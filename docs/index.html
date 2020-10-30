@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bitty Engine</title>
-  <link rel="shortcut icon" type="image/jpg" href="favicon.ico"/>
+  <title>Bitty Engine - An itty bitty game engine</title>
+  <link rel="shortcut icon" href="/favicon.ico"/>
   <style type="text/css">
     body {
       margin: 0;
@@ -26,14 +26,40 @@
     #content {
       position: relative;
     }
+    #more {
+      display: none;
+    }
+    #button_container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #toggle_screenshots {
+      width: 12em;
+      padding: .5em;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      background-color: rgb(77, 88, 100);;
+    }
+    #toggle_screenshots:hover {
+      border: none;
+      background: rgb(255, 199, 95);
+      box-shadow: 0px 0px 1px #777;
+    }
     a:link,
     a:visited {
       color: #69c;
       text-decoration: none;
     }
-    @media (max-width: 760px) {
+    @media (max-width: 870px) {
       body {
         background-color: #fff;
+      }
+      .box {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
       #page {
         width: auto;
@@ -107,40 +133,70 @@
       <h2>Make your own games</h2>
 
       <p align="center">
-        <img src="imgs/screenshot1_code_editor.png">
+        <img src="imgs/screenshot1_edit_code.png" class="box">
         <br>
-        Code editor
+        Edit code
       </p>
       <p align="center">
-        <img src="imgs/screenshot2_sprite_editor.png">
+        <img src="imgs/screenshot2_edit_sprite.png" class="box">
         <br>
-        Sprite editor
+        Edit sprite
       </p>
       <p align="center">
-        <img src="imgs/screenshot3_map_editor.png">
+        <img src="imgs/screenshot3_edit_map.png" class="box">
         <br>
-        Map editor
+        Edit map
       </p>
       <p align="center">
-        <img src="imgs/screenshot4_image_editor.png">
+        <img src="imgs/screenshot4_edit_image.png" class="box">
         <br>
-        Image editor
+        Edit image
       </p>
-      <p align="center">
-        <img src="imgs/screenshot5_sound_view.png">
-        <br>
-        Sound view
-      </p>
-      <p align="center">
-        <img src="imgs/screenshot6_font_view.png">
-        <br>
-        Font view
-      </p>
-      <p align="center">
-        <img src="imgs/screenshot7_play.png">
-        <br>
-        Play
-      </p>
+      <span id="more">
+        <p align="center">
+          <img src="imgs/screenshot5_view_sound.png" class="box">
+          <br>
+          View sound
+        </p>
+        <p align="center">
+          <img src="imgs/screenshot6_view_font.png" class="box">
+          <br>
+          View font
+        </p>
+        <p align="center">
+          <img src="imgs/screenshot7_play.png" class="box">
+          <br>
+          Play
+        </p>
+        <p align="center">
+          <img src="imgs/screenshot8_palette.png" class="box">
+          <br>
+          Palette
+        </p>
+        <p align="center">
+          <img src="imgs/screenshot9_blend.png" class="box">
+          <br>
+          Blend
+        </p>
+        <p align="center">
+          <img src="imgs/screenshot10_custom_clip.png" class="box">
+          <br>
+          Custom clip
+        </p>
+        <p align="center">
+          <img src="imgs/screenshot11_terminal.png" class="box">
+          <br>
+          Terminal
+        </p>
+        <p align="center">
+          <img src="imgs/screenshot12_pathfinding.png" class="box">
+          <br>
+          Pathfinding
+        </p>
+      </span>
+      <div id="button_container">
+        <button onclick="toggleScreenshots()" id="toggle_screenshots">Show more...</button>
+      </div>
 
       <h2>Get Bitty Engine</h2>
 
@@ -187,9 +243,28 @@
           </tbody>
         </table>
       </p>
+
+      <hr>
+
+      <p align="center">
+        © 2020 <a href="https://paladin-t.github.io/">Tony Wang</a> |
+        <a href="https://paladin-t.github.io/bitty/CHANGELOG">Changelog</a>
+      </p>
     </div>
   </div>
   <script type="text/javascript">
+    function toggleScreenshots () {
+      var more = document.getElementById('more');
+      var btn = document.getElementById('toggle_screenshots');
+
+      if (!more.style.display || more.style.display === 'none') {
+        more.style.display = 'inline';
+        btn.innerHTML = 'Show less';
+      } else {
+        more.style.display = 'none';
+        btn.innerHTML = 'Show more...';
+      }
+    } 
   </script>
 </body>
 </html>
