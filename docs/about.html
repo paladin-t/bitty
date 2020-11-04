@@ -5,53 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bitty Engine - An itty bitty game engine</title>
   <link rel="shortcut icon" href="/favicon.ico"/>
-  <style type="text/css">
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: rgb(77, 88, 100);
-      font: 14px Helvetica, Arial, sans-serif;
-    }
-    #page {
-      width: 750px;
-      margin: 2em auto;
-      padding: 20px 50px;
-      border-radius: 1em;
-      background-color: #fff;
-    }
-    #content {
-      position: relative;
-    }
-    a:link,
-    a:visited {
-      color: #69c;
-      text-decoration: none;
-    }
-    @media (max-width: 870px) {
-      body {
-        background-color: #fff;
-      }
-      #page {
-        width: auto;
-        margin: 0 auto;
-        padding: 1em;
-        border-radius: 0;
-      }
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="/style.css">
 </head>
 <body>
-  <div id="page">
-    <div id="content">
+  <div class="page">
+    <div class="content">
       <p align="center">
-        <h1 align="center">About</h1>
+        <img src="imgs/logo.png">
       </p>
 
       <p align="left">
-        <a href="https://paladin-t.github.io/bitty/">Home</a> |
+        <a href="/index.html">Home</a> |
         <a href="https://store.steampowered.com/app/1386180/">Steam</a> |
         <a href="https://paladin-t.github.io/bitty/documents/manual">Manual</a> |
-        <a href="https://paladin-t.github.io/bitty/about.html">About</a>
+        <a href="/about.html">About</a>
       </p>
       <p align="left">
         An itty bitty game engine.
@@ -59,7 +26,10 @@
 
       <hr>
 
-      <h2>Built with</h2>
+      <h2>
+        <a id="built-with" href="#built-with"></a>
+        Built with
+      </h2>
 
       <p align="left">
         Lua
@@ -86,7 +56,9 @@
         <a href="https://zlib.net/">https://zlib.net/</a>
       </p>
 
-      <h2>Email</h2>
+      <h2>
+        Email
+      </h2>
 
       <p align="left">
         <img src="imgs/mailto.png">

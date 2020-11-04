@@ -5,83 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bitty Engine - An itty bitty game engine</title>
   <link rel="shortcut icon" href="/favicon.ico"/>
-  <style type="text/css">
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: rgb(77, 88, 100);
-      font: 14px Helvetica, Arial, sans-serif;
-    }
-    table, th, td {
-      border: 1px black solid;
-      border-collapse: collapse;
-    }
-    #page {
-      width: 750px;
-      margin: 2em auto;
-      padding: 20px 50px;
-      border-radius: 1em;
-      background-color: #fff;
-    }
-    #content {
-      position: relative;
-    }
-    #more {
-      display: none;
-    }
-    #button_container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    #toggle_screenshots {
-      width: 12em;
-      padding: .5em;
-      border: none;
-      border-radius: 6px;
-      color: #fff;
-      background-color: rgb(77, 88, 100);;
-    }
-    #toggle_screenshots:hover {
-      border: none;
-      background: rgb(255, 199, 95);
-      box-shadow: 0px 0px 1px #777;
-    }
-    a:link,
-    a:visited {
-      color: #69c;
-      text-decoration: none;
-    }
-    @media (max-width: 870px) {
-      body {
-        background-color: #fff;
-      }
-      .box {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      #page {
-        width: auto;
-        margin: 0 auto;
-        padding: 1em;
-        border-radius: 0;
-      }
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="/style.css">
 </head>
 <body>
-  <div id="page">
-    <div id="content">
+  <div class="page">
+    <div class="content">
       <p align="center">
         <img src="imgs/logo.png">
       </p>
 
       <p align="left">
-        <a href="https://paladin-t.github.io/bitty/">Home</a> |
+        <a href="/index.html">Home</a> |
         <a href="https://store.steampowered.com/app/1386180/">Steam</a> |
         <a href="https://paladin-t.github.io/bitty/documents/manual">Manual</a> |
-        <a href="https://paladin-t.github.io/bitty/about.html">About</a>
+        <a href="/about.html">About</a>
       </p>
       <p align="left">
         An itty bitty game engine.
@@ -89,7 +26,10 @@
 
       <hr>
 
-      <h2>Get Bitty Engine</h2>
+      <h2>
+        <a id="get-bitty-engine" href="#get-bitty-engine"></a>
+        Get Bitty Engine
+      </h2>
 
       <p align="center">
         <a href="https://store.steampowered.com/app/1386180/"><img src="imgs/steam.png"></a>
@@ -99,7 +39,10 @@
         Coming soon
       </p>
 
-      <h2>About Bitty Engine</h2>
+      <h2>
+        <a id="about-bitty-engine" href="#about-bitty-engine"></a>
+        About Bitty Engine
+      </h2>
 
       <p align="left">
         Features
@@ -130,7 +73,10 @@
         </ul>
       </p>
 
-      <h2>Make your own games</h2>
+      <h2>
+        <a id="make-your-own-games" href="#make-your-own-games"></a>
+        Make your own games
+      </h2>
 
       <p align="center">
         <img src="imgs/screenshot1_edit_code.png" class="box">
@@ -152,7 +98,7 @@
         <br>
         Edit image
       </p>
-      <span id="more">
+      <span class="more" id="more">
         <p align="center">
           <img src="imgs/screenshot5_view_sound.png" class="box">
           <br>
@@ -194,11 +140,14 @@
           Pathfinding
         </p>
       </span>
-      <div id="button_container">
-        <button onclick="toggleScreenshots()" id="toggle_screenshots">Show more...</button>
+      <div class="button_container">
+        <button onclick="toggleScreenshots()" class="button_content" id="toggle_screenshots">Show more...</button>
       </div>
 
-      <h2>Get Bitty Engine</h2>
+      <h2>
+        <a id="get-bitty-engine" href="#get-bitty-engine"></a>
+        Get Bitty Engine
+      </h2>
 
       <p align="center">
         <a href="https://store.steampowered.com/app/1386180/">
@@ -210,7 +159,10 @@
         Coming soon
       </p>
 
-      <h2>System requirements</h2>
+      <h2>
+        <a id="system-requirements" href="#system-requirements"></a>
+        System requirements
+      </h2>
 
       <p align="left">
         <table>
@@ -264,7 +216,7 @@
         more.style.display = 'none';
         btn.innerHTML = 'Show more...';
       }
-    } 
+    }
   </script>
 </body>
 </html>
