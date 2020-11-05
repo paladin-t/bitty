@@ -18,6 +18,9 @@ table, th, td {
 .content {
   position: relative;
 }
+.round_image {
+  border-radius: 8px;
+}
 .more {
   display: none;
 }
