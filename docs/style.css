@@ -21,6 +21,9 @@ table, th, td {
 .round_image {
   border-radius: 8px;
 }
+.round_banner {
+  border-radius: 8px;
+}
 .more {
   display: none;
 }
@@ -58,6 +61,12 @@ a:visited {
     border-radius: 0;
   }
   .box {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .round_banner {
+    border-radius: 8px;
     width: 100%;
     height: 100%;
     object-fit: cover;
