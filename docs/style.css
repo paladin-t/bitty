@@ -15,24 +15,37 @@ table, th, td {
   border-radius: 1em;
   background-color: #fff;
 }
+.hr {
+  width: 50%;
+  height: 1px;
+  border: 0;
+  margin: 0 auto;
+  margin-top: 40px;
+  background-image: linear-gradient(to right, rgba(100, 100, 100, 0), rgba(100, 100, 100, 0.75), rgba(100, 100, 100, 0));
+}
 .content {
   position: relative;
 }
-.round_image {
+.round-image {
   border-radius: 8px;
 }
-.round_banner {
+.round-banner {
   border-radius: 8px;
 }
 .more {
-  display: none;
+  display: inline-block;
+  width: 100%;
+  max-height: 40px;
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(to bottom, transparent, rgba(165, 165, 165, 0.9));
 }
-.button_container {
+.button-container {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.button_content {
+.button-content {
   width: 12em;
   padding: .5em;
   border: none;
@@ -40,7 +53,7 @@ table, th, td {
   color: #fff;
   background-color: rgb(77, 88, 100);;
 }
-.button_content:hover {
+.button-content:hover {
   border: none;
   background: rgb(255, 199, 95);
   box-shadow: 0px 0px 1px #777;
@@ -69,13 +82,13 @@ a:visited {
     height: 100%;
     object-fit: cover;
   }
-  .round_banner {
+  .round-banner {
     border-radius: 8px;
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  .frame_container {
+  .frame-container {
     display: block;
     width: 100%;
     height: auto;

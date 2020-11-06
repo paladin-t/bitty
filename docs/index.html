@@ -15,7 +15,7 @@
       </p>
 
       <p align="left">
-        <a href="index.html">Home</a> |
+        <a href="index.html"><b>Home</b></a> |
         <a href="https://store.steampowered.com/app/1386180/">Steam</a> |
         <a href="https://paladin-t.github.io/bitty/documents/manual">Manual</a> |
         <a href="about.html">About</a>
@@ -32,7 +32,7 @@
       </h2>
 
       <p align="center">
-        <a href="https://store.steampowered.com/app/1386180/"><img src="imgs/steam.png" class="round_image"></a>
+        <a href="https://store.steampowered.com/app/1386180/"><img src="imgs/steam.png" class="round-image"></a>
       </p>
 
       <h2>
@@ -42,7 +42,7 @@
 
       <p align="left">
         <p align="center">
-          <img src="imgs/banner_coding.png" class="round_banner">
+          <img src="imgs/banner_coding.png" class="round-banner">
         </p>
 
         <br>
@@ -89,65 +89,76 @@
         <br>
         Edit code
       </p>
+      <hr class='hr'>
       <p align="center">
         <img src="imgs/screenshot2_edit_sprite.png" class="box">
         <br>
         Edit sprite
       </p>
+      <hr class='hr'>
       <p align="center">
         <img src="imgs/screenshot3_edit_map.png" class="box">
         <br>
         Edit map
       </p>
+      <hr class='hr'>
       <p align="center">
         <img src="imgs/screenshot4_edit_image.png" class="box">
         <br>
         Edit image
       </p>
-      <span class="more" id="more">
+      <hr class='hr'>
+      <span class="more" id="more-screenshots">
         <p align="center">
           <img src="imgs/screenshot5_view_sound.png" class="box">
           <br>
           View sound
         </p>
+        <hr class='hr'>
         <p align="center">
           <img src="imgs/screenshot6_view_font.png" class="box">
           <br>
           View font
         </p>
+        <hr class='hr'>
         <p align="center">
           <img src="imgs/screenshot7_play.png" class="box">
           <br>
           Play
         </p>
+        <hr class='hr'>
         <p align="center">
           <img src="imgs/screenshot8_palette.png" class="box">
           <br>
           Palette
         </p>
+        <hr class='hr'>
         <p align="center">
           <img src="imgs/screenshot9_blend.png" class="box">
           <br>
           Blend
         </p>
+        <hr class='hr'>
         <p align="center">
           <img src="imgs/screenshot10_custom_clip.png" class="box">
           <br>
           Custom clip
         </p>
+        <hr class='hr'>
         <p align="center">
           <img src="imgs/screenshot11_terminal.png" class="box">
           <br>
           Terminal
         </p>
+        <hr class='hr'>
         <p align="center">
           <img src="imgs/screenshot12_pathfinding.png" class="box">
           <br>
           Pathfinding
         </p>
       </span>
-      <div class="button_container">
-        <button onclick="toggleScreenshots()" class="button_content" id="toggle_screenshots">Show more...</button>
+      <div class="button-container">
+        <button class="button-content" id="toggle-screenshots">Show more...</button>
       </div>
 
       <h2>
@@ -155,7 +166,7 @@
         Get Bitty Engine
       </h2>
 
-      <p align="center" class="frame_container">
+      <p align="center" class="frame-container">
         <iframe src="https://store.steampowered.com/widget/1386180/" class="frame" frameborder="0"></iframe>
       </p>
 
@@ -205,18 +216,21 @@
     </div>
   </div>
   <script type="text/javascript">
-    function toggleScreenshots () {
-      var more = document.getElementById('more');
-      var btn = document.getElementById('toggle_screenshots');
-
-      if (!more.style.display || more.style.display === 'none') {
-        more.style.display = 'inline';
-        btn.innerHTML = 'Show less';
-      } else {
-        more.style.display = 'none';
-        btn.innerHTML = 'Show more...';
-      }
+    function toggle (btn_id, more_id) {
+      var more = document.getElementById(more_id);
+      var btn = document.getElementById(btn_id);
+      btn.onclick = function () {
+        if (!more.style.display || more.style.display === 'inline-block') {
+          more.style.display = 'inline';
+          btn.innerHTML = 'Show less';
+        } else {
+          more.style.display = 'inline-block';
+          btn.innerHTML = 'Show more...';
+        }
+      };
     }
+
+    toggle('toggle-screenshots', 'more-screenshots');
   </script>
 </body>
 </html>
