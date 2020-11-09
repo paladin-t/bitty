@@ -2,6 +2,8 @@
 
 ## Welcome to Bitty Engine
 
+[Manual](https://paladin-t.github.io/bitty/documents/manual) | [Operations](operations)
+
 **An itty bitty game engine.**
 
 Draft.
@@ -9,7 +11,6 @@ Draft.
 ## Table of content
 
 * [Fundamental](#fundamental)
-	* [Operations](#operations)
 	* [Specifications](#specifications)
 	* [Project Structure](#project-structure)
 		* [In Directory](#in-directory)
@@ -78,10 +79,6 @@ Draft.
 [HOME](#welcome-to-bitty-engine)
 
 # Fundamental
-
-## Operations
-
-TODO
 
 ## Specifications
 
