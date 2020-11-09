@@ -40,20 +40,20 @@ table, th, td {
   overflow: hidden;
   background-image: linear-gradient(to bottom, transparent, rgba(165, 165, 165, 0.9));
 }
-.button-container {
+.more-button {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.button-content {
+.button {
   width: 12em;
   padding: .5em;
   border: none;
   border-radius: 6px;
   color: #fff;
-  background-color: rgb(77, 88, 100);;
+  background-color: rgb(77, 88, 100);
 }
-.button-content:hover {
+.button:hover {
   border: none;
   background: rgb(255, 199, 95);
   box-shadow: 0px 0px 1px #777;
