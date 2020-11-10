@@ -8,6 +8,11 @@ table, th, td {
   border: 1px black solid;
   border-collapse: collapse;
 }
+a:link,
+a:visited {
+  color: #69c;
+  text-decoration: none;
+}
 .page {
   width: 750px;
   margin: 2em auto;
@@ -61,11 +66,6 @@ table, th, td {
 .frame {
   width: 490px;
   height: 190px;
-}
-a:link,
-a:visited {
-  color: #69c;
-  text-decoration: none;
 }
 @media (max-width: 870px) {
   body {

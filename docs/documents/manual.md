@@ -2,7 +2,7 @@
 
 ## Welcome to Bitty Engine
 
-[Manual](https://paladin-t.github.io/bitty/documents/manual) | [Operations](operations)
+[**Manual**](https://paladin-t.github.io/bitty/documents/manual) | [Operations](operations)
 
 **An itty bitty game engine.**
 
@@ -82,7 +82,16 @@ Draft.
 
 ## Specifications
 
-TODO
+* Display: defaults to 480x320 pixels, configurable to bigger, smaller or self-adaption, up to 4800x3200
+* Audio: 1 BGM channel, 4 SFX channels; supports MP3, OGG, WAV, FLAC, etc.
+* Font: supports Bitmap and TrueType
+* Code: Lua, supports multiple source files
+* Sprite: up to 1024x1024 pixels per frame, up to 1024 frames per sprite
+* Map: up to 4096x4096 tiles per page
+* Image: either true-colored (PNG, JPG, BMP, TGA) or paletted, up to 1024x1024 pixels per file
+* Palette: 256 colors with transparency support
+* Gamepad: 6 buttons for each pad (D-Pad + A/B), up to 2 players
+* Keyboard and mouse: supported
 
 ## Project Structure
 
@@ -122,37 +131,17 @@ TODO
 
 ## Lua
 
-TODO
+Bitty project is programmable in the [Lua](https://www.lua.org/) programming language.
 
 ### Syntax
 
-TODO
+Lua is widely used and validated in the software industry, there are a lot of learning materials about the language on the internet. Click to see the [official documentation](https://www.lua.org/docs.html).
 
 ### Standard Libraries
 
-Inherited:
+These ready to use modules are reserved from the original: `package`, `coroutine`, `table`, `string`, `math`, `utf8`.
 
-`package`
-
-`coroutine`
-
-`table`
-
-`string`
-
-`math`
-
-`utf8`
-
-Disabled:
-
-`io`
-
-`os`
-
-`debug`
-
-TODO
+These trivial modules are disabled: `io`, `os`, `debug`. There are alternatives for them.
 
 ## Program Structure
 
@@ -168,6 +157,8 @@ TODO
 
 #### Pathfinder
 
+This module is used to perform a pathfinding algorithm on 2D grids:
+
 TODO
 
 #### Randomizer
@@ -175,6 +166,8 @@ TODO
 TODO
 
 #### Walker
+
+This module is used to perform a smooth walking algorithm on 2D grids:
 
 TODO
 
@@ -267,6 +260,10 @@ TODO
 TODO
 
 ## Primitives
+
+The coordinate definition in Bitty Engine is:
+
+![](imgs/coordinate.png)
 
 TODO
 
