@@ -39,6 +39,10 @@
 
 * F1: open manual
 
+* Use "dir/file", for example, to create assets in directory
+
+![](imgs/directory.png)
+
 ### Code Edit
 
 * Tab: indent

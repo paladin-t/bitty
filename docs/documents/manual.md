@@ -6,7 +6,7 @@
 
 **An itty bitty game engine.**
 
-Draft.
+As you see, this document is **draft**. I will gradually fill contents to make it a full description of the libraries, tools and other aspects for game making. For the moment, I suggest you to take a look at the examples for reference, especially the "Libraries" and "Primitives" categories that already covered most API. I'll also improve the examples during this period.
 
 ## Table of content
 
@@ -111,7 +111,9 @@ TODO
 
 ## Backup
 
-TODO
+Bitty Engine makes backup once you save an asset or a project, the entire project will be stored to `X:/Users/YourName/AppData/Roaming/bitty/engine/backup` on Windows.
+
+You can navigate there by clicking "Project", "Browse Data Directory...".
 
 ## Capturing
 
@@ -139,13 +141,30 @@ Lua is widely used and validated in the software industry, there are a lot of le
 
 ### Standard Libraries
 
-These ready to use modules are reserved from the original: `package`, `coroutine`, `table`, `string`, `math`, `utf8`.
+The ready to use modules, `package`, `coroutine`, `table`, `string`, `math`, `utf8`, are reserved from the original.
 
-These trivial modules are disabled: `io`, `os`, `debug`. There are alternatives for them.
+The trivial modules, `io`, `os`, `debug`, are disabled. Bitty Engine offers alternatives.
 
 ## Program Structure
 
-TODO
+A conventional entry program of Bitty project is made up of a `setup` function which is called once a program starts, and an `update` which is called periodically:
+
+```lua
+function setup()
+end
+
+function update(delta)
+end
+```
+
+Define another `quit` function to run code on execution termination:
+
+```lua
+function quit()
+end
+```
+
+Generally `setup` is used to initial game variables, states, `update` is where gameplay logic goes, and `quit` is for persist necessary data on disk. All the three entries are optional.
 
 ## Libraries
 
