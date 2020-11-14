@@ -39,7 +39,7 @@
 
 * F1: open manual
 
-* Use "dir/file", for example, to create assets in directory
+* Input "dir/file", for example, to create assets in directory
 
 ![](imgs/directory.png)
 
@@ -60,7 +60,7 @@
 
 * +/-: change view scale
 
-* Double click on a frame to change its interval
+* Double click on a frame or slide to change its interval
 
 ![](imgs/interval.png)
 
@@ -131,7 +131,7 @@
 * ;: vertical flip
 * ': horizontal flip
 
-* Select an area then fill with the paint bucket tool to perform a ranged filling
+* Select an area then fill with the paint bucket tool to perform ranged filling
 
 ![](imgs/fill.png)
 
