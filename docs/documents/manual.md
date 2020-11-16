@@ -328,8 +328,6 @@ TODO
 
 TODO
 
-0 for LMB, 1 for MMB, 2 for RMB.
-
 ### Camera
 
 TODO
