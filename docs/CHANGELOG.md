@@ -1,4 +1,4 @@
-### v0.8 2020
+### v0.8 Nov. 18, 2020
 
 Added Windows version. First release with features including:
 

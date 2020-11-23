@@ -4,7 +4,7 @@
 
 ### General
 
-* F5/Ctrl+R: run, or continue running
+* F5/Ctrl+R: run, or resume running
 * Shift+F5/Ctrl+.: stop running
 
 * Ctrl+N: new project
@@ -39,7 +39,7 @@
 
 * F1: open manual
 
-* Input "dir/file", for example, to create assets in directory
+* Input "dir/sub/.../file", for example, to create assets in directory
 
 ![](imgs/directory.png)
 
@@ -108,7 +108,7 @@
 * Shift: hold to move
 * Alt: hold to pick color
 
-* 1/2/3/4/5/6/7/8/9/0: select color
+* 1/2/3/4/5/6/7/8/9/0: pick a preselected color
 
 * H: move
 * I: pick color
