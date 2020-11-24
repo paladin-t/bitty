@@ -4,7 +4,7 @@
 
 [Home](https://paladin-t.github.io/bitty/) |
 [Steam](https://store.steampowered.com/app/1386180/) |
-[Manual](https://paladin-t.github.io/bitty/documents/manual) |
+[Documents](https://paladin-t.github.io/bitty/documents/index.html) |
 [About](https://paladin-t.github.io/bitty/about.html)
 
 More stuff will be added...
