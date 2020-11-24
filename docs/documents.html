@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Bitty Engine is an itty bitty game engine, with built-in editors, programmable in Lua." />
   <meta name="twitter:card" content="Bitty Engine is an itty bitty game engine, with built-in editors, programmable in Lua." />
-  <meta name="og:title" property="og:title" content="Changelog | Bitty Engine" />
+  <meta name="og:title" property="og:title" content="Documents | Bitty Engine" />
   <meta name="og:description" property="og:description" content="Bitty Engine is an itty bitty game engine, with built-in editors, programmable in Lua." />
-  <title>Changelog | Bitty Engine</title>
+  <title>Documents | Bitty Engine</title>
   <link rel="shortcut icon" href="favicon.ico" />
   <link rel="apple-touch-icon" href="icon.png" />
   <link rel="stylesheet" type="text/css" href="style.css" />
-  <link rel="stylesheet" type="text/css" href="prism.css" />
 </head>
 <body onclick>
   <div class="page">
@@ -23,7 +22,7 @@
       <p align="left">
         <a href="index.html">Home</a> |
         <a href="https://store.steampowered.com/app/1386180/" target="_blank">Steam</a> |
-        <a href="documents.html">Documents</a> |
+        <a href="documents.html"><b>Documents</b></a> |
         <a href="about.html">About</a>
       </p>
       <p align="left">
@@ -33,11 +32,12 @@
 
       <hr>
 
-      <div id="document">
-        <div id="document-content" class="document-content">
-          Loading...
-        </div>
-      </div>
+      <p align="left">
+        [
+          <a href="manual.html">Manual</a> |
+          <a href="operations.html">Operations</a>
+        ]
+      </p>
 
       <hr>
 
@@ -47,38 +47,7 @@
       </p>
     </div>
   </div>
-  <script src="polyfill.js"></script>
-  <script src="article.js"></script>
-  <script src="marked.js"></script>
-  <script src="prism.js"></script>
-  <script src="prism-lua.js"></script>
   <script type="text/javascript">
-    (function () {
-      var url = 'CHANGELOG.md';
-      var ref = 'CHANGELOG';
-
-      try {
-        Article.read(url, ref, {
-          content: 'document-content',
-          parse: function (markdown) {
-            return markdown
-              .replaceAll('![](imgs/', '![](documents/imgs/');
-          },
-          preprocess: function (html) {
-            return html
-              .replaceAll('<code>', '<code class="language-auto">');
-          },
-          highlight: function () {
-            Prism.highlightAll();
-          }
-        });
-      } catch (_) {
-        var html = 'Oops, cannot load content for the moment...<br>Try refersh or ';
-        html += '<a href="' + ref + '" target="_blank">click</a>';
-
-        Article.attach('document-content', html);
-      }
-    })();
   </script>
 </body>
 </html>

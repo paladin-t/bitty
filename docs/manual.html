@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Bitty Engine is an itty bitty game engine, with built-in editors, programmable in Lua." />
   <meta name="twitter:card" content="Bitty Engine is an itty bitty game engine, with built-in editors, programmable in Lua." />
-  <meta name="og:title" property="og:title" content="Changelog | Bitty Engine" />
+  <meta name="og:title" property="og:title" content="Manual | Bitty Engine" />
   <meta name="og:description" property="og:description" content="Bitty Engine is an itty bitty game engine, with built-in editors, programmable in Lua." />
-  <title>Changelog | Bitty Engine</title>
+  <title>Manual | Bitty Engine</title>
   <link rel="shortcut icon" href="favicon.ico" />
   <link rel="apple-touch-icon" href="icon.png" />
   <link rel="stylesheet" type="text/css" href="style.css" />
@@ -23,7 +23,7 @@
       <p align="left">
         <a href="index.html">Home</a> |
         <a href="https://store.steampowered.com/app/1386180/" target="_blank">Steam</a> |
-        <a href="documents.html">Documents</a> |
+        <a href="documents.html"><b>Documents</b></a> |
         <a href="about.html">About</a>
       </p>
       <p align="left">
@@ -32,6 +32,13 @@
       </p>
 
       <hr>
+
+      <p align="left">
+        [
+          <a href="manual.html"><b>Manual</b></a> |
+          <a href="operations.html">Operations</a>
+        ]
+      </p>
 
       <div id="document">
         <div id="document-content" class="document-content">
@@ -54,15 +61,16 @@
   <script src="prism-lua.js"></script>
   <script type="text/javascript">
     (function () {
-      var url = 'CHANGELOG.md';
-      var ref = 'CHANGELOG';
+      var url = 'documents/manual.md';
+      var ref = 'documents/manual';
 
       try {
         Article.read(url, ref, {
           content: 'document-content',
           parse: function (markdown) {
             return markdown
-              .replaceAll('![](imgs/', '![](documents/imgs/');
+            .replace('[**Manual**](https://paladin-t.github.io/bitty/documents/manual.html) | [Operations](operations)', '')
+            .replaceAll('![](imgs/', '![](documents/imgs/');
           },
           preprocess: function (html) {
             return html

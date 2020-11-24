@@ -2,7 +2,7 @@
 
 ## Welcome to Bitty Engine
 
-[**Manual**](https://paladin-t.github.io/bitty/documents/manual) | [Operations](operations)
+[**Manual**](https://paladin-t.github.io/bitty/manual.html) | [Operations](operations)
 
 **An itty bitty game engine.**
 
