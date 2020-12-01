@@ -6,8 +6,6 @@
 
 **An itty bitty game engine.**
 
-As you see, this document is **draft**. I will gradually fill contents to make it a full description of the libraries, tools and other aspects for game making. For the moment, I suggest you to take a look at the examples for reference, especially the "Libraries" and "Primitives" categories that already covered most API. I'll also improve the examples during this period.
-
 ## Table of content
 
 * [Fundamental](#fundamental)
@@ -62,8 +60,9 @@ As you see, this document is **draft**. I will gradually fill contents to make i
 		* [Texture](#texture)
 		* [Sprite](#sprite)
 		* [Map](#map)
-		* [SFX](#sfx)
-		* [Music](#music)
+		* [Audio](#audio)
+			* [SFX](#sfx)
+			* [Music](#music)
 		* [Gamepad](#gamepad)
 		* [Keyboard](#keyboard)
 		* [Mouse](#mouse)
@@ -115,7 +114,7 @@ A binary-based project archive is just a compressed ZIP package replaced with th
 
 ## Backup
 
-Bitty Engine makes backup once you save an asset or a project, the entire project will be stored to `X:/Users/YourName/AppData/Roaming/bitty/engine/backup` on Windows.
+Bitty Engine makes backup once you save an asset or a project, click "Project", "Browse Data Directory..." to locate it.
 
 You can navigate there by clicking "Project", "Browse Data Directory...".
 
@@ -142,11 +141,21 @@ Bitty project is programmable in the [Lua](https://www.lua.org/) programming lan
 
 Lua is widely used and validated in the software industry, there are a lot of learning materials about the language on the internet. Click to see the [official documentation](https://www.lua.org/docs.html).
 
+Lua is 1-based for list accessing, Bitty Engine follows the same convention for sequenced structures, like `Bytes`, `File`, etc. Otherwise it is 0-based for coordinates, like `Pathfinder`, `Image`, `Map`, `Palette`, etc.
+
+This document uses a meta method form to describe operators. Eg. `vec2:__add(vec2_)` for `vec2 + vec2_`, `vec2:__len()` for `#vec2`, etc.
+
 ### Standard Libraries
 
 The ready to use modules, `package`, `coroutine`, `table`, `string`, `math`, `utf8`, are reserved from the original.
 
-The trivial modules, `io`, `os`, `debug`, are disabled. Bitty Engine offers alternatives.
+The trivial modules, `io`, `os`, `debug`, are removed. Bitty Engine offers alternatives.
+
+**Functions**
+
+* `print(...)`: outputs some values to the console window as message, for debugging purposes
+* `warn(...)`: outputs some values to the console window as warn, for debugging purposes
+* `error(...)`: outputs some values to the console window as error, and stops execution, for debugging purposes
 
 ## Program Structure
 
@@ -167,7 +176,9 @@ function quit()
 end
 ```
 
-Generally `setup` is used to initial game variables, states, `update` is where gameplay logic goes, and `quit` is for persist necessary data on disk. All the three entries are optional.
+Generally `setup` is used to initial game variables, states, `update` is where gameplay logic goes, and `quit` is for persisting necessary data on disk. All the three entries are optional.
+
+Bitty Engine uses a timeout mechanism to avoid unexpected infinite loops, it raises an error when any invoking to the entries takes more than 10 seconds by default. The timeout value can be changed by [Debug.setTimeout(...)](#debug).
 
 ## Libraries
 
@@ -175,40 +186,79 @@ Generally `setup` is used to initial game variables, states, `update` is where g
 
 #### Pathfinder
 
-This module is used to perform a pathfinding algorithm on 2D grids:
+This module performs a pathfinding algorithm on 2D grids.
 
 **Constructors**
 
-* `Pathfinder.new(w, n, e, s)`
+* `Pathfinder.new(w, n, e, s)`: constructs a pathfinder object with finite borders
+	* `w`: the west edge, minimum in the x direction
+	* `n`: the north edge, minimum in the y direction
+	* `e`: the east edge, maximum in the x direction
+	* `s`: the south edge, maximum in the y direction
 
-**Object Field**
+**Object Fields**
 
-* `pathfinder.diagonalCost`
+* `pathfinder.diagonalCost`: gets or sets the walking cost of diagonal direction, defaults to 1.414; set to -1 for not walkable
 
 **Methods**
 
-* `pathfinder:get(pos)`
-* `pathfinder:set(pos, cost)`
-* `pathfinder:clear()`
-* `pathfinder:solve(beginPos, endPos, eval)`
-* `pathfinder:solve(beginPos, endPos)`
+* `pathfinder:get(pos)`: gets the walking cost of a prefilled grid at the specific position
+	* `pos`: the position to get
+	* returns walking cost
+* `pathfinder:set(pos, cost)`: sets the walking cost of a grid, initializes a cost matrix with 1 for all grids when first calling to this function
+	* `pos`: the position to set
+	* `cost`: the cost value to set
+* `pathfinder:clear()`: clears prefilled matrix and internal cached data
+* `pathfinder:solve(beginPos, endPos, eval)`: resolves for a possible path
+	* `beginPos`: the beginning position
+	* `endPos`: the ending position
+	* `eval`: in form of `function (pos) return number end`, an invokable object which accepts position and returns the walking cost at that point
+	* returns an approachable path, in a list of `Vec2`, could be empty
+* `pathfinder:solve(beginPos, endPos)`: resolves for a possible path
+
+Grid coordinates can be any integer, with range of values from -32,767 to 32,767. A cost matrix will be prefilled once calling the `pathfinder:set(...)` function; this data exists until calling `pathfinder:clear()`. The `pathfinder:solve(...)` function prefers to use invokable to get grid cost, and falls to use prefilled matrix if no evaluator provided.
+
+Walking cost is combined with two parts by multiplicative: neighbor cost and map cost. Neighbor cost stands for how much does it cost to walk from the current grid to its neighbor directions as following, in which `D` defaults to 1.414:
+
+```
+ _________________
+|     |     |     |
+|  D  |  1  |  D  |
+|_____|_____|_____|
+|     |     |     |
+|  1  |     |  1  |
+|_____|_____|_____|
+|     |     |     |
+|  D  |  1  |  D  |
+|_____|_____|_____|
+```
+
+Pathfinder retrieves grid cost from either an evaluator or prefilled matrix. All cost states must be immutable during calling the `pathfinder:solve(...)` function. It's not walkable if either part of the cost combination results -1; positive cost means walkable, and the pathfinder prefers lower cost grids.
 
 #### Randomizer
 
+This module provide a random algorithm organized by object, other than the built-in random function in Lua. You can use either.
+
 **Constructors**
 
-* `Random.new()`
+* `Random.new()`: constructs a randomizer object
 
 **Methods**
 
-* `random:seed([seed])`
-* `random:next(low, up)`
-* `random:next(up)`
-* `random:next()`
+* `random:seed([seed])`: seeds the randomizer
+	* `seed`: the seed; omit to seed with the current time
+* `random:next(low, up)`: generates a random number
+	* `low`: the low bound
+	* `up`: the up bound
+	* returns a pseudo random integer with uniform distribution in the range [m, n]
+* `random:next(n)`: generates a random number
+	* returns equivalent to `random:next(1, n)` for a positive `n`; returns an integer with all bits random for a zero `n`
+* `random:next()`: generates a random number
+	* returns a pseudo random float with uniform distribution in the range [0, 1)
 
 #### Walker
 
-This module is used to perform a smooth walking algorithm on 2D grids:
+This module performs a smooth walking algorithm on 2D grids.
 
 **Constants**
 
@@ -220,124 +270,221 @@ This module is used to perform a smooth walking algorithm on 2D grids:
 
 **Constructors**
 
-* `Walker.new()`
+* `Walker.new()`: constructs a walker object
 
-**Object Field**
+**Object Fields**
 
-* `walker.objectSize`
-* `walker.tileSize`
-* `walker.offset`
+* `walker.objectSize`: gets or sets the object size, defaults to 8x8
+* `walker.tileSize`: gets or sets the tile size, defaults to 8x8
+* `walker.offset`: gets or sets the walker offset, defaults to 0, 0
 
 **Methods**
 
-* `walker:solve(objPos, expDir, eval, slidable = 5)`
+* `walker:solve(objPos, expDir, eval, slidable = 5)`: resolves for a walking step
+	* `objPos`: the object position
+	* `expDir`: the expected direction
+	* `eval`: in form of `function (pos) return boolean, enum end`, an invokable object which accepts position and returns `true` for blocked, `false` for pass; in addition this evaluator can return a secondary value in `Walker.None`, `Walker.Left`, `Walker.Right`, `Walker.Up`, `Walker.Down` for one-way walk
+	* `slidable`: non-zero for slidable at edge, with range of values from 0 to 10
+	* returns a resolved directional `Vec2` or `nil`
 
 ### Archive
 
+This module offers manipulations for a ZIP package.
+
 **Constructors**
 
-* `Archive.new()`
+* `Archive.new()`: constructs an archive object
 
 **Methods**
 
-* `archive:open(path, access = Stream.Read)`
-* `archive:close()`
-* `archive:all()`
-* `archive:exists(entry)`
-* `archive:make(entry)`
-* `archive:toBytes(entry, bytes)`
-* `archive:fromBytes(entry, bytes)`
-* `archive:toFile(entry, path)`
-* `archive:fromFile(entry, path)`
-* `archive:toDirectory(entry, path)`
-* `archive:fromDirectory(entry, path)`
+* `archive:open(path, access = Stream.Read)`: opens an archive file for reading or writing
+	* `path`: the archive file path
+	* `access`: can be one in `Stream.Read`, `Stream.Write`, `Stream.Append`, for reading, truncated writing, non-truncated writing respectively
+	* returns `true` for success, otherwise `false`
+* `archive:close()`: closes an opened archive
+	* returns `true` for success, otherwise `false`
+* `archive:all()`: gets all entry names in the archive
+	* returns the entry list, in a list of string, could be empty or `nil`
+* `archive:exists(entry)`: gets whether the specific entry exists in the archive
+	* `entry`: the entry name to look for
+	* returns `true` for exists, otherwise `false`
+* `archive:make(entry)`: makes an entry in the archive
+	* `entry`: the entry name to make
+	* returns `true` for success, otherwise `false`
+* `archive:toBytes(entry, bytes)`: reads the specific entry and writes to `Bytes`
+	* `entry`: the entry name to read
+	* `bytes`: the `Bytes` to receive, its cursor will be at the end
+	* returns `bytes` for success, otherwise `nil`
+* `archive:fromBytes(entry, bytes)`: writes the specific entry from `Bytes`
+	* `entry`: the entry name to write
+	* `bytes`: the `Bytes` to retrieve from start till end, its cursor won't be moved
+	* returns `true` for success, otherwise `false`
+* `archive:toFile(entry, path)`: reads the specific entry and writes to file
+	* `entry`: the entry name to read
+	* `path`: the file path to receive
+	* returns `true` for success, otherwise `false`
+* `archive:fromFile(entry, path)`: writes the specific entry from file
+	* `entry`: the entry name to write
+	* `path`: the file path to retrieve
+	* returns `true` for success, otherwise `false`
+* `archive:toDirectory(path)`: reads all the entries and writes to directory
+	* `path`: the directory path to receive
+	* returns `true` for success, otherwise `false`
+* `archive:fromDirectory(path)`: writes all the entries from directory
+	* `path`: the directory path to retrieve
+	* returns `true` for success, otherwise `false`
 
 ### Bytes
 
-Being the same as Lua array, `Bytes` index starts from 1. Implements a `Stream` as memory buffer.
+Being the same as Lua list, `Bytes` index starts from 1. Implements a `Stream` as memory buffer.
 
 **Constructors**
 
-* `Bytes.new()`
+* `Bytes.new()`: constructs a bytes object
 
 **Operators**
 
-* `bytes[index]`
-* `bytes:__len()`
+* `=bytes[index]`: reads a byte from the specific index
+	* `index`: starts from 1
+	* returns byte
+* `bytes[index]=`: writes a byte to the specific index
+	* `index`: starts from 1
+* `bytes:__len()`: gets the length in bytes
 
 **Methods**
 
-* `bytes:peek()`
-* `bytes:poke(index)`
-* `bytes:count()`
-* `bytes:empty()`
-* `bytes:endOfStream()`
-* `bytes:readByte()`
-* `bytes:readInt16()`
-* `bytes:readUInt16()`
-* `bytes:readInt32()`
-* `bytes:readUInt32()`
-* `bytes:readInt64()`
-* `bytes:readSingle()`
-* `bytes:readDouble()`
-* `bytes:readBytes([expSize[, buf]])`
-* `bytes:readString([expSize])`
-* `bytes:readLine()`
-* `bytes:writeByte(val)`
-* `bytes:writeInt16(val)`
-* `bytes:writeUInt16(val)`
-* `bytes:writeInt32(val)`
-* `bytes:writeUInt32(val)`
-* `bytes:writeInt64(val)`
-* `bytes:writeSingle(val)`
-* `bytes:writeDouble(val)`
-* `bytes:writeBytes(bytes[, expSize])`
-* `bytes:writeString(val)`
-* `bytes:writeLine(val)`
-* `bytes:get(index)`
-* `bytes:set(index, val)`
-* `bytes:resize(expSize)`
-* `bytes:clear()`
+* `bytes:peek()`: peeks the reading/writing cursor
+	* returns the cursor, starts from 1
+* `bytes:poke(index)`: pokes the reading/writig cursor
+	* `index`: starts from 1
+	* returns `true` for success, otherwise `false`
+* `bytes:count()`: gets the length in bytes
+	* returns the length in bytes
+* `bytes:empty()`: gets whether the `Bytes` is empty
+	* returns `true` for empty, otherwise `false`
+* `bytes:endOfStream()`: gets whether the cursor is at the end
+	* returns `true` for end, otherwise `false`
+* `bytes:readByte()`: reads a byte and moves the cursor forward
+	* returns byte
+* `bytes:readInt16()`: reads a 16-bit signed integer and moves the cursor forward
+	* returns 16-bit signed integer
+* `bytes:readUInt16()`: reads a 16-bit unsigned integer and moves the cursor forward
+	* returns 16-bit unsigned integer
+* `bytes:readInt32()`: reads a 32-bit signed integer and moves the cursor forward
+	* returns 32-bit signed integer
+* `bytes:readUInt32()`: reads a 32-bit unsigned integer and moves the cursor forward
+	* returns 32-bit unsigned integer
+* `bytes:readInt64()`: reads a 64-bit signed integer and moves the cursor forward
+	* returns 64-bit signed integer
+* `bytes:readSingle()`: reads a single precision real number and moves the cursor forward
+	* returns single precision real number
+* `bytes:readDouble()`: reads a double precision real number and moves the cursor forward
+	* returns double precision real number
+* `bytes:readBytes([expSize[, bytes_]])`: reads some bytes and moves the cursor forward
+	* `expSize`: optional, the expected size in bytes to read; omit to read till end
+	* `bytes_`: optional, `Bytes` to receive, its content will be cleared; omit to return a new `Bytes`
+	* returns the target `Bytes`, its cursor will be at the end
+* `bytes:readString([expSize])`: reads some text and moves the cursor forward
+	* `expSize`: optional, the expected size in bytes to read; omit to read till end
+	* returns the read string
+* `bytes:readLine()`: reads a line of text and moves the cursor forward
+	* returns the read line
+* `bytes:writeByte(val)`: writes a byte and moves the cursor forward
+	* `val`: the byte to write
+	* returns the written size in bytes
+* `bytes:writeInt16(val)`: writes a 16-bit signed integer and moves the cursor forward
+	* `val`: the 16-bit signed integer to write
+	* returns the written size in bytes
+* `bytes:writeUInt16(val)`: writes a 16-bit unsigned integer and moves the cursor forward
+	* `val`: the 16-bit unsigned integer to write
+	* returns the written size in bytes
+* `bytes:writeInt32(val)`: writes a 32-bit signed integer and moves the cursor forward
+	* `val`: the 32-bit signed integer to write
+	* returns the written size in bytes
+* `bytes:writeUInt32(val)`: writes a 32-bit unsigned integer and moves the cursor forward
+	* `val`: the 32-bit unsigned integer to write
+	* returns the written size in bytes
+* `bytes:writeInt64(val)`: writes a 64-bit signed integer and moves the cursor forward
+	* `val`: the 64-bit signed integer to write
+	* returns the written size in bytes
+* `bytes:writeSingle(val)`: writes a single precision real number and moves the cursor forward
+	* `val`: the single precision real number to write
+	* returns the written size in bytes
+* `bytes:writeDouble(val)`: writes a double precision real number and moves the cursor forward
+	* `val`: the double precision real number to write
+	* returns the written size in bytes
+* `bytes:writeBytes(bytes_[, expSize])`: writes some bytes and moves the cursor forward
+	* `bytes_`: the `Bytes` to write from start till end, its cursor won't be moved
+	* `expSize`: optional, the expected size in bytes to write; omit to write till `bytes_`'s end
+	* returns the written size in bytes
+* `bytes:writeString(val)`: writes some text and moves the cursor forward
+	* `val`: the string to write
+	* returns the written size in bytes
+* `bytes:writeLine(val)`: writes a line of text and moves the cursor forward
+	* `val`: the line to write
+	* returns the written size in bytes
+* `bytes:get(index)`: gets a byte at the specific index, doesn't moves the cursor
+	* `index`: the index to get, starts from 1
+	* returns byte
+* `bytes:set(index, val)`: sets a byte to the specific index, doesn't moves the cursor
+	* `index`: the index to set, starts from 1
+	* `val`: the byte to set
+* `bytes:resize(expSize)`: resizes the `Bytes`
+	* `expSize`: the expected new size
+* `bytes:clear()`: clears all content and resets the cursor
 
 ### Color
 
 **Constructors**
 
-* `Color.new(r, g, b, a = 255)`
-* `Color.new()`
+* `Color.new(r, g, b, a = 255)`: constructs a color object
+	* `r`: the red component, with range of values from 0 to 255
+	* `g`: the green component, with range of values from 0 to 255
+	* `b`: the blue component, with range of values from 0 to 255
+	* `a`: the alpha component, with range of values from 0 to 255
+* `Color.new()`: constructs a color object as white
 
 **Operators**
 
-* `color:__add(color_)`
-* `color:__sub(color_)`
-* `color:__mul(num)`
-* `color:__mul(color_)`
-* `color:__unm()`
-* `color:__eq(color_)`
+* `color:__add(color_)`: adds with another `Color` componentwise
+* `color:__sub(color_)`: subtracts by another `Color` componentwise
+* `color:__mul(num)`: multiplies with another number
+* `color:__mul(color_)`: multiplies with another `Color` componentwise
+* `color:__unm()`: takes the opposite `Color` componentwise
+* `color:__eq(color_)`: compares with another `Color` for equality
 
-**Object Field**
+**Object Fields**
 
-* `color.r`
-* `color.g`
-* `color.b`
-* `color.a`
+* `color.r`: gets or sets the red component
+* `color.g`: gets or sets the green component
+* `color.b`: gets or sets the blue component
+* `color.a`: gets or sets the alpha component
 
 **Methods**
 
-* `color:toRGBA()`
-* `color:fromRGBA(int)`
+* `color:toRGBA()`: converts the `Color` to an RGBA integer in little-endian
+* `color:fromRGBA(int)`: fills the `Color` with an RGBA integer in little-endian
 
 ### Date Time
 
 **Static Functions**
 
-* `DateTime.now()`
-	* returns `sec`, `min`, `hr`, `mday`, `mo`, `yr`, `wday`, `yday`, `isdst`
-* `DateTime.ticks()`
-* `DateTime.toMilliseconds(ticks)`
-* `DateTime.fromMilliseconds(ms)`
-* `DateTime.toSeconds(ticks)`
-* `DateTime.fromSeconds(sec)`
+* `DateTime.now()`: gets the current time
+	* returns `sec` (0-based), `min` (0-based), `hr` (0-based, since midnight), `mday` (1-based, day of the month), `mo` (1-based), `yr` (since C.E.), `wday` (1-based, days since Sun.), `yday` (1-based, days since 1, Jan.), `isdst` (daylight saving time flag)
+* `DateTime.ticks()`: gets a high precision timestamp
+	* returns timestamp in nanoseconds
+* `DateTime.toMilliseconds(ticks)`: converts nanoseconds to milliseconds
+	* `ticks`: nanoseconds
+	* returns milliseconds
+* `DateTime.fromMilliseconds(ms)`: converts milliseconds to nanoseconds
+	* `ms`: milliseconds
+	* returns nanoseconds
+* `DateTime.toSeconds(ticks)`: converts nanoseconds to seconds
+	* `ticks`: nanoseconds
+	* returns seconds
+* `DateTime.fromSeconds(sec)`: converts seconds to nanoseconds
+	* `sec`: seconds
+	* returns nanoseconds
 
 ### Encoding
 
@@ -345,264 +492,425 @@ Being the same as Lua array, `Bytes` index starts from 1. Implements a `Stream` 
 
 **Static Functions**
 
-* `Base64.encode(bytes)`
-* `Base64.decode(txt)`
+* `Base64.encode(bytes)`: encodes the specific `Bytes` to Base64 string
+	* `bytes`: the `Bytes` to encode from start till end, its cursor won't be moved
+	* returns Base64 string
+* `Base64.decode(txt)`: decodes the specific Base64 string to `Bytes`
+	* `txt`: Base64 string to decode
+	* returns `Bytes`, its cursor will be at the end
 
 ### File
 
-Following the Stream protocol, `File` cursor starts from 1. Implements a `Stream` as file.
+Being the same as Lua list, `File` index starts from 1. Implements a `Stream` as file on disk.
 
 **Constructors**
 
-* `File.new()`
+* `File.new()`: constructs a file object
 
 **Operators**
 
-* `file:__len()`
+* `file:__len()`: gets the length in bytes
 
 **Methods**
 
-* `file:open(path, access = Stream.Read)`
-* `file:close()`
-* `file:peek()`
-* `file:poke(index)`
-* `file:count()`
-* `file:empty()`
-* `file:endOfStream()`
-* `file:readByte()`
-* `file:readInt16()`
-* `file:readUInt16()`
-* `file:readInt32()`
-* `file:readUInt32()`
-* `file:readInt64()`
-* `file:readSingle()`
-* `file:readDouble()`
-* `file:readBytes([expSize[, buf]])`
-* `file:readString([expSize])`
-* `file:readLine()`
-* `file:writeByte()`
-* `file:writeInt16()`
-* `file:writeUInt16()`
-* `file:writeInt32()`
-* `file:writeUInt32()`
-* `file:writeInt64()`
-* `file:writeSingle()`
-* `file:writeDouble()`
-* `file:writeBytes(bytes[, expSize])`
-* `file:writeString(val)`
-* `file:writeLine(val)`
+* `file:open(path, access = Stream.Read)`: opens a file for reading or writing
+	* `path`: the file path
+	* `access`: can be one in `Stream.Read`, `Stream.Write`, `Stream.Append`, `Stream.ReadWrite`, for reading, truncated writing, non-truncated writing, reading and writing respectively
+	* returns `true` for success, otherwise `false`
+* `file:close()` closes an opened file
+	* returns `true` for success, otherwise `false`
+* `file:peek()`: peeks the reading/writing cursor
+	* returns the cursor, starts from 1
+* `file:poke(index)`: pokes the reading/writing cursor
+	* `index`: starts from 1
+	* returns `true` for success, otherwise `false`
+* `file:count()`: gets the length in bytes
+	* returns the length in bytes
+* `file:empty()`: gets whether the `File` is empty
+	* returns `true` for empty, otherwise `false`
+* `file:endOfStream()`: gets whether the cursor is at the end
+	* returns `true` for end, otherwise `false`
+* `file:readByte()`: reads a byte and moves the cursor forward
+	* returns byte
+* `file:readInt16()`: reads a 16-bit signed integer and moves the cursor forward
+	* returns 16-bit signed integer
+* `file:readUInt16()`: reads a 16-bit unsigned integer and moves the cursor forward
+	* returns 16-bit unsigned integer
+* `file:readInt32()`: reads a 32-bit signed integer and moves the cursor forward
+	* returns 32-bit signed integer
+* `file:readUInt32()`: reads a 32-bit unsigned integer and moves the cursor forward
+	* returns 32-bit unsigned integer
+* `file:readInt64()`: reads a 64-bit signed integer and moves the cursor forward
+	* returns 64-bit signed integer
+* `file:readSingle()`: reads a single precision real number and moves the cursor forward
+	* returns single precision real number
+* `file:readDouble()`: reads a double precision real number and moves the cursor forward
+	* returns double precision real number
+* `file:readBytes([expSize[, bytes]])`: reads some bytes and moves the cursor forward
+	* `expSize`: optional, the expected size in bytes to read; omit to read till end
+	* `bytes`: optional, `Bytes` to receive, its content will be cleared; omit to return a new `Bytes`
+	* returns the target `Bytes`, its cursor will be at the end
+* `file:readString([expSize])`: reads some text and moves the cursor forward
+	* `expSize`: optional, the expected size in bytes to read; omit to read till end
+	* returns the read string
+* `file:readLine()`: reads a line of text and moves the cursor forward
+	* returns the read line
+* `file:writeByte()`: writes a byte and moves the cursor forward
+	* `val`: the byte to write
+	* returns the written size in bytes
+* `file:writeInt16()`: writes a 16-bit signed integer and moves the cursor forward
+	* `val`: the 16-bit signed integer to write
+	* returns the written size in bytes
+* `file:writeUInt16()`: writes a 16-bit unsigned integer and moves the cursor forward
+	* `val`: the 16-bit unsigned integer to write
+	* returns the written size in bytes
+* `file:writeInt32()`: writes a 32-bit signed integer and moves the cursor forward
+	* `val`: the 32-bit signed integer to write
+	* returns the written size in bytes
+* `file:writeUInt32()`: writes a 32-bit unsigned integer and moves the cursor forward
+	* `val`: the 32-bit unsigned integer to write
+	* returns the written size in bytes
+* `file:writeInt64()`: writes a 64-bit signed integer and moves the cursor forward
+	* `val`: the 64-bit signed integer to write
+	* returns the written size in bytes
+* `file:writeSingle()`: writes a single precision real number and moves the cursor forward
+	* `val`: the single precision real number to write
+	* returns the written size in bytes
+* `file:writeDouble()`: writes a double precision real number and moves the cursor forward
+	* `val`: the double precision real number to write
+	* returns the written size in bytes
+* `file:writeBytes(bytes[, expSize])`: writes some bytes and moves the cursor forward
+	* `bytes`: the `Bytes` to write from start till end, its cursor won't be moved
+	* `expSize`: optional, the expected size in bytes to write; omit to write till `bytes`'s end
+	* returns the written size in bytes
+* `file:writeString(val)`: writes some text and moves the cursor forward
+	* `val`: the string to write
+	* returns the written size in bytes
+* `file:writeLine(val)`: writes a line of text and moves the cursor forward
+	* `val`: the line to write
+	* returns the written size in bytes
 
 ### Filesystem
 
 **Static Functions**
 
-* `Path.combine(...)`
-* `Path.split(full)`
+* `Path.combine(...)`: combines a number of paths
+	* returns the combined path
+* `Path.split(full)`: splits the specific path into parts
 	* returns `name`, `ext`, `parent`
-* `Path.existsFile(path)`
-* `Path.existsDirectory(path)`
-* `Path.copyFile(src, dst)`
-* `Path.copyDirectory(src, dst)`
-* `Path.moveFile(src, dst)`
-* `Path.moveDirectory(src, dst)`
-* `Path.removeFile(path, toTrashBin)`
-* `Path.removeDirectory(path, toTrashBin)`
-* `Path.touchFile(path)`
-* `Path.touchDirectory(path)`
+* `Path.existsFile(path)`: gets whether the specific file exists
+	* `path`: the file path
+	* returns `true` for exists, otherwise `false`
+* `Path.existsDirectory(path)`: gets whether the specific directory exists
+	* `path`: the directory path
+	* returns `true` for exists, otherwise `false`
+* `Path.copyFile(src, dst)`: copies the specific file to a new path
+	* `src`: the source path
+	* `dst`: the destination path
+	* returns `true` for success, otherwise `false`
+* `Path.copyDirectory(src, dst)`: copies the specific directory to a new path recursively
+	* `src`: the source path
+	* `dst`: the destination path
+	* returns `true` for success, otherwise `false`
+* `Path.moveFile(src, dst)`: moves the specific file to a new path
+	* `src`: the source path
+	* `dst`: the destination path
+	* returns `true` for success, otherwise `false`
+* `Path.moveDirectory(src, dst)`: moves the specific directory to a new path recursively
+	* `src`: the source path
+	* `dst`: the destination path
+	* returns `true` for success, otherwise `false`
+* `Path.removeFile(path, toTrashBin)`: removes the specific file
+	* `path`: the file path
+	* `toTrashBin`: `true` to remove to the trash bin, otherwise remove permanently
+	* returns `true` for success, otherwise `false`
+* `Path.removeDirectory(path, toTrashBin)`: removes the specific directory recursively
+	* `path`: the directory path
+	* `toTrashBin`: `true` to remove to the trash bin, otherwise remove permanently
+	* returns `true` for success, otherwise `false`
+* `Path.touchFile(path)`: tries to create a file at the specific path, will touch its ancestors
+	* `path`: the file path
+	* returns `true` for success, otherwise `false`
+* `Path.touchDirectory(path)`: tries to create a directory at the specific path, will touch its ancestors
+	* * `path`: the directory path
+	* returns `true` for success, otherwise `false`
 
 **Static Variables**
 
-* `Path.executableFile`: readonly
-* `Path.documentDirectory`: readonly
-* `Path.writableDirectory`: readonly
+* `Path.executableFile`: readonly, gets the executable file path
+* `Path.documentDirectory`: readonly, gets the documents directory path
+* `Path.writableDirectory`: readonly, gets the writable directory path
 
 **Constructors**
 
-* `FileInfo.new(path)`
+* `FileInfo.new(path)`: constructs a file information object with the specific path
+	* `path`: the file path
 
-* `DirectoryInfo.new(path)`
+* `DirectoryInfo.new(path)`: constructs a directory information object with the specific path
+	* `path`: the directory path
 
 **Methods**
 
-* `fileInfo:fullPath()`
-* `fileInfo:parentPath()`
-* `fileInfo:fileName()`
-* `fileInfo:extName()`
-* `fileInfo:empty()`
-* `fileInfo:exists()`
-* `fileInfo:make()`
-* `fileInfo:copyTo(dst)`
-* `fileInfo:moveTo(dst)`
-* `fileInfo:remove(toTrashBin)`
-* `fileInfo:rename(newName[, newExt])`
-* `fileInfo:parent()`
-* `fileInfo:readAll()`
+* `fileInfo:fullPath()`: gets the full path
+	* returns the full path
+* `fileInfo:parentPath()`: gets the path of the parent directory
+	* returns the path of the parent directory
+* `fileInfo:fileName()`: gets the file name
+	* returns the file name, without extension
+* `fileInfo:extName()`: gets the extension name
+	* returns the extension name, without dot
+* `fileInfo:empty()`: gets whether the file represented by the `FileInfo` is empty
+	* returns `true` if empty, otherwise `false`
+* `fileInfo:exists()`: gets whether the file represented by the `FileInfo` exists
+	* returns `true` for exists, otherwise `false`
+* `fileInfo:make()`: makes a file represented by the `FileInfo` if it doesn't exist, fails if its ancestors don't exist
+	* returns `true` for success, otherwise `false`
+* `fileInfo:copyTo(dst)`: copies the file represented by the `FileInfo` to a new path
+	* `dst`: the destination path
+	* returns `true` for success, otherwise `false`
+* `fileInfo:moveTo(dst)`: moves the file represented by the `FileInfo` to a new path
+	* `dst`: the destination path
+	* returns `true` for success, otherwise `false`
+* `fileInfo:remove(toTrashBin)`: removes the file represented by the `FileInfo`
+	* `toTrashBin`: `true` to remove to the trash bin, otherwise remove permanently
+	* returns `true` for success, otherwise `false`
+* `fileInfo:rename(newName[, newExt])`: renames the file represented by the `FileInfo`
+	* `newName`: the new file name
+	* `newExt`: the new extension name; omit to keep the old
+	* returns `true` for success, otherwise `false`
+* `fileInfo:parent()`: gets the `DirectoryInfo` of the `FileInfo`'s parent
+	* returns the `DirectoryInfo`
+* `fileInfo:readAll()`: reads all content of the file represented by the `FileInfo` as string
+	* returns the content string
 
-* `directoryInfo:fullPath()`
-* `directoryInfo:parentPath()`
-* `directoryInfo:dirName()`
-* `directoryInfo:empty()`
-* `directoryInfo:exists()`
-* `directoryInfo:make()`
-* `directoryInfo:copyTo(dst)`
-* `directoryInfo:moveTo(dst)`
-* `directoryInfo:remove(toTrashBin)`
-* `directoryInfo:rename(newName)`
-* `directoryInfo:getFiles(pattern = "*.*", recursive = false)`
-* `directoryInfo:getDirectories(recursive = false)`
-* `directoryInfo:parent()`
+* `directoryInfo:fullPath()`: gets the full path
+	* returns the full path
+* `directoryInfo:parentPath()`: gets the path of the parent directory
+	* returns the path of the parent directory
+* `directoryInfo:dirName()`: gets the directory name
+	* returns the directory name
+* `directoryInfo:empty()`: gets whether the directory represented by the `DirectoryInfo` is empty
+	* returns `true` if empty, otherwise `false`
+* `directoryInfo:exists()`: gets whether the directory represented by the `DirectoryInfo` exists
+	* returns `true` for exists, otherwise `false`
+* `directoryInfo:make()`: makes a directory represented by the `DirectoryInfo` if it doesn't exist, fails if its ancestors don't exist
+	* returns `true` for success, otherwise `false`
+* `directoryInfo:copyTo(dst)`: copies the directory represented by the `DirectoryInfo` to a new path
+	* `dst`: the destination path
+	* returns `true` for success, otherwise `false`
+* `directoryInfo:moveTo(dst)`: moves the directory represented by the `DirectoryInfo` to a new path
+	* `dst`: the destination path
+	* returns `true` for success, otherwise `false`
+* `directoryInfo:remove(toTrashBin)`: removes the directory represented by the `DirectoryInfo`
+	* `toTrashBin`: `true` to remove to the trash bin, otherwise remove permanently
+	* returns `true` for success, otherwise `false`
+* `directoryInfo:rename(newName)`: renames the directory represented by the `DirectoryInfo`
+	* `newName`: the new directory name
+	* returns `true` for success, otherwise `false`
+* `directoryInfo:getFiles(pattern = "*.*", recursive = false)`: gets sub-files under the directory represented by the `DirectoryInfo`
+	* `pattern`: lookup pattern, supports wildcards
+	* `recursive`: whether lookup its sub-directories
+	* returns a list of `FileInfo` objects
+* `directoryInfo:getDirectories(recursive = false)`: gets sub-directories under the directory represented by the `DirectoryInfo`
+	* `recursive`: whether lookup its sub-directories
+	* returns a list of `DirectoryInfo` objects
+* `directoryInfo:parent()`: gets the `DirectoryInfo` of this `DirectoryInfo`'s parent
+	* returns the `DirectoryInfo`
 
 ### Image
 
 **Constructors**
 
-* `Image.new(palette)`
-* `Image.new()`
+* `Image.new(palette)`: constructs an image object with the specific `Palette` asset
+	* `palette`: the `Palette`
+* `Image.new()`: constructs a true-colored image object
 
-**Object Field**
+**Object Fields**
 
-* `image.channels`: readonly
-* `image.width`: readonly
-* `image.height`: readonly
+* `image.channels`: readonly, gets the channels of the `Image`, 1 for paletted, 4 for true-colored
+* `image.width`: readonly, gets the width of the `Image`
+* `image.height`: readonly, gets the height of the `Image`
 
 **Methods**
 
-* `image:resize(w, h)`
-* `image:get(x, y)`
-* `image:set(x, y, val)`
-* `image:fromImage(img)`
-* `image:fromBlank(w, h, paletted = 0)`
-* `image:toBytes(bytes, type = "png")`
-* `image:fromBytes(bytes)`
+* `image:resize(width, height)`: resizes the `Image` with the specific size
+	* `width`: the width
+	* `height`: the height
+	* returns `true` for success, otherwise `false`
+* `image:get(x, y)`: gets the `Color` or `Palette` index at the specific index
+	* `x`: starts from 0
+	* `y`: starts from 0
+	* returns `Color` or palette index
+* `image:set(x, y, val)`: sets the `Color` or `Palette` index at the specific index
+	* `x`: starts from 0
+	* `y`: starts from 0
+	* `val`: `Color` or `Palette` index
+	* returns `true` for success, otherwise `false`
+* `image:fromImage(img)`: loads content from another `Image`
+	* `img`: the specific `Image` to load
+	* returns `true` for success, otherwise `false`
+* `image:fromBlank(width, height, paletted = 0)`: loads blank content
+	* `width`: the specific width
+	* `height`: the specific height
+	* `paletted`: 0 for true-colored, non-zero for paletted
+	* returns `true` for success, otherwise `false`
+* `image:toBytes(bytes, type = "png")`: encodes the `Image` to `Bytes`
+	* `bytes`: the `Bytes` to receive, its cursor will be at the end
+	* `type`: can be one in "png", "jpg", "bmp", "tga", "img"
+	* returns `bytes` for success, otherwise `nil`
+* `image:fromBytes(bytes)`: decodes the specific `Bytes`
+	* `bytes`: the `Bytes` to retrieve from start till end, its cursor won't be moved
+	* returns `true` for success, otherwise `false`
 
 ### JSON
 
 **Constructors**
 
-* `Json.new()`
+* `Json.new()`: constructs a JSON object
 
 **Methods**
 
-* `json:toString(pretty = true)`
-* `json:fromString(txt)`
-* `json:toTable()`
-* `json:fromTable(tbl)`
+* `json:toString(pretty = true)`: serializes the `Json` to string
+	* `pretty`: whether to serialize in a friendly to read format
+	* returns serialized string
+* `json:fromString(txt)`: parses `Json` data from the specific string
+	* `txt`: the text to parse
+	* returns `true` for success, otherwise `false`
+* `json:toTable()`: serializes the `Json` to Lua table
+	* returns serialized Lua table
+* `json:fromTable(tbl)`: parses `Json` data from the specific Lua table, ignores incompatible data types
+	* `tbl`: the table to parse
+	* returns `true` for success, otherwise `false`
 
 ### Math
 
 **Static Functions**
 
-* `Rect.byXYWH(x, y, w, h)`
+* `Rect.byXYWH(x, y, w, h)`: constructs a rectangle object in real numbers by position and size
 
-* `Recti.byXYWH(x, y, w, h)`
+* `Recti.byXYWH(x, y, w, h)`: constructs a rectangle object in integers by position and size
 
 **Constructors**
 
-* `Vec2.new([x, y])`
+* `Vec2.new([x, y])`: constructs a vector object in 2 dimensions
 
-* `Vec3.new([x, y, z])`
+* `Vec3.new([x, y, z])`: constructs a vector object in 3 dimensions
 
-* `Vec4.new([x, y, z, w])`
+* `Vec4.new([x, y, z, w])`: constructs a vector object in 4 dimensions
 
-* `Rect.new([x1, y1, x2, y2])`
+* `Rect.new([x0, y0, x1, y1])`: constructs a rectangle object in real numbers by points
 
-* `Recti.new([x1, y1, x2, y2])`
+* `Recti.new([x0, y0, x1, y1])`: constructs a rectangle object in integers by points
 
-* `Rot.new([s, c])`
+* `Rot.new([s, c])`: constructs a rotation object
 
 **Operators**
 
-* `vec2:__add(vec2_)`
-* `vec2:__sub(vec2_)`
-* `vec2:__mul(num)`
-* `vec2:__mul(vec2_)`
-* `vec2:__unm()`
-* `vec2:__len()`
-* `vec2:__eq(vec2_)`
+* `vec2:__add(vec2_)`: adds with another `Vec2` componentwise
+* `vec2:__sub(vec2_)`: subtracts by another `Vec2` componentwise
+* `vec2:__mul(num)`: multiplies with another number
+* `vec2:__mul(vec2_)`: multiplies with another `Vec2` componentwise
+* `vec2:__unm()`: takes the opposite `Vec2` componentwise
+* `vec2:__len()`: gets the length of the `Vec2`
+* `vec2:__eq(vec2_)`: compares with another `Vec2` for equality
 
-* `vec3:__add(vec3_)`
-* `vec3:__sub(vec3_)`
-* `vec3:__mul(num)`
-* `vec3:__mul(vec3_)`
-* `vec3:__unm()`
-* `vec3:__len()`
-* `vec3:__eq(vec3_)`
+* `vec3:__add(vec3_)`: adds with another `Vec3` componentwise
+* `vec3:__sub(vec3_)`: subtracts by another `Vec3` componentwise
+* `vec3:__mul(num)`: multiplies with another number
+* `vec3:__mul(vec3_)`: multiplies with another `Vec3` componentwise
+* `vec3:__unm()`: takes the opposite `Vec3` componentwise
+* `vec3:__len()`: gets the length of the `Vec3`
+* `vec3:__eq(vec3_)`: compares with another `Vec3` for equality
 
-* `vec4:__add(vec4_)`
-* `vec4:__sub(vec4_)`
-* `vec4:__mul(num)`
-* `vec4:__mul(vec4_)`
-* `vec4:__unm()`
-* `vec4:__eq(vec4_)`
+* `vec4:__add(vec4_)`: adds with another `Vec4` componentwise
+* `vec4:__sub(vec4_)`: subtracts by another `Vec4` componentwise
+* `vec4:__mul(num)`: multiplies with another number
+* `vec4:__mul(vec4_)`: multiplies with another `Vec4` componentwise
+* `vec4:__unm()`: takes the opposite `Vec4` componentwise
+* `vec4:__eq(vec4_)`: compares with another `Vec4` for equality
 
-* `rot:__mul(vec2)`
-* `rot:__mul(rot_)`
-* `rot:__eq(rot_)`
+* `rot:__mul(vec2)`: rotates another `Vec2`
+* `rot:__mul(rot_)`: rotates another `Rot`
+* `rot:__eq(rot_)`: compares with another `Rot` for equality
 
-* `rect:__eq(rect_)`
+* `rect:__eq(rect_)`: compares with another `Rect` for equality
 
-* `recti:__eq(recti_)`
+* `recti:__eq(recti_)`: compares with another `Recti` for equality
 
-**Object Field**
+**Object Fields**
 
-* `vec2.x`
-* `vec2.y`
-* `vec2.normalized`: readonly
-* `vec2.length`: readonly
-* `vec2.angle`: readonly
+* `vec2.x`: gets or sets the x component
+* `vec2.y`: gets or sets the y component
+* `vec2.normalized`: readonly, gets the normalized `Vec2`
+* `vec2.length`: readonly, gets the length
+* `vec2.angle`: readonly, gets the rotated angle in radians as a vector
 
-* `vec3.x`
-* `vec3.y`
-* `vec3.z`
-* `vec3.normalized`: readonly
-* `vec3.length`: readonly
+* `vec3.x`: gets or sets the x component
+* `vec3.y`: gets or sets the y component
+* `vec3.z`: gets or sets the z component
+* `vec3.normalized`: readonly, gets the normalized `Vec3`
+* `vec3.length`: readonly, gets the length
 
-* `rect4.x`
-* `rect4.y`
-* `rect4.z`
-* `rect4.w`
+* `rect4.x`: gets or sets the x component
+* `rect4.y`: gets or sets the y component
+* `rect4.z`: gets or sets the z component
+* `rect4.w`: gets or sets the w component
 
-* `rot.s`
-* `rot.c`
-* `rot.angle`
+* `rot.s`: gets or sets the sine component
+* `rot.c`: gets or sets the cosine component
+* `rot.angle`: gets or sets the angle in radians denoted by the `Rot`
 
-* `rect.x0`
-* `rect.y0`
-* `rect.x1`
-* `rect.y1`
+* `rect.x0`: gets or sets the first x component
+* `rect.y0`: gets or sets the first y component
+* `rect.x1`: gets or sets the second x component
+* `rect.y1`: gets or sets the second y component
 
-* `recti.x0`
-* `recti.y0`
-* `recti.x1`
-* `recti.y1`
+* `recti.x0`: gets or sets the first x component
+* `recti.y0`: gets or sets the first y component
+* `recti.x1`: gets or sets the second x component
+* `recti.y1`: gets or sets the second y component
 
 **Methods**
 
-* `vec2:normalize()`
-* `vec2:distanceTo(vec2_)`
-* `vec2:dot(vec2_)`
-* `vec2:cross(num)`
-* `vec2:cross(vec2_)`
-* `vec2:angleTo(vec2_)`
-* `vec2:rotated(angle[, pivot])`
-* `vec2:rotated(rot[, pivot])`
+* `vec2:normalize()`: normalizes the `Vec2`
+	* returns the original length before normalization
+* `vec2:distanceTo(vec2_)`: gets the distance between this and another `Vec2`
+	* returns the distance number
+* `vec2:dot(vec2_)`: applies a dot multiplication
+	* returns the dot result as number
+* `vec2:cross(num)`: applies a cross multiplication
+	* returns the cross `Vec2`
+* `vec2:cross(vec2_)`: applies a cross multiplication
+	* returns the cross result as number
+* `vec2:angleTo(vec2_)`: gets the angle between this and another `Vec2` as vectors
+	* returns the angle in radians
+* `vec2:rotated(angle[, pivot])`: gets the rotated `Vec2`
+	* `angle`: the angle to rotate
+	* `pivot`: the pivot `Vec2` to rotate around
+	* returns the rotated `Vec2`
+* `vec2:rotated(rot[, pivot])`: gets the rotated `Vec2`
+	* `rot`: the `Rot` to rotate
+	* `pivot`: the pivot `Vec2` to rotate around
+	* returns the rotated `Vec2`
 
-* `vec3:normalize()`
-* `vec3:dot(vec3_)`
+* `vec3:normalize()`: normalizes the `Vec3`
+	* returns the original length before normalization
+* `vec3:dot(vec3_)`: applies a dot multiplication
+	* returns the dot result as number
 
-* `rect:xMin()`
-* `rect:yMin()`
-* `rect:xMax()`
-* `rect:xMax()`
-* `rect:width()`
-* `rect:height()`
+* `rect:xMin()`: gets the minimum x component
+* `rect:yMin()`: gets the minimum y component
+* `rect:xMax()`: gets the maximum x component
+* `rect:xMax()`: gets the maximum y component
+* `rect:width()`: gets the width
+* `rect:height()`: gets the height
 
-* `recti:xMin()`
-* `recti:yMin()`
-* `recti:xMax()`
-* `recti:xMax()`
-* `recti:width()`
-* `recti:height()`
+* `recti:xMin()`: gets the minimum x component
+* `recti:yMin()`: gets the minimum y component
+* `recti:xMax()`: gets the maximum x component
+* `recti:xMax()`: gets the maximum y component
+* `recti:width()`: gets the width
+* `recti:height()`: gets the height
 
 ### Network
 
@@ -614,50 +922,121 @@ Following the Stream protocol, `File` cursor starts from 1. Implements a `Stream
 
 **Constructors**
 
-* `Network.new(onRecv[, onEstb[, onDisc]])`
+* `Network.new(onRecv[, onEstb[, onDisc]])`: constructs a network object
 	* `onRecv`: callback on received
 	* `onEstb`: callback on connection established
 	* `onDisc`: callback on connection disconnected
 
-**Object Field**
+The callback of received event is an invokable in form of `function (data, size, addr) end`, which accepts three parameters respectively represent for the data has been just received, the data size corresponding to specific types, and the remote adress string. The type of the first parameter is determined by the "data_type" option.
 
-* `network.ready`: readonly
-* `network.polling`: readonly
-* `network.connective`: readonly
+The callback of connection established is an invokable in form of `function (addr) end`, which accepts a parameter represents for the remote address string; `nil` for failure for outcoming connection. It's invoked when either incoming or outcoming connection established; ignored by UDP.
+
+The callback of disconnected is an invokable in form of `function (addr) end`, which accepts a parameter represents for the remote address string. It's invoked when either incoming or outcoming connection disconnected; ignored by UDP.
+
+**Object Fields**
+
+* `network.ready`: readonly, gets whether the `Network` is ready
 
 **Methods**
 
-* `network:getOption(key)`
-* `network:setOption(key, val)`
-* `network:open(addr[, protocal])`
-* `network:close()`
-* `network:poll([timeoutMs])`
-* `network:disconnect()`
-* `network:send(bytes)`
-* `network:send(txt)`
-* `network:send(json)`
-* `network:broadcast(bytes)`
-* `network:broadcast(txt)`
-* `network:broadcast(json)`
+* `network:getOption(key)`: gets the option value of the specific key
+	* `key`: the option key to get
+	* returns the option value
+* `network:setOption(key, val)`: sets the options value of the specific key
+	* `key`: the option key to set
+	* `val`: the value to set
+
+Currently there is only one available option:
+
+| Key | Value | Note |
+|---|---|---|
+| "data_type" | Can be one in "stream", "bytes", "string", "json", defaults to "json" | Data type for transmission/datagram |
+
+* `network:open(addr[, protocal])`: opens a `Network` as either server or client
+	* `addr`: the address
+	* `protocal`: can be one in `Network.Udp`, `Network.Tcp`
+	* returns `true` for success, otherwise `false`
+* `network:close()`: closes a `Network`, clears all options; will neither be impossible to send nor receive anything after closing
+	* returns `true` for success, otherwise `false`
+
+An `addr` argument is combined with four parts, direction, protocol, address and port:
+
+| Part | Value |
+|---|---|
+| Direction | `>` for connecting, `<` for listening |
+| Protocol | `udp://`, `tcp://` |
+| Address | IP address |
+| Port | Port number |
+
+For example:
+
+| Address string | Connectivity |
+|---|---|
+| ">tcp://192.168.0.1:12000" | As client, connects to 192.168.0.1 port 12000 via TCP |
+| "<udp://127.0.0.1:12000" | As server, listens from local host port 12000 via UDP |
+| "udp://192.168.0.1:12000" | As client, sends to 192.168.0.1 port 12000 via UDP |
+| "tcp://12000" | As server, listens from port 12000 via TCP |
+| "192.168.0.1:12000" | As client, connects to 192.168.0.1 port 12000, protocal determined by the explicit `protocal` parameter |
+| "12000" | As server, listens from port 12000, protocal determined by the explicit `protocal` parameter |
+
+* `network:poll([timeoutMs])`: polls pending `Network` events manually; do not need to call this function if a program already entered the `update(delta)` loop
+	* `timeoutMs`: the timeout value
+* `network:disconnect()`: disconnects from remote peers
+* `network:send(bytes)`: sends the specific `Bytes`
+	* `bytes`: the `Bytes` to send
+	* returns `true` for success, otherwise `false`
+* `network:send(txt)`: sends the specific string
+	* `txt`: the string to send
+	* returns `true` for success, otherwise `false`
+* `network:send(json)`: sends the specific `Json`
+	* `json` the `Json` to send
+	* returns `true` for success, otherwise `false`
+* `network:broadcast(bytes)`: broadcasts the specific `Bytes`
+	* `bytes`: the `Bytes` to broadcast
+	* returns `true` for success, otherwise `false`
+* `network:broadcast(txt)`: broadcasts the specific string
+	* `txt`: the string to broadcast
+	* returns `true` for success, otherwise `false`
+* `network:broadcast(json)`: broadcasts the specific `Json`
+	* `json`: the `Json` to broadcast
+	* returns `true` for success, otherwise `false`
+
+A single transmission or datagram cannot be longer than 512KB.
+
+Consider closing and setting a `Network` object to `nil` as soon as it's no longer in use.
+
+For "stream", it sends and receives raw `Bytes`, you are free parsing and serializing for your own protocol.
+
+For "bytes", an extra 32-bit unsigned integer will be automatically packed at head of `Bytes` before sending, the size head itself also counts; `Bytes` parameter in the received callback doesn't contain that head. In short words, it's transparent between Bitty Engine projects, but it's helpful to communicate with other endpoints to distinguish different messages, and you have to adapt the rule for other `Network` endpoints.
+
+For both "string" and "json", the underneath data flow always end up with a zero byte, vice versa, received string and `Json` must end up with a terminal zero byte.
 
 ### Platform
 
 **Static Functions**
 
-* `Platform.surf(url)`
-* `Platform.browse(dir)`
-* `Platform.hasClipboardText()`
-* `Platform.getClipboardText()`
-* `Platform.setClipboardText(txt)`
-* `Platform.execute(cmd)`
+* `Platform.surf(url)`: surfs the Internet via browser
+	* `url`: the URL address to surf
+* `Platform.browse(dir)`: browses the filesystem via explorer
+	* `dir`: the directory path to browse
+* `Platform.hasClipboardText()`: gets whether there is text content in the clipboard
+	* returns `true` for nonempty, otherwise `false`
+* `Platform.getClipboardText()`: gets the text content in the clipboard
+	* returns the text content
+* `Platform.setClipboardText(txt)`: sets the text content in the clipboard
+	* `txt`: the text to set
+* `Platform.execute(cmd)`: executes the specific system command
+	* `cmd`: the command to execute
 
 **Static Variables**
 
-* `Platform.os`: readonly
-* `Platform.endian`: readonly
-	* returns "little-endian" or "big-endian"
+* `Platform.os`: readonly, gets the current running OS
+* `Platform.endian`: readonly, gets the current endian
+	* returns either "little-endian" or "big-endian"
 
 ### Stream
+
+This module contains constants indicating accessibilities for other modules.
 
 **Constants**
 
@@ -672,79 +1051,172 @@ Following the Stream protocol, `File` cursor starts from 1. Implements a `Stream
 
 **Static Functions**
 
-* `Resources.load(entry, hint)`
-* `Resources.load(str, hint)`
-* `Resources.load(json, hint)`
-* `Resources.load(table, hint)`
-* `Resources.load(img, hint)`
-* `Resources.wait(res)`
-* `Resources.unload(res)`
-* `Resources.collect()`
+* `Resources.load(entry[, hint])`: loads a resource from the specific asset entry
+	* `entry`: the entry name to load
+	* `hint`: the type hint
+	* returns loaded resource, or `nil`
+* `Resources.load(str[, hint])`: loads a resource from the specific asset string
+	* `str`: the asset string to load
+	* `hint`: the type hint
+	* returns loaded resource, or `nil`
+* `Resources.load(json[, hint])`: loads a resource from the specific `Json` object
+	* `json`: the `Json` to load
+	* `hint`: the type hint
+	* returns loaded resource, or `nil`
+* `Resources.load(table[, hint])`: loads a resource from the specific Lua table
+	* `table`: the Lua table to load
+	* `hint`: the type hint
+	* returns loaded resource, or `nil`
+* `Resources.load(img[, hint])`: loads a resource from the specific `Image` object
+	* `img`: the `Image` to load
+	* `hint`: the type hint
+	* returns loaded resource, or `nil`
+* `Resources.wait(res)`: waits for the resource is ready to use for a short period
+	* `res`: the resource to wait for
+	* returns `true` for ready, otherwise `false`
+* `Resources.unload(res)`: unloads a resource
+	* `res`: the resource to unload
+* `Resources.collect()`: collects all unused resources
+
+The `hint` can be one in `Palette`, `Texture`, `Sprite`, `Map`, `Sfx`, `Music`. Bitty Engine can infer most of the asset types. However it is necessary if the content is insufficient to tell, or when load an audio asset as either `Sfx` or `Music`.
+
+For example:
+
+```lua
+foo = Resources.load('bar.pal') -- Load a palette.
+foo = Resources.load({ width = 128, height = 128 }) -- Load a blank texture.
+```
+
+```lua
+local data = {
+    width = 8, height = 8,
+    count = 2,
+    data = {
+      {
+        x = 16, y = 0, width = 8, height = 8,
+        interval = 0.25,
+        key = 'idle'
+      },
+      {
+        x = 24, y = 0, width = 8, height = 8,
+        interval = 0.25,
+        key = ''
+      }
+    },
+    ref = baz -- Ref by object.
+  }
+  foo = Resources.load(data) -- Load a sprite.
+```
+
+```lua
+local data = {
+  tiles = {
+    count = { 8, 8 }
+  },
+  width = 60, height = 40,
+  data = { ... },
+  ref = 'baz.png' -- Ref by asset name.
+}
+foo = Resources.load(data) -- Load a map.
+```
+
+```lua
+foo = Resources.load('bar.mp3', Sfx) -- Load an SFX.
+foo = Resources.load('bar.mp3', Music) -- Load a music.
+```
+
+The asynchronous `Resources.load(...)` returns a resource handle immediately. It is lazy evaluated, actual loading is deferred until specific reading and writing access. The synchronous `Resources.wait(...)` also loads it, it returns immediately if the specific resource is already loaded, otherwise it waits until loaded or timeout.
+
+Consider use `Resources.unload(...)` or `Resources.collect()` to unload unused resources, or there would be memory leak.
 
 ### Asset
 
-Created by `Resources.load(...)`.
+Can be loaded by `Resources.load(...)`, only when Bitty Engine cannot determine specific sub asset type.
 
 ### Palette Asset
 
-Created by `Resources.load(...)`.
+Can be loaded by `Resources.load(...)`.
 
 ### Font Asset
 
 **Constructors**
 
-* `Font.new()`
+* `Font.new(entry, size = 14, permeation = 1)`: constructs a font object from the specific (TrueType or Bitmap) font asset with the specific size and permeation
+	* `entry`: the entry name to load
+	* `size`: can be either a number for both dimensions, or a `Vec2`
+	* `permeation`: indicates how to blur glyph edges with the alpha channel, with range of values from 0 to 255
+* `Font.new(img, size = 14, permeation = 1)`: constructs a font object from the specific (Bitmap) `Image` with the specific size and permeation
+	* `img`: the `Image` to load
+	* `size`: can be either a number for both dimensions, or a `Vec2`
+	* `permeation`: indicates how to blur glyph edges with the alpha channel, with range of values from 0 to 255
+* `Font.new(nil, size = 14, permeation = 1)`: constructs a font object the default font with the specific size and permeation
+	* `size`: can be either a number for both dimensions, or a `Vec2`
+	* `permeation`: indicates how to blur glyph edges with the alpha channel, with range of values from 0 to 255
 
 ### Texture Asset
 
-Created by `Resources.load(...)`.
+Can be loaded by `Resources.load(...)`.
 
-**Object Field**
+**Object Fields**
 
-* `texture.width`: readonly
-* `texture.height`: readonly
+* `texture.width`: readonly, gets the `Texture` width
+* `texture.height`: readonly, gets the `Texture` height
 
 **Methods**
 
-* `texture:blend(mode)`
+* `texture:blend(mode)`: sets the blend state of the `Texture` with the specific mode
+	* `mode`: the blend mode to set; refer to the blend modes of `Canvas`
+	* returns `true` for success, otherwise `false`
 
 ### Sprite Asset
 
-Created by `Resources.load(...)`.
+Can be loaded by `Resources.load(...)`.
 
-**Object Field**
+**Object Fields**
 
-* `sprite.count`: readonly
-* `sprite.width`: readonly
-* `sprite.height`: readonly
+* `sprite.count`: readonly, gets the `Sprite` frame count
+* `sprite.width`: readonly, gets the `Sprite` width of every frame
+* `sprite.height`: readonly, gets the `Sprite` height of every frame
 
-* `sprite.hFlip`
-* `sprite.vFlip`
+* `sprite.hFlip`: gets or sets whether the `Sprite` is flipped horizontally
+* `sprite.vFlip`: gets or sets whether the `Sprite` is flipped vertically
 
 **Methods**
 
-* `sprite:play(res, beginIndex = -1, endIndex = -1, reset = true, loop = true)`
-* `sprite:play(res, beginStr, reset = true, loop = true)`
-* `sprite:pause()`
-* `sprite:resume()`
-* `sprite:stop()`
+* `sprite:play(beginIndex = -1, endIndex = -1, reset = true, loop = true)`: plays the specific animation, use -1 for both begin and end indices to play through all frames
+	* `beginIndex`: the begin frame index, starts from 0
+	* `endIndex`: the end frame index, starts from 0
+	* `reset`: whether resets to the initial animation frame
+	* `loop`: `true` for loop, otherwise plays once
+	* returns `true` for success, otherwise `false`, and a secondary value for estimated duration
+* `sprite:play(beginStr, reset = true, loop = true)`: plays the specific animation
+	* `beginStr`: the animation name string
+	* `reset`: whether resets to the initial animation frame
+	* `loop`: `true` for loop, otherwise plays once
+	* returns `true` for success, otherwise `false`, and a secondary value for estimated duration
+* `sprite:pause()`: pauses playing
+	* returns `true` for success, otherwise `false`
+* `sprite:resume()`: resumes playing
+	* returns `true` for success, otherwise `false`
+* `sprite:stop()`: stops playing
+	* returns `true` for success, otherwise `false`
 
 ### Map Asset
 
-Created by `Resources.load(...)`.
+Can be loaded by `Resources.load(...)`.
 
-**Object Field**
+**Object Fields**
 
-* `map.width`: readonly
-* `map.height`: readonly
+* `map.width`: readonly, gets the `Map` width
+* `map.height`: readonly, gets the `Map` height
 
 ### SFX Asset
 
-Created by `Resources.load(...)`.
+Can be loaded by `Resources.load(...)`.
 
 ### Music Asset
 
-Created by `Resources.load(...)`.
+Can be loaded by `Resources.load(...)`.
 
 ## Primitives
 
@@ -752,136 +1224,242 @@ The coordinate definition in Bitty Engine is:
 
 ![](imgs/coordinate.png)
 
+The zero point is to the top-left corner, the x, y axises increase in right, bottom respectively.
+
 ### Basics
 
 **Functions**
 
-* `cls([col])`: clears the screen with the specific color
-	* `col`: optional, defaults to the previous passed value
-* `color(col)`: sets the active color with a specific value
-* `color()`: resets the active color to white
+* `cls([col])`: clears the screen with the specific `Color`
+	* `col`: optional, defaults to the previous passed value to this function
+* `color(col)`: sets the active `Color` with a specific value
+	* `col`: the `Color` to set
+* `color()`: resets the active `Color` to white
 * `sync()`: synchronizes commands to graphics manually
+	* returns synchronized command count
 
 ### Shapes
 
 **Functions**
 
-* `plot(x, y[, col])`
-* `line(x1, y1, x2, y2[, col])`
-* `circ(x, y, r, fill = false[, col])`
-* `ellipse(x, y, rx, ry, fill = false[, col])`
-* `rect(x1, y1, x2, y2, fill = false[, col[, rad]])`
-* `text(txt, x, y[, col, margin = 1])`
-* `tri(p1, p2, p3, fill = false[, col])`
+* `plot(x, y[, col])`: draws a point
+	* `x`: the x position
+	* `y`: the y position
+	* `col`: omit to use the active `Color`
+* `line(x0, y0, x1, y1[, col])`: draws a line
+	* `x0`: the first x position
+	* `y0`: the first y position
+	* `x1`: the second x position
+	* `y1`: the second y position
+	* `col`: omit to use the active `Color`
+* `circ(x, y, r, fill = false[, col])`: draws a cicle
+	* `x`: the x position
+	* `y`: the y position
+	* `r`: the radius
+	* `fill`: `true` for fill
+	* `col`: omit to use the active `Color`
+* `ellipse(x, y, rx, ry, fill = false[, col])`: draws an ellipse
+	* `x`: the x position
+	* `y`: the y position
+	* `rx`: the x radius
+	* `ry`: the y radius
+	* `fill`: `true` for fill
+	* `col`: omit to use the active `Color`
+* `rect(x0, y0, x1, y1, fill = false[, col[, rad]])`: draws a rectangle
+	* `x0`: the first x position
+	* `y0`: the first y position
+	* `x1`: the second x position
+	* `y1`: the second y position
+	* `fill`: `true` for fill
+	* `col`: omit to use the active `Color`
+	* `rad`: the radius of the corner arcs of the rectangle
+* `text(txt, x, y[, col, margin = 1])`: draws text
+	* `txt`: the text to draw
+	* `x`: the x position
+	* `y`: the y position
+	* `col`: omit to use the active `Color`
+	* `margin`: the margin distance
+* `tri(p0, p1, p2, fill = false[, col])`: draws a triangle
+	* `p0`: `Vec2` for the first point
+	* `p1`: `Vec2` for the second point
+	* `p2`: `Vec2` for the third point
+	* `fill`: `true` for fill
+	* `col`: omit to use the active `Color`
 
 ### Palette
 
 **Functions**
 
-* `pget(res, index)`
+* `pget(res, index)`: gets the `Color` from the specific `Palette` resource
+	* `res`: the `Palette` resource
 	* `index`: starts from 0
-* `pset(res, index, col)`
+	* returns the `Color`
+* `pset(res, index, col)`: sets the `Color` to the specific `Palette` resource
+	* `res`: the `Palette` resource
 	* `index`: starts from 0
+	* `col`: the `Color` to set
 
 ### Font
 
 **Functions**
 
-* `font(font_)`
-* `font()`
-* `measure(txt, font, margin = 1)`
+* `font(font_)`: sets the active `Font` for the `text(...)` function
+	* `font_`: the `Font` resource
+* `font()`: resets the active `Font` to default
+* `measure(txt, font, margin = 1)`: measures the size of the specific text
+	* `txt`: the text to measure
+	* `font`: the `Font` to measure with, `nil` to use default
+	* `margin`: the margin distance
+	* returns width, height
 
 ### Texture
 
 **Functions**
 
-* `tex(res, x, y[, w, h[, sx, sy[, sw, sh, [rotAngle, rotCenter = Vec2.new(0.5, 0.5), hFlip = false, vFlip = false]]]])`
+* `tex(res, x, y[, w, h[, sx, sy[, sw, sh, [rotAngle, rotCenter = Vec2.new(0.5, 0.5), hFlip = false, vFlip = false]]]])`: draws the specific `Texture` resource
+	* `res`: the `Texture` resource
+	* `x`: the destination x position
+	* `y`: the destination y position
+	* `w`: the destination width; omit to use the resource width
+	* `y`: the destination height; omit to use the resource height
+	* `sx`: the source x position to sample, defaults to 0
+	* `sy`: the source y position to sample, defaults to 0
+	* `sw`: the source width to sample, defaults to the resource width
+	* `sh`: the source height to sample, defaults to the resource height
+	* `rotAngle`: the rotation angle in radians
+	* `rotCenter`: the rotation center
+	* `hFlip`: whether to flip horizontally
+	* `vFlip`: whether to flip vertically
 
 ### Sprite
 
 **Functions**
 
-* `spr(res, x, y[, w, h[, rotAngle, rotCenter = Vec2.new(0.5, 0.5)]])`
+* `spr(res, x, y[, w, h[, rotAngle, rotCenter = Vec2.new(0.5, 0.5)]])`: draws the specific `Sprite` resource
+	* `res`: the `Sprite` resource
+	* `x`: the destination x position
+	* `y`: the destination y position
+	* `w`: the destination width
+	* `y`: the destination height
+	* `rotAngle`: the rotation angle in radians
+	* `rotCenter`: the rotation center
 
 ### Map
 
 **Functions**
 
-* `map(res, x, y)`
-* `mget(res, x, y)`
+* `map(res, x, y)`: draws the specific `Map` resource
+	* `res`: the `Map` resource
+	* `x`: the destination x position
+	* `y`: the destination y position
+* `mget(res, x, y)`: gets the tile index from the specific `Map` resource
+	* `res`: the `Map` resource
 	* `x`: starts from 0
 	* `y`: starts from 0
-* `mset(res, x, y, cel)`
+	* returns the tile index
+* `mset(res, x, y, cel)`: sets the tile index to the specific `Map` resource
+	* `res`: the `Map` resource
 	* `x`: starts from 0
 	* `y`: starts from 0
+	* `cel`: the tile index
 
-### SFX
+### Audio
 
 **Functions**
 
-* `volume(sfxVol, musicVol)`
+* `volume(sfxVol, musicVol)`: sets the audio volume
 	* `sfxVol`: with range of values from 0.0 to 1.0
 	* `musicVol`: with range of values from 0.0 to 1.0
-* `play(sfx, loop = false[, fade[, channel]])`
-* `stop(sfx[, fade])`
 
-### Music
+#### SFX
 
 **Functions**
 
-* `volume(sfxVol, musicVol)`
-	* `sfxVol`: with range of values from 0.0 to 1.0
-	* `musicVol`: with range of values from 0.0 to 1.0
-* `play(music, loop = false[, fade])`
-* `stop(music[, fade])`
+* `play(sfx, loop = false[, fade[, channel]])`: plays the specific `Sfx` resource
+	* `sfx`: the `Sfx` resource
+	* `loop`: `true` for loop, otherwise plays once
+	* `fade`: the fade in time in seconds
+	* `channel`: the specific channel to play this sound; omit to pick automatically
+* `stop(sfx[, fade])`: stops the specific `Sfx` resource
+	* `sfx`: the `Sfx` resource
+	* `fade`: the fade out time in seconds
+
+#### Music
+
+**Functions**
+
+* `play(music, loop = false[, fade])`: plays the specific `Music` resource
+	* `music`: the `Music` resource
+	* `loop`: `true` for loop, otherwise plays once
+	* `fade`: the fade in time in seconds
+* `stop(music[, fade])`: stops the specific `Music` resource
+	* `music`: the `Music` resource
+	* `fade`: the fade out time in seconds
 
 ### Gamepad
 
+A gamepad is a virtual entity, its buttons are binded to a keyboard or an actual gamepad hardware.
+
 **Functions**
 
-* `btn(button, index)`
-	* `index`: starts from 1
-* `btnp(button, index)`
-	* `index`: starts from 1
-* `rumble(index, lowHz = 100[, hiHz, ms = 100])`
-	* `index`: starts from 1
+* `btn(button, index)`: gets whether the specific gamepad button is pressed
+	* `button`: the button index
+	* `index`: the gamepad index, starts from 1
+	* returns `true` for pressed, otherwise `false`
+* `btnp(button, index)`: gets whether the specific gamepad button is released from pressing
+	* `button`: the button index
+	* `index`: the gamepad index, starts from 1
+	* returns `true` for released, otherwise `false`
+* `rumble(index, lowHz = 100[, hiHz, ms = 100])`: rumbles the specific gamepad, if an actual hardware is binded to any key of the gamepad entity
+	* `index`: the gamepad index, starts from 1
 
-0 for Left, 1 for Right, 2 for Up, 3 for Down, 4 for A, 5 for B.
+For the `button` parameter, 0, 1, 2, 3, 4, 5 are for Left, Right, Up, Down, A, B respectively.
 
 ### Keyboard
 
 **Functions**
 
-* `key(code)`
-* `keyp(code)`
+* `key(code)`: gets whether the specific key is pressed
+	* `code`: the key code on keyboard
+	* returns `true` for pressed, otherwise `false`
+* `keyp(code)`: gets whether the specific key is released from pressing
+	* `code`: the key code on keyboard
+	* returns `true` for released, otherwise `false`
 
 ### Mouse
 
 **Functions**
 
-* `mouse(index)`
-	* `index`: starts from 1
-	* returns `x`, `y`, `b1`, `b2`, `b3`
+* `mouse(index)`: gets the current mouse states
+	* `index`: always 1 for the mouse, or the finger index on touch screens, starts from 1
+	* returns `x`, `y`, `b1`, `b2`, `b3` for the mouse position and the LMB, RMB, MMB respectively
 
 ### Camera
 
 **Functions**
 
-* `camera(x, y)`: sets the camera offset
-* `camera()`: resets the camera offset
+* `camera(x, y)`: sets the camera offset, affects all coordinate-based primitives
+	* `x`: the x offset
+	* `y`: the y offset
+* `camera()`: resets the camera offset to 0, 0
 
 ### Clip
 
 **Functions**
 
 * `clip(x, y, w, h)`: sets the clip area
-* `clip()`: resets the clip area
+	* `x`: the x offset to clip
+	* `y`: the y offset to clip
+	* `w`: the clip width
+	* `h`: the clip height
+* `clip()`: resets the clip area to none
 
 ### Blend
 
 **Functions**
 
 * `blend(mode)`: sets the blend state with the specific mode
+	* `mode`: the blend mode to set; refer to the blend modes of `Canvas`
 * `blend()`: resets the blend state to alpha blend
 
 ## Application
@@ -915,50 +1493,66 @@ The coordinate definition in Bitty Engine is:
 
 **Static Functions**
 
-* `Canvas.compose(srcColFactor, dstColFactor, colOp, srcAlphaFactor, dstAlphaFactor, alphaOp)`
+* `Canvas.compose(srcColFactor, dstColFactor, colOp, srcAlphaFactor, dstAlphaFactor, alphaOp)`: composes a blend value from the specific parameters
+	* `srcColFactor`: the specific source color factor
+	* `dstColFactor`: the specific destination color factor
+	* `colOp`: the specific color operation
+	* `srcAlphaFactor`: the specific source alpha factor
+	* `dstAlphaFactor`: the specific destination alpha factor
+	* `alphaOp`: the specific alpha operation
 	* returns composed blend option
 
 **Static Variables**
 
-* `Canvas.main`: readonly
+* `Canvas.main`: readonly, gets the main `Canvas`
 
-**Object Field**
+**Object Fields**
 
-* `canvas.target`
-* `canvas.autoCls`
+* `canvas.target`: gets or sets the render target of the `Canvas`, `nil` for the main canvas
+* `canvas.autoCls`: gets or sets whether to clear the canvas automatically, either `true` or `false`
 
 **Methods**
 
-* `canvas:size()`
-* `canvas:resize()`
+* `canvas:size()`: gets the `Canvas` size
+	* returns `width`, `height`
+* `canvas:resize(width, height)`: resizes the `Canvas`
+	* `width`: the specific width, 0 to adapt automatically
+	* `height`: the specific height, 0 to adapt automatically
+	* returns `true` for success, otherwise `false`
 
 ### Project
 
 **Static Variables**
 
-* `Project.main`: readonly
+* `Project.main`: readonly, gets the main `Project`
 
 **Methods**
 
-* `project:fullPath()`
-	* returns the full path of the project, or `nil`
-* `project:getAssets()`
+* `project:fullPath()`: gets the full path of the `Project`
+	* returns the full path of the `Project`, or `nil`
+* `project:getAssets()`: gets all asset names in the `Project`
 	* returns a list of asset entries, or `nil`
-* `project:read()`
-	* returns asset content as `Bytes`, or `nil`
+* `project:read(name)`: reads the content of the specific asset
+	* `name`: the asset name to read
+	* returns asset content as `Bytes` and its cursor will be at the end, or `nil`
 
 ### Debug
 
 **Static Functions**
 
-* `Debug.setBreakpoint(src, ln, brk = true)`
+* `Debug.setBreakpoint(src, ln, brk = true)`: sets or unsets a breakpoint programmingly
+	* `src`: the source file
+	* `ln`: the line number
+	* `brk`: whether to set or unset
 	* returns `true` for success, otherwise `false`
-* `Debug.clearBreakpoints([src])`
+* `Debug.clearBreakpoints([src])`: clears breakpoints programmingly
+	* `src`: the source file to clear; omit to clear all in project
 	* returns `true` for success, otherwise `false`
-* `Debug.getTimeout()`
-	* returns the active timeout value
-* `Debug.setTimeout(val)`
-* `Debug.setTimeout()`
+* `Debug.getTimeout()`: gets the invoking timeout value
+	* returns the invoking timeout value
+* `Debug.setTimeout(val)`: sets the invoking timeout value to the specific seconds
+	* `val`: the timeout value in seconds, 0 to disable timeout
+* `Debug.setTimeout()`: resets the invoking timeout value to default (10 seconds)
 
 [HOME](#welcome-to-bitty-engine)
 

@@ -46,7 +46,7 @@
 ### Code Edit
 
 * Tab: indent
-* Shift+Tab: unindent
+* Ctrl+Shift+Tab/Shift+Tab: unindent
 
 * Ctrl+F: find
 * F3: find next
