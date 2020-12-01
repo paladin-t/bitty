@@ -11,6 +11,7 @@ Improved usability, fixed some bugs, and finished the manual.
 * Fixed a `Bytes` filling bug with `Network`
 * Fixed an unexpected key event bug eg. with LAlt+A
 * Fixed some minor bugs in the examples
+* Improved the behaviour when open project with pending changes
 * Finished the first version of the reference manual
 
 ### v0.8 Nov. 18, 2020
