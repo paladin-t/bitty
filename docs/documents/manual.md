@@ -98,7 +98,7 @@
 
 ## Project Structure
 
-A new created project consists of a meta info asset ("info.json") and an entry source ("main.lua"). A meta info indicates basic information of a project in JSON. An entry is where a project starts to execute. You can add supported existing file or create new blank assets into a project. All text-based assets use Unix LF ('\n') for line ending.
+A new created project consists of a meta info asset ("info.json") and an entry source ("main.lua"). The meta info indicates basic information of the project in JSON. The entry is where the project starts to execute. You can add supported existing file or create new blank assets into the project. All text-based assets use Unix LF ('\n') for line ending.
 
 ### In Directory
 
@@ -115,8 +115,6 @@ A binary-based project archive is just a compressed ZIP package replaced with th
 ## Backup
 
 Bitty Engine makes backup once you save an asset or a project, click "Project", "Browse Data Directory..." to locate it.
-
-You can navigate there by clicking "Project", "Browse Data Directory...".
 
 ## Capturing
 
@@ -143,7 +141,7 @@ Lua is widely used and validated in the software industry, there are a lot of le
 
 Lua is 1-based for list accessing, Bitty Engine follows the same convention for sequenced structures, like `Bytes`, `File`, etc. Otherwise it is 0-based for coordinates, like `Pathfinder`, `Image`, `Map`, `Palette`, etc.
 
-This document uses a meta method form to describe operators. Eg. `vec2:__add(vec2_)` denotes `vec2 + vec2_`, `vec2:__len()` denotes `#vec2`, etc.
+This document uses a meta method form to describe operators. Eg. `foo:__len()` denotes `#foo`, `foo:__add(bar)` denotes `foo + bar`, `foo:__unm()` denotes `-foo`, etc.
 
 ### Standard Libraries
 
@@ -247,7 +245,7 @@ Pathfinder retrieves grid cost from either an evaluator or prefilled matrix. All
 
 #### Randomizer
 
-This module provide a random algorithm organized by object, other than the built-in random function in Lua. You can use either.
+This module provide a random algorithm organized by object, other than the built-in random function in Lua..
 
 **Constructors**
 
@@ -1313,7 +1311,7 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 * `color(col)`: sets the active `Color` with a specific value
 	* `col`: the `Color` to set
 * `color()`: resets the active `Color` to white
-* `sync()`: synchronizes commands to graphics manually
+* `sync()`: synchronizes commands to graphics manually, also updates `Network` and `Web` pipelines
 	* returns synchronized command count
 
 ### Shapes
