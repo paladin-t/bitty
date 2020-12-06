@@ -1,12 +1,10 @@
 ![](imgs/logo.png)
 
-## Welcome to Bitty Engine
+## Reference Manual
 
 [**Manual**](https://paladin-t.github.io/bitty/manual.html) | [Operations](operations)
 
-**An itty bitty game engine.**
-
-## Table of content
+## Table of Content
 
 * [Fundamental](#fundamental)
 	* [Specifications](#specifications)
@@ -41,7 +39,9 @@
 		* [Math](#math)
 		* [Network](#network)
 		* [Platform](#platform)
+		* [Promise](#promise)
 		* [Stream](#stream)
+		* [Web](#web)
 	* [Assets and Resources](#assets-and-resources)
 		* [Resources](#resources)
 		* [Asset](#asset)
@@ -79,7 +79,7 @@
 * [Building](#building)
 	* [Building for Desktop](#building-for-desktop)
 
-[HOME](#welcome-to-bitty-engine)
+[TOP](#reference-manual)
 
 # Fundamental
 
@@ -129,7 +129,7 @@ You can navigate there by clicking "Project", "Browse Data Directory...".
 * F7: start recording frames
 * F8: stop recording frames
 
-[HOME](#welcome-to-bitty-engine)
+[TOP](#reference-manual)
 
 # Programming
 
@@ -139,11 +139,11 @@ Bitty project is programmable in the [Lua](https://www.lua.org/) programming lan
 
 ### Syntax
 
-Lua is widely used and validated in the software industry, there are a lot of learning materials about the language on the internet. Click to see the [official documentation](https://www.lua.org/docs.html).
+Lua is widely used and validated in the software industry, there are a lot of learning materials about the language on the internet. Click to see on the [Wikipedia](https://en.wikipedia.org/wiki/Lua_(programming_language)) or read the [official documentations](https://www.lua.org/docs.html).
 
 Lua is 1-based for list accessing, Bitty Engine follows the same convention for sequenced structures, like `Bytes`, `File`, etc. Otherwise it is 0-based for coordinates, like `Pathfinder`, `Image`, `Map`, `Palette`, etc.
 
-This document uses a meta method form to describe operators. Eg. `vec2:__add(vec2_)` for `vec2 + vec2_`, `vec2:__len()` for `#vec2`, etc.
+This document uses a meta method form to describe operators. Eg. `vec2:__add(vec2_)` denotes `vec2 + vec2_`, `vec2:__len()` denotes `#vec2`, etc.
 
 ### Standard Libraries
 
@@ -151,11 +151,21 @@ The ready to use modules, `package`, `coroutine`, `table`, `string`, `math`, `ut
 
 The trivial modules, `io`, `os`, `debug`, are removed. Bitty Engine offers alternatives.
 
+Bitty Engine offers some handy built-in functions, some are reserved from the original but the behaviour is improved, some are extended.
+
 **Functions**
 
 * `print(...)`: outputs some values to the console window as message, for debugging purposes
 * `warn(...)`: outputs some values to the console window as warn, for debugging purposes
 * `error(...)`: outputs some values to the console window as error, and stops execution, for debugging purposes
+
+* `msgbox(...)`: popups a message box with the specific content
+* `input(prompt[, default])`: popups an input box
+	* `prompt`: the prompt on the box
+	* `default`: the default content
+	* returns inputted string, or `nil` for canceled
+
+* `exit()`: exits the current execution
 
 ## Program Structure
 
@@ -304,7 +314,7 @@ This module offers manipulations for a ZIP package.
 * `archive:close()`: closes an opened archive
 	* returns `true` for success, otherwise `false`
 * `archive:all()`: gets all entry names in the archive
-	* returns the entry list, in a list of string, could be empty or `nil`
+	* returns an entry list, in a list of string, could be empty or `nil`
 * `archive:exists(entry)`: gets whether the specific entry exists in the archive
 	* `entry`: the entry name to look for
 	* returns `true` for exists, otherwise `false`
@@ -336,7 +346,7 @@ This module offers manipulations for a ZIP package.
 
 ### Bytes
 
-Being the same as Lua list, `Bytes` index starts from 1. Implements a `Stream` as memory buffer.
+Being the same as Lua list, `Bytes` index starts from 1. Implements a `Stream` protocol as memory buffer.
 
 **Constructors**
 
@@ -501,7 +511,7 @@ Being the same as Lua list, `Bytes` index starts from 1. Implements a `Stream` a
 
 ### File
 
-Being the same as Lua list, `File` index starts from 1. Implements a `Stream` as file on disk.
+Being the same as Lua list, `File` index starts from 1. Implements a `Stream` protocol as file on disk.
 
 **Constructors**
 
@@ -595,7 +605,7 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` as
 **Static Functions**
 
 * `Path.combine(...)`: combines a number of paths
-	* returns the combined path
+	* returns combined path
 * `Path.split(full)`: splits the specific path into parts
 	* returns `name`, `ext`, `parent`
 * `Path.existsFile(path)`: gets whether the specific file exists
@@ -679,7 +689,7 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` as
 	* `newExt`: the new extension name; omit to keep the old
 	* returns `true` for success, otherwise `false`
 * `fileInfo:parent()`: gets the `DirectoryInfo` of the `FileInfo`'s parent
-	* returns the `DirectoryInfo`
+	* returns the `DirectoryInfo` of its parent
 * `fileInfo:readAll()`: reads all content of the file represented by the `FileInfo` as string
 	* returns the content string
 
@@ -715,7 +725,7 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` as
 	* `recursive`: whether lookup its sub-directories
 	* returns a list of `DirectoryInfo` objects
 * `directoryInfo:parent()`: gets the `DirectoryInfo` of this `DirectoryInfo`'s parent
-	* returns the `DirectoryInfo`
+	* returns the `DirectoryInfo` of its parent
 
 ### Image
 
@@ -941,7 +951,7 @@ The callback of disconnected is an invokable in form of `function (addr) end`, w
 
 * `network:getOption(key)`: gets the option value of the specific key
 	* `key`: the option key to get
-	* returns the option value
+	* returns option value
 * `network:setOption(key, val)`: sets the options value of the specific key
 	* `key`: the option key to set
 	* `val`: the value to set
@@ -991,6 +1001,9 @@ For example:
 * `network:send(json)`: sends the specific `Json`
 	* `json` the `Json` to send
 	* returns `true` for success, otherwise `false`
+* `network:send(tbl)`: sends the specific Lua table as `Json`
+	* `tbl` the Lua table to send
+	* returns `true` for success, otherwise `false`
 * `network:broadcast(bytes)`: broadcasts the specific `Bytes`
 	* `bytes`: the `Bytes` to broadcast
 	* returns `true` for success, otherwise `false`
@@ -999,6 +1012,9 @@ For example:
 	* returns `true` for success, otherwise `false`
 * `network:broadcast(json)`: broadcasts the specific `Json`
 	* `json`: the `Json` to broadcast
+	* returns `true` for success, otherwise `false`
+* `network:broadcast(tbl)`: broadcasts the specific Lua table as `Json`
+	* `tbl`: the Lua table to broadcast
 	* returns `true` for success, otherwise `false`
 
 A single transmission or datagram cannot be longer than 512KB.
@@ -1022,17 +1038,45 @@ For both "string" and "json", the underneath data flow always end up with a zero
 * `Platform.hasClipboardText()`: gets whether there is text content in the clipboard
 	* returns `true` for nonempty, otherwise `false`
 * `Platform.getClipboardText()`: gets the text content in the clipboard
-	* returns the text content
+	* returns text content
 * `Platform.setClipboardText(txt)`: sets the text content in the clipboard
 	* `txt`: the text to set
 * `Platform.execute(cmd)`: executes the specific system command
 	* `cmd`: the command to execute
+
+* `Platform.openFile([title[, filter]])`: popups an open-file-dialog
+	* `title`: the title text
+	* `filter`: the file filter, eg. `"Text files (*.txt)";"*.txt";"All files (*.*)";"*"`
+	* returns selected file path, or `nil` for canceled
+* `Platform.saveFile([title[, filter]])`: popups a save-file-dialog
+	* `title`: the title text
+	* `filter`: the file filter
+	* returns specified file path, or `nil` for canceled
+* `Platform.selectDirectory([title])`: popups a select-directory-dialog
+	* `title`: the title text
+	* returns selected directory path, or `nil` for canceled
 
 **Static Variables**
 
 * `Platform.os`: readonly, gets the current running OS
 * `Platform.endian`: readonly, gets the current endian
 	* returns either "little-endian" or "big-endian"
+
+### Promise
+
+This module declares a minimal protocol to handle asynchronization.
+
+**Methods**
+
+* `promise:thus(handler)`: sets the specific callback to handle on succeeded
+	* `handler`: in form of `function (...) end`, an invokable object which accepts optional arguments
+	* returns this `Promise` itself
+* `promise:catch(handler)`: sets the specific callback to handle on failed
+	* `handler`: in form of `function () end`, an invokable object
+	* returns this `Promise` itself
+* `promise:finally(handler)`: sets the specific callback to handle on finished
+	* `handler`: in form of `function () end`, an invokable object
+	* returns this `Promise` itself
 
 ### Stream
 
@@ -1044,6 +1088,40 @@ This module contains constants indicating accessibilities for other modules.
 * `Stream.Write`
 * `Stream.Append`
 * `Stream.ReadWrite`
+
+### Web
+
+**Experimental** feature. Implements a `Promise` protocol for HTTP accessing and manipulating.
+
+**Functions**
+
+* `fetch(url[, options])`: performs an HTTP request
+	* `url`: the URL to request
+	* `options`: the option `Json` or Lua table
+	* returns `Promise` object
+
+The `thus` handler of the returned `Promise` object takes an invokable object in form of `function (rsp) end` which accepts the responded content. The `catch` handler of the returned `Promise` object takes an invokable object in form of `function () end`. The `finally` handler of the returned `Promise` object takes an invokable object in form of `function () end`.
+
+For example:
+
+```lua
+local headers = { }
+headers['Content-Type'] = 'text/html'
+headers['User-Agent'] = 'Mozilla/5.0 Gecko/20100101 Firefox/83.0'
+fetch('https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch', {
+    method = 'GET',
+    headers = headers
+  })
+  :thus(function (rsp)
+    print(rsp)
+  end)
+  :catch(function ()
+    print('Error.')
+  end)
+  :finally(function ()
+    print('Finished.')
+  end)
+```
 
 ## Assets and Resources
 
@@ -1063,8 +1141,8 @@ This module contains constants indicating accessibilities for other modules.
 	* `json`: the `Json` to load
 	* `hint`: the type hint
 	* returns loaded resource, or `nil`
-* `Resources.load(table[, hint])`: loads a resource from the specific Lua table
-	* `table`: the Lua table to load
+* `Resources.load(tbl[, hint])`: loads a resource from the specific Lua table
+	* `tbl`: the Lua table to load
 	* `hint`: the type hint
 	* returns loaded resource, or `nil`
 * `Resources.load(img[, hint])`: loads a resource from the specific `Image` object
@@ -1089,23 +1167,23 @@ foo = Resources.load({ width = 128, height = 128 }) -- Load a blank texture.
 
 ```lua
 local data = {
-    width = 8, height = 8,
-    count = 2,
-    data = {
-      {
-        x = 16, y = 0, width = 8, height = 8,
-        interval = 0.25,
-        key = 'idle'
-      },
-      {
-        x = 24, y = 0, width = 8, height = 8,
-        interval = 0.25,
-        key = ''
-      }
+  width = 8, height = 8,
+  count = 2,
+  data = {
+    {
+      x = 16, y = 0, width = 8, height = 8,
+      interval = 0.25,
+      key = 'idle'
     },
-    ref = baz -- Ref by object.
-  }
-  foo = Resources.load(data) -- Load a sprite.
+    {
+      x = 24, y = 0, width = 8, height = 8,
+      interval = 0.25,
+      key = ''
+    }
+  },
+  ref = baz -- Ref by object.
+}
+foo = Resources.load(data) -- Load a sprite.
 ```
 
 ```lua
@@ -1293,7 +1371,7 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 * `pget(res, index)`: gets the `Color` from the specific `Palette` resource
 	* `res`: the `Palette` resource
 	* `index`: starts from 0
-	* returns the `Color`
+	* returns `Color`
 * `pset(res, index, col)`: sets the `Color` to the specific `Palette` resource
 	* `res`: the `Palette` resource
 	* `index`: starts from 0
@@ -1310,7 +1388,7 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 	* `txt`: the text to measure
 	* `font`: the `Font` to measure with, `nil` to use default
 	* `margin`: the margin distance
-	* returns width, height
+	* returns `width`, `height` for both dimensions respectively
 
 ### Texture
 
@@ -1356,7 +1434,7 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 	* `res`: the `Map` resource
 	* `x`: starts from 0
 	* `y`: starts from 0
-	* returns the tile index
+	* returns tile index
 * `mset(res, x, y, cel)`: sets the tile index to the specific `Map` resource
 	* `res`: the `Map` resource
 	* `x`: starts from 0
@@ -1549,12 +1627,12 @@ For the `button` parameter, 0, 1, 2, 3, 4, 5 are for Left, Right, Up, Down, A, B
 	* `src`: the source file to clear; omit to clear all in project
 	* returns `true` for success, otherwise `false`
 * `Debug.getTimeout()`: gets the invoking timeout value
-	* returns the invoking timeout value
+	* returns invoking timeout value
 * `Debug.setTimeout(val)`: sets the invoking timeout value to the specific seconds
 	* `val`: the timeout value in seconds, 0 to disable timeout
 * `Debug.setTimeout()`: resets the invoking timeout value to default (10 seconds)
 
-[HOME](#welcome-to-bitty-engine)
+[TOP](#reference-manual)
 
 # Import and Export
 
@@ -1566,7 +1644,7 @@ Click "Project", "Import..." to browse and import some assets from a "*.bit" arc
 
 Click "Project", "Export..." to select and export some assets to a "*.bit" archive.
 
-[HOME](#welcome-to-bitty-engine)
+[TOP](#reference-manual)
 
 # Building
 
@@ -1574,4 +1652,4 @@ Click "Project", "Export..." to select and export some assets to a "*.bit" archi
 
 Click "Project", "Build for Desktop", "Windows" to make an executable for Windows with the current project.
 
-[HOME](#welcome-to-bitty-engine)
+[TOP](#reference-manual)

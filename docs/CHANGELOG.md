@@ -1,3 +1,21 @@
+### v0.8.2 Dec. 6, 2020
+
+Enhanced modules, improved usability.
+
+* Added an assets filter
+* Added a `Promise` protocol
+* Added a `fetch(...)` function (experimental)
+* Added an `input(...)` function
+* Added a `msgbox(...)` function
+* Added an `exit()` function
+* Added `Platform.openFile(...)`, `Platform.saveFile(...)`, `Platform.selectDirectory(...)` functions
+* Added a "Basics/Updating" example
+* Added a "Libraries/Web" example
+* Fixed an indent/unindent bug for single line
+* Fixed an abort bug for infinite loop
+* Improved `network:send(...)`, `network:boardcast(...)` to support Lua table
+* Improved UTF-8 support for custom font
+
 ### v0.8.1 Dec. 1, 2020
 
 Improved usability, fixed some bugs, and finished the manual.

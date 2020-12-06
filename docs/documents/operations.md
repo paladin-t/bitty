@@ -1,8 +1,26 @@
+![](imgs/logo.png)
+
 ## Operations
 
 [Manual](manual) | **Operations**
 
-### General
+## Table of Content
+
+* [General](#general)
+* [Code Edit](#code-edit)
+* [Sprite Edit](#sprite-edit)
+* [Map Edit](#map-edit)
+* [Image Edit](#image-edit)
+* [Palette Edit](#palette-edit)
+* [JSON Edit](#json-edit)
+* [Text Edit](#text-edit)
+* [Bytes Preview](#bytes-preview)
+* [Font Preview](#font-preview)
+* [Sound Preview](#sound-preview)
+
+[TOP](#operations)
+
+# General
 
 * F5/Ctrl+R: run, or resume running
 * Shift+F5/Ctrl+.: stop running
@@ -23,8 +41,9 @@
 * Ctrl+A: select all
 
 * Ctrl+Tab: switch asset
-* Ctrl+W: close asset
+* Ctrl+W: close the current asset
 
+* Ctrl+E: toggle assets filter
 * Ctrl+Shift+N: add asset
 * Ctrl+Shift+A: add file
 
@@ -43,7 +62,9 @@
 
 ![](imgs/directory.png)
 
-### Code Edit
+[TOP](#operations)
+
+# Code Edit
 
 * Tab: indent
 * Ctrl+Shift+Tab/Shift+Tab: unindent
@@ -53,7 +74,9 @@
 * Shift+F3: find previous
 * Ctrl+G: goto line
 
-### Sprite Edit
+[TOP](#operations)
+
+# Sprite Edit
 
 * CapsLock: toggle grid visibility for ref
 * NumLock: toggle transparent background visibility for ref
@@ -64,7 +87,9 @@
 
 ![](imgs/interval.png)
 
-### Map Edit
+[TOP](#operations)
+
+# Map Edit
 
 * CapsLock: toggle grid visibility for ref
 * NumLock: toggle transparent background visibility for ref
@@ -100,7 +125,9 @@
 
 ![](imgs/stamp.png)
 
-### Image Edit
+[TOP](#operations)
+
+# Image Edit
 
 * CapsLock: toggle grid visibility
 * NumLock: toggle transparent background visibility
@@ -139,13 +166,17 @@
 
 ![](imgs/rotate.png)
 
-### Palette Edit
+[TOP](#operations)
+
+# Palette Edit
 
 * Home: select the first color
 * End: select the last color
 * Left/Right/Up/Down: select around
 
-### JSON Edit
+[TOP](#operations)
+
+# JSON Edit
 
 * Tab: indent
 * Shift+Tab: unindent
@@ -155,7 +186,9 @@
 * Shift+F3: find previous
 * Ctrl+G: goto line
 
-### Text Edit
+[TOP](#operations)
+
+# Text Edit
 
 * Tab: indent
 * Shift+Tab: unindent
@@ -165,17 +198,25 @@
 * Shift+F3: find previous
 * Ctrl+G: goto line
 
-### Bytes Preview
+[TOP](#operations)
+
+# Bytes Preview
 
 For preview only.
 
-### Font Preview
+[TOP](#operations)
+
+# Font Preview
 
 For preview only.
 
-### Sound Preview
+[TOP](#operations)
 
-For preview only.
+# Sound Preview
+
+For preview only. Cannot play when game is running.
 
 * Enter: play
 * Esc: stop
+
+[TOP](#operations)
