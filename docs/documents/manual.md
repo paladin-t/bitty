@@ -98,7 +98,7 @@
 
 ## Project Structure
 
-A new created project consists of a meta info asset ("info.json") and an entry source ("main.lua"). The meta info indicates basic information of the project in JSON. The entry is where the project starts to execute. You can add supported existing file or create new blank assets into the project. All text-based assets use Unix LF ('\n') for line ending.
+A new created project consists of a meta info asset ("info.json") and an entry source ("main.lua"). The meta info indicates basic information of the project in JSON. The entry is where the project starts to execute. You can add supported existing file or create new blank assets into a project. All text-based assets use Unix LF ('\n') for line ending.
 
 ### In Directory
 
@@ -157,7 +157,8 @@ Bitty Engine offers some handy built-in functions, some are reserved from the or
 * `warn(...)`: outputs some values to the console window as warn, for debugging purposes
 * `error(...)`: outputs some values to the console window as error, and stops execution, for debugging purposes
 
-* `msgbox(...)`: popups a message box with the specific content
+* `msgbox(msg)`: popups a message box with the specific content
+	* `msg`: the message string
 * `input(prompt[, default])`: popups an input box
 	* `prompt`: the prompt on the box
 	* `default`: the default content
@@ -1063,6 +1064,17 @@ For both "string" and "json", the underneath data flow always end up with a zero
 ### Promise
 
 This module declares a minimal protocol to handle asynchronization.
+
+**Constants**
+
+* `Promise.Pending`
+* `Promise.Resolved`
+* `Promise.Rejected`
+
+**Object Fields**
+
+* `promise.state`: gets the state of the `Promise` object, can be one in `Promise.Pending`, `Promise.Resolved`, `Promise.Rejected`
+* `promise.value`: gets the fulfilled value of the `Promise` object, or `nil`
 
 **Methods**
 
