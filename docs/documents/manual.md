@@ -1101,11 +1101,13 @@ This module contains constants indicating accessibilities for other modules.
 
 ### Web
 
-**Experimental** feature. Implements a `Promise` protocol for HTTP accessing and manipulating.
+**Experimental** feature. This module offers fetching via HTTP.
 
 **Functions**
 
-* `fetch(url[, options])`: performs an HTTP request
+Implements a `Promise` protocol for HTTP accessing and manipulating.
+
+* `fetch(url[, options])`: requests the specific HTTP resource
 	* `url`: the URL to request
 	* `options`: the option `Json` or Lua table
 	* returns `Promise` object
