@@ -70,6 +70,7 @@
           content: 'article-content',
           parse: function (markdown) {
             return markdown
+              .replaceAll('![](imgs/logo.png)', '')
               .replace('[**Manual**](https://paladin-t.github.io/bitty/manual.html) | [Operations](operations)', '')
               .replaceAll('![](imgs/', '![](documents/imgs/');
           },

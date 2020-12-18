@@ -70,6 +70,7 @@
           content: 'article-content',
           parse: function (markdown) {
             return markdown
+              .replaceAll('![](imgs/logo.png)', '')
               .replace('[Manual](manual) | **Operations**', '')
               .replaceAll('![](imgs/', '![](documents/imgs/');
           },

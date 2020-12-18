@@ -32,6 +32,7 @@
 		* [Date Time](#date-time)
 		* [Encoding](#encoding)
 			* [Base64](#base64)
+			* [LZ4](#lz4)
 		* [File](#file)
 		* [Filesystem](#filesystem)
 		* [Image](#image)
@@ -86,7 +87,7 @@
 ## Specifications
 
 * Display: defaults to 480x320 pixels, configurable to bigger, smaller or self-adaption
-* Audio: 1 BGM channel, 4 SFX channels; supports MP3, OGG, WAV, FLAC, etc.
+* Audio: 1 BGM channel, 4 SFX channels; supports MP3, OGG, WAV, etc.
 * Font: supports Bitmap and TrueType
 * Code: Lua, supports multiple source files
 * Sprite: up to 1024x1024 pixels per frame, up to 1024 frames per sprite
@@ -185,7 +186,17 @@ function quit()
 end
 ```
 
-Generally `setup` is used to initial game variables, states, `update` is where gameplay logic goes, and `quit` is for persisting necessary data on disk. All the three entries are optional.
+Define `focusLost`, `focusGained` functions to run code on focus changed:
+
+```lua
+function focusLost()
+end
+
+function focusGained()
+end
+```
+
+Generally `setup` is used to initial game variables, states, `update` is where gameplay logic goes, and `quit` is for persisting necessary data on disk. All these five entries are optional.
 
 Bitty Engine uses a timeout mechanism to avoid unexpected infinite loops, it raises an error when any invoking to the entries takes more than 10 seconds by default. The timeout value can be changed by [Debug.setTimeout(...)](#debug).
 
@@ -506,6 +517,17 @@ Being the same as Lua list, `Bytes` index starts from 1. Implements a `Stream` p
 	* returns Base64 string
 * `Base64.decode(txt)`: decodes the specific Base64 string to `Bytes`
 	* `txt`: Base64 string to decode
+	* returns `Bytes`, its cursor will be at the end
+
+#### LZ4
+
+**Static Functions**
+
+* `Lz4.encode(bytes)`: encodes the specific `Bytes` to LZ4 encoded `Bytes`
+	* `bytes`: the `Bytes` to encode from start till end, its cursor won't be moved
+	* returns LZ4 encoded `Bytes`
+* `Lz4.decode(bytes)`: decodes the specific LZ4 `Bytes` to `Bytes`
+	* `bytes`: LZ4 `Bytes` to decode
 	* returns `Bytes`, its cursor will be at the end
 
 ### File
@@ -911,15 +933,15 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 * `rect:yMin()`: gets the minimum y component
 * `rect:xMax()`: gets the maximum x component
 * `rect:xMax()`: gets the maximum y component
-* `rect:width()`: gets the width
-* `rect:height()`: gets the height
+* `rect:width()`: gets the width, equals to `rect:xMax() - rect:xMin()`
+* `rect:height()`: gets the height, equals to `rect:yMax() - rect:yMin()`
 
 * `recti:xMin()`: gets the minimum x component
 * `recti:yMin()`: gets the minimum y component
 * `recti:xMax()`: gets the maximum x component
 * `recti:xMax()`: gets the maximum y component
-* `recti:width()`: gets the width
-* `recti:height()`: gets the height
+* `recti:width()`: gets the width, equals to `rect:xMax() - rect:xMin() + 1`
+* `recti:height()`: gets the height, equals to `rect:yMax() - rect:yMin() + 1`
 
 ### Network
 
@@ -1662,6 +1684,10 @@ Click "Project", "Export..." to select and export some assets to a "*.bit" archi
 
 ## Building for Desktop
 
-Click "Project", "Build for Desktop", "Windows" to make an executable for Windows with the current project.
+Click "Project", "Build", "Windows" to make an executable for Windows with the current opened project.
+
+Click "Project", "Build", "MacOS" to make an executable for MacOS with the current opened project.
+
+Click "Project", "Build", "Linux" to make an executable for Linux with the current opened project.
 
 [TOP](#reference-manual)

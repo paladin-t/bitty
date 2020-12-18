@@ -1,3 +1,21 @@
+### v0.9 Dec. 18, 2020
+
+Added MacOS and Linux versions. Enhanced modules, improved usability, fixed some bugs.
+
+* Added MacOS and Linux support
+* Added binary builders for MacOS and Linux
+* Added `focusLost()`, `focusGained()` entries
+* Added support for `Lz4` encoding
+* Added `Promise.Pending`, `Promise.Resolved`, `Promise.Rejected` constant
+* Added `promise.state`, `promise.value` fields
+* Fixed an interaction blocking issue with minor buttons
+* Fixed a text encoding bug with the `Platform.surf(...)`, `Platform.browse(...)` functions
+* Fixed a browsing bug with the frame recorder
+* Fixed a calculation bug of `vec3:dot(vec3_)`
+* Improved responsiveness for project saving
+* Upgraded Lua from v5.4.1 to v5.4.2
+* Upgraded cURL from v7.73.0 to v7.74.0
+
 ### v0.8.2 Dec. 6, 2020
 
 Enhanced modules, improved usability.
