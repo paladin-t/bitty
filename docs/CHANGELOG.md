@@ -1,4 +1,4 @@
-### v0.9 Dec. 18, 2020
+### v0.9 beta Dec. 18, 2020
 
 Added MacOS and Linux versions. Enhanced modules, improved usability, fixed some bugs.
 
@@ -16,7 +16,7 @@ Added MacOS and Linux versions. Enhanced modules, improved usability, fixed some
 * Upgraded Lua from v5.4.1 to v5.4.2
 * Upgraded cURL from v7.73.0 to v7.74.0
 
-### v0.8.2 Dec. 6, 2020
+### v0.8.2 beta Dec. 6, 2020
 
 Enhanced modules, improved usability.
 
@@ -34,7 +34,7 @@ Enhanced modules, improved usability.
 * Improved `network:send(...)`, `network:boardcast(...)` to support Lua table
 * Improved UTF-8 support for custom font
 
-### v0.8.1 Dec. 1, 2020
+### v0.8.1 beta Dec. 1, 2020
 
 Improved usability, fixed some bugs, and finished the manual.
 
@@ -50,7 +50,7 @@ Improved usability, fixed some bugs, and finished the manual.
 * Improved the behaviour when open project with pending changes
 * Finished the first version of the reference manual
 
-### v0.8 Nov. 18, 2020
+### v0.8 beta Nov. 18, 2020
 
 Added Windows version. First release with features including:
 
