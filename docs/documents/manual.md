@@ -25,6 +25,7 @@
 		* [Algorithms](#algorithms)
 			* [Pathfinder](#pathfinder)
 			* [Randomizer](#randomizer)
+			* [Raycaster](#raycaster)
 			* [Walker](#walker)
 		* [Archive](#archive)
 		* [Bytes](#bytes)
@@ -229,12 +230,15 @@ This module performs a pathfinding algorithm on 2D grids.
 	* `pos`: the position to set
 	* `cost`: the cost value to set
 * `pathfinder:clear()`: clears prefilled matrix and internal cached data
-* `pathfinder:solve(beginPos, endPos, eval)`: resolves for a possible path
+* `pathfinder:solve(beginPos, endPos, eval)`: resolves for a possible path with the specific evaluator
 	* `beginPos`: the beginning position
 	* `endPos`: the ending position
 	* `eval`: in form of `function (pos) return number end`, an invokable object which accepts position and returns the walking cost at that point
 	* returns an approachable path, in a list of `Vec2`, could be empty
-* `pathfinder:solve(beginPos, endPos)`: resolves for a possible path
+* `pathfinder:solve(beginPos, endPos)`: resolves for a possible path with the prefilled cost matrix
+	* `beginPos`: the beginning position
+	* `endPos`: the ending position
+	* returns an approachable path, in a list of `Vec2`, could be empty
 
 Grid coordinates can be any integer, with range of values from -32,767 to 32,767. A cost matrix will be prefilled once calling the `pathfinder:set(...)` function; this data exists until calling `pathfinder:clear()`. The `pathfinder:solve(...)` function prefers to use invokable to get grid cost, and falls to use prefilled matrix if no evaluator provided.
 
@@ -276,6 +280,27 @@ This module provide a random algorithm organized by object, other than the built
 * `random:next()`: generates a random number
 	* returns a pseudo random float with uniform distribution in the range [0, 1)
 
+#### Raycaster
+
+This module performs a raycasting algorithm on 2D grids.
+
+**Constructors**
+
+* `Raycaster.new()`: constructs a raycaster object
+
+**Object Fields**
+
+* `raycaster.tileSize`: gets or sets the tile size, defaults to 8x8
+* `raycaster.offset`: gets or sets the raycaster offset, defaults to 0, 0
+
+**Methods**
+
+* `raycaster:solve(rayPos, rayDir, eval)`: resolves for raycasting
+	* `rayPos`: the ray position
+	* `rayDir`: the ray direction
+	* `eval`: in form of `function (pos) return boolean end`, an invokable object which accepts position and returns `true` for blocked, `false` for pass
+	* returns an approximate intersection position as `Vec2` or `nil`, and a secondary value for intersection index as `Vec2` or `nil`
+
 #### Walker
 
 This module performs a smooth walking algorithm on 2D grids.
@@ -305,7 +330,7 @@ This module performs a smooth walking algorithm on 2D grids.
 	* `expDir`: the expected direction
 	* `eval`: in form of `function (pos) return boolean, enum end`, an invokable object which accepts position and returns `true` for blocked, `false` for pass; in addition this evaluator can return a secondary value in `Walker.None`, `Walker.Left`, `Walker.Right`, `Walker.Up`, `Walker.Down` for one-way walk
 	* `slidable`: non-zero for slidable at edge, with range of values from 0 to 10
-	* returns a resolved directional `Vec2` or `nil`
+	* returns a resolved directional `Vec2`, could be zero
 
 ### Archive
 
@@ -1104,7 +1129,7 @@ This module declares a minimal protocol to handle asynchronization.
 	* `handler`: in form of `function (...) end`, an invokable object which accepts optional arguments
 	* returns this `Promise` itself
 * `promise:catch(handler)`: sets the specific callback to handle on failed
-	* `handler`: in form of `function () end`, an invokable object
+	* `handler`: in form of `function ([err]) end`, an invokable object
 	* returns this `Promise` itself
 * `promise:finally(handler)`: sets the specific callback to handle on finished
 	* `handler`: in form of `function () end`, an invokable object
@@ -1134,17 +1159,17 @@ Implements a `Promise` protocol for HTTP accessing and manipulating.
 	* `options`: the option `Json` or Lua table
 	* returns `Promise` object
 
-The `thus` handler of the returned `Promise` object takes an invokable object in form of `function (rsp) end` which accepts the responded content. The `catch` handler of the returned `Promise` object takes an invokable object in form of `function () end`. The `finally` handler of the returned `Promise` object takes an invokable object in form of `function () end`.
+The `thus` handler of the returned `Promise` object takes an invokable object in form of `function (rsp) end` which accepts the responded content. The `catch` handler of the returned `Promise` object takes an invokable object in form of `function (err) end`. The `finally` handler of the returned `Promise` object takes an invokable object in form of `function () end`.
 
 For example:
 
 ```lua
-local headers = { }
-headers['Content-Type'] = 'text/html'
-headers['User-Agent'] = 'Mozilla/5.0 Gecko/20100101 Firefox/83.0'
-fetch('https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch', {
+fetch('https://github.com', {
     method = 'GET',
-    headers = headers
+    headers = {
+      ['Content-Type'] = 'text/html',
+      ['User-Agent'] = 'Mozilla/5.0 Gecko/20100101 Firefox/83.0'
+    }
   })
   :thus(function (rsp)
     print(rsp)
@@ -1514,11 +1539,11 @@ A gamepad is a virtual entity, its buttons are binded to a keyboard or an actual
 
 **Functions**
 
-* `btn(button, index)`: gets whether the specific gamepad button is pressed
+* `btn(button[, index])`: gets whether the specific gamepad button is pressed
 	* `button`: the button index
 	* `index`: the gamepad index, starts from 1
 	* returns `true` for pressed, otherwise `false`
-* `btnp(button, index)`: gets whether the specific gamepad button is released from pressing
+* `btnp(button[, index])`: gets whether the specific gamepad button is released from pressing
 	* `button`: the button index
 	* `index`: the gamepad index, starts from 1
 	* returns `true` for released, otherwise `false`
@@ -1542,9 +1567,9 @@ For the `button` parameter, 0, 1, 2, 3, 4, 5 are for Left, Right, Up, Down, A, B
 
 **Functions**
 
-* `mouse(index)`: gets the current mouse states
+* `mouse([index])`: gets the current mouse states
 	* `index`: always 1 for the mouse, or the finger index on touch screens, starts from 1
-	* returns `x`, `y`, `b1`, `b2`, `b3` for the mouse position and the LMB, RMB, MMB respectively
+	* returns `x`, `y`, `b1`, `b2`, `b3` for the mouse position and the LMB, RMB, MMB respectively, `x` and `y` could be NaN if the mouse is outside the canvas
 
 ### Camera
 
@@ -1684,10 +1709,6 @@ Click "Project", "Export..." to select and export some assets to a "*.bit" archi
 
 ## Building for Desktop
 
-Click "Project", "Build", "Windows" to make an executable for Windows with the current opened project.
-
-Click "Project", "Build", "MacOS" to make an executable for MacOS with the current opened project.
-
-Click "Project", "Build", "Linux" to make an executable for Linux with the current opened project.
+Click "Project", "Build", then "Windows"/"MacOS"/"Linux" to make an executable for Windows/MacOS/Linux respectively with the current opened project.
 
 [TOP](#reference-manual)
