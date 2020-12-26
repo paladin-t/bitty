@@ -1278,16 +1278,20 @@ Can be loaded by `Resources.load(...)`.
 
 **Constructors**
 
-* `Font.new(entry, size = 14, permeation = 1)`: constructs a font object from the specific (TrueType or Bitmap) font asset with the specific size and permeation
+* `Font.new(entry, size = 14 | Vec2.new(8, 8), permeation = 1)`: constructs a font object from the specific (TrueType or Bitmap) font asset with the specific size and permeation
 	* `entry`: the entry name to load
-	* `size`: can be either a number for both dimensions, or a `Vec2`
+	* `size`: can be either a number for TrueType, or a `Vec2` for Bitmap
 	* `permeation`: indicates how to blur glyph edges with the alpha channel, with range of values from 0 to 255
-* `Font.new(img, size = 14, permeation = 1)`: constructs a font object from the specific (Bitmap) `Image` with the specific size and permeation
+* `Font.new(path, size = 14 | Vec2.new(8, 8), permeation = 1)`: constructs a font object from the specific (TrueType or Bitmap) font file with the specific size and permeation
+	* `path`: the file path to load
+	* `size`: can be either a number for TrueType, or a `Vec2` for Bitmap
+	* `permeation`: indicates how to blur glyph edges with the alpha channel, with range of values from 0 to 255
+* `Font.new(img, size = Vec2.new(8, 8), permeation = 1)`: constructs a font object from the specific (Bitmap) `Image` with the specific size and permeation
 	* `img`: the `Image` to load
-	* `size`: can be either a number for both dimensions, or a `Vec2`
+	* `size`: the size as `Vec2` for a character
 	* `permeation`: indicates how to blur glyph edges with the alpha channel, with range of values from 0 to 255
-* `Font.new(nil, size = 14, permeation = 1)`: constructs a font object the default font with the specific size and permeation
-	* `size`: can be either a number for both dimensions, or a `Vec2`
+* `Font.new(nil, size = 14, permeation = 1)`: constructs a font object from the default font with the specific size and permeation
+	* `size`: the size as number
 	* `permeation`: indicates how to blur glyph edges with the alpha channel, with range of values from 0 to 255
 
 ### Texture Asset
