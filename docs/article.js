@@ -33,6 +33,8 @@
   }
 
   function read (url, ref, nodes) {
+    var hash = window.location.hash;
+
     return article(url)
       .then(function (markdown) {
         markdown = nodes.parse(markdown);
@@ -44,6 +46,8 @@
             attach(nodes.content, html);
 
             nodes.highlight();
+
+            window.location.hash = hash;
           });
       })
       .catch(function (_) {
