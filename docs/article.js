@@ -47,7 +47,8 @@
 
             nodes.highlight();
 
-            window.location.hash = hash;
+            if (hash && hash.length > 0)
+              window.location.hash = hash;
           });
       })
       .catch(function (_) {
