@@ -80,6 +80,7 @@
 	* [Export](#export)
 * [Building](#building)
 	* [Building for Desktop](#building-for-desktop)
+	* [Building for HTML](#building-for-html)
 
 [TOP](#reference-manual)
 
@@ -1714,5 +1715,11 @@ Click "Project", "Export..." to select and export some assets to a "*.bit" archi
 ## Building for Desktop
 
 Click "Project", "Build", then "Windows"/"MacOS"/"Linux" to make an executable for Windows/MacOS/Linux respectively with the current opened project.
+
+## Building for HTML
+
+Click "Project", "Build", then "HTML" to make an executable for browser with the current opened project. It requires a WebAssembly capable browser.
+
+You can upload it to cloud or host it on your own server for others to play.
 
 [TOP](#reference-manual)

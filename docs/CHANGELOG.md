@@ -1,3 +1,15 @@
+### v0.9.2 beta Dec. 31, 2020
+
+Added HTML builder. Enhanced modules, fixed some bugs.
+
+* Added binary builders for HTML (WebAssembly)
+* Added support to load `Font` object from file directly
+* Fixed a UTF-8 rendering issue of the `text(...)` function
+* Fixed a resolving issue of the `fetch(...)` function
+* Fixed a popup representation issue with built binary
+* Fixed a crash bug with JSON editor (Linux)
+* Fixed a crash bug of the `input(...)` function
+
 ### v0.9.1 beta Dec. 25, 2020
 
 Enhanced modules, improved high-DPI awareness on MacOS, fixed some bugs.
@@ -23,8 +35,8 @@ Added MacOS and Linux versions. Enhanced modules, improved usability, fixed some
 * Added `Promise.Pending`, `Promise.Resolved`, `Promise.Rejected` constant
 * Added `promise.state`, `promise.value` fields
 * Fixed an interaction blocking issue with minor buttons
-* Fixed a text encoding bug with the `Platform.surf(...)`, `Platform.browse(...)` methods
-* Fixed a browsing bug with the frame recorder
+* Fixed a text encoding bug of the `Platform.surf(...)`, `Platform.browse(...)` methods
+* Fixed a browsing bug of the frame recorder
 * Fixed a calculation bug of `vec3:dot(vec3_)`
 * Improved responsiveness for project saving
 * Upgraded Lua from v5.4.1 to v5.4.2
@@ -56,9 +68,9 @@ Improved usability, fixed some bugs, and finished the manual.
 * Added tooltips for some unobvious operations
 * Added detailed font customization by config
 * Changed the `bytes:readBytes(...)`, `file:readBytes(...)` methods, the results' cursor will be at the end
-* Fixed a variable value inspecting bug with the debugger
+* Fixed a variable value inspecting bug of the debugger
 * Fixed a bug of the `fileInfo:empty()` method
-* Fixed a `Bytes` filling bug with the `Network` module
+* Fixed a `Bytes` filling bug of the `Network` module
 * Fixed an unexpected key event bug eg. with LAlt+A
 * Fixed some minor bugs in the examples
 * Improved the behaviour when open project with pending changes
