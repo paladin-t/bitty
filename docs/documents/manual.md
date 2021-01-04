@@ -19,6 +19,7 @@
 * [Programming](#programming)
 	* [Lua](#lua)
 		* [Syntax](#syntax)
+		* [Memory management](#memory-management)
 		* [Standard Libraries](#standard-libraries)
 	* [Program Structure](#program-structure)
 	* [Libraries](#libraries)
@@ -145,6 +146,10 @@ Lua is widely used and validated in the software industry, there are a lot of le
 Lua is 1-based for list accessing, Bitty Engine follows the same convention for sequenced structures, like `Bytes`, `File`, etc. Otherwise it is 0-based for coordinates, like `Pathfinder`, `Image`, `Map`, `Palette`, etc.
 
 This document uses a meta method form to describe operators. Eg. `foo:__len()` denotes `#foo`, `foo:__add(bar)` denotes `foo + bar`, `foo:__unm()` denotes `-foo`, etc.
+
+### Memory management
+
+Lua uses GC to free unused memory automatically, thus you don't have to do that manually most of the time. However resources loaded by `Resources.load(...)` are not, consider unload them properly. See [Resources](#resources) for details.
 
 ### Standard Libraries
 
@@ -1265,7 +1270,7 @@ foo = Resources.load('bar.mp3', Music) -- Load a music.
 
 The asynchronous `Resources.load(...)` returns a resource handle immediately. It is lazy evaluated, actual loading is deferred until specific reading and writing access. The synchronous `Resources.wait(...)` also loads it, it returns immediately if the specific resource is already loaded, otherwise it waits until loaded or timeout.
 
-Consider use `Resources.unload(...)` or `Resources.collect()` to unload unused resources, or there would be memory leak.
+Consider use `Resources.unload(...)` or `Resources.collect()` to unload unused resources (loaded by `Resources.load(...)`), or there would be memory leak.
 
 ### Asset
 
@@ -1294,6 +1299,8 @@ Can be loaded by `Resources.load(...)`.
 * `Font.new(nil, size = 14, permeation = 1)`: constructs a font object from the default font with the specific size and permeation
 	* `size`: the size as number
 	* `permeation`: indicates how to blur glyph edges with the alpha channel, with range of values from 0 to 255
+
+`Font` is managed by GC, do not need to unload it manually.
 
 ### Texture Asset
 
