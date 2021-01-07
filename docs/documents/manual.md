@@ -694,7 +694,7 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 	* `path`: the file path
 	* returns `true` for success, otherwise `false`
 * `Path.touchDirectory(path)`: tries to create a directory at the specific path, will touch its ancestors
-	* * `path`: the directory path
+	* `path`: the directory path
 	* returns `true` for success, otherwise `false`
 
 **Static Variables**
@@ -1198,15 +1198,23 @@ fetch('https://github.com', {
 	* `entry`: the entry name to load
 	* `hint`: the type hint
 	* returns loaded resource, or `nil`
-* `Resources.load(str[, hint])`: loads a resource from the specific asset string
-	* `str`: the asset string to load
+* `Resources.load(path[, hint])`: loads a resource from the specific file path
+	* `path`: the file path to load
+	* `hint`: the type hint
+	* returns loaded resource, or `nil`
+* `Resources.load(bytes[, hint])`: loads a resource from the specific `Bytes`; available for `Texture`, `Sfx`, `Music`
+	* `bytes`: the `Bytes` to load, its cursor won't be moved
+	* `hint`: the type hint
+	* returns loaded resource, or `nil`
+* `Resources.load(str[, hint])`: loads a resource from the specific asset content as string
+	* `str`: the asset content as string to load
 	* `hint`: the type hint
 	* returns loaded resource, or `nil`
 * `Resources.load(json[, hint])`: loads a resource from the specific `Json` object
 	* `json`: the `Json` to load
 	* `hint`: the type hint
 	* returns loaded resource, or `nil`
-* `Resources.load(tbl[, hint])`: loads a resource from the specific Lua table
+* `Resources.load(tbl[, hint])`: loads a resource from the specific Lua table; similar to the `Json` version, but in table form
 	* `tbl`: the Lua table to load
 	* `hint`: the type hint
 	* returns loaded resource, or `nil`
@@ -1214,14 +1222,14 @@ fetch('https://github.com', {
 	* `img`: the `Image` to load
 	* `hint`: the type hint
 	* returns loaded resource, or `nil`
-* `Resources.wait(res)`: waits for the resource is ready to use for a short period
+* `Resources.wait(res)`: waits until the resource is loaded or timeout
 	* `res`: the resource to wait for
-	* returns `true` for ready, otherwise `false`
+	* returns `true` for ready to use, otherwise `false`
 * `Resources.unload(res)`: unloads a resource
 	* `res`: the resource to unload
 * `Resources.collect()`: collects all unused resources
 
-The `hint` can be one in `Palette`, `Texture`, `Sprite`, `Map`, `Sfx`, `Music`. Bitty Engine can infer most of the asset types. However it is necessary if the content is insufficient to tell, or when load an audio asset as either `Sfx` or `Music`.
+The `hint` can be one in `Palette`, `Texture`, `Sprite`, `Map`, `Sfx`, `Music`. Bitty Engine can infer most of the asset types. However this hint is necessary if the content is insufficient to tell a type, or when load an audio asset as either `Sfx` or `Music`.
 
 For example:
 
@@ -1268,7 +1276,7 @@ foo = Resources.load('bar.mp3', Sfx) -- Load an SFX.
 foo = Resources.load('bar.mp3', Music) -- Load a music.
 ```
 
-The asynchronous `Resources.load(...)` returns a resource handle immediately. It is lazy evaluated, actual loading is deferred until specific reading and writing access. The synchronous `Resources.wait(...)` also loads it, it returns immediately if the specific resource is already loaded, otherwise it waits until loaded or timeout.
+The asynchronous `Resources.load(...)` returns a resource handle immediately. It is lazy evaluated, loading is deferred until specific reading and writing access happens. The synchronous `Resources.wait(...)` also loads it, it returns immediately if the specific resource is already loaded, otherwise it waits until loaded or timeout.
 
 Consider use `Resources.unload(...)` or `Resources.collect()` to unload unused resources (loaded by `Resources.load(...)`), or there would be memory leak.
 
