@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Bitty Engine is an itty bitty game engine, with built-in editors, programmable in Lua.">
   <meta name="twitter:card" content="Bitty Engine is an itty bitty game engine, with built-in editors, programmable in Lua.">
-  <meta name="og:title" property="og:title" content="Manual | Bitty Engine">
+  <meta name="og:title" property="og:title" content="Keycodes | Bitty Engine">
   <meta name="og:description" property="og:description" content="Bitty Engine is an itty bitty game engine, with built-in editors, programmable in Lua.">
-  <title>Manual | Bitty Engine</title>
+  <title>Keycodes | Bitty Engine</title>
   <link rel="shortcut icon" href="favicon.ico" />
   <link rel="apple-touch-icon" href="icon.png" />
   <link rel="stylesheet" type="text/css" href="style.css">
@@ -36,9 +36,9 @@
 
       <p align="left">
         [
-          <a href="manual.html"><b>Manual</b></a> |
+          <a href="manual.html">Manual</a> |
           <a href="operations.html">Operations</a> |
-          <a href="keycodes.html">Keycodes</a>
+          <a href="keycodes.html"><b>Keycodes</b></a>
         ]
       </p>
 
@@ -63,17 +63,14 @@
   <script src="prism-lua.js"></script>
   <script type="text/javascript">
     (function () {
-      var url = 'documents/manual.md';
-      var ref = 'documents/manual';
+      var url = 'keycodes.md';
+      var ref = 'keycodes';
 
       try {
         Article.read(url, ref, {
           content: 'article-content',
           parse: function (markdown) {
-            return markdown
-              .replaceAll('![](imgs/logo.png)', '')
-              .replace('[**Manual**](https://paladin-t.github.io/bitty/manual.html) | [Operations](operations)', '')
-              .replaceAll('![](imgs/', '![](documents/imgs/');
+            return markdown;
           },
           preprocess: function (html) {
             return html
