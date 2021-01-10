@@ -1,3 +1,22 @@
+### v0.9.3 beta Jan. 10, 2021
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added a `Noiser` module
+* Added support to load texture and audio from `Bytes`
+* Added project strategy for map batch preference
+* Added a `project:strategies()` method to get effective strategies
+* Added error prompt for HTML build
+* Added a "Libraries/Algorithms/Noiser" example
+* Added a "Recipes/Tween" example
+* Fixed a crash bug of the `Path`, `FileInfo`, `DirectoryInfo` modules when path is too long (Windows)
+* Fixed a freeze bug of the `exit()` function
+* Fixed a non-working bug of the `stop(sfx)` function
+* Fixed a tab bar rendering issue of the editors
+* Improved stability if ran into memory problem
+* Improved completeness checking when `close()` objects
+* Improved code editing and highlighting
+
 ### v0.9.2 beta Dec. 31, 2020
 
 Added HTML builder. Enhanced modules, fixed some bugs.

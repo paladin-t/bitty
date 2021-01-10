@@ -24,6 +24,7 @@
 	* [Program Structure](#program-structure)
 	* [Libraries](#libraries)
 		* [Algorithms](#algorithms)
+			* [Noiser](#noiser)
 			* [Pathfinder](#pathfinder)
 			* [Randomizer](#randomizer)
 			* [Raycaster](#raycaster)
@@ -143,7 +144,7 @@ Bitty project is programmable in the [Lua](https://www.lua.org/) programming lan
 
 Lua is widely used and validated in the software industry, there are a lot of learning materials about the language on the internet. Click to see on the [Wikipedia](https://en.wikipedia.org/wiki/Lua_(programming_language)) or read the [official documentations](https://www.lua.org/docs.html).
 
-Lua is 1-based for list accessing, Bitty Engine follows the same convention for sequenced structures, like `Bytes`, `File`, etc. Otherwise it is 0-based for coordinates, like `Pathfinder`, `Image`, `Map`, `Palette`, etc.
+Lua is 1-based for list accessing, Bitty Engine follows the same convention for sequenced structures, like `Bytes`, `File`, etc. Otherwise it is 0-based for coordinates and graphical units, like `Noiser`, `Pathfinder`, `Image`, `Sprite`, `Palette`, `Map`, etc.
 
 This document uses a meta method form to describe operators. Eg. `foo:__len()` denotes `#foo`, `foo:__add(bar)` denotes `foo + bar`, `foo:__unm()` denotes `-foo`, etc.
 
@@ -203,13 +204,55 @@ function focusGained()
 end
 ```
 
-Generally `setup` is used to initial game variables, states, `update` is where gameplay logic goes, and `quit` is for persisting necessary data on disk. All these five entries are optional.
+Generally `setup` is used to initial game variables, states, `update` is where gameplay logic and rendering goes, and `quit` is for persisting necessary data on disk. All these five entries are optional.
 
 Bitty Engine uses a timeout mechanism to avoid unexpected infinite loops, it raises an error when any invoking to the entries takes more than 10 seconds by default. The timeout value can be changed by [Debug.setTimeout(...)](#debug).
 
 ## Libraries
 
 ### Algorithms
+
+#### Noiser
+
+This module generates 2D or 3D noise values.
+
+**Constructors**
+
+* `Noiser.new()`: constructs a noiser object with
+
+**Methods**
+
+* `noiser:setOption(key, val)`: sets the options value of the specific key
+	* `key`: the option key to set
+	* `val`: the value to set
+
+Available options:
+
+| Key | Value | Note |
+|---|---|---|
+| "frequency" | Real number | Defaults to 0.01 |
+| "noise_type" | Can be one in "open_simplex2", "open_simplex2s", "cellular", "perlin", "value_cubic", "value" | Defaults to "open_simplex2" |
+| "rotation_type_3d" | Can be one in "none", "improve_xy_planes", "improve_xz_planes" | Defaults to "none" |
+| "fractal_type" | Can be one in "none", "fbm", "ridged", "pingpong", "domain_warp_progressive", "domain_warp_independent" | Defaults to "none" |
+| "fractal_octaves" | Integer | Defaults to 3 |
+| "fractal_lacunarity" | Real number | Defaults to 2.0 |
+| "fractal_gain" | Real number | Defaults to 0.5 |
+| "fractal_weighted_strength" | Real number | Defaults to 0.0 |
+| "fractal_pingpong_strength" | Real number | Defaults to 2.0 |
+| "cellular_distance_function" | Can be one in "euclidean", "euclidean_sq", "manhattan", "hybrid" | Defaults to "euclidean_sq" |
+| "cellular_return_type" | Can be one in "cell_value", "distance", "distance2", "distance2_add", "distance2_sub", "distance2_mul", "distance2_div" | Defaults to "distance" |
+| "cellular_jitter" | Real number | Defaults to 1.0 |
+| "domain_warp_type" | Can be one in "open_simplex2", "open_simplex2_reduced", "basic_grid" | Defaults to "open_simplex2" |
+| "domain_warp_amplitude" | Real number | Defaults to 1.0 |
+
+* `noiser:seed(seed)`: seeds the noiser for all noise types
+	* `seed`: the seed integer
+* `noiser:get(pos)`: gets the value at the specific position
+	* `pos`: the position to get, either `Vec2` or `Vec3`
+	* returns noise value, with range of values from -1.0 to 1.0
+* `noiser:domainWarp(pos)`: applies domain warping at the specific position
+	* `pos`: the position to warp, either `Vec2` or `Vec3`
+	* returns warped position
 
 #### Pathfinder
 
@@ -267,7 +310,7 @@ Pathfinder retrieves grid cost from either an evaluator or prefilled matrix. All
 
 #### Randomizer
 
-This module provide a random algorithm organized by object, other than the built-in random function in Lua..
+This module provide a random algorithm organized by object, other than the built-in random function in Lua.
 
 **Constructors**
 
@@ -1229,7 +1272,7 @@ fetch('https://github.com', {
 	* `res`: the resource to unload
 * `Resources.collect()`: collects all unused resources
 
-The `hint` can be one in `Palette`, `Texture`, `Sprite`, `Map`, `Sfx`, `Music`. Bitty Engine can infer most of the asset types. However this hint is necessary if the content is insufficient to tell a type, or when load an audio asset as either `Sfx` or `Music`.
+The `hint` can be one in `Palette`, `Texture`, `Sprite`, `Map`, `Sfx`, `Music`. Bitty Engine can infer asset types from extension or content most of the time. However hint is necessary if there is yet insufficient information to tell a type, or to distinguish as either `Sfx` or `Music` when loading an audio asset.
 
 For example:
 
@@ -1278,7 +1321,12 @@ foo = Resources.load('bar.mp3', Music) -- Load a music.
 
 The asynchronous `Resources.load(...)` returns a resource handle immediately. It is lazy evaluated, loading is deferred until specific reading and writing access happens. The synchronous `Resources.wait(...)` also loads it, it returns immediately if the specific resource is already loaded, otherwise it waits until loaded or timeout.
 
-Consider use `Resources.unload(...)` or `Resources.collect()` to unload unused resources (loaded by `Resources.load(...)`), or there would be memory leak.
+Consider use `Resources.unload(...)` or `Resources.collect()` to unload unused resources (loaded by `Resources.load(...)`) periodically and properly, or there would be memory leak. One possible practice is to call Lua's GC then collect resources after loading a new level, and the old one is no longer in use:
+
+```lua
+collectgarbage()
+Resources.collect()
+```
 
 ### Asset
 
@@ -1536,7 +1584,7 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 	* `sfx`: the `Sfx` resource
 	* `loop`: `true` for loop, otherwise plays once
 	* `fade`: the fade in time in seconds
-	* `channel`: the specific channel to play this sound; omit to pick automatically
+	* `channel`: the specific channel to play this sound, starts from 1; omit to pick automatically
 * `stop(sfx[, fade])`: stops the specific `Sfx` resource
 	* `sfx`: the `Sfx` resource
 	* `fade`: the fade out time in seconds
@@ -1582,6 +1630,8 @@ For the `button` parameter, 0, 1, 2, 3, 4, 5 are for Left, Right, Up, Down, A, B
 * `keyp(code)`: gets whether the specific key is released from pressing
 	* `code`: the key code on keyboard
 	* returns `true` for released, otherwise `false`
+
+See [keycodes](https://paladin-t.github.io/bitty/keycodes.html) for more.
 
 ### Mouse
 
@@ -1679,6 +1729,23 @@ For the `button` parameter, 0, 1, 2, 3, 4, 5 are for Left, Right, Up, Down, A, B
 
 ### Project
 
+Project accepts strategies, add a "strategies" field in "info.json" to enable specific options, eg.
+
+```json
+{
+  ...
+  "strategies": [
+    "batch_map"
+  ]
+}
+```
+
+Currently there is only one available strategy, change and try if it's needed:
+
+| Strategy | Description | Note |
+|---|---|---|
+| "batch_map" | Hints to batch map for better rendering performance, but could be slow with `mset(...)` | Always on for HTML build |
+
 **Static Variables**
 
 * `Project.main`: readonly, gets the main `Project`
@@ -1692,6 +1759,8 @@ For the `button` parameter, 0, 1, 2, 3, 4, 5 are for Left, Right, Up, Down, A, B
 * `project:read(name)`: reads the content of the specific asset
 	* `name`: the asset name to read
 	* returns asset content as `Bytes` and its cursor will be at the end, or `nil`
+* `project:strategies()`: gets all effective strategies
+	* returns a strategy list, in a list of string, could be empty or `nil`
 
 ### Debug
 
