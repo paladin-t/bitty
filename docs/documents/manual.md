@@ -19,7 +19,7 @@
 * [Programming](#programming)
 	* [Lua](#lua)
 		* [Syntax](#syntax)
-		* [Memory management](#memory-management)
+		* [Memory Management](#memory-management)
 		* [Standard Libraries](#standard-libraries)
 	* [Program Structure](#program-structure)
 	* [Libraries](#libraries)
@@ -41,6 +41,8 @@
 		* [Image](#image)
 		* [JSON](#json)
 		* [Math](#math)
+			* [Structures](#structures)
+			* [Intersection Detection](#intersection-detection)
 		* [Network](#network)
 		* [Platform](#platform)
 		* [Promise](#promise)
@@ -101,6 +103,8 @@
 * Gamepad: 6 buttons for each pad (D-Pad + A/B), up to 2 players
 * Keyboard and mouse: supported
 
+[TOP](#reference-manual)
+
 ## Project Structure
 
 A new created project consists of a meta info asset ("info.json") and an entry source ("main.lua"). The meta info indicates basic information of the project in JSON. The entry is where the project starts to execute. You can add supported existing file or create new blank assets into a project. All text-based assets use Unix LF ('\n') for line ending.
@@ -117,11 +121,17 @@ A text-based project archive is a plain text file with the "*.bit" extension, wi
 
 A binary-based project archive is just a compressed ZIP package replaced with the "*.bit" extension.
 
+[TOP](#reference-manual)
+
 ## Backup
 
 Bitty Engine makes backup once you save an asset or a project, click "Project", "Browse Data Directory..." to locate it.
 
+[TOP](#reference-manual)
+
 ## Capturing
+
+There are shortcuts to capture canvas during running.
 
 ### Screenshot
 
@@ -148,7 +158,7 @@ Lua is 1-based for list accessing, Bitty Engine follows the same convention for 
 
 This document uses a meta method form to describe operators. Eg. `foo:__len()` denotes `#foo`, `foo:__add(bar)` denotes `foo + bar`, `foo:__unm()` denotes `-foo`, etc.
 
-### Memory management
+### Memory Management
 
 Lua uses GC to free unused memory automatically, thus you don't have to do that manually most of the time. However resources loaded by `Resources.load(...)` are not, consider unload them properly. See [Resources](#resources) for details.
 
@@ -174,6 +184,8 @@ Bitty Engine offers some handy built-in functions, some are reserved from the or
 	* returns inputted string, or `nil` for canceled
 
 * `exit()`: exits the current execution
+
+[TOP](#reference-manual)
 
 ## Program Structure
 
@@ -207,6 +219,8 @@ end
 Generally `setup` is used to initial game variables, states, `update` is where gameplay logic and rendering goes, and `quit` is for persisting necessary data on disk. All these five entries are optional.
 
 Bitty Engine uses a timeout mechanism to avoid unexpected infinite loops, it raises an error when any invoking to the entries takes more than 10 seconds by default. The timeout value can be changed by [Debug.setTimeout(...)](#debug).
+
+[TOP](#reference-manual)
 
 ## Libraries
 
@@ -889,6 +903,8 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 
 ### Math
 
+#### Structures
+
 **Static Functions**
 
 * `Rect.byXYWH(x, y, w, h)`: constructs a rectangle object in real numbers by position and size
@@ -1016,6 +1032,22 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 * `recti:xMax()`: gets the maximum y component
 * `recti:width()`: gets the width, equals to `rect:xMax() - rect:xMin() + 1`
 * `recti:height()`: gets the height, equals to `rect:yMax() - rect:yMin() + 1`
+
+#### Intersection Detection
+
+**Static Functions**
+
+* `Math.intersects(shapeA, shapeB)`: detects whether two shapes intersects with each other
+	* `shapeA`: the first shape
+	* `shapeB`: the second shape
+	* returns `true` for intersects, otherwise `false`
+
+Both shape parameters can be:
+
+* Point: `Vec2`
+* Line (segment): `Vec4`, `x`, `y` for first point, `z`, `w` for second
+* Circle: `Vec3`, `x`, `y` for center, `z` for radius
+* AABB: `Rect`; `Recti` is supported as well, but converted to `Rect` internally to determine against other shapes except for another `Recti`
 
 ### Network
 
@@ -1223,13 +1255,15 @@ fetch('https://github.com', {
   :thus(function (rsp)
     print(rsp)
   end)
-  :catch(function ()
+  :catch(function (err)
     print('Error.')
   end)
   :finally(function ()
     print('Finished.')
   end)
 ```
+
+[TOP](#reference-manual)
 
 ## Assets and Resources
 
@@ -1321,7 +1355,7 @@ foo = Resources.load('bar.mp3', Music) -- Load a music.
 
 The asynchronous `Resources.load(...)` returns a resource handle immediately. It is lazy evaluated, loading is deferred until specific reading and writing access happens. The synchronous `Resources.wait(...)` also loads it, it returns immediately if the specific resource is already loaded, otherwise it waits until loaded or timeout.
 
-Consider use `Resources.unload(...)` or `Resources.collect()` to unload unused resources (loaded by `Resources.load(...)`) periodically and properly, or there would be memory leak. One possible practice is to call Lua's GC then collect resources after loading a new level, and the old one is no longer in use:
+Consider use `Resources.unload(...)` or `Resources.collect()` to unload unused resources (loaded by `Resources.load(...)`) periodically and properly, or there would be memory leak. One possible practice is to call Lua's GC then collect resources after loading a new level, since the old one is no longer in use:
 
 ```lua
 collectgarbage()
@@ -1330,7 +1364,7 @@ Resources.collect()
 
 ### Asset
 
-Can be loaded by `Resources.load(...)`, only when Bitty Engine cannot determine specific sub asset type.
+Can be loaded by `Resources.load(...)`, only happens when Bitty Engine cannot determine specific sub asset type.
 
 ### Palette Asset
 
@@ -1356,7 +1390,7 @@ Can be loaded by `Resources.load(...)`.
 	* `size`: the size as number
 	* `permeation`: indicates how to blur glyph edges with the alpha channel, with range of values from 0 to 255
 
-`Font` is managed by GC, do not need to unload it manually.
+`Font` is constructed like regular object and managed by GC, do not need to unload it manually.
 
 ### Texture Asset
 
@@ -1423,6 +1457,8 @@ Can be loaded by `Resources.load(...)`.
 
 Can be loaded by `Resources.load(...)`.
 
+[TOP](#reference-manual)
+
 ## Primitives
 
 The coordinate definition in Bitty Engine is:
@@ -1440,7 +1476,7 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 * `color(col)`: sets the active `Color` with a specific value
 	* `col`: the `Color` to set
 * `color()`: resets the active `Color` to white
-* `sync()`: synchronizes commands to graphics manually, also updates `Network` and `Web` pipelines
+* `sync()`: synchronizes commands to graphics manually, also updates `Network` and `Web` links
 	* returns synchronized command count
 
 ### Shapes
@@ -1572,8 +1608,11 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 
 **Functions**
 
-* `volume(sfxVol, musicVol)`: sets the audio volume
-	* `sfxVol`: with range of values from 0.0 to 1.0
+* `volume(sfxVol[, musicVol])`: sets the audio volume
+	* `sfxVol`: volume for all SFX channels, with range of values from 0.0 to 1.0
+	* `musicVol`: with range of values from 0.0 to 1.0
+* `volume({ sfxVol1, sfxVol2, sfxVol3, sfxVol4 }[, musicVol])`: sets the audio volume
+	* `{ sfxVol1, sfxVol2, sfxVol3, sfxVol4 }`: volume for SFX channels respectively, with range of values from 0.0 to 1.0 at each, -1 to leave as is
 	* `musicVol`: with range of values from 0.0 to 1.0
 
 #### SFX
@@ -1584,7 +1623,7 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 	* `sfx`: the `Sfx` resource
 	* `loop`: `true` for loop, otherwise plays once
 	* `fade`: the fade in time in seconds
-	* `channel`: the specific channel to play this sound, starts from 1; omit to pick automatically
+	* `channel`: the specific channel to play this sound, starts from 1; omit to pick an available automatically
 * `stop(sfx[, fade])`: stops the specific `Sfx` resource
 	* `sfx`: the `Sfx` resource
 	* `fade`: the fade out time in seconds
@@ -1669,7 +1708,16 @@ See [keycodes](https://paladin-t.github.io/bitty/keycodes.html) for more.
 	* `mode`: the blend mode to set; refer to the blend modes of `Canvas`
 * `blend()`: resets the blend state to alpha blend
 
+[TOP](#reference-manual)
+
 ## Application
+
+**Static Functions**
+
+* `Application.setCursor(img[, x, y])`: sets the mouse cursor
+	* `img`: the specific `Image` to set, `nil` to reset
+	* `x`: the spot x, with range of values from 0.0 to 1.0
+	* `y`: the spot y, with range of values from 0.0 to 1.0
 
 ### Canvas
 
@@ -1744,7 +1792,7 @@ Currently there is only one available strategy, change and try if it's needed:
 
 | Strategy | Description | Note |
 |---|---|---|
-| "batch_map" | Hints to batch map for better rendering performance, but could be slow with `mset(...)` | Always on for HTML build |
+| "batch_map" | Hints to batch map for better rendering performance, but requires more memory and could be slow with `mset(...)` | Always on for HTML build |
 
 **Static Variables**
 
@@ -1786,11 +1834,13 @@ Currently there is only one available strategy, change and try if it's needed:
 
 ## Import
 
-Click "Project", "Import..." to browse and import some assets from a "*.bit" archive. This operation doesn't overwrite conflictions.
+Click "Project", "Import..." to browse and import some assets from a "*.bit", "*.txt", "*.zip" archive. This operation doesn't overwrite conflictions in your editing project.
+
+[TOP](#reference-manual)
 
 ## Export
 
-Click "Project", "Export..." to select and export some assets to a "*.bit" archive.
+Click "Project", "Export..." to select and export some assets to a "*.bit", "*.txt", "*.zip" archive.
 
 [TOP](#reference-manual)
 
@@ -1799,6 +1849,8 @@ Click "Project", "Export..." to select and export some assets to a "*.bit" archi
 ## Building for Desktop
 
 Click "Project", "Build", then "Windows"/"MacOS"/"Linux" to make an executable for Windows/MacOS/Linux respectively with the current opened project.
+
+[TOP](#reference-manual)
 
 ## Building for HTML
 
