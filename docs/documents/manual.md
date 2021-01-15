@@ -98,7 +98,7 @@
 * Code: Lua, supports multiple source files
 * Sprite: up to 1024x1024 pixels per frame, up to 1024 frames per sprite
 * Map: up to 4096x4096 tiles per page
-* Image: either true-colored (PNG, JPG, BMP, TGA) or paletted, up to 1024x1024 pixels per file
+* Image: either true-color (PNG, JPG, BMP, TGA) or paletted, up to 1024x1024 pixels per file
 * Palette: 256 colors with transparency support
 * Gamepad: 6 buttons for each pad (D-Pad + A/B), up to 2 players
 * Keyboard and mouse: supported
@@ -842,11 +842,11 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 
 * `Image.new(palette)`: constructs an image object with the specific `Palette` asset
 	* `palette`: the `Palette`
-* `Image.new()`: constructs a true-colored image object
+* `Image.new()`: constructs a true-color image object
 
 **Object Fields**
 
-* `image.channels`: readonly, gets the channels of the `Image`, 1 for paletted, 4 for true-colored
+* `image.channels`: readonly, gets the channels of the `Image`, 1 for paletted, 4 for true-color
 * `image.width`: readonly, gets the width of the `Image`
 * `image.height`: readonly, gets the height of the `Image`
 
@@ -871,7 +871,7 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 * `image:fromBlank(width, height, paletted = 0)`: loads blank content
 	* `width`: the specific width
 	* `height`: the specific height
-	* `paletted`: 0 for true-colored, non-zero for paletted
+	* `paletted`: 0 for true-color, non-zero for paletted
 	* returns `true` for success, otherwise `false`
 * `image:toBytes(bytes, type = "png")`: encodes the `Image` to `Bytes`
 	* `bytes`: the `Bytes` to receive, its cursor will be at the end
@@ -1714,7 +1714,7 @@ See [keycodes](https://paladin-t.github.io/bitty/keycodes.html) for more.
 
 **Static Functions**
 
-* `Application.setCursor(img[, x, y])`: sets the mouse cursor
+* `Application.setCursor(img[, x, y])`: sets the mouse cursor, doesn't work for HTML build
 	* `img`: the specific `Image` to set, `nil` to reset
 	* `x`: the spot x, with range of values from 0.0 to 1.0
 	* `y`: the spot y, with range of values from 0.0 to 1.0
