@@ -1557,7 +1557,7 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 
 **Functions**
 
-* `tex(res, x, y[, w, h[, sx, sy[, sw, sh, [rotAngle, rotCenter = Vec2.new(0.5, 0.5), hFlip = false, vFlip = false]]]])`: draws the specific `Texture` resource
+* `tex(res, x, y[, w, h[, sx, sy[, sw, sh[, rotAngle, rotCenter = Vec2.new(0.5, 0.5), hFlip = false, vFlip = false]]]])`: draws the specific `Texture` resource
 	* `res`: the `Texture` resource
 	* `x`: the destination x position
 	* `y`: the destination y position
@@ -1646,12 +1646,12 @@ A gamepad is a virtual entity, its buttons are binded to a keyboard or an actual
 
 **Functions**
 
-* `btn(button[, index])`: gets whether the specific gamepad button is pressed
-	* `button`: the button index
+* `btn([button[, index]])`: gets whether the specific gamepad button is pressed
+	* `button`: the button index; omit to get any key
 	* `index`: the gamepad index, starts from 1
 	* returns `true` for pressed, otherwise `false`
-* `btnp(button[, index])`: gets whether the specific gamepad button is released from pressing
-	* `button`: the button index
+* `btnp([button[, index]])`: gets whether the specific gamepad button is released from pressing
+	* `button`: the button index; omit to get any key
 	* `index`: the gamepad index, starts from 1
 	* returns `true` for released, otherwise `false`
 * `rumble(index, lowHz = 100[, hiHz, ms = 100])`: rumbles the specific gamepad, if an actual hardware is binded to any key of the gamepad entity
@@ -1714,7 +1714,7 @@ See [keycodes](https://paladin-t.github.io/bitty/keycodes.html) for more.
 
 **Static Functions**
 
-* `Application.setCursor(img[, x, y])`: sets the mouse cursor, doesn't work for HTML build
+* `Application.setCursor(img[, x, y])`: sets the mouse cursor
 	* `img`: the specific `Image` to set, `nil` to reset
 	* `x`: the spot x, with range of values from 0.0 to 1.0
 	* `y`: the spot y, with range of values from 0.0 to 1.0

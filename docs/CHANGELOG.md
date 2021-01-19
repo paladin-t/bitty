@@ -1,3 +1,28 @@
+### v1.0 Jan. 19, 2021
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added a `Math.intersects(...)` function
+* Added an `Application.setCursor(...)` function to customize mouse cursor
+* Added support to set volume of SFX channels respectively
+* Added support for object inspecting of the debugger
+* Added support for icon customization on startup
+* Added a "Libraries/Math/Intersection Detection" example
+* Added tooltips for asset ref
+* Improved performance of text-based project saving
+* Improved completeness checking when call object methods
+* Improved asset filter
+* Improved the `btn(...)` and `btnp(...)` functions to support getting any button
+* Improved performance when edit big map
+* Fixed an audio volume resetting bug
+* Fixed a sprite animation resetting issue
+* Fixed return value bugs when write to `Bytes`
+* Fixed return value bugs when write to `File`
+* Fixed a readonly issue when open code assets during running
+* Fixed a deadlock issue when break (by breakpoint) during requiring another source
+* Fixed a selection issue after pasting in text-based editors
+* Fixed a table splitting issue in the document viewer
+
 ### v0.9.3 beta Jan. 10, 2021
 
 Enhanced modules, improved usability, fixed some bugs.
