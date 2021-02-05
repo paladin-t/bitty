@@ -1,0 +1,6 @@
+[submodule "lib/sdl"]
+	path = lib/sdl
+	url = https://github.com/paladin-t/sdl.git
+[submodule "lib/sdl_mixer"]
+	path = lib/sdl_mixer
+	url = https://github.com/paladin-t/sdl_mixer.git
