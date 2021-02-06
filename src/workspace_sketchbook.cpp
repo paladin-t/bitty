@@ -610,7 +610,7 @@ void WorkspaceSketchbook::shortcuts(class Window* wnd, class Renderer* rnd, cons
 	}
 	if (tab && io.KeyCtrl && !io.KeyShift)
 		Operations::editSwitchAsset(rnd, this, project);
-	if (w && modifier)
+	if (w && io.KeyCtrl)
 		editingClosing(true);
 
 	// Project operations.
