@@ -1,0 +1,46 @@
+package:application/vnd.bitty-archive;
+data:text/json;count=141;path=info.json;
+{
+  "id": 0,
+  "title": "Basics/05. Debug",
+  "description": "",
+  "author": "Tony",
+  "version": "1.0",
+  "genre": "TUTORIAL",
+  "url": ""
+}
+data:text/lua;count=710;path=main.lua;
+--[[
+Example for the Bitty Engine
+
+Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+
+Homepage: https://paladin-t.github.io/bitty/
+]]
+
+-- You can also click before a line number, or locate to a line and press F9 to
+-- toggle breakpoint.
+
+local function counter(a)
+	local s = a
+	return function (b)
+		s = s + b -- (a)
+		          -- See the debug window on the right side for context details.
+		          -- Click the resume button or press F5 to resume.
+		print(s)
+	end
+end
+
+function setup()
+	Debug.setBreakpoint('main.lua', 15, true) -- Set a breakpoint to line (a).
+
+	local count = counter(42)
+	count(1)
+	count(2)
+	count(3)
+end
+
+function quit()
+	Debug.clearBreakpoints() -- Clear all breakpoints.
+end
+

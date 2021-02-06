@@ -1,0 +1,90 @@
+/*
+** Bitty
+**
+** An itty bitty game engine.
+**
+** Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+**
+** For the latest info, see https://github.com/paladin-t/bitty/
+*/
+
+#include "encoding.h"
+#include "platform.h"
+#include "../lib/imgui_sdl/imgui_sdl.h"
+#include <SDL.h>
+#include <algorithm>
+#include <clocale>
+
+/*
+** {===========================================================================
+** Platform
+*/
+
+bool Platform::ignore(const char* path) {
+	if (!path)
+		return true;
+	if (*path == '\0')
+		return true;
+	if (path[0] == '.' && path[1] == '\0')
+		return true;
+	if (path[0] == '.' && path[1] == '.' && path[2] == '\0')
+		return true;
+
+	return false;
+}
+
+std::string Platform::writableDirectory(void) {
+	const std::string osstr = Unicode::toOs(SDL_GetPrefPath("bitty", "engine"));
+
+	return osstr;
+}
+
+bool Platform::hasClipboardText(void) {
+	return !!SDL_HasClipboardText();
+}
+
+std::string Platform::clipboardText(void) {
+	const std::string txt = SDL_GetClipboardText();
+	const std::string osstr = Unicode::toOs(txt);
+
+	return osstr;
+}
+
+void Platform::clipboardText(const char* txt) {
+	const std::string utfstr = Unicode::fromOs(txt);
+
+	SDL_SetClipboardText(utfstr.c_str());
+}
+
+bool Platform::isLittleEndian(void) {
+	union { uint32_t i; char c[4]; } bint = { 0x04030201 };
+
+	return bint.c[0] == 1;
+}
+
+const char* Platform::locale(const char* loc) {
+	const char* result = setlocale(LC_ALL, loc);
+	fprintf(
+		stdout,
+		"Set generic locale to \"%s\".\n",
+		result ? result : "nil"
+	);
+
+	return result;
+}
+
+void Platform::execute(const char* cmd) {
+	system(cmd);
+}
+
+void Platform::idle(void) {
+	SDL_Event evt;
+	if (SDL_PollEvent(&evt)) {
+		const bool windowResized = evt.type == SDL_WINDOWEVENT && evt.window.event == SDL_WINDOWEVENT_SIZE_CHANGED;
+		const bool targetReset = evt.type == SDL_RENDER_TARGETS_RESET;
+		if (windowResized || targetReset)
+			ImGuiSDL::Reset(); // FIXME: remove this temporary patch.
+	}
+}
+
+/* ===========================================================================} */

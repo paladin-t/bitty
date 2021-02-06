@@ -1,0 +1,210 @@
+package:application/vnd.bitty-archive;
+data:text/json;count=145;path=info.json;
+{
+  "id": 0,
+  "title": "Basics/07. Coroutine",
+  "description": "",
+  "author": "Tony",
+  "version": "1.0",
+  "genre": "TUTORIAL",
+  "url": ""
+}
+data:text/lua;count=617;path=class.lua;
+--[[
+Example for the Bitty Engine
+
+Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+
+Homepage: https://paladin-t.github.io/bitty/
+]]
+
+-- Declares a class.
+function class(kls, base)
+	if not base then
+		base = { }
+	end
+
+	kls.new = function (...)
+		local obj = { }
+		setmetatable(obj, kls)
+		if obj.ctor then
+			obj:ctor(...)
+		end
+
+		return obj
+	end
+
+	kls.__index = kls
+
+	setmetatable(kls, base)
+
+	return kls
+end
+
+-- Determines whether an object is instance of a specific class.
+function is(obj, kls)
+	repeat
+		if obj == kls then
+			return true
+		end
+		obj = getmetatable(obj)
+	until not obj
+
+	return false
+end
+
+data:text/lua;count=1725;path=co.lua;
+--[[
+Example for the Bitty Engine
+
+Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+
+Homepage: https://paladin-t.github.io/bitty/
+]]
+
+require 'class'
+
+-- Coroutine class.
+Coroutine = class({
+	_cos = nil,
+
+	waitFor = function (sec)
+		local start = DateTime.ticks()
+		sec = DateTime.fromSeconds(sec)
+
+		while DateTime.ticks() - start < sec do
+			coroutine.yield()
+		end
+	end,
+
+	ctor = function (self)
+		self._cos = nil
+	end,
+
+	__len = function (self)
+		return #self._cos
+	end,
+
+	count = function (self)
+		return #self._cos
+	end,
+	empty = function (self)
+		return self._cos == nil or #self._cos == 0
+	end,
+	clear = function (self)
+		self._cos = nil
+
+		return self
+	end,
+
+	start = function (self, co, ...)
+		if type(co) == 'function' then
+			co = coroutine.create(co)
+		end
+
+		if type(co) ~= 'thread' then
+			error('Unexpected data: ' .. tostring(co) .. '.')
+		end
+
+		if self._cos == nil then
+			self._cos = { }
+		end
+		table.insert(self._cos, co)
+
+		if coroutine.status(co) ~= 'dead' then
+			local ret, msg = coroutine.resume(co, ...)
+			if not ret then
+				error(msg)
+			end
+		end
+
+		return self
+	end,
+
+	update = function (self, ...)
+		if self._cos == nil or #self._cos == 0 then
+			return false
+		end
+
+		local dead = nil
+		for i = 1, #self._cos do
+			local co = self._cos[i]
+			if coroutine.status(co) ~= 'dead' then
+				local ret, msg = coroutine.resume(co, ...)
+				if not ret then
+					error(msg)
+				end
+			end
+			if coroutine.status(co) == 'dead' then
+				if dead == nil then
+					dead = { }
+				end
+				table.insert(dead, i)
+			end
+			if self._cos == nil then
+				return false
+			end
+		end
+		if dead ~= nil then
+			for i = #dead, 1, -1 do
+				table.remove(self._cos, dead[i])
+			end
+		end
+
+		return true
+	end
+})
+
+data:text/lua;count=1051;path=main.lua;
+--[[
+Example for the Bitty Engine
+
+Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+
+Homepage: https://paladin-t.github.io/bitty/
+]]
+
+require 'co' -- Require the updatable coroutine wrapper.
+
+local co = nil
+local acc = 0
+
+function setup()
+	co = Coroutine.new() -- Create a coroutine object.
+
+	co:start( -- Start the coroutine with a yieldable function.
+		function (n)
+			coroutine.yield(n)
+			acc = n
+
+			while true do -- Loop forever.
+				Coroutine.waitFor(1) -- Wait for 1 second.
+				acc = acc + 1 -- Accumulate it.
+			end
+		end,
+		42 -- Arguments will be passed to the function above.
+	)
+
+	co:start( -- Start the coroutine with another function.
+		function ()
+			for i = 1, 5 do
+				print(i)
+				coroutine.yield(i)
+
+				Coroutine.waitFor(1)
+			end
+
+			print('End.')
+		end
+	)
+end
+
+function update(delta)
+	co:update() -- Update coroutines.
+
+	local canvasWidth, canvasHeight = Canvas.main:size()
+	local textWidth, textHeight = measure(acc)
+	local x, y = (canvasWidth - textWidth) * 0.5, (canvasHeight - textHeight) * 0.5
+	text(acc, x, y)
+end
+

@@ -1,0 +1,9 @@
+/CMakeFiles
+/CMakeCache.txt
+/cmake_install.cmake
+/Makefile
+/bitty
+*.0
+*.1
+*.a
+*.so

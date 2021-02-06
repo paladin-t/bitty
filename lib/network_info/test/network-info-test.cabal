@@ -1,0 +1,24 @@
+name:           network-info-test
+version:        0.1
+build-type:     Simple
+cabal-version:  >= 1.6
+tested-with:    GHC == 8.0.2, GHC == 8.2.2, GHC == 8.4.1
+
+Executable network-info-test
+  hs-source-dirs: ../src src
+  include-dirs: ../cbits
+  cc-options: -Wall -Werror
+
+  main-is: Main.hs
+  other-modules: Network.Info
+
+  build-depends:
+    base == 4.*
+
+  if os(windows)
+    c-sources: ../cbits/network-windows.c
+    extra-libraries: iphlpapi
+  else
+    c-sources: ../cbits/network-unix.c
+  if os(solaris)
+    extra-libraries: socket, nsl

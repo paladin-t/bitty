@@ -1,0 +1,11 @@
+/x64_debug
+/x64_release
+/x86_debug
+/x86_release
+
+/bitty.app
+/bitty.app.dSYM
+/build.action
+/libcurl.framework
+/SDL2.framework
+/SDL2_mixer.framework

@@ -1,0 +1,6 @@
+*.swp
+.ghc.environment.*
+/cbits/*.exe
+/dist/
+/test/dist
+/dist-newstyle

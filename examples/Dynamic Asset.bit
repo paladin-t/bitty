@@ -1,0 +1,92 @@
+package:application/vnd.bitty-archive;
+data:text/json;count=149;path=info.json;
+{
+  "id": 0,
+  "title": "Basics/09. Dynamic Asset",
+  "description": "",
+  "author": "Tony",
+  "version": "1.0",
+  "genre": "TUTORIAL",
+  "url": ""
+}
+data:text/lua;count=1499;path=main.lua;
+--[[
+Example for the Bitty Engine
+
+Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+
+Homepage: https://paladin-t.github.io/bitty/
+]]
+
+local map_ = nil
+local spr_ = nil
+local tex_ = nil
+
+function setup()
+	-- Load a map dynamically.
+	local data = {
+		tiles = {
+			count = { 8, 8 }
+		},
+		width = 60, height = 40,
+		data = { },
+		ref = 'bank.png' -- Ref by asset name.
+	}
+	for j = 1, data.height do
+		for i = 1, data.width do
+			local flag = ((j % 2) + (i % 2)) % 2 == 0
+			local idx = flag and 1 or 0
+			table.insert(data.data, idx)
+		end
+	end
+	map_ = Resources.load(data, Map)
+
+	-- Load a sprite dynamically.
+	local bytes = Project.main:read('bank.png')
+	local img = Image.new()
+	img:fromBytes(bytes)
+	tex_ = Resources.load(img, Texture)
+	data = {
+		width = 8, height = 8,
+		count = 2,
+		data = {
+			{
+				x = 16, y = 0, width = 8, height = 8,
+				interval = 0.25,
+				key = 'idle'
+			},
+			{
+				x = 24, y = 0, width = 8, height = 8,
+				interval = 0.25,
+				key = ''
+			}
+		},
+		ref = tex_ -- Ref by object.
+	}
+	spr_ = Resources.load(data, Sprite)
+	spr_:play('idle')
+
+	-- Load an image dynamically.
+	local WHITE = Color.new(255, 255, 255)
+	local BLACK = Color.new(0, 0, 0)
+	data = {
+		width = 2, height = 2,
+		depth = 0,
+		data = {
+			WHITE:toRGBA(),
+			BLACK:toRGBA(),
+			BLACK:toRGBA(),
+			WHITE:toRGBA()
+		}
+	}
+	tex_ = Resources.load(data, Texture)
+end
+
+function update(delta)
+	map(map_, 0, 0)
+	spr(spr_, 128, 152, 16, 16)
+	tex(tex_, 336, 152, 16, 16, 0, 0, tex_.width, tex_.height)
+end
+
+data:image/png;base64;count=580;path=bank.png;
+iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABeElEQVR4XmOUP+PwnwEP2Mw2CZ80g66uLuOv9YxYzWAL/M8I0sx47xdW+f9KbIxAwDCQgGAAOE9TYnD9dQmrG7XL5jGo39EDywE9ywAMCAw2u/5PsBjQswzAgMBgMyizMw5kALAQa/luNj0UpbgChWGIASZi3VtQUABOCcPF4zB/M1ErwmDJH2QeMhtmPiz5g/jI7IFOMCQFACjPgzC6o0H5H58YKP+jy2MTG4jAILoMuNqVBHefK5pLQTGOHgjIqQAU4+geHiypgKgAQC8AYf7XBjJAVR2oGsSW7EFyoPoPVA1i8zC4GmQYBaMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhQJ0QAAAi3VKCrH9IGwAAAABJRU5ErkJggg==

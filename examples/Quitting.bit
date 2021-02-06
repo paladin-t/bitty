@@ -1,0 +1,58 @@
+package:application/vnd.bitty-archive;
+data:text/json;count=144;path=info.json;
+{
+  "id": 0,
+  "title": "Basics/03. Quitting",
+  "description": "",
+  "author": "Tony",
+  "version": "1.0",
+  "genre": "TUTORIAL",
+  "url": ""
+}
+data:text/lua;count=938;path=main.lua;
+--[[
+Example for the Bitty Engine
+
+Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+
+Homepage: https://paladin-t.github.io/bitty/
+]]
+
+-- Get a persistence file path under the writable directory.
+local tmpPath = Path.combine(Path.writableDirectory, 'basics_quitting.txt')
+print('Using: ', tmpPath)
+
+-- Reads and returns persisted data from file.
+local function read()
+	local result = 0
+	local file = File.new()
+	if file:open(tmpPath, Stream.Read) then
+		result = file:readLine()
+		result = tonumber(result)
+		file:close()
+	end
+
+	return result
+end
+
+-- Writes data to file.
+local function write(data)
+	local file = File.new()
+	if file:open(tmpPath, Stream.Write) then
+		file:writeLine(tostring(data))
+		file:close()
+	end
+end
+
+local counter = 0
+
+function setup()
+	counter = read() -- Read on setup.
+	print('Counter: ' .. counter)
+end
+
+function quit()
+	counter = counter + 1
+	write(counter) -- Write the new value to file on quit.
+end
+

@@ -1,0 +1,115 @@
+package:application/vnd.bitty-archive;
+data:text/json;count=139;path=info.json;
+{
+  "id": 0,
+  "title": "Basics/06. OOP",
+  "description": "",
+  "author": "Tony",
+  "version": "1.0",
+  "genre": "TUTORIAL",
+  "url": ""
+}
+data:text/lua;count=617;path=class.lua;
+--[[
+Example for the Bitty Engine
+
+Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+
+Homepage: https://paladin-t.github.io/bitty/
+]]
+
+-- Declares a class.
+function class(kls, base)
+	if not base then
+		base = { }
+	end
+
+	kls.new = function (...)
+		local obj = { }
+		setmetatable(obj, kls)
+		if obj.ctor then
+			obj:ctor(...)
+		end
+
+		return obj
+	end
+
+	kls.__index = kls
+
+	setmetatable(kls, base)
+
+	return kls
+end
+
+-- Determines whether an object is instance of a specific class.
+function is(obj, kls)
+	repeat
+		if obj == kls then
+			return true
+		end
+		obj = getmetatable(obj)
+	until not obj
+
+	return false
+end
+
+data:text/lua;count=769;path=main.lua;
+--[[
+Example for the Bitty Engine
+
+Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+
+Homepage: https://paladin-t.github.io/bitty/
+]]
+
+require 'class'
+
+A = class({
+	ctor = function (self, n)
+		print('A:ctor')
+
+		self.n = n
+	end,
+
+	fun = function (self)
+		print('A:fun')
+
+		return self.n
+	end
+})
+
+B = class({
+	ctor = function (self, n)
+		A.ctor(self)
+		print('B:ctor')
+
+		self.n = n
+	end
+}, A)
+
+C = class({
+	ctor = function (self, n)
+		print('C:ctor')
+
+		self.n = n
+	end,
+
+	fun = function (self)
+		print('C:fun')
+
+		return self.n
+	end
+})
+
+local a = A.new(1)
+local b = B.new(2)
+local c = C.new(3)
+
+print(a:fun())
+print(b:fun())
+print(c:fun())
+
+print('a is A: ' .. tostring(is(a, A)))
+print('b is A: ' .. tostring(is(b, A)))
+print('c is A: ' .. tostring(is(c, A)))
+

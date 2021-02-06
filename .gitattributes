@@ -1,2 +1,4 @@
+*.h linguist-language=C++
 docs/* linguist-vendored
-
+lib/* linguist-vendored
+src/resource/* linguist-generated

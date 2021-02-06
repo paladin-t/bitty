@@ -97,7 +97,7 @@
 * Shift: hold to move
 * Alt: hold to pick tile
 
-* Ctrl: hold to replace same colored pixels with the paint bucket tool
+* Ctrl: hold to replace same indexed cels with the paint bucket tool
 
 * H: move
 * I: pick color
@@ -121,6 +121,8 @@
 * ;: vertical flip
 * ': horizontal flip
 
+* Select an area then fill with the paint bucket tool to perform ranged filling
+
 * Use the stamp tool to perform multiple tiles painting
 
 ![](imgs/stamp.png)
@@ -134,6 +136,8 @@
 
 * Shift: hold to move
 * Alt: hold to pick color
+
+* Ctrl: hold to replace same colored pixels with the paint bucket tool
 
 * 1/2/3/4/5/6/7/8/9/0: pick a preselected color
 

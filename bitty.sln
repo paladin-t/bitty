@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bitty", "bitty.vcxproj", "{E0C26149-8226-4591-A8DE-7B9D54BFCB3E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		debug|x64 = debug|x64
+		debug|x86 = debug|x86
+		release|x64 = release|x64
+		release|x86 = release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E0C26149-8226-4591-A8DE-7B9D54BFCB3E}.debug|x64.ActiveCfg = debug|x64
+		{E0C26149-8226-4591-A8DE-7B9D54BFCB3E}.debug|x64.Build.0 = debug|x64
+		{E0C26149-8226-4591-A8DE-7B9D54BFCB3E}.debug|x86.ActiveCfg = debug|Win32
+		{E0C26149-8226-4591-A8DE-7B9D54BFCB3E}.debug|x86.Build.0 = debug|Win32
+		{E0C26149-8226-4591-A8DE-7B9D54BFCB3E}.release|x64.ActiveCfg = release|x64
+		{E0C26149-8226-4591-A8DE-7B9D54BFCB3E}.release|x64.Build.0 = release|x64
+		{E0C26149-8226-4591-A8DE-7B9D54BFCB3E}.release|x86.ActiveCfg = release|Win32
+		{E0C26149-8226-4591-A8DE-7B9D54BFCB3E}.release|x86.Build.0 = release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

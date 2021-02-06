@@ -353,8 +353,8 @@ This module performs a raycasting algorithm on 2D grids.
 
 **Object Fields**
 
-* `raycaster.tileSize`: gets or sets the tile size, defaults to 8x8
-* `raycaster.offset`: gets or sets the raycaster offset, defaults to 0, 0
+* `raycaster.tileSize`: gets or sets the tile size as `Vec2`, defaults to 8x8
+* `raycaster.offset`: gets or sets the raycaster offset as `Vec2`, defaults to 0, 0
 
 **Methods**
 
@@ -382,9 +382,9 @@ This module performs a smooth walking algorithm on 2D grids.
 
 **Object Fields**
 
-* `walker.objectSize`: gets or sets the object size, defaults to 8x8
-* `walker.tileSize`: gets or sets the tile size, defaults to 8x8
-* `walker.offset`: gets or sets the walker offset, defaults to 0, 0
+* `walker.objectSize`: gets or sets the object size as `Vec2`, defaults to 8x8
+* `walker.tileSize`: gets or sets the tile size as `Vec2`, defaults to 8x8
+* `walker.offset`: gets or sets the walker offset as `Vec2`, defaults to 0, 0
 
 **Methods**
 
@@ -841,7 +841,7 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 **Constructors**
 
 * `Image.new(palette)`: constructs an image object with the specific `Palette` asset
-	* `palette`: the `Palette`
+	* `palette`: the `Palette` loaded by `Resources.load(...)`
 * `Image.new()`: constructs a true-color image object
 
 **Object Fields**
@@ -852,9 +852,10 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 
 **Methods**
 
-* `image:resize(width, height)`: resizes the `Image` with the specific size
+* `image:resize(width, height, stretch = true)`: resizes the `Image` with the specific size; cannot stretch paletted image
 	* `width`: the width
 	* `height`: the height
+	* `stretch`: `true` to stretch the image, otherwise to clip
 	* returns `true` for success, otherwise `false`
 * `image:get(x, y)`: gets the `Color` or `Palette` index at the specific index
 	* `x`: starts from 0
@@ -1473,8 +1474,10 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 
 * `cls([col])`: clears the screen with the specific `Color`
 	* `col`: optional, defaults to the previous passed value to this function
+	* returns the previous clear `Color`
 * `color(col)`: sets the active `Color` with a specific value
 	* `col`: the `Color` to set
+	* returns the previous active `Color`
 * `color()`: resets the active `Color` to white
 * `sync()`: synchronizes commands to graphics manually, also updates `Network` and `Web` links
 	* returns synchronized command count
@@ -1676,9 +1679,9 @@ See [keycodes](https://paladin-t.github.io/bitty/keycodes.html) for more.
 
 **Functions**
 
-* `mouse([index])`: gets the current mouse states
-	* `index`: always 1 for the mouse, or the finger index on touch screens, starts from 1
-	* returns `x`, `y`, `b1`, `b2`, `b3` for the mouse position and the LMB, RMB, MMB respectively, `x` and `y` could be NaN if the mouse is outside the canvas
+* `mouse([index])`: gets the current mouse (or touch) states
+	* `index`: always 1 for the mouse, or the finger index with touch screens, starts from 1
+	* returns `x`, `y`, `b1`, `b2`, `b3`, `wheel` for the mouse position and the LMB, RMB, MMB, wheel state respectively, `x` and `y` could be NaN if the mouse is outside the canvas, `wheel` can be negative, positive or zero
 
 ### Camera
 
@@ -1687,7 +1690,9 @@ See [keycodes](https://paladin-t.github.io/bitty/keycodes.html) for more.
 * `camera(x, y)`: sets the camera offset, affects all coordinate-based primitives
 	* `x`: the x offset
 	* `y`: the y offset
+	* returns the previous camera offset `x`, `y`, or both `nil` for non-offset
 * `camera()`: resets the camera offset to 0, 0
+	* returns the previous camera offset `x`, `y`, or both `nil` for non-offset
 
 ### Clip
 
@@ -1698,7 +1703,9 @@ See [keycodes](https://paladin-t.github.io/bitty/keycodes.html) for more.
 	* `y`: the y offset to clip
 	* `w`: the clip width
 	* `h`: the clip height
+	* returns the previous clip area `x`, `y`, `w`, `h`, or all `nil` for non-clip
 * `clip()`: resets the clip area to none
+	* returns the previous clip area `x`, `y`, `w`, `h`, or all `nil` for non-clip
 
 ### Blend
 

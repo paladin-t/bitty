@@ -1,0 +1,30 @@
+package:application/vnd.bitty-archive;
+data:text/json;count=136;path=info.json;
+{
+  "id": 0,
+  "title": "Get More...",
+  "description": "",
+  "author": "Tony",
+  "version": "1.0",
+  "genre": "TUTORIAL",
+  "url": ""
+}
+data:text/lua;count=320;path=main.lua;
+--[[
+Example for the Bitty Engine
+
+Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+
+Homepage: https://paladin-t.github.io/bitty/
+]]
+
+-- Get full version for more examples.
+
+function setup()
+	Platform.surf('https://store.steampowered.com/app/1386180/')
+end
+
+function update(delta)
+	text('Hello World', 0, 0)
+end
+

@@ -1,0 +1,16 @@
+/.vs/bitty/v14
+/enc_temp_folder
+/debug
+/temp
+/build
+/bitty.VC.db
+/bitty.VC.VC.opendb
+*.DS_Store
+*.exp
+*.idb
+*.ilk
+*.iobj
+*.ipdb
+*.ncb
+*.obj
+*.suo

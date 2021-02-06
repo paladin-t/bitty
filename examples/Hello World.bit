@@ -1,0 +1,41 @@
+package:application/vnd.bitty-archive;
+data:text/json;count=147;path=info.json;
+{
+  "id": 0,
+  "title": "Basics/01. Hello World",
+  "description": "",
+  "author": "Tony",
+  "version": "1.0",
+  "genre": "TUTORIAL",
+  "url": ""
+}
+data:text/lua;count=828;path=main.lua;
+--[[
+Example for the Bitty Engine
+
+Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+
+Homepage: https://paladin-t.github.io/bitty/
+]]
+
+-- Code chunks in global scope execute once when it has been loaded.
+local txt = 'Hello World'
+
+-- Initial entry, executes only once when program starts up.
+function setup()
+	print(txt) -- Print text in the console window.
+	           -- This is often used to inspect value of variables to help
+	           -- developing.
+end
+
+-- Updating entry, executes once per cycle (often 60 times per second).
+function update(delta)
+	-- Calculate position.
+	local canvasWidth, canvasHeight = Canvas.main:size()
+	local textWidth, textHeight = measure(txt)
+	local x, y = (canvasWidth - textWidth) * 0.5, (canvasHeight - textHeight) * 0.5
+
+	-- Draw text at the center of canvas.
+	text(txt, x, y)
+end
+

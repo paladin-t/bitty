@@ -1,0 +1,2592 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="lib\sdl_gfx\SDL2_framerate.c">
+      <Filter>lib\sdl_gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\sdl_gfx\SDL2_gfxPrimitives.c">
+      <Filter>lib\sdl_gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\sdl_gfx\SDL2_imageFilter.c">
+      <Filter>lib\sdl_gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\sdl_gfx\SDL2_rotozoom.c">
+      <Filter>lib\sdl_gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\micropather\micropather.cpp">
+      <Filter>lib\micropather</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\stb\stb_vorbis.c">
+      <Filter>lib\stb</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\adler32.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\compress.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\crc32.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\deflate.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\gzclose.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\gzlib.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\gzread.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\gzwrite.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\infback.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\inffast.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\inflate.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\inftrees.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\trees.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\uncompr.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\zutil.c">
+      <Filter>lib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\contrib\minizip\ioapi.c">
+      <Filter>lib\zlib\contrib\minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\contrib\minizip\iowin32.c">
+      <Filter>lib\zlib\contrib\minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\contrib\minizip\miniunz.c">
+      <Filter>lib\zlib\contrib\minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\contrib\minizip\minizip.c">
+      <Filter>lib\zlib\contrib\minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\contrib\minizip\mztools.c">
+      <Filter>lib\zlib\contrib\minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\contrib\minizip\unzip.c">
+      <Filter>lib\zlib\contrib\minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\zlib\contrib\minizip\zip.c">
+      <Filter>lib\zlib\contrib\minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\mongoose\mongoose.c">
+      <Filter>lib\mongoose</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bytes.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\datetime.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\encoding.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\filesystem.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\text.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input.cpp">
+      <Filter>src\input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\map.cpp">
+      <Filter>src\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sprite.cpp">
+      <Filter>src\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\color.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer.cpp">
+      <Filter>src\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\texture.cpp">
+      <Filter>src\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform_windows.cpp">
+      <Filter>src\shared\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="src\plus.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window.cpp">
+      <Filter>src\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\json.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\archive.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\network_info\cbits\network-unix.c">
+      <Filter>lib\network_info\cbits</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\network_info\cbits\network-windows.c">
+      <Filter>lib\network_info\cbits</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\imgui_sdl\imgui_sdl.cpp">
+      <Filter>lib\imgui_sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\imgui\imgui.cpp">
+      <Filter>lib\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\imgui\imgui_demo.cpp">
+      <Filter>lib\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\imgui\imgui_draw.cpp">
+      <Filter>lib\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\imgui\imgui_widgets.cpp">
+      <Filter>lib\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lapi.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lauxlib.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lbaselib.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lcode.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lcorolib.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lctype.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\ldblib.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\ldebug.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\ldo.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\ldump.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lfunc.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lgc.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\linit.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\liolib.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\llex.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lmathlib.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lmem.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\loadlib.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lobject.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lopcodes.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\loslib.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lparser.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lstate.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lstring.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lstrlib.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\ltable.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\ltablib.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\ltm.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lua.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\luac.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lundump.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lutf8lib.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lvm.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lua\src\lzio.c">
+      <Filter>lib\lua\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\image.cpp">
+      <Filter>src\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network_mongoose.cpp">
+      <Filter>src\shared\network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\palette.cpp">
+      <Filter>src\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scripting_lua.cpp">
+      <Filter>src\executable\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\object.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\workspace.cpp">
+      <Filter>src\workspace</Filter>
+    </ClCompile>
+    <ClCompile Include="src\theme.cpp">
+      <Filter>src\workspace</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resource\inline_resource.cpp">
+      <Filter>src\workspace\inlines</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\jo_gif\jo_gif.cpp">
+      <Filter>lib\jo_gif</Filter>
+    </ClCompile>
+    <ClCompile Include="src\document.cpp">
+      <Filter>src\workspace\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\theme_sketchbook.cpp">
+      <Filter>src\workspace\sketchbook</Filter>
+    </ClCompile>
+    <ClCompile Include="src\workspace_sketchbook.cpp">
+      <Filter>src\workspace\sketchbook</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\imgui_code_editor\imgui_code_editor.cpp">
+      <Filter>lib\imgui_code_editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\asset.cpp">
+      <Filter>src\workspace</Filter>
+    </ClCompile>
+    <ClCompile Include="src\code.cpp">
+      <Filter>src\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\application.cpp">
+      <Filter>src\application</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lz4\lib\lz4.c">
+      <Filter>lib\lz4\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lz4\lib\lz4frame.c">
+      <Filter>lib\lz4\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lz4\lib\lz4hc.c">
+      <Filter>lib\lz4\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\lz4\lib\xxhash.c">
+      <Filter>lib\lz4\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\recorder.cpp">
+      <Filter>src\workspace\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\luaxx.cpp">
+      <Filter>src\executable\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources.cpp">
+      <Filter>src\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scripting_lua_api.cpp">
+      <Filter>src\executable\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\loader.cpp">
+      <Filter>src\workspace</Filter>
+    </ClCompile>
+    <ClCompile Include="src\audio.cpp">
+      <Filter>src\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scripting_lua_dbg.cpp">
+      <Filter>src\executable\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\widgets.cpp">
+      <Filter>src\workspace</Filter>
+    </ClCompile>
+    <ClCompile Include="src\generic.cpp">
+      <Filter>src\workspace\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\operations.cpp">
+      <Filter>src\workspace</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editor_code.cpp">
+      <Filter>src\workspace\editors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editor_json.cpp">
+      <Filter>src\workspace\editors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\widgets_sketchbook.cpp">
+      <Filter>src\workspace\sketchbook</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stream.cpp">
+      <Filter>src\shared\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="src\updatable.cpp">
+      <Filter>src\shared\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dispatchable.cpp">
+      <Filter>src\shared\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="src\collectible.cpp">
+      <Filter>src\shared\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cloneable.cpp">
+      <Filter>src\shared\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="src\executable.cpp">
+      <Filter>src\shared\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editable.cpp">
+      <Filter>src\workspace\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editing.cpp">
+      <Filter>src\workspace\editors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editor_text.cpp">
+      <Filter>src\workspace\editors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\archive_zip.cpp">
+      <Filter>src\shared\archive</Filter>
+    </ClCompile>
+    <ClCompile Include="src\archive_txt.cpp">
+      <Filter>src\shared\archive</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\b64\buffer.c">
+      <Filter>lib\b64</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\b64\decode.c">
+      <Filter>lib\b64</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\b64\encode.c">
+      <Filter>lib\b64</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scripting.cpp">
+      <Filter>src\executable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\project.cpp">
+      <Filter>src\workspace</Filter>
+    </ClCompile>
+    <ClCompile Include="src\primitives.cpp">
+      <Filter>src\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src\application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\plugin.cpp">
+      <Filter>src\executable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\entry.cpp">
+      <Filter>src\workspace\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editor.cpp">
+      <Filter>src\workspace\editors</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\md4c\src\md4c.c">
+      <Filter>lib\md4c\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\font.cpp">
+      <Filter>src\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pathfinder.cpp">
+      <Filter>src\shared\algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\walker.cpp">
+      <Filter>src\shared\algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\randomizer.cpp">
+      <Filter>src\shared\algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\either.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hacks.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editor_polyfill.cpp">
+      <Filter>src\workspace\editors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scripting_lua_api_promises.cpp">
+      <Filter>src\executable\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\promise.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\altsvc.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\amigaos.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\asyn-ares.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\asyn-thread.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\base64.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\conncache.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\connect.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\content_encoding.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\cookie.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_addrinfo.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_ctype.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_des.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_endian.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_fnmatch.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_get_line.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_gethostname.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_gssapi.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_memrchr.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_multibyte.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_ntlm_core.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_ntlm_wb.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_path.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_range.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_rtmp.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_sasl.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_sspi.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\curl_threads.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\dict.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\doh.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\dotdot.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\dynbuf.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\easy.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\easygetopt.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\easyoptions.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\escape.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\fileinfo.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\formdata.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\ftp.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\ftplistparser.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\getenv.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\getinfo.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\gopher.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\hash.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\hmac.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\hostasyn.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\hostcheck.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\hostip.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\hostip4.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\hostip6.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\hostsyn.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\http.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\http_chunks.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\http_digest.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\http_negotiate.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\http_ntlm.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\http_proxy.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\http2.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\idn_win32.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\if2ip.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\imap.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\inet_ntop.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\inet_pton.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\krb5.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\ldap.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\llist.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\md4.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\md5.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\memdebug.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\mime.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\mprintf.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\mqtt.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\multi.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\netrc.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\non-ascii.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\nonblock.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\nwlib.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\nwos.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\openldap.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\parsedate.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\pingpong.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\pop3.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\progress.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\psl.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\rename.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\rtsp.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\select.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\sendf.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\setopt.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\sha256.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\share.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\slist.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\smb.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\smtp.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\socketpair.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\socks.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\socks_gssapi.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\socks_sspi.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\speedcheck.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\splay.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\strcase.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\strdup.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\strerror.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\strtok.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\strtoofft.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\system_win32.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\telnet.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\tftp.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\timeval.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\transfer.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\url.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\urlapi.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\version.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\version_win32.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\warnless.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\wildcard.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\x509asn1.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vquic\ngtcp2.c">
+      <Filter>lib\curl\lib\vquic</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vquic\quiche.c">
+      <Filter>lib\curl\lib\vquic</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vquic\vquic.c">
+      <Filter>lib\curl\lib\vquic</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vssh\libssh.c">
+      <Filter>lib\curl\lib\vssh</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vssh\libssh2.c">
+      <Filter>lib\curl\lib\vssh</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vssh\wolfssh.c">
+      <Filter>lib\curl\lib\vssh</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vtls\bearssl.c">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vtls\gskit.c">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vtls\gtls.c">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vtls\keylog.c">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vtls\mbedtls.c">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vtls\mbedtls_threadlock.c">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vtls\mesalink.c">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vtls\nss.c">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vtls\openssl.c">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vtls\schannel.c">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vtls\schannel_verify.c">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vtls\sectransp.c">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vtls\vtls.c">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vtls\wolfssl.c">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vauth\cleartext.c">
+      <Filter>lib\curl\lib\vauth</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vauth\cram.c">
+      <Filter>lib\curl\lib\vauth</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vauth\digest.c">
+      <Filter>lib\curl\lib\vauth</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vauth\digest_sspi.c">
+      <Filter>lib\curl\lib\vauth</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vauth\krb5_gssapi.c">
+      <Filter>lib\curl\lib\vauth</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vauth\krb5_sspi.c">
+      <Filter>lib\curl\lib\vauth</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vauth\ntlm.c">
+      <Filter>lib\curl\lib\vauth</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vauth\ntlm_sspi.c">
+      <Filter>lib\curl\lib\vauth</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vauth\oauth2.c">
+      <Filter>lib\curl\lib\vauth</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vauth\spnego_gssapi.c">
+      <Filter>lib\curl\lib\vauth</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vauth\spnego_sspi.c">
+      <Filter>lib\curl\lib\vauth</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\vauth\vauth.c">
+      <Filter>lib\curl\lib\vauth</Filter>
+    </ClCompile>
+    <ClCompile Include="src\web_curl.cpp">
+      <Filter>src\shared\web</Filter>
+    </ClCompile>
+    <ClCompile Include="src\web.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\web_html.cpp">
+      <Filter>src\shared\web</Filter>
+    </ClCompile>
+    <ClCompile Include="src\web_mongoose.cpp">
+      <Filter>src\shared\web</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mathematics.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\file.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\rand.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\file_handle.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\curl\lib\hsts.c">
+      <Filter>lib\curl\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\raycaster.cpp">
+      <Filter>src\shared\algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\noiser.cpp">
+      <Filter>src\shared\algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\imgui\imgui_tables.cpp">
+      <Filter>lib\imgui</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{c3d5360a-dc5a-4c4b-b6ce-f17ee51e8d12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{12f8ec45-2873-4be5-9d0c-b677452148d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\sdl">
+      <UniqueIdentifier>{abcba142-c021-4a54-9bad-5a73fd524c09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\sdl\include">
+      <UniqueIdentifier>{58bb4324-c580-4f76-a347-985c25769a94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\sdl_gfx">
+      <UniqueIdentifier>{f1185f1a-b5d3-44c3-9e82-a74fb7f39c74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>{2cad55a9-59e2-43d5-8242-b6169264e154}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\dirent">
+      <UniqueIdentifier>{0241aa66-350c-4faf-b278-3170b1bcc378}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\micropather">
+      <UniqueIdentifier>{5913d10d-4852-4af7-a331-526aa7475962}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\rapidjson">
+      <UniqueIdentifier>{2ca95005-729d-4918-b801-a12d707e795e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\rapidjson\include">
+      <UniqueIdentifier>{6479eef4-d60e-4fe9-8a1d-c8bcee670577}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\rapidjson\include\rapidjson">
+      <UniqueIdentifier>{b0b79d8f-6b49-4433-8004-9d77f0215ae3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\rapidjson\include\rapidjson\error">
+      <UniqueIdentifier>{0073d68b-b0a8-499c-b875-2294fb93263c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\rapidjson\include\rapidjson\internal">
+      <UniqueIdentifier>{75e03a81-101c-4f56-aa6c-53ba819fe655}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\rapidjson\include\rapidjson\msinttypes">
+      <UniqueIdentifier>{723d469b-705b-4d28-bc3e-b1163c3035d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\stb">
+      <UniqueIdentifier>{800ef1e4-f303-4295-91a4-00a1be4bcaf8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\zlib">
+      <UniqueIdentifier>{b11558d3-971a-4c3e-bc93-55b9daeb1817}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\zlib\contrib">
+      <UniqueIdentifier>{3d972380-1ad4-4418-8005-ac38aea4adf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\zlib\contrib\minizip">
+      <UniqueIdentifier>{bc6e4a7d-6c7d-44fd-b208-cb9238095b09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\mongoose">
+      <UniqueIdentifier>{ffaca46c-9cd7-48be-ab28-a32be3e2d417}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\input">
+      <UniqueIdentifier>{c28de17f-0fbd-431f-b68c-249086676a38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\application">
+      <UniqueIdentifier>{e39ad79b-1f9b-4cd4-ac81-a925aa168fec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\network_info">
+      <UniqueIdentifier>{a1054137-d134-4713-9fbe-9c892770673d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\network_info\cbits">
+      <UniqueIdentifier>{27a700fe-5411-41b2-94d5-e78f7a5548e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\imgui_sdl">
+      <UniqueIdentifier>{6d7bb16a-1fcf-4654-bc34-7f650ad4280e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\imgui">
+      <UniqueIdentifier>{22376f07-cf5a-4d8d-8887-cabce471c4a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\sdl_mixer">
+      <UniqueIdentifier>{f2835358-cc2c-4fec-831a-eb37fc3e6072}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\sdl_mixer\include">
+      <UniqueIdentifier>{a953279e-7cf0-43b7-a876-2d42169dc475}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\lua">
+      <UniqueIdentifier>{b885e412-e275-4ec0-a86c-d9cb25bdcfa0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\lua\src">
+      <UniqueIdentifier>{8f6d7695-74f7-43b9-81e6-a7d72f25edec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\shared">
+      <UniqueIdentifier>{88f54660-ac24-48d3-85ee-9d4074b3d841}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\shared\platform">
+      <UniqueIdentifier>{8cb831ef-6cce-4282-a6d4-0fc3dc25e454}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\shared\network">
+      <UniqueIdentifier>{d3ecd42a-5013-4485-8366-f813acbc9ff2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\jo_gif">
+      <UniqueIdentifier>{33e5d71f-9487-4e5d-8c4a-cc213f9d1dce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\md4c">
+      <UniqueIdentifier>{611c9182-4f21-4cd6-b544-4241caf65ed9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\imgui_code_editor">
+      <UniqueIdentifier>{22abb10c-d981-4e61-a9b2-4a9007239440}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\workspace">
+      <UniqueIdentifier>{376031da-05c7-44a2-926a-7dd1a491b44b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\workspace\shared">
+      <UniqueIdentifier>{12f14090-1b11-497a-9525-a8a23c4a36d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\graphics">
+      <UniqueIdentifier>{2e52467b-7217-4f8c-b24e-63c44dfa937a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\jpath">
+      <UniqueIdentifier>{f9773f40-863a-47d9-83c8-46a7bfdac9b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\lz4">
+      <UniqueIdentifier>{505907cc-8b4c-453b-a675-0715ec0a396f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\lz4\lib">
+      <UniqueIdentifier>{266210b5-ebf4-401c-bed5-ab33993bf537}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\portable_file_dialogs">
+      <UniqueIdentifier>{d78c1b90-7aba-4a3a-b282-77a462dbc975}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\resources">
+      <UniqueIdentifier>{1c77cb26-40e8-47cc-a0e0-63a28beaf732}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\dirent\include">
+      <UniqueIdentifier>{0b302922-1a08-4527-b787-da22e4045fac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\promise_cpp">
+      <UniqueIdentifier>{52e0deb8-c9b1-46b4-9bf1-96e8bbe47009}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\promise_cpp\promise">
+      <UniqueIdentifier>{e2ce9613-d50c-4077-8e9d-e2d00a3c11d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\workspace\editors">
+      <UniqueIdentifier>{fe198dad-cad2-47b5-bc76-88b55c0c8c07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\shared\interfaces">
+      <UniqueIdentifier>{828148f2-b473-4edd-9948-718435241f5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\workspace\interfaces">
+      <UniqueIdentifier>{b7eeefe9-92b6-4bd2-ae63-0370ed2fb119}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\workspace\inlines">
+      <UniqueIdentifier>{cebfb771-dc41-4382-acfb-0d3afbdc83d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\shared\archive">
+      <UniqueIdentifier>{910602af-d7d1-4736-9494-40f9d3880fe0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\b64">
+      <UniqueIdentifier>{7621e834-9cf3-4a83-bf13-66c5fee30a44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\executable">
+      <UniqueIdentifier>{56d2185e-9984-4b58-ae39-1eb91d230cc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\executable\lua">
+      <UniqueIdentifier>{d3c8332f-0be8-4a95-a84c-8f8b915e7579}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\workspace\sketchbook">
+      <UniqueIdentifier>{451d7194-2c7b-484c-9a3f-1d55dadb7ac8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\md4c\src">
+      <UniqueIdentifier>{d451e8d4-6db2-408b-98a1-61f0bae2933f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\shared\algorithms">
+      <UniqueIdentifier>{119f347b-56dd-41e7-940f-484c9b35ad7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\curl">
+      <UniqueIdentifier>{7bede6dc-c793-4303-9c04-beb44d7293db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\curl\include">
+      <UniqueIdentifier>{da1e4530-f5cb-4fee-bc81-2dd93f0b5e8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\curl\include\curl">
+      <UniqueIdentifier>{63bc5ab0-545b-4a62-a6b6-946feeba5856}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\curl\lib">
+      <UniqueIdentifier>{501911ef-225b-4675-bbd5-91bbddf42cb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\curl\lib\vquic">
+      <UniqueIdentifier>{f139cd00-19e7-4d11-a7c8-72e7c7f1a03c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\curl\lib\vssh">
+      <UniqueIdentifier>{47b8f0ba-34bb-4628-90fe-9cdf51e5690b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\curl\lib\vauth">
+      <UniqueIdentifier>{f50bc564-fbdd-4f02-9a0f-21674eb5f34e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\shared\web">
+      <UniqueIdentifier>{ee6fc6cc-0dfe-4dc4-9409-c71c872dfdca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\curl\lib\vtls">
+      <UniqueIdentifier>{2a79f400-d639-40e7-a191-3a5fe8d4a272}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\fast_noise">
+      <UniqueIdentifier>{7f668bde-d906-4542-9471-2f1c13e585b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\fast_noise\Cpp">
+      <UniqueIdentifier>{70271e75-d0d6-49d7-b422-1c90da716a86}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lib\sdl_gfx\SDL2_framerate.h">
+      <Filter>lib\sdl_gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl_gfx\SDL2_gfxPrimitives.h">
+      <Filter>lib\sdl_gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl_gfx\SDL2_gfxPrimitives_font.h">
+      <Filter>lib\sdl_gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl_gfx\SDL2_imageFilter.h">
+      <Filter>lib\sdl_gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl_gfx\SDL2_rotozoom.h">
+      <Filter>lib\sdl_gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="res\resource.h">
+      <Filter>res</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\micropather\micropather.h">
+      <Filter>lib\micropather</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\allocators.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\cursorstreamwrapper.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\document.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\encodedstream.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\encodings.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\filereadstream.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\filewritestream.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\fwd.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\istreamwrapper.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\memorybuffer.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\memorystream.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\ostreamwrapper.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\pointer.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\prettywriter.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\rapidjson.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\reader.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\schema.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\stream.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\stringbuffer.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\writer.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\error\en.h">
+      <Filter>lib\rapidjson\include\rapidjson\error</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\error\error.h">
+      <Filter>lib\rapidjson\include\rapidjson\error</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\internal\biginteger.h">
+      <Filter>lib\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\internal\diyfp.h">
+      <Filter>lib\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\internal\dtoa.h">
+      <Filter>lib\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\internal\ieee754.h">
+      <Filter>lib\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\internal\itoa.h">
+      <Filter>lib\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\internal\meta.h">
+      <Filter>lib\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\internal\pow10.h">
+      <Filter>lib\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\internal\regex.h">
+      <Filter>lib\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\internal\stack.h">
+      <Filter>lib\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\internal\strfunc.h">
+      <Filter>lib\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\internal\strtod.h">
+      <Filter>lib\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\internal\swap.h">
+      <Filter>lib\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\msinttypes\inttypes.h">
+      <Filter>lib\rapidjson\include\rapidjson\msinttypes</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\msinttypes\stdint.h">
+      <Filter>lib\rapidjson\include\rapidjson\msinttypes</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_c_lexer.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_connected_components.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_divide.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_dxt.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_easy_font.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_herringbone_wang_tile.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_image.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_image_resize.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_image_write.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_leakcheck.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_perlin.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_rect_pack.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_sprintf.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_textedit.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_tilemap_editor.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_truetype.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_voxel_render.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stretchy_buffer.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\zlib\crc32.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\zlib\deflate.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\zlib\gzguts.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\zlib\inffast.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\zlib\inffixed.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\zlib\inflate.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\zlib\inftrees.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\zlib\trees.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\zlib\zconf.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\zlib\zlib.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\zlib\zutil.h">
+      <Filter>lib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\zlib\contrib\minizip\crypt.h">
+      <Filter>lib\zlib\contrib\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\zlib\contrib\minizip\ioapi.h">
+      <Filter>lib\zlib\contrib\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\zlib\contrib\minizip\iowin32.h">
+      <Filter>lib\zlib\contrib\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\zlib\contrib\minizip\mztools.h">
+      <Filter>lib\zlib\contrib\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\zlib\contrib\minizip\unzip.h">
+      <Filter>lib\zlib\contrib\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\zlib\contrib\minizip\zip.h">
+      <Filter>lib\zlib\contrib\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\mongoose\mongoose.h">
+      <Filter>lib\mongoose</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bytes.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\datetime.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\encoding.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\filesystem.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\text.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input.h">
+      <Filter>src\input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\map.h">
+      <Filter>src\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sprite.h">
+      <Filter>src\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\color.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer.h">
+      <Filter>src\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\texture.h">
+      <Filter>src\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\plus.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\window.h">
+      <Filter>src\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\json.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\archive.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\network_info\cbits\common.h">
+      <Filter>lib\network_info\cbits</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\network_info\cbits\network.h">
+      <Filter>lib\network_info\cbits</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bitty.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\begin_code.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\close_code.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_assert.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_atomic.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_audio.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_bits.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_blendmode.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_clipboard.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_config.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_config_android.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_config_iphoneos.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_config_macosx.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_config_minimal.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_config_pandora.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_config_psp.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_config_windows.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_config_winrt.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_config_wiz.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_copying.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_cpuinfo.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_egl.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_endian.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_error.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_events.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_filesystem.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_gamecontroller.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_gesture.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_haptic.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_hints.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_joystick.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_keyboard.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_keycode.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_loadso.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_log.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_main.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_messagebox.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_mouse.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_mutex.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_name.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_opengl.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_opengl_glext.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_opengles.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_opengles2.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_opengles2_gl2.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_opengles2_gl2ext.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_opengles2_gl2platform.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_opengles2_khrplatform.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_pixels.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_platform.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_power.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_quit.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_rect.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_render.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_revision.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_rwops.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_scancode.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_sensor.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_shape.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_stdinc.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_surface.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_system.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_syswm.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_test.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_test_assert.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_test_common.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_test_compare.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_test_crc32.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_test_font.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_test_fuzzer.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_test_harness.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_test_images.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_test_log.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_test_md5.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_test_memory.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_test_random.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_thread.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_timer.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_touch.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_types.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_version.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_video.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_vulkan.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\imgui_sdl\imgui_sdl.h">
+      <Filter>lib\imgui_sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\imgui\imconfig.h">
+      <Filter>lib\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\imgui\imgui.h">
+      <Filter>lib\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\imgui\imgui_internal.h">
+      <Filter>lib\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\imgui\imstb_rectpack.h">
+      <Filter>lib\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\imgui\imstb_textedit.h">
+      <Filter>lib\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\imgui\imstb_truetype.h">
+      <Filter>lib\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl_mixer\include\SDL_mixer.h">
+      <Filter>lib\sdl_mixer\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lapi.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lauxlib.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lcode.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lctype.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\ldebug.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\ldo.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lfunc.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lgc.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\llex.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\llimits.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lmem.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lobject.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lopcodes.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lparser.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lprefix.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lstate.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lstring.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\ltable.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\ltm.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lua.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\luaconf.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lualib.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lundump.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lvm.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lzio.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lua.hpp">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\image.h">
+      <Filter>src\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network_mongoose.h">
+      <Filter>src\shared\network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\palette.h">
+      <Filter>src\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scripting_lua.h">
+      <Filter>src\executable\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\object.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\workspace.h">
+      <Filter>src\workspace</Filter>
+    </ClInclude>
+    <ClInclude Include="src\theme.h">
+      <Filter>src\workspace</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resource\inline_resource.h">
+      <Filter>src\workspace\inlines</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\jo_gif\jo_gif.h">
+      <Filter>lib\jo_gif</Filter>
+    </ClInclude>
+    <ClInclude Include="src\document.h">
+      <Filter>src\workspace\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\theme_sketchbook.h">
+      <Filter>src\workspace\sketchbook</Filter>
+    </ClInclude>
+    <ClInclude Include="src\workspace_sketchbook.h">
+      <Filter>src\workspace\sketchbook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\imgui_code_editor\imgui_code_editor.h">
+      <Filter>lib\imgui_code_editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\asset.h">
+      <Filter>src\workspace</Filter>
+    </ClInclude>
+    <ClInclude Include="src\code.h">
+      <Filter>src\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\application.h">
+      <Filter>src\application</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_ds.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_include.h">
+      <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\jpath\jpath.hpp">
+      <Filter>lib\jpath</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lz4\lib\lz4.h">
+      <Filter>lib\lz4\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lz4\lib\lz4frame.h">
+      <Filter>lib\lz4\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lz4\lib\lz4frame_static.h">
+      <Filter>lib\lz4\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lz4\lib\lz4hc.h">
+      <Filter>lib\lz4\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lz4\lib\xxhash.h">
+      <Filter>lib\lz4\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\recorder.h">
+      <Filter>src\workspace\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\portable_file_dialogs\portable-file-dialogs.h">
+      <Filter>lib\portable_file_dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\luaxx.h">
+      <Filter>src\executable\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources.h">
+      <Filter>src\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scripting_lua_api.h">
+      <Filter>src\executable\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\loader.h">
+      <Filter>src\workspace</Filter>
+    </ClInclude>
+    <ClInclude Include="src\audio.h">
+      <Filter>src\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scripting_lua_dbg.h">
+      <Filter>src\executable\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\widgets.h">
+      <Filter>src\workspace</Filter>
+    </ClInclude>
+    <ClInclude Include="src\generic.h">
+      <Filter>src\workspace\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\operations.h">
+      <Filter>src\workspace</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\dirent\include\dirent.h">
+      <Filter>lib\dirent\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\internal\clzll.h">
+      <Filter>lib\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\promise_cpp\promise\allocator.hpp">
+      <Filter>lib\promise_cpp\promise</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\promise_cpp\promise\any.hpp">
+      <Filter>lib\promise_cpp\promise</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\promise_cpp\promise\debug.hpp">
+      <Filter>lib\promise_cpp\promise</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\promise_cpp\promise\list.hpp">
+      <Filter>lib\promise_cpp\promise</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\promise_cpp\promise\misc.hpp">
+      <Filter>lib\promise_cpp\promise</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\promise_cpp\promise\stack.hpp">
+      <Filter>lib\promise_cpp\promise</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\promise_cpp\promise\std_addon.hpp">
+      <Filter>lib\promise_cpp\promise</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\promise_cpp\promise.hpp">
+      <Filter>lib\promise_cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editor_code.h">
+      <Filter>src\workspace\editors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editor_json.h">
+      <Filter>src\workspace\editors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\widgets_sketchbook.h">
+      <Filter>src\workspace\sketchbook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\ljumptab.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\lua\src\lopnames.h">
+      <Filter>lib\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stream.h">
+      <Filter>src\shared\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="src\updatable.h">
+      <Filter>src\shared\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dispatchable.h">
+      <Filter>src\shared\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="src\collectible.h">
+      <Filter>src\shared\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cloneable.h">
+      <Filter>src\shared\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="src\executable.h">
+      <Filter>src\shared\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editable.h">
+      <Filter>src\workspace\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editing.h">
+      <Filter>src\workspace\editors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editor_text.h">
+      <Filter>src\workspace\editors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\archive_zip.h">
+      <Filter>src\shared\archive</Filter>
+    </ClInclude>
+    <ClInclude Include="src\archive_txt.h">
+      <Filter>src\shared\archive</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\b64\b64.h">
+      <Filter>lib\b64</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scripting.h">
+      <Filter>src\executable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\project.h">
+      <Filter>src\workspace</Filter>
+    </ClInclude>
+    <ClInclude Include="src\primitives.h">
+      <Filter>src\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\plugin.h">
+      <Filter>src\executable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\entry.h">
+      <Filter>src\workspace\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editor.h">
+      <Filter>src\workspace\editors</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\md4c\src\md4c.h">
+      <Filter>lib\md4c\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\font.h">
+      <Filter>src\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resource\inline_toast.h">
+      <Filter>src\workspace\inlines</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pathfinder.h">
+      <Filter>src\shared\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="src\walker.h">
+      <Filter>src\shared\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="src\randomizer.h">
+      <Filter>src\shared\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="src\either.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hacks.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editor_polyfill.h">
+      <Filter>src\workspace\editors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scripting_lua_api_promises.h">
+      <Filter>src\executable\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\promise.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\include\curl\curl.h">
+      <Filter>lib\curl\include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\include\curl\curlver.h">
+      <Filter>lib\curl\include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\include\curl\easy.h">
+      <Filter>lib\curl\include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\include\curl\mprintf.h">
+      <Filter>lib\curl\include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\include\curl\multi.h">
+      <Filter>lib\curl\include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\include\curl\options.h">
+      <Filter>lib\curl\include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\include\curl\stdcheaders.h">
+      <Filter>lib\curl\include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\include\curl\system.h">
+      <Filter>lib\curl\include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\include\curl\typecheck-gcc.h">
+      <Filter>lib\curl\include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\include\curl\urlapi.h">
+      <Filter>lib\curl\include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\altsvc.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\amigaos.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\arpa_telnet.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\asyn.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\config-amigaos.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\config-dos.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\config-mac.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\config-os400.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\config-plan9.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\config-riscos.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\config-tpf.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\config-vxworks.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\config-win32.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\config-win32ce.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\conncache.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\connect.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\content_encoding.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\cookie.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_addrinfo.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_base64.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_ctype.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_des.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_endian.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_fnmatch.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_get_line.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_gethostname.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_gssapi.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_hmac.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_krb5.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_ldap.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_md4.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_md5.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_memory.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_memrchr.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_multibyte.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_ntlm_core.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_ntlm_wb.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_path.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_printf.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_range.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_rtmp.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_sasl.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_setup.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_setup_once.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_sha256.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_sspi.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curl_threads.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\curlx.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\dict.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\doh.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\dotdot.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\dynbuf.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\easyif.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\easyoptions.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\escape.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\file.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\fileinfo.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\formdata.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\ftp.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\ftplistparser.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\getinfo.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\gopher.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\hash.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\hostcheck.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\hostip.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\http.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\http_chunks.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\http_digest.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\http_negotiate.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\http_ntlm.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\http_proxy.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\http2.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\if2ip.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\imap.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\inet_ntop.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\inet_pton.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\llist.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\memdebug.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\mime.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\mqtt.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\multihandle.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\multiif.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\netrc.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\non-ascii.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\nonblock.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\parsedate.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\pingpong.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\pop3.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\progress.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\psl.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\quic.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\rand.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\rename.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\rtsp.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\select.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\sendf.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\setopt.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\setup-os400.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\setup-vms.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\setup-win32.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\share.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\sigpipe.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\slist.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\smb.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\smtp.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\sockaddr.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\socketpair.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\socks.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\speedcheck.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\splay.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\strcase.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\strdup.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\strerror.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\strtok.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\strtoofft.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\system_win32.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\telnet.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\tftp.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\timeval.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\transfer.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\url.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\urlapi-int.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\urldata.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\version_win32.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\warnless.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\wildcard.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\x509asn1.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vquic\ngtcp2.h">
+      <Filter>lib\curl\lib\vquic</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vquic\quiche.h">
+      <Filter>lib\curl\lib\vquic</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vquic\vquic.h">
+      <Filter>lib\curl\lib\vquic</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vssh\ssh.h">
+      <Filter>lib\curl\lib\vssh</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vtls\bearssl.h">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vtls\gskit.h">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vtls\gtls.h">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vtls\keylog.h">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vtls\mbedtls.h">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vtls\mbedtls_threadlock.h">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vtls\mesalink.h">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vtls\nssg.h">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vtls\openssl.h">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vtls\schannel.h">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vtls\sectransp.h">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vtls\vtls.h">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vtls\wolfssl.h">
+      <Filter>lib\curl\lib\vtls</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vauth\digest.h">
+      <Filter>lib\curl\lib\vauth</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vauth\ntlm.h">
+      <Filter>lib\curl\lib\vauth</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\vauth\vauth.h">
+      <Filter>lib\curl\lib\vauth</Filter>
+    </ClInclude>
+    <ClInclude Include="src\web_curl.h">
+      <Filter>src\shared\web</Filter>
+    </ClInclude>
+    <ClInclude Include="src\web.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\web_html.h">
+      <Filter>src\shared\web</Filter>
+    </ClInclude>
+    <ClInclude Include="src\web_mongoose.h">
+      <Filter>src\shared\web</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mathematics.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\file_handle.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\curl\lib\hsts.h">
+      <Filter>lib\curl\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\raycaster.h">
+      <Filter>src\shared\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editor_bytes.h">
+      <Filter>src\workspace\editors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editor_font.h">
+      <Filter>src\workspace\editors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editor_image.h">
+      <Filter>src\workspace\editors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editor_map.h">
+      <Filter>src\workspace\editors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editor_palette.h">
+      <Filter>src\workspace\editors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editor_sound.h">
+      <Filter>src\workspace\editors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editor_sprite.h">
+      <Filter>src\workspace\editors</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\fast_noise\Cpp\FastNoiseLite.h">
+      <Filter>lib\fast_noise\Cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\noiser.h">
+      <Filter>src\shared\algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="src\editor_plugin.h">
+      <Filter>src\workspace\editors</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib\network_info\cbits\common.inc">
+      <Filter>lib\network_info\cbits</Filter>
+    </None>
+    <None Include="src\resource\inline_font.h">
+      <Filter>src\workspace\inlines</Filter>
+    </None>
+    <None Include="src\resource\inline_icon.h">
+      <Filter>src\workspace\inlines</Filter>
+    </None>
+    <None Include="src\resource\inline_image.h">
+      <Filter>src\workspace\inlines</Filter>
+    </None>
+    <None Include="src\resource\inline_slice.h">
+      <Filter>src\workspace\inlines</Filter>
+    </None>
+    <None Include="src\resource\inline_sound.h">
+      <Filter>src\workspace\inlines</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\bitty.ico">
+      <Filter>res</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="res\bitty.rc">
+      <Filter>res</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

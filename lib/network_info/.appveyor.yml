@@ -1,0 +1,30 @@
+version: "{build}"
+clone_folder: "c:\\WORK"
+
+environment:
+  global:
+    CABOPTS:  "--store-dir=C:\\SR --http-transport=plain-http"
+  matrix:
+    - GHCVER: "8.2.2"
+    - GHCVER: "8.0.2"
+
+cache:
+ - "C:\\SR"
+
+install:
+ - "choco install -y ghc --version %GHCVER%"
+ - "refreshenv"
+ - "set PATH=C:\\msys64\\mingw64\\bin;C:\\msys64\\usr\\bin;%PATH%"
+ - "cabal --version"
+ - "ghc --version"
+ - "cabal %CABOPTS% update -vverbose+nowrap"
+
+build: off
+
+ # network-info-test.exe invocation should be replaced with
+ # - "cabal %CABOPTS% new-run  -j1 network-info-test"
+ # once a newer cabal-install is in choco
+
+test_script:
+ - "cabal %CABOPTS% new-build -j1 -vnormal+nowrap all"
+ - "C:/WORK/dist-newstyle/build/x86_64-windows/ghc-%GHCVER%/network-info-test-0.1/build/network-info-test/network-info-test.exe"

@@ -1,0 +1,63 @@
+package:application/vnd.bitty-archive;
+data:text/json;count=150;path=info.json;
+{
+  "id": 0,
+  "title": "Basics/04. Multiple Files",
+  "description": "",
+  "author": "Tony",
+  "version": "1.0",
+  "genre": "TUTORIAL",
+  "url": ""
+}
+data:text/lua;count=323;path=bar.lua;
+--[[
+Example for the Bitty Engine
+
+Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+
+Homepage: https://paladin-t.github.io/bitty/
+]]
+
+print('Begin bar')
+
+local ret, _ = require 'foo' -- Require 'foo'; would warn for recursive requiring.
+print(tostring(ret) .. ', ' .. tostring(_))
+
+print('End bar')
+
+return '[bar]'
+
+data:text/lua;count=287;path=foo.lua;
+--[[
+Example for the Bitty Engine
+
+Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+
+Homepage: https://paladin-t.github.io/bitty/
+]]
+
+print('Begin foo')
+
+local ret, _ = require 'bar' -- Require 'bar'.
+print(tostring(ret) .. ', ' .. tostring(_))
+
+print('End foo')
+
+return '[foo]'
+
+data:text/lua;count=273;path=main.lua;
+--[[
+Example for the Bitty Engine
+
+Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+
+Homepage: https://paladin-t.github.io/bitty/
+]]
+
+print('Begin main')
+
+local ret, _ = require 'foo' -- Require 'foo'.
+print(tostring(ret) .. ', ' .. tostring(_))
+
+print('End main')
+

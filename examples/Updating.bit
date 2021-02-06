@@ -1,0 +1,42 @@
+package:application/vnd.bitty-archive;
+data:text/json;count=144;path=info.json;
+{
+  "id": 0,
+  "title": "Basics/02. Updating",
+  "description": "",
+  "author": "Tony",
+  "version": "1.0",
+  "genre": "TUTORIAL",
+  "url": ""
+}
+data:text/lua;count=908;path=main.lua;
+--[[
+Example for the Bitty Engine
+
+Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+
+Homepage: https://paladin-t.github.io/bitty/
+]]
+
+-- Variables to accumulate time.
+local perSecond = 0
+local thirdSecond = 0
+
+-- Updating entry, executes once per cycle (often 60 times per second).
+-- The delta parameter means how long has been elapsed since previous update.
+function update(delta)
+	perSecond = perSecond + delta         -- Accumulate to the "per second" variable.
+	if thirdSecond ~= nil then
+		thirdSecond = thirdSecond + delta -- Accumulate to the "third second" variable.
+	end
+
+	if perSecond >= 1 then
+		perSecond = perSecond - 1
+		print('Per second.')   -- This happens per second. See output in the console window.
+	end
+	if thirdSecond ~= nil and thirdSecond >= 3 then
+		thirdSecond = nil     -- Stop further ticking.
+		print('Third second.') -- This happens once on the third second.
+	end
+end
+

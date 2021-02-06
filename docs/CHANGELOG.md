@@ -1,3 +1,27 @@
+### v1.0.1 Feb. 6 2021
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added context menu to the text-based editors
+* Added support to resize image asset
+* Added support to resize map asset
+* Added a `stretch` parameter to the `image:resize(...)` method
+* Added return values to the `cls(...)` function for previous clear color
+* Added return values to the `color(...)` function for previous active color
+* Added return values to the `camera(...)` function for previous camera offset
+* Added return values to the `clip(...)` function for previous clip area
+* Added a return value to the `mouse(...)` function for mouse wheel state
+* Changed modifier of shortcut combinations from Ctrl to Cmd on MacOS
+* Improved plugin to support customized source editor and compiler
+* Fixed a crash bug when step into with the debugger
+* Fixed a freeze bug when break with the debugger
+* Fixed a scope navigation bug for recursion with the debugger
+* Fixed an asset closing issue
+* Fixed a mouse cursor rendering issue of the code editor
+* Fixed a selection issue after typing in text-based editors
+* Fixed a tab ('\t') character rendering issue of text-based editors
+* Upgraded ImGui from v1.79 to v1.80
+
 ### v1.0 Jan. 19, 2021
 
 Enhanced modules, improved usability, fixed some bugs.

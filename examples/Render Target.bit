@@ -1,0 +1,45 @@
+package:application/vnd.bitty-archive;
+data:text/json;count=149;path=info.json;
+{
+  "id": 0,
+  "title": "Basics/10. Render Target",
+  "description": "",
+  "author": "Tony",
+  "version": "1.0",
+  "genre": "TUTORIAL",
+  "url": ""
+}
+data:text/lua;count=851;path=main.lua;
+--[[
+Example for the Bitty Engine
+
+Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+
+Homepage: https://paladin-t.github.io/bitty/
+]]
+
+local tex_ = nil
+
+function setup()
+	tex_ = Resources.load({ width = 128, height = 128 }) -- Load a dynamic texture.
+	Resources.wait(tex_)
+
+	Canvas.main.target = tex_ -- Use the texture as render target.
+	cls(Color.new(100, 200, 80)) -- Clear the render target with a specific color.
+	text('This is a', 10, 0) -- Draw something.
+	text('render target.', 10, 16)
+
+	Canvas.main.target = nil -- Restore the render target to the main canvas.
+	cls(Color.new(30, 30, 30)) -- Restore the clear color.
+
+	sync()
+
+	Resources.collect()
+end
+
+function update(delta)
+	local canvasWidth, canvasHeight = Canvas.main:size()
+	local x, y = (canvasWidth - tex_.width) * 0.5, (canvasHeight - tex_.height) * 0.5
+	tex(tex_, x, y)
+end
+

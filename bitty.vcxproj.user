@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">
+    <LocalDebuggerCommandArguments>-w $(ProjectDir)bitty\$(PlatformTarget)_$(Configuration)</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>$(ProjectDir)bitty\$(PlatformTarget)_$(Configuration)</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|Win32'">
+    <LocalDebuggerCommandArguments>-w $(ProjectDir)bitty\$(PlatformTarget)_$(Configuration)</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>$(ProjectDir)bitty\$(PlatformTarget)_$(Configuration)</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug|x64'">
+    <LocalDebuggerCommandArguments>-w $(ProjectDir)bitty\$(PlatformTarget)_$(Configuration)</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>$(ProjectDir)bitty\$(PlatformTarget)_$(Configuration)</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|x64'">
+    <LocalDebuggerCommandArguments>-w $(ProjectDir)bitty\$(PlatformTarget)_$(Configuration)</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>$(ProjectDir)bitty\$(PlatformTarget)_$(Configuration)</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ShowAllFiles>false</ShowAllFiles>
+  </PropertyGroup>
+</Project>
