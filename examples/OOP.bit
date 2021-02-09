@@ -53,7 +53,7 @@ function is(obj, kls)
 	return false
 end
 
-data:text/lua;count=769;path=main.lua;
+data:text/lua;count=758;path=main.lua;
 --[[
 Example for the Bitty Engine
 
@@ -80,10 +80,8 @@ A = class({
 
 B = class({
 	ctor = function (self, n)
-		A.ctor(self)
+		A.ctor(self, n)
 		print('B:ctor')
-
-		self.n = n
 	end
 }, A)
 

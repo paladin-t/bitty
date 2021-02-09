@@ -871,21 +871,34 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 					);
 				}
 			}
+			if (type == Image::TYPE()) {
+				if (referencing == 0) {
+					ImGui::Separator();
+					if (ImGui::MenuItem(_theme->menuEdit_ResizeImage())) {
+						Asset::List::Index idx = assetsEditingIndex();
+						if (idx != -1)
+							resizeAsset(wnd, rnd, project, idx);
+					}
+				}
+			}
 			if (referencing != 0) {
 				ImGui::Separator();
 				if (type == Map::TYPE()) {
+					if (ImGui::MenuItem(_theme->menuEdit_ResizeMap())) {
+						Asset::List::Index idx = assetsEditingIndex();
+						if (idx != -1)
+							resizeAsset(wnd, rnd, project, idx);
+					}
 					if (ImGui::MenuItem(_theme->menuEdit_ResizeTile())) {
-						Asset::List::Index idx = assetsSelectedIndex();
-						if (idx == -1)
-							idx = assetsEditingIndex();
-						resizeAssetTile(wnd, rnd, project, idx);
+						Asset::List::Index idx = assetsEditingIndex();
+						if (idx != -1)
+							resizeAssetTile(wnd, rnd, project, idx);
 					}
 				}
 				if (ImGui::MenuItem(_theme->menuEdit_ResolveRef())) {
-					Asset::List::Index idx = assetsSelectedIndex();
-					if (idx == -1)
-						idx = assetsEditingIndex();
-					rebindAssetRef(wnd, rnd, project, idx);
+					Asset::List::Index idx = assetsEditingIndex();
+					if (idx != -1)
+						rebindAssetRef(wnd, rnd, project, idx);
 				}
 			}
 
