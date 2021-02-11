@@ -9465,6 +9465,51 @@ static void open_Canvas(lua_State* L) {
 
 /**< Project. */
 
+static int Project_ctor(lua_State* L) {
+	if (isPlugin(L)) {
+		error(L, "The \"Project.new()\" constructor is not available for plugin.");
+
+		return 0;
+	}
+
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	const Project* project = impl->project();
+	if (!project) {
+		error(L, "Cannot create project.");
+
+		return 0;
+	}
+
+	LockGuard<RecursiveMutex>::UniquePtr acquired;
+	Project* prj = project->acquire(acquired);
+	if (!prj)
+		return write(L, false);
+
+	Project* newPrj = new Project();
+	if (!newPrj)
+		return write(L, nullptr);
+
+	newPrj->loader(prj->loader());
+	newPrj->factory(prj->factory());
+	newPrj->open(nullptr);
+
+	ProjectPtr ret(newPrj);
+
+	return write(L, &ret);
+}
+
+static int Project___gc(lua_State* L) {
+	ProjectPtr* obj = nullptr;
+	check<>(L, obj);
+	if (!obj)
+		return 0;
+
+	obj->~shared_ptr();
+
+	return 0;
+}
+
 static int Project_fullPath(lua_State* L) {
 	ProjectPtr* obj = nullptr;
 	read<>(L, obj);
@@ -9522,6 +9567,200 @@ static int Project_getAssets(lua_State* L) {
 	return write(L, entries);
 }
 
+static int Project_load(lua_State* L) {
+	if (isPlugin(L)) {
+		error(L, "The \"project:load(...)\" method is not available for plugin.");
+
+		return 0;
+	}
+
+	// Prepare.
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	// Get arguments.
+	ProjectPtr* obj = nullptr;
+	std::string path;
+	read<>(L, obj, path);
+
+	// Prepare.
+	if (!obj)
+		return write(L, false);
+
+	const Project* main = impl->project();
+	const Project* editing = impl->editing();
+	if ((uintptr_t)obj->get() == (uintptr_t)main || (uintptr_t)obj->get() == (uintptr_t)editing) {
+		error(L, "Cannot load from this project.");
+
+		return 0;
+	}
+	do {
+		if (!main)
+			break;
+
+		LockGuard<RecursiveMutex>::UniquePtr acquired;
+		Project* prj = main->acquire(acquired);
+		if (prj) {
+			if (Path::isParentOf(prj->path().c_str(), path.c_str())) {
+				error(L, "Cannot load from this project.");
+
+				return 0;
+			}
+		}
+	} while (false);
+	do {
+		if (!editing)
+			break;
+
+		LockGuard<RecursiveMutex>::UniquePtr acquired;
+		Project* prj = editing->acquire(acquired);
+		if (prj) {
+			if (Path::isParentOf(prj->path().c_str(), path.c_str())) {
+				error(L, "Cannot load from this project.");
+
+				return 0;
+			}
+		}
+	} while (false);
+
+	const Project* project = obj->get();
+	if (!project)
+		return write(L, false);
+
+	LockGuard<RecursiveMutex>::UniquePtr acquired;
+	Project* prj = project->acquire(acquired);
+	if (!prj)
+		return write(L, false);
+
+	if (prj->iterating()) {
+		error(L, "Cannot load project while iterating.");
+
+		return write(L, false);
+	}
+
+	// Load.
+	prj->unload();
+	prj->readonly(false);
+	if (!prj->load(path.c_str()))
+		return write(L, false);
+	prj->dirty(false);
+
+	// Finish.
+	return write(L, true);
+}
+
+static int Project_save(lua_State* L) {
+	if (isPlugin(L)) {
+		error(L, "The \"project:save(...)\" method is not available for plugin.");
+
+		return 0;
+	}
+
+	// Prepare.
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	// Get arguments.
+	ProjectPtr* obj = nullptr;
+	std::string path;
+	read<>(L, obj, path);
+
+	// Prepare.
+	if (!obj)
+		return write(L, false);
+
+	const Project* main = impl->project();
+	const Project* editing = impl->editing();
+	if ((uintptr_t)obj->get() == (uintptr_t)main || (uintptr_t)obj->get() == (uintptr_t)editing) {
+		error(L, "Cannot save to this project.");
+
+		return 0;
+	}
+	do {
+		if (!main)
+			break;
+
+		LockGuard<RecursiveMutex>::UniquePtr acquired;
+		Project* prj = main->acquire(acquired);
+		if (prj) {
+			if (Path::isParentOf(prj->path().c_str(), path.c_str())) {
+				error(L, "Cannot save to this project.");
+
+				return 0;
+			}
+		}
+	} while (false);
+	do {
+		if (!editing)
+			break;
+
+		LockGuard<RecursiveMutex>::UniquePtr acquired;
+		Project* prj = editing->acquire(acquired);
+		if (prj) {
+			if (Path::isParentOf(prj->path().c_str(), path.c_str())) {
+				error(L, "Cannot save to this project.");
+
+				return 0;
+			}
+		}
+	} while (false);
+
+	const Project* project = obj->get();
+	if (!project)
+		return write(L, false);
+
+	LockGuard<RecursiveMutex>::UniquePtr acquired;
+	Project* prj = project->acquire(acquired);
+	if (!prj)
+		return write(L, false);
+
+	if (prj->iterating()) {
+		error(L, "Cannot save project while iterating.");
+
+		return write(L, false);
+	}
+
+	// Save.
+	Project::ErrorHandler onError = [] (const char*) -> void { };
+	if (!prj->save(path.c_str(), true, onError))
+		return write(L, false);
+	prj->readonly(false);
+	prj->dirty(false);
+
+	// Finish.
+	return write(L, true);
+}
+
+static int Project_exists(lua_State* L) {
+#if BITTY_TRIAL_ENABLED
+	if (isPlugin(L)) {
+		error(L, "The \"project:exists(...)\" method is not available for trial.");
+
+		return 0;
+	}
+#endif /* BITTY_TRIAL_ENABLED */
+
+	ProjectPtr* obj = nullptr;
+	std::string name;
+	read<>(L, obj, name);
+
+	if (!obj)
+		return write(L, false);
+
+	const Project* project = obj->get();
+	if (!project)
+		return write(L, false);
+
+	LockGuard<RecursiveMutex>::UniquePtr acquired;
+	Project* prj = project->acquire(acquired);
+	if (!prj)
+		return write(L, false);
+
+	Asset* asset = prj->get(name.c_str());
+	if (!asset)
+		return write(L, false);
+
+	return write(L, true);
+}
+
 static int Project_read(lua_State* L) {
 #if BITTY_TRIAL_ENABLED
 	if (isPlugin(L)) {
@@ -9559,6 +9798,168 @@ static int Project_read(lua_State* L) {
 		return write(L, nullptr);
 
 	return write(L, &bytes);
+}
+
+static int Project_write(lua_State* L) {
+#if BITTY_TRIAL_ENABLED
+	if (isPlugin(L)) {
+		error(L, "The \"project:write(...)\" method is not available for trial.");
+
+		return 0;
+	}
+#endif /* BITTY_TRIAL_ENABLED */
+
+	// Prepare.
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	// Get arguments.
+	const int n = getTop(L);
+	ProjectPtr* obj = nullptr;
+	std::string name;
+	Bytes::Ptr* bytes = nullptr;
+	bool overwrite = true;
+	if (n == 4)
+		read<>(L, obj, name, bytes, overwrite);
+	else
+		read<>(L, obj, name, bytes);
+
+	// Prepare.
+	if (!obj || !bytes)
+		return write(L, false);
+
+	const Project* main = impl->project();
+	if ((uintptr_t)obj->get() == (uintptr_t)main) {
+		error(L, "Cannot write to this project.");
+
+		return 0;
+	}
+
+	const Project* project = obj->get();
+	if (!project)
+		return write(L, false);
+
+	LockGuard<RecursiveMutex>::UniquePtr acquired;
+	Project* prj = project->acquire(acquired);
+	if (!prj)
+		return write(L, false);
+
+	if (prj->iterating()) {
+		error(L, "Cannot write to project while iterating.");
+
+		return write(L, false);
+	}
+
+	Asset* asset = prj->get(name.c_str());
+	if (asset && !overwrite)
+		return write(L, false);
+
+	// Write.
+	std::string ext;
+	Path::split(name, nullptr, &ext, nullptr);
+	const bool add = !asset;
+	if (add) {
+		asset = prj->factory().create(prj);
+		const unsigned type = Asset::typeOf(ext, true);
+		asset->link(type, bytes->get(), name.c_str(), nullptr);
+
+		asset->dirty(true);
+
+		prj->add(asset);
+		prj->dirty(true);
+	} else {
+		Asset::States* states = asset->states();
+		states->deactivate();
+		states->deselect();
+
+		asset->finish((Asset::Usages)(Asset::RUNNING | Asset::EDITING), false);
+		asset->unload();
+		prj->cleanup((Asset::Usages)(Asset::RUNNING | Asset::EDITING));
+
+		const unsigned type = Asset::typeOf(ext, true);
+		asset->link(type, bytes->get(), name.c_str(), nullptr);
+
+		asset->dirty(true);
+
+		prj->dirty(true);
+	}
+
+	// Process the asset.
+	asset->prepare(Asset::EDITING, false);
+
+	Asset::States* states = asset->states();
+	states->activate(Asset::States::EDITABLE);
+	states->focus();
+
+	prj->bringToFront(asset);
+
+	// Finish.
+	return write(L, true);
+}
+
+static int Project_remove(lua_State* L) {
+#if BITTY_TRIAL_ENABLED
+	if (isPlugin(L)) {
+		error(L, "The \"project:remove(...)\" method is not available for trial.");
+
+		return 0;
+	}
+#endif /* BITTY_TRIAL_ENABLED */
+
+	// Prepare.
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	// Get arguments.
+	ProjectPtr* obj = nullptr;
+	std::string name;
+	read<>(L, obj, name);
+
+	// Prepare.
+	if (!obj)
+		return write(L, false);
+
+	const Project* main = impl->project();
+	const Project* editing = impl->editing();
+	if ((uintptr_t)obj->get() == (uintptr_t)main || (uintptr_t)obj->get() == (uintptr_t)editing) {
+		error(L, "Cannot remove from this project.");
+
+		return 0;
+	}
+
+	const Project* project = obj->get();
+	if (!project)
+		return write(L, false);
+
+	LockGuard<RecursiveMutex>::UniquePtr acquired;
+	Project* prj = project->acquire(acquired);
+	if (!prj)
+		return write(L, false);
+
+	if (prj->iterating()) {
+		error(L, "Cannot remove from project while iterating.");
+
+		return write(L, false);
+	}
+
+	Asset* asset = prj->get(name.c_str());
+	if (!asset)
+		return write(L, true);
+
+	// Remove.
+	Asset::States* states = asset->states();
+	states->deactivate();
+	states->deselect();
+
+	asset->finish((Asset::Usages)(Asset::RUNNING | Asset::EDITING), false);
+	asset->unload();
+	prj->cleanup((Asset::Usages)(Asset::RUNNING | Asset::EDITING));
+
+	asset->remove();
+	prj->remove(asset);
+
+	prj->dirty(true);
+
+	// Finish.
+	return write(L, true);
 }
 
 static int Project_strategies(lua_State* L) {
@@ -9640,17 +10041,25 @@ static void open_Project(lua_State* L) {
 	def(
 		L, "Project",
 		LUA_LIB(
-			array<luaL_Reg>()
+			array(
+				luaL_Reg{ "new", Project_ctor }, // For game only.
+				luaL_Reg{ nullptr, nullptr }
+			)
 		),
 		array(
-			luaL_Reg{ "__gc", __gc<ProjectPtr> },
+			luaL_Reg{ "__gc", Project___gc },
 			luaL_Reg{ "__tostring", __tostring<ProjectPtr> },
 			luaL_Reg{ nullptr, nullptr }
 		),
 		array(
 			luaL_Reg{ "fullPath", Project_fullPath },
 			luaL_Reg{ "getAssets", Project_getAssets },
+			luaL_Reg{ "load", Project_load }, // For game only.
+			luaL_Reg{ "save", Project_save }, // For game only.
+			luaL_Reg{ "exists", Project_exists },
 			luaL_Reg{ "read", Project_read },
+			luaL_Reg{ "write", Project_write },
+			luaL_Reg{ "remove", Project_remove },
 			luaL_Reg{ "strategies", Project_strategies },
 			luaL_Reg{ nullptr, nullptr }
 		),
@@ -9660,11 +10069,11 @@ static void open_Project(lua_State* L) {
 	getGlobal(L, "Project");
 	{
 		ProjectPtr main = Project_main(L);
-		if (main)
+		if (main) // For game and plugin.
 			setTable(L, "main", &main);
 		ProjectPtr editing = Project_editing(L);
-		if (editing)
-			setTable(L, "editing", &editing);
+		if (editing) // For plugin only.
+			setTable(L, "editing", &editing); // Undocumented.
 	}
 	pop(L);
 }

@@ -232,7 +232,7 @@ This module generates 2D or 3D noise values.
 
 **Constructors**
 
-* `Noiser.new()`: constructs a noiser object with
+* `Noiser.new()`: constructs a noiser object
 
 **Methods**
 
