@@ -1,3 +1,6 @@
+* [Source file structure](#source-file-structure)
+* [Encrypting assets](#encrypting-assets)
+
 ## Source file structure
 
 The source code files are flat tiled in this directory, there are also some inline resources in the "resource" directory.
@@ -108,3 +111,7 @@ workspace                  ________________________________|               |
                                                                            |
 bitty                      ________________________________________________|
 ```
+
+## Encrypting assets
+
+It is possible to encrypt assets by making your own loader for any asset type. See "loader.h", "loader.cpp" for more.

@@ -100,9 +100,9 @@ You can compile a core version from this repository, and customize redistributab
 * Introduce your own API
 * Bring to other platforms
 
-A C++14 capable compiler is required, any compiler came after 2014 should be ok.
+See the [README](src/README.md) under the "src" directory for details.
 
-You need to get this repository and its submodules before build:
+A C++14 capable compiler is required, any compiler came after 2014 should be ok. You need to get this repository and its submodules before build:
 
 ```sh
 git clone https://github.com/paladin-t/bitty.git
@@ -204,7 +204,7 @@ Dependencies: CMake, GCC.
 
 ### Other platforms
 
-You can also setup your own build pipeline for other platforms. The "lib" and "src" are almost what you will deal with. See the [README](src/README.md) under "src" for description of directory structure.
+You can also setup your own build pipeline for other platforms. The "lib" and "src" directories are almost all you need. See the [README](src/README.md) under the "src" directory for project structure.
 
 The "platform_*" files contain most platform dependent code.
 
