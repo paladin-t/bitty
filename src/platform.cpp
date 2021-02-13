@@ -73,10 +73,6 @@ const char* Platform::locale(const char* loc) {
 	return result;
 }
 
-void Platform::execute(const char* cmd) {
-	system(cmd);
-}
-
 void Platform::idle(void) {
 	SDL_Event evt;
 	if (SDL_PollEvent(&evt)) {

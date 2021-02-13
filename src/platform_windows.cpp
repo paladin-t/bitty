@@ -280,6 +280,10 @@ void Platform::threadName(const char* threadName) {
 	platformThreadName(::GetCurrentThreadId(), threadName);
 }
 
+void Platform::execute(const char* cmd) {
+	system(cmd);
+}
+
 void Platform::redirectIoToConsole(void) {
 	// Prepare.
 	if (platformRedirectedIoToConsole)

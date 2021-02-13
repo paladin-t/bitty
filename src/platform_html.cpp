@@ -266,6 +266,16 @@ void Platform::threadName(const char*) {
 	// Do nothing.
 }
 
+EM_JS(
+	void, platformHtmlExecute, (const char* cmd), {
+		eval(UTF8ToString(cmd));
+	}
+);
+
+void Platform::execute(const char* cmd) {
+	platformHtmlExecute(cmd);
+}
+
 void Platform::redirectIoToConsole(void) {
 	// Do nothing.
 }

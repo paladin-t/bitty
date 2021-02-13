@@ -406,6 +406,10 @@ void Platform::threadName(const char* threadName) {
 	prctl(PR_SET_NAME, threadName, 0, 0, 0);
 }
 
+void Platform::execute(const char* cmd) {
+	system(cmd);
+}
+
 void Platform::redirectIoToConsole(void) {
 	BITTY_MISSING
 }

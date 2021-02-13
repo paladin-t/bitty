@@ -296,6 +296,10 @@ void Platform::threadName(const char* threadName) {
 	pthread_setname_np(threadName);
 }
 
+void Platform::execute(const char* cmd) {
+	system(cmd);
+}
+
 void Platform::redirectIoToConsole(void) {
 	BITTY_MISSING
 }
