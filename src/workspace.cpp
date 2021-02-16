@@ -91,7 +91,7 @@ static void workspaceRenderSplash(Window*, Renderer* rnd, Workspace* ws, std::fu
 		ws->splashBitty()->width(),
 		ws->splashBitty()->height()
 	);
-	rnd->render(ws->splashBitty(), nullptr, &dstBitty, nullptr, nullptr, false, false);
+	rnd->render(ws->splashBitty(), nullptr, &dstBitty, nullptr, nullptr, false, false, nullptr, false, false);
 
 	const Math::Recti dstEngine = Math::Recti::byXYWH(
 		(rnd->width() - ws->splashEngine()->width()) / 2,
@@ -99,7 +99,7 @@ static void workspaceRenderSplash(Window*, Renderer* rnd, Workspace* ws, std::fu
 		ws->splashEngine()->width(),
 		ws->splashEngine()->height()
 	);
-	rnd->render(ws->splashEngine(), nullptr, &dstEngine, nullptr, nullptr, false, false);
+	rnd->render(ws->splashEngine(), nullptr, &dstEngine, nullptr, nullptr, false, false, nullptr, false, false);
 
 	if (post)
 		post(rnd, ws);

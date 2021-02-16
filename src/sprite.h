@@ -98,7 +98,12 @@ public:
 
 	virtual bool update(double delta) = 0;
 
-	virtual void render(class Renderer* rnd, int x, int y, int width, int height, const double* rotAngle /* nullable */, const Math::Vec2f* rotCenter /* nullable */) const = 0;
+	virtual void render(
+		class Renderer* rnd,
+		int x, int y, int width, int height,
+		const double* rotAngle /* nullable */, const Math::Vec2f* rotCenter /* nullable */,
+		const Color* color /* nullable */, bool colorChanged, bool alphaChanged
+	) const = 0;
 
 	virtual bool load(Texture::Ptr tex, const Math::Recti* fullArea /* nullable */, const Math::Vec2i* frameSize, double interval, bool columnMajorOrder) = 0;
 	virtual bool load(int width, int height) = 0;

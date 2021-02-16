@@ -334,7 +334,11 @@ public:
 		return true;
 	}
 
-	virtual void render(class Renderer* rnd, int x, int y) const override {
+	virtual void render(
+		class Renderer* rnd,
+		int x, int y,
+		const Color* color, bool colorChanged, bool alphaChanged
+	) const override {
 		if (!_tiles.texture)
 			return;
 
@@ -347,7 +351,7 @@ public:
 			if (batch) {
 				const Math::Recti dstRect = Math::Recti::byXYWH(x, y, _width * _tileWidth, _height * _tileHeight);
 
-				rnd->render(batch.get(), nullptr, &dstRect, nullptr, nullptr, false, false);
+				rnd->render(batch.get(), nullptr, &dstRect, nullptr, nullptr, false, false, color, colorChanged, alphaChanged);
 
 				return;
 			}
@@ -373,7 +377,7 @@ public:
 				const int dstY = y + j * _tileHeight;
 				const Math::Recti dstRect = Math::Recti::byXYWH(dstX, dstY, _tileWidth, _tileHeight);
 
-				rnd->render(_tiles.texture.get(), &srcRect, &dstRect, nullptr, nullptr, false, false);
+				rnd->render(_tiles.texture.get(), &srcRect, &dstRect, nullptr, nullptr, false, false, color, colorChanged, alphaChanged);
 			}
 		}
 	}

@@ -320,7 +320,12 @@ public:
 		return true;
 	}
 
-	virtual void render(class Renderer* rnd, int x, int y, int width, int height, const double* rotAngle, const Math::Vec2f* rotCenter) const override {
+	virtual void render(
+		class Renderer* rnd,
+		int x, int y, int width, int height,
+		const double* rotAngle, const Math::Vec2f* rotCenter,
+		const Color* color, bool colorChanged, bool alphaChanged
+	) const override {
 		Math::Recti area;
 		Texture::Ptr tex = nullptr;
 		if (!get(_cursor, &tex, &area, nullptr, nullptr))
@@ -339,7 +344,7 @@ public:
 		if (!Math::intersects(viewport, dst))
 			return;
 
-		rnd->render(tex.get(), &area, &dst, rotAngle, rotCenter, hFlip(), vFlip());
+		rnd->render(tex.get(), &area, &dst, rotAngle, rotCenter, hFlip(), vFlip(), color, colorChanged, alphaChanged);
 	}
 
 	virtual bool load(Texture::Ptr tex, const Math::Recti* fullArea, const Math::Vec2i* frameSize, double interval, bool columnMajorOrder) override {

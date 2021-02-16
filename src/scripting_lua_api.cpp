@@ -8716,7 +8716,10 @@ static int Primitives_tex(lua_State* L) {
 	double rotAngle = 0;
 	Math::Vec2f* rotCenter = nullptr;
 	bool hFlip = false, vFlip = false;
-	if (n == 13)
+	Color* col = nullptr;
+	if (n == 14)
+		read<>(L, res, x, y, w, h, sx, sy, sw, sh, rotAngle, rotCenter, hFlip, vFlip, col);
+	else if (n == 13)
 		read<>(L, res, x, y, w, h, sx, sy, sw, sh, rotAngle, rotCenter, hFlip, vFlip);
 	else if (n == 12)
 		read<>(L, res, x, y, w, h, sx, sy, sw, sh, rotAngle, rotCenter, hFlip);
@@ -8743,7 +8746,8 @@ static int Primitives_tex(lua_State* L) {
 		x, y, w, h,
 		sx, sy, sw, sh,
 		rotAnglePtr, rotCenter,
-		hFlip, vFlip
+		hFlip, vFlip,
+		col
 	);
 
 	return 0;
@@ -8757,7 +8761,10 @@ static int Primitives_spr(lua_State* L) {
 	int x = 0, y = 0, w = 0, h = 0;
 	double rotAngle = 0;
 	Math::Vec2f* rotCenter = nullptr;
-	if (n == 7)
+	Color* col = nullptr;
+	if (n == 8)
+		read<>(L, res, x, y, w, h, rotAngle, rotCenter, col);
+	else if (n == 7)
 		read<>(L, res, x, y, w, h, rotAngle, rotCenter);
 	else if (n == 6)
 		read<>(L, res, x, y, w, h, rotAngle);
@@ -8776,7 +8783,8 @@ static int Primitives_spr(lua_State* L) {
 			*res,
 			x, y, w, h,
 			rotAnglePtr, rotCenter,
-			impl->delta()
+			impl->delta(),
+			col
 		);
 	} else {
 		error(L, "Sprite resource expected.");
@@ -8788,12 +8796,17 @@ static int Primitives_spr(lua_State* L) {
 static int Primitives_map(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
+	const int n = getTop(L);
 	Resources::Map::Ptr* res = nullptr;
 	int x = 0, y = 0;
-	read<>(L, res, x, y);
+	Color* col = nullptr;
+	if (n == 4)
+		read<>(L, res, x, y, col);
+	else
+		read<>(L, res, x, y);
 
 	if (res && *res)
-		impl->primitives()->map(*res, x, y, impl->delta());
+		impl->primitives()->map(*res, x, y, impl->delta(), col);
 	else
 		error(L, "Map resource expected.");
 

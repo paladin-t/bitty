@@ -241,17 +241,17 @@ public:
 	 *
 	 * @param[in] rotAngle Rotation angle in DEG.
 	 */
-	virtual void tex(Resources::Texture::Ptr tex /* nullable */, int x, int y, int width, int height, int sx, int sy, int swidth, int sheight, const double* rotAngle /* nullable */, const Math::Vec2f* rotCenter /* nullable */, bool hFlip, bool vFlip) const = 0;
+	virtual void tex(Resources::Texture::Ptr tex /* nullable */, int x, int y, int width, int height, int sx, int sy, int swidth, int sheight, const double* rotAngle /* nullable */, const Math::Vec2f* rotCenter /* nullable */, bool hFlip, bool vFlip, const Color* col /* nullable */) const = 0;
 	/**
 	 * @brief Draws a sprite.
 	 *
 	 * @param[in] rotAngle Rotation angle in DEG.
 	 */
-	virtual void spr(Resources::Sprite::Ptr spr, int x, int y, int width, int height, const double* rotAngle /* nullable */, const Math::Vec2f* rotCenter /* nullable */, double delta) const = 0;
+	virtual void spr(Resources::Sprite::Ptr spr, int x, int y, int width, int height, const double* rotAngle /* nullable */, const Math::Vec2f* rotCenter /* nullable */, double delta, const Color* col /* nullable */) const = 0;
 	/**
 	 * @brief Draws a map.
 	 */
-	virtual void map(Resources::Map::Ptr map, int x, int y, double delta) const = 0;
+	virtual void map(Resources::Map::Ptr map, int x, int y, double delta, const Color* col /* nullable */) const = 0;
 	/**
 	 * @brief Gets the palette color at the specific index.
 	 *

@@ -172,7 +172,13 @@ public:
 		SDL_RenderClear(_renderer);
 	}
 
-	virtual void render(class Texture* tex, const Math::Recti* srcRect, const Math::Recti* dstRect, const double* rotAngle, const Math::Vec2f* rotCenter, bool hFlip, bool vFlip) override {
+	virtual void render(
+		class Texture* tex,
+		const Math::Recti* srcRect, const Math::Recti* dstRect,
+		const double* rotAngle, const Math::Vec2f* rotCenter,
+		bool hFlip, bool vFlip,
+		const Color* color, bool colorChanged, bool alphaChanged
+	) override {
 		// Prepare.
 		if (!tex || !tex->pointer(this))
 			return;
@@ -200,6 +206,16 @@ public:
 		if (vFlip)
 			flip = (SDL_RendererFlip)(flip | SDL_FLIP_VERTICAL);
 
+		Uint8 r = 0, g = 0, b = 0, a = 0;
+		if (color && colorChanged) {
+			SDL_GetTextureColorMod(texture, &r, &g, &b);
+			SDL_SetTextureColorMod(texture, color->r, color->g, color->b);
+		}
+		if (color && alphaChanged) {
+			SDL_GetTextureAlphaMod(texture, &a);
+			SDL_SetTextureAlphaMod(texture, color->a);
+		}
+
 		// Copy.
 		if (rotAngle || flip != SDL_FLIP_NONE) {
 			SDL_RenderCopyEx(
@@ -213,6 +229,14 @@ public:
 				_renderer, texture,
 				srcRect ? &src : nullptr, dstRect ? &dst : nullptr
 			);
+		}
+
+		// Finish.
+		if (color && colorChanged) {
+			SDL_SetTextureColorMod(texture, r, g, b);
+		}
+		if (color && alphaChanged) {
+			SDL_SetTextureAlphaMod(texture, a);
 		}
 	}
 

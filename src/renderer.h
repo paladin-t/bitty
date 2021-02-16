@@ -108,7 +108,13 @@ public:
 	/**
 	 * @brief For `STATIC`, `STREAMING`, `TARGET`.
 	 */
-	virtual void render(class Texture* tex, const Math::Recti* srcRect /* nullable */, const Math::Recti* dstRect /* nullable */, const double* rotAngle /* nullable */, const Math::Vec2f* rotCenter /* nullable */, bool hFlip, bool vFlip) = 0;
+	virtual void render(
+		class Texture* tex,
+		const Math::Recti* srcRect /* nullable */, const Math::Recti* dstRect /* nullable */,
+		const double* rotAngle /* nullable */, const Math::Vec2f* rotCenter /* nullable */,
+		bool hFlip, bool vFlip,
+		const Color* color /* nullable */, bool colorChanged, bool alphaChanged
+	) = 0;
 
 	virtual void present(void) = 0;
 

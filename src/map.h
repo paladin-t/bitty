@@ -96,7 +96,11 @@ public:
 
 	virtual bool update(double delta) = 0;
 
-	virtual void render(class Renderer* rnd, int x, int y) const = 0;
+	virtual void render(
+		class Renderer* rnd,
+		int x, int y,
+		const Color* color /* nullable */, bool colorChanged, bool alphaChanged
+	) const = 0;
 
 	virtual bool load(const int* cels, int width, int height) = 0;
 	virtual void unload(void) = 0;

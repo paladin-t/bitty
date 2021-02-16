@@ -101,7 +101,7 @@ public:
 		return _usage;
 	}
 
-	virtual ScaleModes scaling(void) const override {
+	virtual ScaleModes scale(void) const override {
 #if SDL_VERSION_ATLEAST(2, 0, 12)
 		if (!_texture)
 			return NEAREST;
@@ -115,7 +115,7 @@ public:
 		return NEAREST;
 #endif /* SDL_VERSION_ATLEAST(2, 0, 12) */
 	}
-	virtual void scaling(ScaleModes scale) override {
+	virtual void scale(ScaleModes scale) override {
 #if SDL_VERSION_ATLEAST(2, 0, 12)
 		if (!_texture)
 			return;
@@ -168,8 +168,8 @@ public:
 
 		// Save properties.
 #if SDL_VERSION_ATLEAST(2, 0, 12)
-		SDL_ScaleMode scaling = SDL_ScaleModeNearest;
-		SDL_GetTextureScaleMode(_texture, &scaling);
+		SDL_ScaleMode scale = SDL_ScaleModeNearest;
+		SDL_GetTextureScaleMode(_texture, &scale);
 #endif /* SDL_VERSION_ATLEAST(2, 0, 12) */
 
 		SDL_BlendMode blend = SDL_BLENDMODE_INVALID;
@@ -265,7 +265,7 @@ public:
 		// Restore properties.
 		if (_texture) {
 #if SDL_VERSION_ATLEAST(2, 0, 12)
-			SDL_SetTextureScaleMode(_texture, scaling);
+			SDL_SetTextureScaleMode(_texture, scale);
 #endif /* SDL_VERSION_ATLEAST(2, 0, 12) */
 			SDL_SetTextureBlendMode(_texture, blend);
 		}
@@ -612,8 +612,8 @@ private:
 		} while (false);
 
 #if SDL_VERSION_ATLEAST(2, 0, 12)
-		SDL_ScaleMode scaling = SDL_ScaleModeNearest;
-		SDL_GetTextureScaleMode(_texture, &scaling);
+		SDL_ScaleMode scale = SDL_ScaleModeNearest;
+		SDL_GetTextureScaleMode(_texture, &scale);
 #endif /* SDL_VERSION_ATLEAST(2, 0, 12) */
 
 		SDL_BlendMode blend = SDL_BLENDMODE_INVALID;
@@ -636,7 +636,7 @@ private:
 			SDL_FreeSurface(tmp);
 		}
 #if SDL_VERSION_ATLEAST(2, 0, 12)
-		SDL_SetTextureScaleMode(tex, scaling);
+		SDL_SetTextureScaleMode(tex, scale);
 #endif /* SDL_VERSION_ATLEAST(2, 0, 12) */
 		SDL_SetTextureBlendMode(tex, blend);
 		Uint32 format = 0;

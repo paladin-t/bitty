@@ -70,10 +70,28 @@ public:
 	Dtor dtor = [] (Cmd*) -> void { /* Do nothing. */ };
 };
 
-class CmdClippable : public Cmd {
+class CmdClippable {
 private:
 	bool _clipping = false;
 	int _clippingX = 0, _clippingY = 0, _clippingW = 0, _clippingH = 0;
+
+public:
+	~CmdClippable() {
+		_clipping = false;
+		_clippingX = 0;
+		_clippingY = 0;
+		_clippingW = 0;
+		_clippingH = 0;
+	}
+
+	void clip(int x, int y, int w, int h) {
+		_clipping = true;
+
+		_clippingX = x;
+		_clippingY = y;
+		_clippingW = w;
+		_clippingH = h;
+	}
 
 protected:
 	bool clip(int* x, int* y, int* w, int* h) const {
@@ -99,15 +117,41 @@ protected:
 				rnd->clip();
 		}
 	}
+};
+
+class CmdColored {
+private:
+	bool _colorChanged = false;
+	bool _alphaChanged = false;
+	Color _color;
 
 public:
-	void clip(int x, int y, int w, int h) {
-		_clipping = true;
+	~CmdColored() {
+		_colorChanged = false;
+		_alphaChanged = false;
+		_color = Color(255, 255, 255, 255);
+	}
 
-		_clippingX = x;
-		_clippingY = y;
-		_clippingW = w;
-		_clippingH = h;
+	void colored(const Color &col) {
+		_colorChanged = col.r != 255 || col.g != 255, col.b != 255;
+		_alphaChanged = col.a != 255;
+
+		_color = col;
+	}
+
+protected:
+	bool colored(Color* col, bool* colorChanged, bool* alphaChanged) const {
+		if (!_colorChanged && !_alphaChanged)
+			return false;
+
+		if (col)
+			*col = _color;
+		if (colorChanged)
+			*colorChanged = _colorChanged;
+		if (alphaChanged)
+			*alphaChanged = _alphaChanged;
+
+		return _colorChanged || _alphaChanged;
 	}
 };
 
@@ -220,7 +264,7 @@ public:
 	}
 };
 
-class CmdPlot : public CmdClippable {
+class CmdPlot : public Cmd, public CmdClippable {
 private:
 	int _x = 0, _y = 0;
 	Color _color;
@@ -257,7 +301,7 @@ public:
 	}
 };
 
-class CmdLine : public CmdClippable {
+class CmdLine : public Cmd, public CmdClippable {
 private:
 	int _x0 = 0, _y0 = 0, _x1 = 0, _y1 = 0;
 	Color _color;
@@ -296,7 +340,7 @@ public:
 	}
 };
 
-class CmdCirc : public CmdClippable {
+class CmdCirc : public Cmd, public CmdClippable {
 private:
 	int _x = 0, _y = 0, _r = 0;
 	bool _fill = false;
@@ -339,7 +383,7 @@ public:
 	}
 };
 
-class CmdEllipse : public CmdClippable {
+class CmdEllipse : public Cmd, public CmdClippable {
 private:
 	int _x = 0, _y = 0, _rx = 0, _ry = 0;
 	bool _fill = false;
@@ -383,7 +427,7 @@ public:
 	}
 };
 
-class CmdRect : public CmdClippable {
+class CmdRect : public Cmd, public CmdClippable {
 private:
 	int _x0 = 0, _y0 = 0, _x1 = 0, _y1 = 0;
 	bool _fill = false;
@@ -436,7 +480,7 @@ public:
 	}
 };
 
-class CmdTri : public CmdClippable {
+class CmdTri : public Cmd, public CmdClippable {
 private:
 	Math::Vec3f _p0, _p1, _p2;
 	Resources::Texture::Ptr _texture = nullptr;
@@ -654,7 +698,7 @@ public:
 	}
 };
 
-class CmdText : public CmdClippable {
+class CmdText : public Cmd, public CmdClippable {
 private:
 	std::wstring _text;
 	int _x = 0, _y = 0;
@@ -704,7 +748,7 @@ public:
 				x, y,
 				x + ptr->width() - 1, y + ptr->height() - 1
 			);
-			rnd->render(ptr.get(), nullptr, &dstRect, nullptr, nullptr, false, false);
+			rnd->render(ptr.get(), nullptr, &dstRect, nullptr, nullptr, false, false, nullptr, false, false);
 			x += dstRect.width();
 			if (*text)
 				x += _margin;
@@ -714,7 +758,7 @@ public:
 	}
 };
 
-class CmdTex : public CmdClippable {
+class CmdTex : public Cmd, public CmdClippable, public CmdColored {
 private:
 	Resources::Texture::Ptr _texture = nullptr;
 	int _x = 0, _y = 0, _width = 0, _height = 0;
@@ -780,15 +824,19 @@ public:
 				_swidth = ptr->width();
 			if (_sheight <= 0)
 				_sheight = ptr->height();
-
 			const Math::Recti dstRect = Math::Recti::byXYWH(_x, _y, _width, _height);
 			const Math::Recti srcRect = Math::Recti::byXYWH(_sx, _sy, _swidth, _sheight);
+
+			Color col;
+			bool colorChanged = false, alphaChanged = false;
+			colored(&col, &colorChanged, &alphaChanged);
+
 			rnd->render(
 				ptr.get(),
 				&srcRect, &dstRect,
-				_rotated ? &_rotAngle : nullptr,
-				&_rotCenter,
-				_hFlip, _vFlip
+				_rotated ? &_rotAngle : nullptr, &_rotCenter,
+				_hFlip, _vFlip,
+				&col, colorChanged, alphaChanged
 			);
 		} while (false);
 
@@ -796,7 +844,7 @@ public:
 	}
 };
 
-class CmdSpr : public CmdClippable {
+class CmdSpr : public Cmd, public CmdClippable, public CmdColored {
 private:
 	Resources::Sprite::Ptr _sprite = nullptr;
 	int _x = 0, _y = 0, _width = -1, _height = -1;
@@ -853,11 +901,15 @@ public:
 			if (_height <= 0)
 				_height = ptr->height();
 
+			Color col;
+			bool colorChanged = false, alphaChanged = false;
+			colored(&col, &colorChanged, &alphaChanged);
+
 			ptr->render(
 				rnd,
 				_x, _y, _width, _height,
-				_rotated ? &_rotAngle : nullptr,
-				&_rotCenter
+				_rotated ? &_rotAngle : nullptr, &_rotCenter,
+				&col, colorChanged, alphaChanged
 			);
 		} while (false);
 
@@ -865,7 +917,7 @@ public:
 	}
 };
 
-class CmdMap : public CmdClippable {
+class CmdMap : public Cmd, public CmdClippable, public CmdColored {
 private:
 	Resources::Map::Ptr _map = nullptr;
 	int _x = 0, _y = 0;
@@ -905,7 +957,15 @@ public:
 
 			ptr->update(delta ? *delta : _delta);
 
-			ptr->render(rnd, _x, _y);
+			Color col;
+			bool colorChanged = false, alphaChanged = false;
+			colored(&col, &colorChanged, &alphaChanged);
+
+			ptr->render(
+				rnd,
+				_x, _y,
+				&col, colorChanged, alphaChanged
+			);
 		} while (false);
 
 		clip(rnd, false);
@@ -2417,7 +2477,7 @@ public:
 
 		commit(var, nullptr);
 	}
-	virtual void tex(Resources::Texture::Ptr tex, int x, int y, int width, int height, int sx, int sy, int swidth, int sheight, const double* rotAngle, const Math::Vec2f* rotCenter, bool hFlip, bool vFlip) const override {
+	virtual void tex(Resources::Texture::Ptr tex, int x, int y, int width, int height, int sx, int sy, int swidth, int sheight, const double* rotAngle, const Math::Vec2f* rotCenter, bool hFlip, bool vFlip, const Color* col) const override {
 		translated(x, y);
 
 		const Math::Recti aabb(x, y, x + width, y + height);
@@ -2429,10 +2489,12 @@ public:
 		int clpX = 0, clpY = 0, clpW = 0, clpH = 0;
 		if (clipped(clpX, clpY, clpW, clpH))
 			var.tex.clip(clpX, clpY, clpW, clpH);
+		if (col)
+			var.tex.colored(*col);
 
 		commit(var, nullptr);
 	}
-	virtual void spr(Resources::Sprite::Ptr spr, int x, int y, int width, int height, const double* rotAngle, const Math::Vec2f* rotCenter, double delta) const override {
+	virtual void spr(Resources::Sprite::Ptr spr, int x, int y, int width, int height, const double* rotAngle, const Math::Vec2f* rotCenter, double delta, const Color* col) const override {
 		if (!spr)
 			return;
 
@@ -2443,10 +2505,12 @@ public:
 		int clpX = 0, clpY = 0, clpW = 0, clpH = 0;
 		if (clipped(clpX, clpY, clpW, clpH))
 			var.spr.clip(clpX, clpY, clpW, clpH);
+		if (col)
+			var.spr.colored(*col);
 
 		commit(var, nullptr);
 	}
-	virtual void map(Resources::Map::Ptr map, int x, int y, double delta) const override {
+	virtual void map(Resources::Map::Ptr map, int x, int y, double delta, const Color* col) const override {
 		if (!map)
 			return;
 
@@ -2457,6 +2521,8 @@ public:
 		int clpX = 0, clpY = 0, clpW = 0, clpH = 0;
 		if (clipped(clpX, clpY, clpW, clpH))
 			var.map.clip(clpX, clpY, clpW, clpH);
+		if (col)
+			var.map.colored(*col);
 
 		commit(var, nullptr);
 	}
