@@ -9719,8 +9719,13 @@ static int Project_save(lua_State* L) {
 	}
 
 	// Save.
-	Project::ErrorHandler onError = [] (const char*) -> void { };
-	if (!prj->save(path.c_str(), true, onError))
+	if (!path.empty() && (path.back() == '/' || path.back() == '\\'))
+		Path::touchDirectory(path.c_str());
+	else if (Text::endsWith(path, "." BITTY_ZIP_EXT, true))
+		prj->preference(Archive::ZIP);
+	else
+		prj->preference(Archive::TXT);
+	if (!prj->save(path.c_str(), true, [] (const char*) -> void { }))
 		return write(L, false);
 	prj->readonly(false);
 	prj->dirty(false);
