@@ -27,9 +27,6 @@ public:
 	virtual ~WindowImpl() {
 	}
 
-	virtual const void* pointer(void) const override {
-		return _window;
-	}
 	virtual void* pointer(void) override {
 		return _window;
 	}

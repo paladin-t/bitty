@@ -95,7 +95,7 @@ public:
 	/**
 	 * @return `lua_State*`.
 	 */
-	virtual const void* pointer(void) const override;
+	virtual void* pointer(void) override;
 
 	virtual bool open(
 		Observer* obsvr,

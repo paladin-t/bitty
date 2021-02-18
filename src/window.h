@@ -46,11 +46,15 @@
 class Window {
 public:
 	/**
+	 * @brief Gets the raw pointer.
+	 *
 	 * @return `SDL_Window*`.
 	 */
-	virtual const void* pointer(void) const = 0;
 	virtual void* pointer(void) = 0;
 
+	/**
+	 * @brief Opens the window for further operation.
+	 */
 	virtual bool open(
 		const char* title,
 		int displayIndex, int width, int height,
@@ -58,35 +62,101 @@ public:
 		bool borderless,
 		bool highDpi
 	) = 0;
+	/**
+	 * @brief Closes the window after all operations.
+	 */
 	virtual bool close(void) = 0;
 
+	/**
+	 * @brief Gets the title of the window.
+	 */
 	virtual const char* title(void) const = 0;
+	/**
+	 * @brief Sets the title of the window.
+	 */
 	virtual void title(const char* txt) = 0;
 
+	/**
+	 * @brief Gets the current display index of the window.
+	 */
 	virtual int displayIndex(void) const = 0;
+	/**
+	 * @brief Sets the current display index of the window.
+	 */
 	virtual void displayIndex(int idx) = 0;
 
+	/**
+	 * @brief Gets the current position index of the window.
+	 */
 	virtual Math::Vec2i position(void) const = 0;
+	/**
+	 * @brief Sets the current position index of the window.
+	 */
 	virtual void position(const Math::Vec2i &val) = 0;
 
+	/**
+	 * @brief Gets the current size index of the window.
+	 */
 	virtual Math::Vec2i size(void) const = 0;
+	/**
+	 * @brief Sets the current size index of the window.
+	 */
 	virtual void size(const Math::Vec2i &val) = 0;
 
+	/**
+	 * @brief Gets whether the window is resizable.
+	 */
 	virtual bool resizable(void) const = 0;
+	/**
+	 * @brief Sets whether the window is resizable.
+	 */
 	virtual void resizable(bool val) = 0;
 
+	/**
+	 * @brief Gets whether the window is maximized.
+	 */
 	virtual bool maximized(void) const = 0;
+	/**
+	 * @brief Sets whether the window is maximized.
+	 */
 	virtual void maximize(void) = 0;
+	/**
+	 * @brief Gets whether the window is minimized.
+	 */
 	virtual bool minimized(void) const = 0;
+	/**
+	 * @brief Sets whether the window is minimized.
+	 */
 	virtual void minimize(void) = 0;
+	/**
+	 * @brief Restores the window.
+	 */
 	virtual void restore(void) const = 0;
+	/**
+	 * @brief Gets whether the window is in fullscreen mode.
+	 */
 	virtual bool fullscreen(void) const = 0;
+	/**
+	 * @brief Sets whether the window is in fullscreen mode.
+	 */
 	virtual void fullscreen(bool val) = 0;
 
+	/**
+	 * @brief Gets the width of the window.
+	 */
 	virtual int width(void) const = 0;
+	/**
+	 * @brief Gets the height of the window.
+	 */
 	virtual int height(void) const = 0;
 
+	/**
+	 * @brief Gets the scale of the window.
+	 */
 	virtual int scale(void) const = 0;
+	/**
+	 * @brief Sets the scale of the window.
+	 */
 	virtual void scale(int val) = 0;
 
 	static Window* create(void);

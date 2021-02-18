@@ -104,7 +104,7 @@ static void workspaceRenderSplash(Window*, Renderer* rnd, Workspace* ws, std::fu
 	if (post)
 		post(rnd, ws);
 
-	rnd->present();
+	rnd->flush();
 }
 static void workspaceWaitSplash(Window* wnd, Renderer* rnd, Workspace* ws, const Project* project) {
 #if defined BITTY_OS_HTML

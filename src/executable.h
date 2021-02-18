@@ -117,7 +117,7 @@ public:
 	typedef std::shared_ptr<void> Invokable;
 
 public:
-	virtual const void* pointer(void) const = 0;
+	virtual void* pointer(void) = 0;
 
 	virtual bool open(
 		Observer* observer,

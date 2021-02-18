@@ -31,9 +31,6 @@ public:
 	virtual ~RendererImpl() {
 	}
 
-	virtual const void* pointer(void) const override {
-		return _renderer;
-	}
 	virtual void* pointer(void) override {
 		return _renderer;
 	}
@@ -240,7 +237,7 @@ public:
 		}
 	}
 
-	virtual void present(void) override {
+	virtual void flush(void) override {
 		SDL_RenderPresent(_renderer);
 	}
 };

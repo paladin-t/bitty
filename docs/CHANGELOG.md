@@ -1,3 +1,15 @@
+### v1.0.2 Feb. 18 2021
+
+Enhanced modules, fixed some bugs.
+
+* Added a color parameter to the `tex(...)`, `spr(...)`, `map(...)` functions
+* Added a `Project.new()` constructor
+* Added `project:load(...)`, `project:save(...)` methods
+* Added `project:exists(...)`, `project:write(...)`, `project:remove(...)` methods
+* Fixed a resizing issue of image and map
+* Fixed an execution issue of the `Platform.execute(...)` function (HTML)
+* Upgraded ImGui from v1.80 to v1.81
+
 ### v1.0.1 Feb. 6 2021
 
 Enhanced modules, improved usability, fixed some bugs.

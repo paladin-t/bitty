@@ -73,40 +73,93 @@
 class Renderer {
 public:
 	/**
+	 * @brief Gets the raw pointer.
+	 *
 	 * @return `SDL_Renderer*`.
 	 */
-	virtual const void* pointer(void) const = 0;
 	virtual void* pointer(void) = 0;
 
+	/**
+	 * @brief Opens the renderer for further operation.
+	 */
 	virtual bool open(class Window* wnd) = 0;
+	/**
+	 * @brief Closes the renderer after all operations.
+	 */
 	virtual bool close(void) = 0;
 
+	/**
+	 * @brief Gets the backend driver of the renderer.
+	 */
 	virtual const char* driver(void) const = 0;
 
+	/**
+	 * @brief Gets whether render target is supported by the renderer.
+	 */
 	virtual bool renderTargetSupported(void) const = 0;
 
+	/**
+	 * @brief Gets the maximum texture width supported by the renderer.
+	 */
 	virtual int maxTextureWidth(void) const = 0;
+	/**
+	 * @brief Gets the maximum texture height supported by the renderer.
+	 */
 	virtual int maxTextureHeight(void) const = 0;
 
+	/**
+	 * @brief Gets the current width of the renderer.
+	 */
 	virtual int width(void) const = 0;
+	/**
+	 * @brief Gets the current height of the renderer.
+	 */
 	virtual int height(void) const = 0;
 
+	/**
+	 * @brief Gets the current scale of the renderer.
+	 */
 	virtual int scale(void) const = 0;
+	/**
+	 * @brief Sets the current scale of the renderer.
+	 */
 	virtual void scale(int val) = 0;
 
+	/**
+	 * @brief Gets the current target of the renderer.
+	 */
 	virtual class Texture* target(void) = 0;
+	/**
+	 * @brief Sets the current target of the renderer.
+	 */
 	virtual void target(class Texture* tex /* nullable */) = 0;
 
+	/**
+	 * @brief Gets the current blend mode of the renderer.
+	 */
 	virtual unsigned blend(void) const = 0;
+	/**
+	 * @brief Sets the current blend mode of the renderer.
+	 */
 	virtual void blend(unsigned mode) = 0;
 
+	/**
+	 * @brief Sets the current clip area of the renderer.
+	 */
 	virtual void clip(int x, int y, int width, int height) = 0;
+	/**
+	 * @brief Resets the current clip area of the renderer.
+	 */
 	virtual void clip(void) = 0;
 
+	/**
+	 * @brief Clears the renderer with the specific color.
+	 */
 	virtual void clear(const Color* col /* nullable */) = 0;
 
 	/**
-	 * @brief For `STATIC`, `STREAMING`, `TARGET`.
+	 * @brief Renders the specific texture.
+	 *   For `STATIC`, `STREAMING`, `TARGET`.
 	 */
 	virtual void render(
 		class Texture* tex,
@@ -116,7 +169,10 @@ public:
 		const Color* color /* nullable */, bool colorChanged, bool alphaChanged
 	) = 0;
 
-	virtual void present(void) = 0;
+	/**
+	 * @brief Flushes the renderer.
+	 */
+	virtual void flush(void) = 0;
 
 	static Renderer* create(void);
 	static void destroy(Renderer* ptr);

@@ -259,7 +259,7 @@ Available options:
 | "domain_warp_type" | Can be one in "open_simplex2", "open_simplex2_reduced", "basic_grid" | Defaults to "open_simplex2" |
 | "domain_warp_amplitude" | Real number | Defaults to 1.0 |
 
-* `noiser:seed(seed)`: seeds the noiser for all noise types
+* `noiser:seed(seed)`: seeds the `Noiser` for all noise types
 	* `seed`: the seed integer
 * `noiser:get(pos)`: gets the value at the specific position
 	* `pos`: the position to get, either `Vec2` or `Vec3`
@@ -354,7 +354,7 @@ This module performs a raycasting algorithm on 2D grids.
 **Object Fields**
 
 * `raycaster.tileSize`: gets or sets the tile size as `Vec2`, defaults to 8x8
-* `raycaster.offset`: gets or sets the raycaster offset as `Vec2`, defaults to 0, 0
+* `raycaster.offset`: gets or sets the `Raycaster` offset as `Vec2`, defaults to 0, 0
 
 **Methods**
 
@@ -384,7 +384,7 @@ This module performs a smooth walking algorithm on 2D grids.
 
 * `walker.objectSize`: gets or sets the object size as `Vec2`, defaults to 8x8
 * `walker.tileSize`: gets or sets the tile size as `Vec2`, defaults to 8x8
-* `walker.offset`: gets or sets the walker offset as `Vec2`, defaults to 0, 0
+* `walker.offset`: gets or sets the `Walker` offset as `Vec2`, defaults to 0, 0
 
 **Methods**
 
@@ -405,18 +405,18 @@ This module offers manipulations for a ZIP package.
 
 **Methods**
 
-* `archive:open(path, access = Stream.Read)`: opens an archive file for reading or writing
-	* `path`: the archive file path
+* `archive:open(path, access = Stream.Read)`: opens an `Archive` file for reading or writing
+	* `path`: the `Archive` file path
 	* `access`: can be one in `Stream.Read`, `Stream.Write`, `Stream.Append`, for reading, truncated writing, non-truncated writing respectively
 	* returns `true` for success, otherwise `false`
-* `archive:close()`: closes an opened archive
+* `archive:close()`: closes an opened `Archive`
 	* returns `true` for success, otherwise `false`
-* `archive:all()`: gets all entry names in the archive
+* `archive:all()`: gets all entry names in the `Archive`
 	* returns an entry list, in a list of string, could be empty or `nil`
-* `archive:exists(entry)`: gets whether the specific entry exists in the archive
+* `archive:exists(entry)`: gets whether the specific entry exists in the `Archive`
 	* `entry`: the entry name to look for
 	* returns `true` for exists, otherwise `false`
-* `archive:make(entry)`: makes an entry in the archive
+* `archive:make(entry)`: makes an entry in the `Archive`
 	* `entry`: the entry name to make
 	* returns `true` for success, otherwise `false`
 * `archive:toBytes(entry, bytes)`: reads the specific entry and writes to `Bytes`
@@ -488,7 +488,7 @@ Being the same as Lua list, `Bytes` index starts from 1. Implements a `Stream` p
 	* returns single precision real number
 * `bytes:readDouble()`: reads a double precision real number and moves the cursor forward
 	* returns double precision real number
-* `bytes:readBytes([expSize[, bytes_]])`: reads some bytes and moves the cursor forward
+* `bytes:readBytes([expSize[, bytes_]])`: reads some `Bytes` and moves the cursor forward
 	* `expSize`: optional, the expected size in bytes to read; omit to read till end
 	* `bytes_`: optional, `Bytes` to receive, its content will be cleared; omit to return a new `Bytes`
 	* returns the target `Bytes`, its cursor will be at the end
@@ -521,7 +521,7 @@ Being the same as Lua list, `Bytes` index starts from 1. Implements a `Stream` p
 * `bytes:writeDouble(val)`: writes a double precision real number and moves the cursor forward
 	* `val`: the double precision real number to write
 	* returns the written size in bytes
-* `bytes:writeBytes(bytes_[, expSize])`: writes some bytes and moves the cursor forward
+* `bytes:writeBytes(bytes_[, expSize])`: writes some `Bytes` and moves the cursor forward
 	* `bytes_`: the `Bytes` to write from start till end, its cursor won't be moved
 	* `expSize`: optional, the expected size in bytes to write; omit to write till `bytes_`'s end
 	* returns the written size in bytes
@@ -632,11 +632,11 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 
 **Methods**
 
-* `file:open(path, access = Stream.Read)`: opens a file for reading or writing
-	* `path`: the file path
+* `file:open(path, access = Stream.Read)`: opens a `File` for reading or writing
+	* `path`: the `File` path
 	* `access`: can be one in `Stream.Read`, `Stream.Write`, `Stream.Append`, `Stream.ReadWrite`, for reading, truncated writing, non-truncated writing, reading and writing respectively
 	* returns `true` for success, otherwise `false`
-* `file:close()` closes an opened file
+* `file:close()` closes an opened `File`
 	* returns `true` for success, otherwise `false`
 * `file:peek()`: peeks the reading/writing cursor
 	* returns the cursor, starts from 1
@@ -665,7 +665,7 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 	* returns single precision real number
 * `file:readDouble()`: reads a double precision real number and moves the cursor forward
 	* returns double precision real number
-* `file:readBytes([expSize[, bytes]])`: reads some bytes and moves the cursor forward
+* `file:readBytes([expSize[, bytes]])`: reads some `Bytes` and moves the cursor forward
 	* `expSize`: optional, the expected size in bytes to read; omit to read till end
 	* `bytes`: optional, `Bytes` to receive, its content will be cleared; omit to return a new `Bytes`
 	* returns the target `Bytes`, its cursor will be at the end
@@ -698,7 +698,7 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 * `file:writeDouble()`: writes a double precision real number and moves the cursor forward
 	* `val`: the double precision real number to write
 	* returns the written size in bytes
-* `file:writeBytes(bytes[, expSize])`: writes some bytes and moves the cursor forward
+* `file:writeBytes(bytes[, expSize])`: writes some `Bytes` and moves the cursor forward
 	* `bytes`: the `Bytes` to write from start till end, its cursor won't be moved
 	* `expSize`: optional, the expected size in bytes to write; omit to write till `bytes`'s end
 	* returns the written size in bytes
@@ -826,7 +826,7 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 * `directoryInfo:rename(newName)`: renames the directory represented by the `DirectoryInfo`
 	* `newName`: the new directory name
 	* returns `true` for success, otherwise `false`
-* `directoryInfo:getFiles(pattern = "*.*", recursive = false)`: gets sub-files under the directory represented by the `DirectoryInfo`
+* `directoryInfo:getFiles(pattern = '*.*', recursive = false)`: gets sub-files under the directory represented by the `DirectoryInfo`
 	* `pattern`: lookup pattern, supports wildcards
 	* `recursive`: whether lookup its sub-directories
 	* returns a list of `FileInfo` objects
@@ -855,7 +855,7 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 * `image:resize(width, height, stretch = true)`: resizes the `Image` with the specific size; cannot stretch paletted image
 	* `width`: the width
 	* `height`: the height
-	* `stretch`: `true` to stretch the image, otherwise to clip
+	* `stretch`: `true` to stretch the `Image`, otherwise to clip
 	* returns `true` for success, otherwise `false`
 * `image:get(x, y)`: gets the `Color` or `Palette` index at the specific index
 	* `x`: starts from 0
@@ -874,7 +874,7 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 	* `height`: the specific height
 	* `paletted`: 0 for true-color, non-zero for paletted
 	* returns `true` for success, otherwise `false`
-* `image:toBytes(bytes, type = "png")`: encodes the `Image` to `Bytes`
+* `image:toBytes(bytes, type = 'png')`: encodes the `Image` to `Bytes`
 	* `bytes`: the `Bytes` to receive, its cursor will be at the end
 	* `type`: can be one in "png", "jpg", "bmp", "tga", "img"
 	* returns `bytes` for success, otherwise `nil`
@@ -1174,7 +1174,7 @@ For both "string" and "json", the underneath data flow always end up with a zero
 
 * `Platform.openFile([title[, filter]])`: popups an open-file-dialog
 	* `title`: the title text
-	* `filter`: the file filter, eg. `"Text files (*.txt)";"*.txt";"All files (*.*)";"*"`
+	* `filter`: the file filter, eg. "Text files (*.txt);*.txt;All files (*.*);*"
 	* returns selected file path, or `nil` for canceled
 * `Platform.saveFile([title[, filter]])`: popups a save-file-dialog
 	* `title`: the title text
@@ -1560,7 +1560,7 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 
 **Functions**
 
-* `tex(res, x, y[, w, h[, sx, sy[, sw, sh[, rotAngle, rotCenter = Vec2.new(0.5, 0.5), hFlip = false, vFlip = false]]]])`: draws the specific `Texture` resource
+* `tex(res, x, y[, w, h[, sx, sy[, sw, sh[, rotAngle, rotCenter = Vec2.new(0.5, 0.5), hFlip = false, vFlip = false, col = Color.new(255, 255, 255, 255)]]]])`: draws the specific `Texture` resource
 	* `res`: the `Texture` resource
 	* `x`: the destination x position
 	* `y`: the destination y position
@@ -1574,12 +1574,13 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 	* `rotCenter`: the rotation center
 	* `hFlip`: whether to flip horizontally
 	* `vFlip`: whether to flip vertically
+	* `col`: additional `Color` multiplied to render the `Texture`
 
 ### Sprite
 
 **Functions**
 
-* `spr(res, x, y[, w, h[, rotAngle, rotCenter = Vec2.new(0.5, 0.5)]])`: draws the specific `Sprite` resource
+* `spr(res, x, y[, w, h[, rotAngle, rotCenter = Vec2.new(0.5, 0.5), col = Color.new(255, 255, 255, 255)]])`: draws the specific `Sprite` resource
 	* `res`: the `Sprite` resource
 	* `x`: the destination x position
 	* `y`: the destination y position
@@ -1587,15 +1588,17 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 	* `y`: the destination height
 	* `rotAngle`: the rotation angle in radians
 	* `rotCenter`: the rotation center
+	* `col`: additional `Color` multiplied to render the `Sprite`
 
 ### Map
 
 **Functions**
 
-* `map(res, x, y)`: draws the specific `Map` resource
+* `map(res, x, y, col = Color.new(255, 255, 255, 255))`: draws the specific `Map` resource
 	* `res`: the `Map` resource
 	* `x`: the destination x position
 	* `y`: the destination y position
+	* `col`: additional `Color` multiplied to render the `Map`
 * `mget(res, x, y)`: gets the tile index from the specific `Map` resource
 	* `res`: the `Map` resource
 	* `x`: starts from 0
@@ -1801,6 +1804,10 @@ Currently there is only one available strategy, change and try if it's needed:
 |---|---|---|
 | "batch_map" | Hints to batch map for better rendering performance, but requires more memory and could be slow with `mset(...)` | Always on for HTML build |
 
+**Constants**
+
+* `Project.new()`: constructs a project object
+
 **Static Variables**
 
 * `Project.main`: readonly, gets the main `Project`
@@ -1811,9 +1818,26 @@ Currently there is only one available strategy, change and try if it's needed:
 	* returns the full path of the `Project`, or `nil`
 * `project:getAssets()`: gets all asset names in the `Project`
 	* returns a list of asset entries, or `nil`
+* `project:load(path)`: loads this `Project` from the specific path; for user constructed `Project` only
+	* `path`: the specific path to load from
+	* returns `true` for success, otherwise `false`
+* `project:save(path)`: saves this `Project` to the specific path; for user constructed `Project` only
+	* `path`: the specific path to save to
+	* returns `true` for success, otherwise `false`
+* `project:exists(name)`: gets whether the specific asset exists in the `Project`
+	* `name`: the asset name to look for
+	* returns `true` for exists, otherwise `false`
 * `project:read(name)`: reads the content of the specific asset
 	* `name`: the asset name to read
 	* returns asset content as `Bytes` and its cursor will be at the end, or `nil`
+* `project:write(name, bytes, overwrite = true)`: writes the specific `Bytes` to the `Project`; for user constructed `Project` only
+	* `name`: the asset name to write
+	* `bytes`: the `Bytes` to write
+	* `overwrite`: `true` to overwrite
+	* returns `true` for success, otherwise `false`
+* `project:remove(name)`: removes the specific asset from the `Project`; for user constructed `Project` only
+	* `name`: the asset name to remove
+	* returns `true` for success, otherwise `false`
 * `project:strategies()`: gets all effective strategies
 	* returns a strategy list, in a list of string, could be empty or `nil`
 

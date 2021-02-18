@@ -8733,7 +8733,7 @@ static int Primitives_tex(lua_State* L) {
 		read<>(L, res, x, y, w, h, sx, sy);
 	else if (n == 5)
 		read<>(L, res, x, y, w, h);
-	else if (n == 3)
+	else
 		read<>(L, res, x, y);
 
 	const double* rotAnglePtr = nullptr;

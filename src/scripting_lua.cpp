@@ -74,7 +74,7 @@ ScriptingLua* ScriptingLua::acquire(LockGuard<RecursiveMutex>::UniquePtr &guard)
 	return const_cast<ScriptingLua*>(this);
 }
 
-const void* ScriptingLua::pointer(void) const {
+void* ScriptingLua::pointer(void) {
 	return _L;
 }
 

@@ -336,7 +336,7 @@ public:
 
 			ImGuiSDL::Render(ImGui::GetDrawData());
 		}
-		_renderer->present();
+		_renderer->flush();
 
 		const long long end = DateTime::ticks();
 		const long long diff = end >= begin ? end - begin : 0;
