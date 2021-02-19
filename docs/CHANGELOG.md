@@ -6,6 +6,7 @@ Enhanced modules, fixed some bugs.
 * Added a `Project.new()` constructor
 * Added `project:load(...)`, `project:save(...)` methods
 * Added `project:exists(...)`, `project:write(...)`, `project:remove(...)` methods
+* Added a customizable "window_mask_background" style option
 * Fixed a resizing issue of image and map
 * Fixed an execution issue of the `Platform.execute(...)` function (HTML)
 * Upgraded ImGui from v1.80 to v1.81

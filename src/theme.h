@@ -430,6 +430,9 @@ public:
 	static class Texture* createTexture(class Renderer* rnd, const char* path);
 	static void destroyTexture(class Renderer* rnd, class Texture* &tex);
 
+protected:
+	virtual void setColor(const std::string &key, ImGuiCol idx, const ImColor &col);
+
 private:
 	void fromFile(const char* path);
 };

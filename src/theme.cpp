@@ -659,6 +659,16 @@ void Theme::destroyTexture(class Renderer* /* rnd */, class Texture* &tex) {
 	tex = nullptr;
 }
 
+void Theme::setColor(const std::string &key, ImGuiCol idx, const ImColor &col) {
+	if (idx < 0 || idx >= ImGuiCol_COUNT)
+		return;
+
+	const bool light = key == "light" || key == "all" || key == "default";
+
+	if (light)
+		styleDefault().builtin[idx] = (ImVec4)col;
+}
+
 void Theme::fromFile(const char* path_) {
 	ImGuiIO &io = ImGui::GetIO();
 
@@ -674,6 +684,32 @@ void Theme::fromFile(const char* path_) {
 			doc.SetNull();
 	}
 	file.reset();
+
+	const rapidjson::Value* colors = nullptr;
+	Jpath::get(doc, colors, "colors");
+	if (colors && colors->IsObject()) {
+		for (rapidjson::Value::ConstMemberIterator itcol = colors->MemberBegin(); itcol != colors->MemberEnd(); ++itcol) {
+			const rapidjson::Value &jkcol = itcol->name;
+			const rapidjson::Value &jvcol = itcol->value;
+
+			if (!jkcol.IsString() || !jvcol.IsObject())
+				continue;
+
+			const std::string key = jkcol.GetString();
+			for (rapidjson::Value::ConstMemberIterator ittheme = jvcol.MemberBegin(); ittheme != jvcol.MemberEnd(); ++ittheme) {
+				const rapidjson::Value &jktheme = ittheme->name;
+				const rapidjson::Value &jvtheme = ittheme->value;
+
+				const std::string theme = jktheme.GetString();
+				Color col;
+				if (!Jpath::get(jvtheme, col.r, 0) || !Jpath::get(jvtheme, col.g, 1) || !Jpath::get(jvtheme, col.b, 2) || !Jpath::get(jvtheme, col.a, 3))
+					continue;
+
+				if (theme == "window_mask_background")
+					setColor(key, ImGuiCol_ModalWindowDimBg, ImColor(col.r, col.g, col.b, col.a));
+			}
+		}
+	}
 
 	const rapidjson::Value* fonts = nullptr;
 	Jpath::get(doc, fonts, "fonts");
