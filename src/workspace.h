@@ -254,6 +254,7 @@ protected:
 
 	BITTY_PROPERTY_READONLY_PTR(unsigned, canvasState)
 	BITTY_PROPERTY_READONLY_PTR(bool, canvasFixRatio)
+	BITTY_PROPERTY(Math::Vec2i, canvasValidation)
 	BITTY_PROPERTY(Math::Vec2i, canvasSize)
 	BITTY_FIELD(Mutex, canvasSizeLock)
 	BITTY_PROPERTY_READONLY(Texture::Ptr, canvasTexture)

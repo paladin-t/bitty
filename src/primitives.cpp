@@ -133,7 +133,7 @@ public:
 	}
 
 	void colored(const Color &col) {
-		_colorChanged = col.r != 255 || col.g != 255, col.b != 255;
+		_colorChanged = col.r != 255 || col.g != 255 || col.b != 255;
 		_alphaChanged = col.a != 255;
 
 		_color = col;

@@ -337,6 +337,7 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 
 	canvasState(&settings()->canvasState);
 	canvasFixRatio(&settings()->canvasFixRatio);
+	canvasValidation(Math::Vec2i(-1, -1));
 	canvasSize(Math::Vec2i(BITTY_CANVAS_DEFAULT_WIDTH, BITTY_CANVAS_DEFAULT_HEIGHT));
 	canvasHovering(false);
 	canvasFull(false);
@@ -1592,6 +1593,7 @@ bool Workspace::canvas(class Window* wnd, class Renderer* rnd, const class Proje
 	if (*canvasState() == FRAME && !canvasFull())
 		return true;
 
+	ImGuiIO &io = ImGui::GetIO();
 	ImGuiStyle &style = ImGui::GetStyle();
 
 	VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2());
@@ -1599,24 +1601,67 @@ bool Workspace::canvas(class Window* wnd, class Renderer* rnd, const class Proje
 
 	ImGuiWindowFlags flags = ImGuiWindowFlags_None;
 	if (*canvasState() == POPUP && !canvasFull()) {
+		const bool num1 = ImGui::IsKeyPressed(SDL_SCANCODE_1);
+		const bool num2 = ImGui::IsKeyPressed(SDL_SCANCODE_2);
+		const bool num3 = ImGui::IsKeyPressed(SDL_SCANCODE_3);
+		const bool num4 = ImGui::IsKeyPressed(SDL_SCANCODE_4);
+#if WORKSPACE_MODIFIER_KEY == WORKSPACE_MODIFIER_KEY_CTRL
+		const bool modifier = io.KeyCtrl;
+#elif WORKSPACE_MODIFIER_KEY == WORKSPACE_MODIFIER_KEY_CMD
+		const bool modifier = io.KeySuper;
+#endif /* WORKSPACE_MODIFIER_KEY */
+
 		flags = WORKSPACE_WND_FLAGS_FLOAT;
 		if (canvasHovering())
 			flags |= ImGuiWindowFlags_NoMove;
 
-		float canvasRatio = BITTY_CANVAS_DEFAULT_WIDTH / BITTY_CANVAS_DEFAULT_HEIGHT;
+		Math::Vec2i cvsSize;
 		do {
 			LockGuard<decltype(canvasSizeLock())> guard(canvasSizeLock());
 
-			if (canvasSize().x > 0 && canvasSize().y > 0)
-				canvasRatio = (float)canvasSize().x / canvasSize().y;
+			cvsSize = canvasSize();
 		} while (false);
-		const float times = std::max((float)std::floor(rnd->height() / BITTY_CANVAS_DEFAULT_HEIGHT) - 1, 1.0f);
-		const ImVec2 wndSize(
-			BITTY_CANVAS_DEFAULT_WIDTH * times + style.WindowBorderSize * 4 + 1,
-			BITTY_CANVAS_DEFAULT_HEIGHT * times + style.WindowBorderSize * 4 + ImGui::TitleBarHeight()
-		);
-		ImGui::SetNextWindowPos(ImVec2((rnd->width() - wndSize.x) * 0.5f, (rnd->height() - wndSize.y) * 0.5f), ImGuiCond_Once);
-		ImGui::SetNextWindowSize(wndSize, ImGuiCond_Once);
+		float canvasRatio = BITTY_CANVAS_DEFAULT_WIDTH / BITTY_CANVAS_DEFAULT_HEIGHT;
+		if (cvsSize.x > 0 && cvsSize.y > 0) {
+			canvasRatio = (float)cvsSize.x / cvsSize.y;
+		}
+		float times = 1;
+		ImGuiCond cond = ImGuiCond_Once;
+		if (num1 && modifier) {
+			times = 1;
+			cond = ImGuiCond_Always;
+		} else if (num2 && modifier) {
+			times = 2;
+			cond = ImGuiCond_Always;
+		} else if (num3 && modifier) {
+			times = 3;
+			cond = ImGuiCond_Always;
+		} else if (num4 && modifier) {
+			times = 4;
+			cond = ImGuiCond_Always;
+		} else if (cvsSize.y > 0) {
+			times = std::max((float)std::floor(rnd->height() / cvsSize.y) - 1, 1.0f);
+		} else {
+			times = std::max((float)std::floor(rnd->height() / BITTY_CANVAS_DEFAULT_HEIGHT) - 1, 1.0f);
+		}
+		if ((cvsSize.x > 0 && cvsSize.y > 0) && (cvsSize != canvasValidation() || ((num1 || num2 || num3 || num4) && modifier))) {
+			cond = ImGuiCond_Always;
+
+			canvasValidation(cvsSize);
+		}
+		ImVec2 wndSize;
+		if (cvsSize.x > 0) {
+			wndSize.x = cvsSize.x * times + style.WindowBorderSize * 4 + 1;
+		} else {
+			wndSize.x = BITTY_CANVAS_DEFAULT_WIDTH * times + style.WindowBorderSize * 4 + 1;
+		}
+		if (cvsSize.y > 0) {
+			wndSize.y = cvsSize.y * times + style.WindowBorderSize * 4 + ImGui::TitleBarHeight();
+		} else {
+			wndSize.y = BITTY_CANVAS_DEFAULT_HEIGHT * times + style.WindowBorderSize * 4 + ImGui::TitleBarHeight();
+		}
+		ImGui::SetNextWindowPos(ImVec2((rnd->width() - wndSize.x) * 0.5f, (rnd->height() - wndSize.y) * 0.5f), cond);
+		ImGui::SetNextWindowSize(wndSize, cond);
 		ImGui::SetNextWindowSizeConstraints(
 			ImVec2(
 				rnd->width() * 0.2f,
