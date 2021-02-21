@@ -14,6 +14,7 @@
 #include "editable.h"
 #include "filesystem.h"
 #include "image.h"
+#include "loader.h"
 #include "map.h"
 #include "platform.h"
 #include "project.h"
@@ -296,6 +297,9 @@ bool Project::save(const char* path_, bool redirect, ErrorHandler error) {
 }
 
 int Project::unload(void) {
+	if (loader())
+		loader()->reset();
+
 	strategy(NONE);
 	path().clear();
 

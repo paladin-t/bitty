@@ -30,6 +30,10 @@ bool Loader::clone(Loader** ptr) const {
 	return true;
 }
 
+void Loader::reset(void) {
+	// Do nothing.
+}
+
 class Bytes* Loader::decode(const class Project*, const class Asset*, class Bytes* buf) const {
 	return buf;
 }

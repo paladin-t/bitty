@@ -36,6 +36,11 @@ public:
 	virtual bool clone(Loader** ptr) const override;
 
 	/**
+	 * @brief Resets this loader.
+	 */
+	virtual void reset(void);
+
+	/**
 	 * @brief Decodes a `Bytes` buffer after loading an asset. The return value
 	 *   reuses the input object rather than creating new one.
 	 *

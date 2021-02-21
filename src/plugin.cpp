@@ -197,6 +197,7 @@ bool Plugin::close(void) {
 	}
 
 	if (_project) {
+		_project->unload();
 		_project->close();
 		delete _project->loader();
 		_project->loader(nullptr);
