@@ -3119,7 +3119,8 @@ void Operations::projectStop(class Renderer* rnd, Workspace* ws, const class Pro
 
 	ws->debugStopping() = false;
 
-	ws->canvasValidation(Math::Vec2i(-1, -1));
+	if (ws->canvasValidation() != Math::Vec2i(0, 0))
+		ws->canvasValidation(Math::Vec2i(-1, -1));
 	ws->canvasSize(Math::Vec2i(BITTY_CANVAS_DEFAULT_WIDTH, BITTY_CANVAS_DEFAULT_HEIGHT));
 	if (ws->canvasTexture())
 		ws->canvasTexture(nullptr);

@@ -337,7 +337,7 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 
 	canvasState(&settings()->canvasState);
 	canvasFixRatio(&settings()->canvasFixRatio);
-	canvasValidation(Math::Vec2i(-1, -1));
+	canvasValidation(Math::Vec2i(0, 0));
 	canvasSize(Math::Vec2i(BITTY_CANVAS_DEFAULT_WIDTH, BITTY_CANVAS_DEFAULT_HEIGHT));
 	canvasHovering(false);
 	canvasFull(false);
@@ -1644,7 +1644,13 @@ bool Workspace::canvas(class Window* wnd, class Renderer* rnd, const class Proje
 		} else {
 			times = std::max((float)std::floor(rnd->height() / BITTY_CANVAS_DEFAULT_HEIGHT) - 1, 1.0f);
 		}
-		if ((cvsSize.x > 0 && cvsSize.y > 0) && (cvsSize != canvasValidation() || ((num1 || num2 || num3 || num4) && modifier))) {
+		const bool tobeValidated =
+			(cvsSize.x > 0 && cvsSize.y > 0) &&
+			(
+				(canvasValidation() != Math::Vec2i(-1, -1) && canvasValidation() != cvsSize) ||
+				((num1 || num2 || num3 || num4) && modifier)
+			);
+		if (tobeValidated) {
 			cond = ImGuiCond_Always;
 
 			canvasValidation(cvsSize);

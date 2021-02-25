@@ -50,6 +50,9 @@
  */
 class Primitives {
 public:
+	typedef std::function<void(const Variant &)> Function;
+
+public:
 	/**
 	 * @brief Opens the primitives.
 	 */
@@ -303,15 +306,21 @@ public:
 	virtual void stop(Resources::Music::Ptr mus, const int* fadeOutMs /* nullable */) const = 0;
 
 	/**
-	 * @brief Gets the pressed state of the specific (virtual) gamepad button.
+	 * @brief Gets the pressed state of the specific gamepad button.
+	 *
+	 * @param[in] idx Positive for virtual gamepad, negative for hardware controller.
 	 */
 	virtual int btn(int btn, int idx) const = 0;
 	/**
-	 * @brief Gets the released state of the specific (virtual) gamepad button.
+	 * @brief Gets the released state of the specific gamepad button.
+	 *
+	 * @param[in] idx Positive for virtual gamepad, negative for hardware controller.
 	 */
 	virtual int btnp(int btn, int idx) const = 0;
 	/**
-	 * @brief Rumbles the specific (virtual) gamepad if possible.
+	 * @brief Rumbles the specific gamepad if possible.
+	 *
+	 * @param[in] idx Positive for virtual gamepad, negative for hardware controller.
 	 */
 	virtual void rumble(int idx, int lowHz, int hiHz, unsigned ms) const = 0;
 	/**
@@ -338,6 +347,10 @@ public:
 	 * @brief Sets the mouse cursor indicator.
 	 */
 	virtual void cursor(Image::Ptr img /* nullable */, float x, float y) const = 0;
+	/**
+	 * @brief Schedules with a custom C++ function.
+	 */
+	virtual void function(Function func, const Variant &arg /* nullable */) const = 0;
 
 	/**
 	 * @brief Begins a new frame.

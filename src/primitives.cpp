@@ -60,7 +60,8 @@ public:
 		STOP_SFX,
 		STOP_MUSIC,
 		RUMBLE,
-		CURSOR
+		CURSOR,
+		FUNCTION
 	};
 
 	typedef void (* Dtor)(Cmd*);
@@ -698,11 +699,10 @@ public:
 	}
 };
 
-class CmdText : public Cmd, public CmdClippable {
+class CmdText : public Cmd, public CmdClippable, public CmdColored {
 private:
 	std::wstring _text;
 	int _x = 0, _y = 0;
-	Color _color;
 	int _margin = 0;
 
 public:
@@ -713,7 +713,7 @@ public:
 			self->~CmdText();
 		};
 	}
-	CmdText(const char* text, int x, int y, const Color &col, int margin) {
+	CmdText(const char* text, int x, int y, int margin) {
 		type = TEXT;
 		dtor = [] (Cmd* cmd) -> void {
 			CmdText* self = reinterpret_cast<CmdText*>(cmd);
@@ -723,7 +723,6 @@ public:
 		_text = Unicode::toWide(text);
 		_x = x;
 		_y = y;
-		_color = col;
 		_margin = margin;
 	}
 
@@ -738,8 +737,9 @@ public:
 
 			const Resources::Id cp = *text++;
 
+			const Color WHITE(255, 255, 255, 255);
 			int width = -1, height = -1;
-			Resources::Glyph glyph(cp, &_color);
+			Resources::Glyph glyph(cp, &WHITE);
 			Texture::Ptr ptr = res->load(rnd, glyph, &width, &height);
 			if (!ptr)
 				continue;
@@ -748,7 +748,18 @@ public:
 				x, y,
 				x + ptr->width() - 1, y + ptr->height() - 1
 			);
-			rnd->render(ptr.get(), nullptr, &dstRect, nullptr, nullptr, false, false, nullptr, false, false);
+
+			Color col;
+			bool colorChanged = false, alphaChanged = false;
+			colored(&col, &colorChanged, &alphaChanged);
+
+			rnd->render(
+				ptr.get(),
+				nullptr, &dstRect,
+				nullptr, nullptr,
+				false, false,
+				&col, colorChanged, alphaChanged
+			);
 			x += dstRect.width();
 			if (*text)
 				x += _margin;
@@ -1451,6 +1462,35 @@ public:
 	}
 };
 
+class CmdFunction : public Cmd {
+private:
+	Primitives::Function _function = nullptr;
+	Variant _arg = nullptr;
+
+public:
+	CmdFunction() {
+		type = FUNCTION;
+		dtor = [] (Cmd* cmd) -> void {
+			CmdFunction* self = reinterpret_cast<CmdFunction*>(cmd);
+			self->~CmdFunction();
+		};
+	}
+	CmdFunction(Primitives::Function func, const Variant &arg) {
+		type = FUNCTION;
+		dtor = [] (Cmd* cmd) -> void {
+			CmdFunction* self = reinterpret_cast<CmdFunction*>(cmd);
+			self->~CmdFunction();
+		};
+
+		_function = func;
+		_arg = arg;
+	}
+
+	void run(Primitives*) {
+		_function(_arg);
+	}
+};
+
 union CmdVariant {
 public:
 	Cmd cmd;
@@ -1479,6 +1519,7 @@ public:
 	CmdStopMusic stopMusic;
 	CmdRumble rumble;
 	CmdCursor cursor;
+	CmdFunction function;
 
 public:
 	CmdVariant() {
@@ -1613,6 +1654,11 @@ public:
 		case Cmd::CURSOR:
 			new (&cursor) CmdCursor();
 			cursor = other.cursor;
+
+			break;
+		case Cmd::FUNCTION:
+			new (&function) CmdFunction();
+			function = other.function;
 
 			break;
 		default:
@@ -1760,6 +1806,11 @@ public:
 			cursor = other.cursor;
 
 			break;
+		case Cmd::FUNCTION:
+			new (&function) CmdFunction();
+			function = other.function;
+
+			break;
 		default:
 			assert(false && "Not implemented.");
 
@@ -1869,6 +1920,10 @@ public:
 			break;
 		case Cmd::CURSOR:
 			cursor.run(primitives);
+
+			break;
+		case Cmd::FUNCTION:
+			function.run(primitives);
 
 			break;
 		default:
@@ -2470,10 +2525,11 @@ public:
 		translated(x, y);
 
 		CmdVariant var;
-		new (&var.text) CmdText(text, x, y, col ? *col : _color, margin);
+		new (&var.text) CmdText(text, x, y, margin);
 		int clpX = 0, clpY = 0, clpW = 0, clpH = 0;
 		if (clipped(clpX, clpY, clpW, clpH))
 			var.text.clip(clpX, clpY, clpW, clpH);
+		var.text.colored(col ? *col : _color);
 
 		commit(var, nullptr);
 	}
@@ -2642,6 +2698,15 @@ public:
 	virtual void cursor(Image::Ptr img, float x, float y) const override {
 		CmdVariant var;
 		new (&var.cursor) CmdCursor(img, x, y);
+
+		commit(var, nullptr, true);
+	}
+	virtual void function(Function func, const Variant &arg) const override {
+		if (!func)
+			return;
+
+		CmdVariant var;
+		new (&var.function) CmdFunction(func, arg);
 
 		commit(var, nullptr, true);
 	}

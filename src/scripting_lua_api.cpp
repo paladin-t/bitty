@@ -9027,7 +9027,10 @@ static int Primitives_btn(lua_State* L) {
 		if (ret)
 			return write(L, ret);
 
-		return write(L, false);
+		if (btn >= 0)
+			return write(L, false);
+		else
+			return write(L, 0);
 	}
 }
 
@@ -9053,7 +9056,10 @@ static int Primitives_btnp(lua_State* L) {
 		if (ret)
 			return write(L, ret);
 
-		return write(L, false);
+		if (btn >= 0)
+			return write(L, false);
+		else
+			return write(L, 0);
 	}
 }
 
