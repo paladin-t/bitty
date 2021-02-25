@@ -391,6 +391,12 @@ void WorkspaceSketchbook::focusLost(class Window* wnd, class Renderer* rnd, cons
 	showPaused(wnd, rnd, project, primitives);
 }
 
+void WorkspaceSketchbook::renderTargetsReset(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
+	Workspace::renderTargetsReset(wnd, rnd, project, exec, primitives);
+
+	exec->renderTargetsReset();
+}
+
 void WorkspaceSketchbook::shortcuts(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
 	// Prepare.
 	ImGuiIO &io = ImGui::GetIO();

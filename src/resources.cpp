@@ -225,6 +225,30 @@ public:
 		fprintf(stdout, fmt, dictCount);
 	}
 
+	virtual void resetRenderTargets(void) override {
+		int resetCount = 0;
+
+		Dictionary::iterator it = _dictionary.begin();
+		while (it != _dictionary.end()) {
+			Object::Ptr &ptr = it->second;
+			if (ptr->type() == ::Map::TYPE()) {
+				::Map::Ptr map = Object::as<::Map::Ptr>(ptr);
+				if (map) {
+					map->cleanup();
+					++resetCount;
+				}
+				++it;
+			} else {
+				++it;
+			}
+		}
+
+		const char* fmt = resetCount > 1 ?
+			"Resources reset for render targets, cleaned up %d resources.\n" :
+			"Resources reset for render targets, cleaned up %d resource.\n";
+		fprintf(stdout, fmt, resetCount);
+	}
+
 	virtual void font(const class Font* font_) override {
 		if (font_)
 			_font->fromFont(font_);

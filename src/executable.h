@@ -156,6 +156,7 @@ public:
 	virtual bool cycle(double delta) = 0;
 	virtual bool focusLost(void) = 0;
 	virtual bool focusGained(void) = 0;
+	virtual bool renderTargetsReset(void) = 0;
 
 	virtual bool update(double delta) = 0;
 

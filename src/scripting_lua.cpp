@@ -57,6 +57,7 @@ ScriptingLua::ScriptingLua() {
 	_fps = 0;
 
 	_focusing = IDLE;
+	_rendererResetting = false;
 	_state = READY;
 
 	_stepOver = 0;
@@ -188,6 +189,7 @@ void ScriptingLua::finish(void) {
 		_stepOut = 0;
 
 		_focusing = IDLE;
+		_rendererResetting = false;
 
 		if (_update)
 			_update = nullptr;
@@ -197,6 +199,8 @@ void ScriptingLua::finish(void) {
 			_focusLost = nullptr;
 		if (_focusGained)
 			_focusGained = nullptr;
+		if (_rendererReset)
+			_rendererReset = nullptr;
 
 		_fps = 0;
 
@@ -303,6 +307,10 @@ bool ScriptingLua::setup(void) {
 		Lua::read(_L, _focusGained);
 		Lua::pop(_L);
 
+		Lua::getGlobal(_L, SCRIPTING_RENDERER_RESET_FUNCTION_NAME);
+		Lua::read(_L, _rendererReset);
+		Lua::pop(_L);
+
 		assert(Lua::getTop(_L) == 0 && "Polluted Lua stack.");
 		if (setup.valid()) {
 			struct Context {
@@ -386,6 +394,12 @@ bool ScriptingLua::focusGained(void) {
 	return true;
 }
 
+bool ScriptingLua::renderTargetsReset(void) {
+	_rendererResetting = true;
+
+	return true;
+}
+
 bool ScriptingLua::update(double delta) {
 #if BITTY_MULTITHREAD_ENABLED
 	(void)delta;
@@ -452,6 +466,24 @@ void ScriptingLua::sync(double delta) {
 			break;
 		}
 	} while (false);
+
+	if (_rendererResetting) {
+		if (_rendererReset && _rendererReset->valid()) {
+			const int ret = Lua::invoke(
+				_L,
+				[] (lua_State* L, void* ud) -> void {
+					ScriptingLua* impl = (ScriptingLua*)ud;
+
+					check(L, Lua::call(L, *impl->_rendererReset));
+					assert(Lua::getTop(L) == 0 && "Polluted Lua stack.");
+				},
+				this
+			);
+			check(_L, ret);
+		}
+
+		_rendererResetting = false;
+	}
 }
 
 Executable::States ScriptingLua::current(void) const {

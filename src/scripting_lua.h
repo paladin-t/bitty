@@ -51,34 +51,36 @@ private:
 private:
 	lua_State* _L = nullptr;
 
-	Requirement _requirement;                    // By the Lua thread.
-	Dependency _dependency;                      // By the Lua thread.
+	Requirement _requirement;                         // By the Lua thread.
+	Dependency _dependency;                           // By the Lua thread.
 
-	long long _timeout = SCRIPTING_LUA_TIMEOUT;  // By the Lua thread.
+	long long _timeout = SCRIPTING_LUA_TIMEOUT;       // By the Lua thread.
 
-	Atomic<unsigned> _fps;                       // By the Lua, graphics threads.
+	Atomic<unsigned> _fps;                            // By the Lua, graphics threads.
 
-	Lua::Function::Ptr _update = nullptr;        // By the Lua thread.
-	Lua::Function::Ptr _quit = nullptr;          // By the Lua thread.
-	Lua::Function::Ptr _focusLost = nullptr;     // By the Lua thread.
-	Lua::Function::Ptr _focusGained = nullptr;   // By the Lua thread.
+	Lua::Function::Ptr _update = nullptr;             // By the Lua thread.
+	Lua::Function::Ptr _quit = nullptr;               // By the Lua thread.
+	Lua::Function::Ptr _focusLost = nullptr;          // By the Lua thread.
+	Lua::Function::Ptr _focusGained = nullptr;        // By the Lua thread.
+	Lua::Function::Ptr _rendererReset = nullptr;      // By the Lua thread.
 
-	Atomic<FocusStates> _focusing;               // By the Lua, graphics threads.
-	Atomic<States> _state;                       // By the Lua, graphics threads.
+	Atomic<FocusStates> _focusing;                    // By the Lua, graphics threads.
+	Atomic<bool> _rendererResetting;                  // By the Lua, graphics threads.
+	Atomic<States> _state;                            // By the Lua, graphics threads.
 
-	Atomic<int> _stepOver;                       // By the Lua, graphics threads.
-	Atomic<int> _stepInto;                       // By the Lua, graphics threads.
-	Atomic<int> _stepOut;                        // By the Lua, graphics threads.
+	Atomic<int> _stepOver;                            // By the Lua, graphics threads.
+	Atomic<int> _stepInto;                            // By the Lua, graphics threads.
+	Atomic<int> _stepOut;                             // By the Lua, graphics threads.
 
-	Breakpoints _breakpoints;                    // By the Lua, graphics threads.
-	Records _records;                            // By the Lua, graphics threads.
+	Breakpoints _breakpoints;                         // By the Lua, graphics threads.
+	Records _records;                                 // By the Lua, graphics threads.
 
-	int _code = 0;                               // By the Lua thread.
-	double _delta = 0.0;                         // By the Lua thread.
-	Scope _scope;                                // By the Lua thread.
-	long long _activity = 0;                     // By the Lua thread.
+	int _code = 0;                                    // By the Lua thread.
+	double _delta = 0.0;                              // By the Lua thread.
+	Scope _scope;                                     // By the Lua thread.
+	long long _activity = 0;                          // By the Lua thread.
 
-	Updatables _updatables;                      // By the Lua thread.
+	Updatables _updatables;                           // By the Lua thread.
 
 #if BITTY_MULTITHREAD_ENABLED
 	std::thread _thread;
@@ -120,6 +122,7 @@ public:
 	virtual bool cycle(double delta) override;
 	virtual bool focusLost(void) override;
 	virtual bool focusGained(void) override;
+	virtual bool renderTargetsReset(void) override;
 
 	virtual bool update(double delta) override;
 

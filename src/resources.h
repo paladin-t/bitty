@@ -340,6 +340,8 @@ public:
 
 	virtual void reset(void) = 0;
 
+	virtual void resetRenderTargets(void) = 0;
+
 	/**
 	 * @brief Sets the data to generate texture of glyph.
 	 */

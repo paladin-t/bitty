@@ -397,6 +397,10 @@ public:
 	 */
 	virtual void focusLost(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 	/**
+	 * @brief Callback for render targets reset.
+	 */
+	virtual void renderTargetsReset(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
+	/**
 	 * @brief Callback when the application window resized.
 	 */
 	virtual void resized(class Window* wnd, class Renderer* rnd, const class Project* project, const Math::Vec2i &size);

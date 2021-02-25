@@ -523,6 +523,8 @@ private:
 			case SDL_RENDER_TARGETS_RESET:
 				fprintf(stdout, "SDL: SDL_RENDER_TARGETS_RESET.\n");
 
+				_workspace->renderTargetsReset(_window, _renderer, _project, _executable, _primitives);
+
 				reset = true;
 
 				break;
@@ -591,9 +593,12 @@ private:
 			}
 
 			if (reset) {
-				ImGuiSDL::Reset(); // FIXME: remove this temporary patch.
-				                   // Added this patch to fix an issue produced on some Intel's GPU that
-				                   // render target went invalid after resizing the app window.
+				// FIXME: remove this temporary patch.
+				// Added this patch to fix an issue produced on some Intel's GPU that
+				// render target went invalid after resizing the app window.
+				ImGuiSDL::Reset();
+
+				_resources->resetRenderTargets();
 			}
 		}
 

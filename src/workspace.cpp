@@ -671,6 +671,10 @@ void Workspace::focusLost(class Window* wnd, class Renderer* rnd, const class Pr
 	save(wnd, rnd, project, primitives);
 }
 
+void Workspace::renderTargetsReset(class Window* /* wnd */, class Renderer* /* rnd */, const class Project* /* project */, Executable* /* exec */, class Primitives* /* primitives */) {
+	// Do nothing.
+}
+
 void Workspace::resized(class Window* wnd, class Renderer* rnd, const class Project* project, const Math::Vec2i &size) {
 	if (!wnd->maximized() && !wnd->fullscreen())
 		settings()->applicationWindowSize = size;
