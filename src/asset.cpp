@@ -476,7 +476,7 @@ bool Asset::finish(Usages usage, bool shallow) {
 	bool result = true;
 	if ((usage & _readyFor) == NONE) {
 		if ((usage & EDITING) != NONE) {
-			if (object(EDITING).unique())
+			if (unique(object(EDITING)))
 				object(EDITING, nullptr);
 		}
 
@@ -583,7 +583,7 @@ bool Asset::finish(Usages usage, bool shallow) {
 
 		editor(edit);
 
-		if (object(EDITING).unique())
+		if (unique(object(EDITING)))
 			object(EDITING, nullptr);
 	} while (false);
 
@@ -596,10 +596,10 @@ bool Asset::finish(Usages usage, bool shallow) {
 			break;
 
 		if (exists()) {
-			if (object(RUNNING).unique())
+			if (unique(object(RUNNING)))
 				object(RUNNING, nullptr);
 		} else {
-			if (object(RUNNING).unique()) {
+			if (unique(object(RUNNING))) {
 				const char* usg = usage == RUNNING ? "running" : "editing";
 				if (entry().empty())
 					fprintf(stdout, "Ignored unloading unpersisted asset object for %s.\n", usg);

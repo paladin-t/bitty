@@ -12,20 +12,22 @@
 #include "encoding.h"
 #include "../lib/b64/b64.h"
 #include "../lib/lz4/lib/lz4.h"
-#if defined BITTY_OS_WIN
+#if ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_WINAPI
 #	include <Windows.h>
-#elif defined BITTY_OS_ANDROID
-#else /* Platform macro. */
-#	include <codecvt>
+#elif ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_CUSTOM
+	// Do nothing.
+#elif ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_CODECVT
+#	include <codecvt> // Deprecated in C++17, use `ENCODING_STRING_CONVERTER_CUSTOM`
+	                  // instead if it's not available.
 #	include <locale>
-#endif /* Platform macro. */
+#endif /* ENCODING_STRING_CONVERTER */
 
 /*
 ** {===========================================================================
 ** Utilities
 */
 
-#if defined BITTY_CP_VC
+#if ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_WINAPI
 static int encodingBytesToWchar(const char* sz, wchar_t** out, size_t size) {
 	int result = ::MultiByteToWideChar(CP_UTF8, 0, sz, -1, 0, 0);
 	if ((int)size < result)
@@ -61,9 +63,9 @@ static int encodingWcharToBytes(const wchar_t* sz, char** out, size_t size) {
 
 	return result;
 }
-#endif /* BITTY_CP_VC */
+#endif /* ENCODING_STRING_CONVERTER */
 
-#if defined BITTY_OS_ANDROID
+#if ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_CUSTOM
 static int encodingCharToUtf8(char* buf, int buf_size, unsigned int c) {
 	if (c < 0x80) {
 		buf[0] = (char)c;
@@ -207,7 +209,7 @@ static int encodingStrFromUtf8(wchar_t* buf, int buf_size, const char* in_text, 
 
 	return (int)(buf_out - buf);
 }
-#endif /* BITTY_OS_ANDROID */
+#endif /* ENCODING_STRING_CONVERTER */
 
 /* ===========================================================================} */
 
@@ -217,7 +219,7 @@ static int encodingStrFromUtf8(wchar_t* buf, int buf_size, const char* in_text, 
 */
 
 std::string Unicode::fromOs(const char* str) {
-#if defined BITTY_CP_VC
+#if defined BITTY_OS_WIN
 	std::string result;
 	char strb[16];
 	char* strp = strb;
@@ -232,9 +234,9 @@ std::string Unicode::fromOs(const char* str) {
 		delete strp;
 
 	return result;
-#else /* BITTY_CP_VC */
+#else /* BITTY_OS_WIN */
 	return str;
-#endif /* BITTY_CP_VC */
+#endif /* BITTY_OS_WIN */
 }
 
 std::string Unicode::fromOs(const std::string &str) {
@@ -242,7 +244,7 @@ std::string Unicode::fromOs(const std::string &str) {
 }
 
 std::string Unicode::toOs(const char* str) {
-#if defined BITTY_CP_VC
+#if defined BITTY_OS_WIN
 	std::string result;
 	char strb[16];
 	char* strp = strb;
@@ -257,9 +259,9 @@ std::string Unicode::toOs(const char* str) {
 		delete strp;
 
 	return result;
-#else /* BITTY_CP_VC */
+#else /* BITTY_OS_WIN */
 	return str;
-#endif /* BITTY_CP_VC */
+#endif /* BITTY_OS_WIN */
 }
 
 std::string Unicode::toOs(const std::string &str) {
@@ -267,7 +269,7 @@ std::string Unicode::toOs(const std::string &str) {
 }
 
 std::string Unicode::fromWide(const wchar_t* str) {
-#if defined BITTY_CP_VC
+#if ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_WINAPI
 	std::string result;
 	char strb[16];
 	char* strp = strb;
@@ -277,7 +279,7 @@ std::string Unicode::fromWide(const wchar_t* str) {
 		delete strp;
 
 	return result;
-#elif defined BITTY_OS_ANDROID
+#elif ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_CUSTOM
 	std::wstring src = str;
 	const int l = (int)(src.length() * 4);
 	char* strp = new char(l);
@@ -287,12 +289,12 @@ std::string Unicode::fromWide(const wchar_t* str) {
 	delete strp;
 
 	return result;
-#else /* Platform macro. */
+#elif ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_CODECVT
 	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> convert;
 	std::string result = convert.to_bytes(str);
 
 	return result;
-#endif /* Platform macro. */
+#endif /* ENCODING_STRING_CONVERTER */
 }
 
 std::string Unicode::fromWide(const std::wstring &str) {
@@ -300,7 +302,7 @@ std::string Unicode::fromWide(const std::wstring &str) {
 }
 
 std::wstring Unicode::toWide(const char* str) {
-#if defined BITTY_CP_VC
+#if ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_WINAPI
 	std::wstring result;
 	wchar_t wstr[16];
 	wchar_t* wstrp = wstr;
@@ -310,7 +312,7 @@ std::wstring Unicode::toWide(const char* str) {
 		delete wstrp;
 
 	return result;
-#elif defined BITTY_OS_ANDROID
+#elif ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_CUSTOM
 	std::string src = str;
 	const int l = (int)(src.length() * 4);
 	wchar_t* strp = new wchar_t(l);
@@ -320,12 +322,12 @@ std::wstring Unicode::toWide(const char* str) {
 	delete strp;
 
 	return result;
-#else /* Platform macro. */
+#elif ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_CODECVT
 	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> convert;
 	std::wstring result = convert.from_bytes(str);
 
 	return result;
-#endif /* Platform macro. */
+#endif /* ENCODING_STRING_CONVERTER */
 }
 
 std::wstring Unicode::toWide(const std::string &str) {

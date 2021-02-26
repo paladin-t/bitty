@@ -173,7 +173,7 @@ public:
 		Dictionary::iterator it = _dictionary.begin();
 		while (it != _dictionary.end()) {
 			Object::Ptr &ptr = it->second;
-			if (ptr.unique()) {
+			if (unique(ptr)) {
 				it = _dictionary.erase(it);
 				++result;
 			} else {

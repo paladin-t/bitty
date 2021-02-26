@@ -16,6 +16,32 @@
 
 /*
 ** {===========================================================================
+** Macros and constants
+*/
+
+#ifndef ENCODING_STRING_CONVERTER_WINAPI
+#	define ENCODING_STRING_CONVERTER_WINAPI 0
+#endif /* ENCODING_STRING_CONVERTER_WINAPI */
+#ifndef ENCODING_STRING_CONVERTER_CUSTOM
+#	define ENCODING_STRING_CONVERTER_CUSTOM 1
+#endif /* ENCODING_STRING_CONVERTER_CUSTOM */
+#ifndef ENCODING_STRING_CONVERTER_CODECVT
+#	define ENCODING_STRING_CONVERTER_CODECVT 2
+#endif /* ENCODING_STRING_CONVERTER_CODECVT */
+#ifndef ENCODING_STRING_CONVERTER
+#	if defined BITTY_OS_WIN
+#		define ENCODING_STRING_CONVERTER ENCODING_STRING_CONVERTER_WINAPI
+#	elif defined BITTY_OS_ANDROID
+#		define ENCODING_STRING_CONVERTER ENCODING_STRING_CONVERTER_CUSTOM
+#	else /* Platform macro. */
+#		define ENCODING_STRING_CONVERTER ENCODING_STRING_CONVERTER_CODECVT
+#	endif /* Platform macro. */
+#endif /* ENCODING_STRING_CONVERTER */
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
 ** Unicode
 */
 

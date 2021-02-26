@@ -285,6 +285,13 @@ public:
 };
 
 /**
+ * @brief Gets whether a shared pointer is unique.
+ */
+template<typename T> bool unique(const std::shared_ptr<T> &ptr) {
+	return ptr.use_count() == 1; // `std::shared_ptr<T>::unique()` is deprecated in C++17, removed in C++20.
+}
+
+/**
  * @brief Pointer of anything.
  */
 typedef std::shared_ptr<void> Any;
