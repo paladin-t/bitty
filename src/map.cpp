@@ -116,12 +116,20 @@ public:
 	virtual void tiles(const Tiles* tiles) override {
 		if (tiles && tiles->texture) {
 			_tiles = *tiles;
+
 			if (_tiles.count.x <= 0)
 				_tiles.count.x = _tiles.texture->width() / BITTY_MAP_TILE_DEFAULT_SIZE;
-			_tileWidth = _tiles.texture->width() / _tiles.count.x;
 			if (_tiles.count.y <= 0)
 				_tiles.count.y = _tiles.texture->height() / BITTY_MAP_TILE_DEFAULT_SIZE;
-			_tileHeight = _tiles.texture->height() / _tiles.count.y;
+
+			if (_tiles._size.x <= 0)
+				_tileWidth = _tiles.texture->width() / _tiles.count.x;
+			else
+				_tileWidth = _tiles._size.x;
+			if (_tiles._size.y <= 0)
+				_tileHeight = _tiles.texture->height() / _tiles.count.y;
+			else
+				_tileHeight = _tiles._size.y;
 		} else {
 			_tiles = Tiles(nullptr, Math::Vec2i());
 			_tileWidth = 0;
@@ -405,8 +413,8 @@ public:
 	virtual bool toJson(rapidjson::Value &val, rapidjson::Document &doc) const override {
 		val.SetObject();
 
-		Map::Tiles t;
-		tiles(t);
+		Tiles tiles_;
+		tiles(tiles_);
 
 		rapidjson::Value jstrtiles;
 		jstrtiles.SetString("tiles", doc.GetAllocator());
@@ -416,9 +424,18 @@ public:
 		jstrcount.SetString("count", doc.GetAllocator());
 		rapidjson::Value jvalcount;
 		jvalcount.SetArray();
-		jvalcount.PushBack(t.count.x, doc.GetAllocator());
-		jvalcount.PushBack(t.count.y, doc.GetAllocator());
+		jvalcount.PushBack(tiles_.count.x, doc.GetAllocator());
+		jvalcount.PushBack(tiles_.count.y, doc.GetAllocator());
 		jvaltiles.AddMember(jstrcount, jvalcount, doc.GetAllocator());
+		if (tiles_._size.x > 0 && tiles_._size.y > 0) {
+			rapidjson::Value jstrsize;
+			jstrsize.SetString("size", doc.GetAllocator());
+			rapidjson::Value jvalsize;
+			jvalsize.SetArray();
+			jvalsize.PushBack(tiles_._size.x, doc.GetAllocator());
+			jvalsize.PushBack(tiles_._size.y, doc.GetAllocator());
+			jvaltiles.AddMember(jstrsize, jvalsize, doc.GetAllocator());
+		}
 		val.AddMember(jstrtiles, jvaltiles, doc.GetAllocator());
 
 		rapidjson::Value jstrw, jstrh;
@@ -463,6 +480,20 @@ public:
 			return false;
 		const int tileCountX = count[0].GetInt();
 		const int tileCountY = count[1].GetInt();
+		int tileSizeX = 0;
+		int tileSizeY = 0;
+		do {
+			rapidjson::Value::ConstMemberIterator jsize = jobjtiles.FindMember("size");
+			if (jsize == jobjtiles.MemberEnd() || !jsize->value.IsArray())
+				break;
+			rapidjson::Value::ConstArray size = jsize->value.GetArray();
+			if (size.Size() < 2)
+				break;
+			if (!size[0].IsInt() || !size[1].IsInt())
+				break;
+			tileSizeX = size[0].GetInt();
+			tileSizeY = size[1].GetInt();
+		} while (false);
 
 		rapidjson::Value::ConstMemberIterator jw = val.FindMember("width");
 		rapidjson::Value::ConstMemberIterator jh = val.FindMember("height");
@@ -486,8 +517,10 @@ public:
 				cels.push_back(0);
 		}
 
-		const Map::Tiles t(texture, Math::Vec2i(tileCountX, tileCountY));
-		tiles(&t);
+		Tiles tiles_(texture, Math::Vec2i(tileCountX, tileCountY));
+		if (tileSizeX > 0 && tileSizeY > 0)
+			tiles_.fit(Math::Vec2i(tileSizeX, tileSizeY));
+		tiles(&tiles_);
 		if (!load(&cels.front(), mapWidth, mapHeight))
 			return false;
 
@@ -558,6 +591,51 @@ Map::Tiles::Tiles() {
 }
 
 Map::Tiles::Tiles(Texture::Ptr texture_, const Math::Vec2i &count_) : texture(texture_), count(count_) {
+}
+
+Math::Vec2i Map::Tiles::size(void) const {
+	Int w = 0;
+	Int h = 0;
+	if (_size.x <= 0) {
+		if (count.x > 0)
+			w = texture->width() / count.x;
+		else
+			w = 0;
+	} else {
+		w = _size.x;
+	}
+	if (_size.y <= 0) {
+		if (count.x > 0)
+			h = texture->height() / count.y;
+		else
+			h = 0;
+	} else {
+		h = _size.y;
+	}
+
+	return Math::Vec2i(w, h);
+}
+
+void Map::Tiles::fit(void) {
+	if (_size.x <= 0 && _size.y <= 0)
+		return;
+
+	const std::div_t divw = _size.x <= 0 ? std::div_t() : std::div(texture->width(), _size.x);
+	const std::div_t divh = _size.y <= 0 ? std::div_t() : std::div(texture->height(), _size.y);
+	if (divw.rem == 0 && divh.rem == 0)
+		_size = Math::Vec2i(0, 0);
+}
+
+void Map::Tiles::fit(const Math::Vec2i &size_) {
+	if (size_.x <= 0 && size_.y <= 0)
+		return;
+
+	const std::div_t divw = size_.x <= 0 ? std::div_t() : std::div(texture->width(), size_.x);
+	const std::div_t divh = size_.y <= 0 ? std::div_t() : std::div(texture->height(), size_.y);
+	if (divw.rem == 0 && divh.rem == 0)
+		_size = Math::Vec2i(0, 0);
+	else
+		_size = size_;
 }
 
 int Map::INVALID(void) {

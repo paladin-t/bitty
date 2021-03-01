@@ -1609,10 +1609,8 @@ promise::Defer Operations::editResizeTile(class Renderer*, Workspace* ws, const 
 				return;
 			}
 			Math::Vec2i defaultSize(BITTY_MAP_TILE_DEFAULT_SIZE, BITTY_MAP_TILE_DEFAULT_SIZE);
-			if (tiles.count.x > 0)
-				defaultSize.x = tiles.texture->width() / tiles.count.x;
-			if (tiles.count.x > 0)
-				defaultSize.y = tiles.texture->height() / tiles.count.y;
+			if (tiles.count.x > 0 && tiles.count.y > 0)
+				defaultSize = tiles.size();
 			const Math::Vec2i maxSize(tiles.texture->width(), tiles.texture->height());
 
 			const std::string assetStr = asset_;
@@ -1658,6 +1656,7 @@ promise::Defer Operations::editResizeTile(class Renderer*, Workspace* ws, const 
 						tiles.texture->width() / size->x,
 						tiles.texture->height() / size->y
 					);
+					tiles.fit(Math::Vec2i(size->x, size->y));
 					ptr->tiles(&tiles);
 					asset->dirty(true);
 

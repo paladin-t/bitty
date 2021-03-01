@@ -955,6 +955,12 @@ bool Asset::save(Usages usage, class Bytes* buf) {
 			if (!ptr)
 				return false;
 
+			Map::Tiles tiles;
+			if (ptr->tiles(tiles) && tiles.texture) {
+				tiles.fit();
+				ptr->tiles(&tiles);
+			}
+
 			rapidjson::Document doc;
 			if (!ptr->toJson(doc))
 				return false;
@@ -1460,6 +1466,10 @@ Object::Ptr Asset::fromBlank(Usages usage, const class Project* project, unsigne
 					break;
 				tileWidth = (Int)lstCount->at(0);
 				tileHeight = (Int)lstCount->at(1);
+				if (tileWidth <= 0 || tileHeight <= 0) {
+					tileWidth = BITTY_MAP_TILE_DEFAULT_SIZE;
+					tileHeight = BITTY_MAP_TILE_DEFAULT_SIZE;
+				}
 			} while (false);
 			const std::string refStr = (std::string)options->get(ASSET_REF_NAME);
 			Texture::Ptr texPtr = nullptr;
@@ -1480,10 +1490,11 @@ Object::Ptr Asset::fromBlank(Usages usage, const class Project* project, unsigne
 				texPtr = refAsset->texture(usage);
 			} while (false);
 
-			Map::Tiles tiles{
+			Map::Tiles tiles(
 				texPtr,
 				Math::Vec2i(texPtr->width() / tileWidth, texPtr->height() / tileHeight)
-			};
+			);
+			tiles.fit(Math::Vec2i(tileWidth, tileHeight));
 			static_assert(sizeof(int) == sizeof(Int32), "Wrong type size.");
 			Bytes::Ptr cels(Bytes::create());
 			for (Int i = 0; i < width * height; ++i)

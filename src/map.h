@@ -30,11 +30,23 @@ public:
 	typedef std::shared_ptr<Map> Ptr;
 
 	struct Tiles {
+		friend class MapImpl;
+
+	public:
 		Texture::Ptr texture = nullptr;
 		Math::Vec2i count;
 
+	private:
+		Math::Vec2i _size;
+
+	public:
 		Tiles();
-		Tiles(Texture::Ptr texture_, const Math::Vec2i &count_);
+		Tiles(Texture::Ptr texture, const Math::Vec2i &count);
+
+		Math::Vec2i size(void) const;
+
+		void fit(void);
+		void fit(const Math::Vec2i &size);
 	};
 
 public:
