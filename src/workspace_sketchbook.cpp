@@ -353,6 +353,7 @@ unsigned WorkspaceSketchbook::update(class Window* wnd, class Renderer* rnd, con
 void WorkspaceSketchbook::require(Executable* exec) {
 	switch (exec->language()) {
 	case Executable::LUA:
+		// Common.
 		Lua::Standard::open(exec);
 		Lua::Libs::open(exec);
 		if (exec->primitives()) {
@@ -360,6 +361,7 @@ void WorkspaceSketchbook::require(Executable* exec) {
 		}
 		Lua::Application::open(exec);
 
+		// Promise.
 		Lua::Standard::promise(exec);
 		Lua::Libs::promise(exec);
 

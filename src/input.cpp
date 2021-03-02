@@ -37,9 +37,14 @@ private:
 		typedef std::array<Sint16, SDL_CONTROLLER_AXIS_MAX> AxisInitialValues;
 
 		SDL_GameController* controller = nullptr;
+		std::string name;
+#if SDL_VERSION_ATLEAST(2, 0, 12)
+		SDL_GameControllerType type = SDL_CONTROLLER_TYPE_UNKNOWN;
+#endif /* SDL_VERSION_ATLEAST */
+		bool attached = false;
 		AxisInitialValues axisInitialValues;
 
-		Controller(SDL_GameController* c) : controller(c) {
+		Controller(SDL_GameController* c, const char* n, bool attached_) : controller(c), name(n), attached(attached_) {
 			axisInitialValues.fill(0);
 		}
 	};
@@ -146,7 +151,13 @@ public:
 
 					if (SDL_IsGameController(i)) {
 						SDL_GameController* controller = SDL_GameControllerOpen(i);
-						Controller ctrl(controller);
+						const char* name = SDL_GameControllerNameForIndex(i);
+						const bool attached = !!SDL_GameControllerGetAttached(controller);
+						Controller ctrl(controller, name, attached);
+#if SDL_VERSION_ATLEAST(2, 0, 12)
+						const SDL_GameControllerType y = SDL_GameControllerTypeForIndex(i);
+						ctrl.type = y;
+#endif /* SDL_VERSION_ATLEAST */
 						_controllers.push_back(ctrl);
 						for (int k = 0; k < SDL_CONTROLLER_AXIS_MAX; ++k) {
 							Sint16 state = 0;
@@ -200,6 +211,70 @@ public:
 			*name = _joysticks[index].name.c_str();
 
 		return _joysticks[index].joystick;
+	}
+
+	virtual int controllerCount(void) override {
+		return (int)_controllers.size();
+	}
+	virtual void* controllerAt(int index, const char** name, const char** type, bool* attached) override {
+		if (name)
+			*name = nullptr;
+		if (type)
+			*type = nullptr;
+		if (attached)
+			*attached = false;
+
+		if (index < 0 || index >= (int)_controllers.size())
+			return nullptr;
+
+		if (name)
+			*name = _controllers[index].name.c_str();
+		if (type) {
+#if SDL_VERSION_ATLEAST(2, 0, 12)
+			switch (_controllers[index].type) {
+			case SDL_CONTROLLER_TYPE_XBOX360:
+				*type = "Xbox 360";
+
+				break;
+			case SDL_CONTROLLER_TYPE_XBOXONE:
+				*type = "Xbox One";
+
+				break;
+			case SDL_CONTROLLER_TYPE_PS3:
+				*type = "PlayStation 3";
+
+				break;
+			case SDL_CONTROLLER_TYPE_PS4:
+				*type = "PlayStation 4";
+
+				break;
+			case SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO:
+				*type = "Nintendo Switch Pro";
+
+				break;
+#if SDL_VERSION_ATLEAST(2, 0, 14)
+			case SDL_CONTROLLER_TYPE_VIRTUAL:
+				*type = "Virtual";
+
+				break;
+			case SDL_CONTROLLER_TYPE_PS5:
+				*type = "PlayStation 5";
+
+				break;
+#endif /* SDL_VERSION_ATLEAST */
+			default:
+				*type = "Unknown";
+
+				break;
+			}
+#else /* SDL_VERSION_ATLEAST */
+			*type = "Unknown";
+#endif /* SDL_VERSION_ATLEAST */
+		}
+		if (attached)
+			*attached = _controllers[index].attached;
+
+		return _controllers[index].controller;
 	}
 
 	virtual void config(const Gamepad* pads, int padCount) override {

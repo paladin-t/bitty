@@ -140,6 +140,12 @@ public:
 	 */
 	virtual void* joystickAt(int index, const char** name /* nullable */) = 0;
 
+	virtual int controllerCount(void) = 0;
+	/**
+	 * @return `SDL_GameController*`.
+	 */
+	virtual void* controllerAt(int index, const char** name /* nullable */, const char** type /* nullable */, bool* attached /* nullable */) = 0;
+
 	virtual void config(const Gamepad* pads /* nullable */, int padCount) = 0;
 
 	virtual std::string nameOf(const Button &btn) = 0;
