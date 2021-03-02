@@ -189,7 +189,7 @@ Bitty Engine offers some handy built-in functions, some are reserved from the or
 
 ## Program Structure
 
-A conventional entry program of Bitty project is made up of a `setup` function which is called once a program starts, and an `update` which is called periodically:
+A conventional entry program of Bitty project is made up of a `setup` function which is called once program starts, and an `update` which is called periodically:
 
 ```lua
 function setup()
@@ -216,7 +216,14 @@ function focusGained()
 end
 ```
 
-Generally `setup` is used to initial game variables, states, `update` is where gameplay logic and rendering goes, and `quit` is for persisting necessary data on disk. All these five entries are optional.
+Define a `rendererReset` function to run code on renderer reset:
+
+```lua
+function rendererReset()
+end
+```
+
+Generally `setup` is used to initial game variables, states, `update` is where gameplay logic and rendering goes, and `quit` is for persisting necessary data on disk. All these six entries are optional.
 
 Bitty Engine uses a timeout mechanism to avoid unexpected infinite loops, it raises an error when any invoking to the entries takes more than 10 seconds by default. The timeout value can be changed by [Debug.setTimeout(...)](#debug).
 
@@ -303,7 +310,7 @@ This module performs a pathfinding algorithm on 2D grids.
 	* `endPos`: the ending position
 	* returns an approachable path, in a list of `Vec2`, could be empty
 
-Grid coordinates can be any integer, with range of values from -32,767 to 32,767. A cost matrix will be prefilled once calling the `pathfinder:set(...)` function; this data exists until calling `pathfinder:clear()`. The `pathfinder:solve(...)` function prefers to use invokable to get grid cost, and falls to use prefilled matrix if no evaluator provided.
+Grid coordinates can be any integer, with range of values from -32,767 to 32,767. A cost matrix will be prefilled once calling the `pathfinder:set(...)` function; this data exists until calling `pathfinder:clear()`. The `pathfinder:solve(...)` function prefers to use invokable to get grid cost, and falls to use prefilled matrix if no evaluator provided. Call `pathfinder:clear()` before solving in either way, if any grid data has been changed.
 
 Walking cost is combined with two parts by multiplicative: neighbor cost and map cost. Neighbor cost stands for how much does it cost to walk from the current grid to its neighbor directions as following, in which `D` defaults to 1.414:
 
@@ -324,7 +331,7 @@ Pathfinder retrieves grid cost from either an evaluator or prefilled matrix. All
 
 #### Randomizer
 
-This module provide a random algorithm organized by object, other than the built-in random function in Lua.
+This module provides a random algorithm organized by object, other than the built-in random function in Lua.
 
 **Constructors**
 
@@ -1351,7 +1358,7 @@ foo = Resources.load(data) -- Load a map.
 
 ```lua
 foo = Resources.load('bar.mp3', Sfx) -- Load an SFX.
-foo = Resources.load('bar.mp3', Music) -- Load a music.
+foo = Resources.load('bar.mp3', Music) -- Load a piece of music.
 ```
 
 The asynchronous `Resources.load(...)` returns a resource handle immediately. It is lazy evaluated, loading is deferred until specific reading and writing access happens. The synchronous `Resources.wait(...)` also loads it, it returns immediately if the specific resource is already loaded, otherwise it waits until loaded or timeout.
@@ -1842,6 +1849,8 @@ Currently there is only one available strategy, change and try if it's needed:
 	* returns a strategy list, in a list of string, could be empty or `nil`
 
 ### Debug
+
+This module is used for debugging purposes.
 
 **Static Functions**
 
