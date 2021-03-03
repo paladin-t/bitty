@@ -129,35 +129,97 @@ public:
 	};
 
 public:
+	/**
+	 * @brief Opens the input system.
+	 */
 	virtual bool open(void) = 0;
+	/**
+	 * @brief Closes the input system.
+	 */
 	virtual bool close(void) = 0;
 
+	/**
+	 * @brief Resets the input system.
+	 */
 	virtual void reset(void) = 0;
 
+	/**
+	 * @brief Gets the count of available joysticks.
+	 */
 	virtual int joystickCount(void) = 0;
 	/**
+	 * @brief Gets the joystick at the specific index.
+	 *
+	 * @param[in] index The joystick index.
+	 * @param[out] name The joystick name.
 	 * @return `SDL_Joystick*`.
 	 */
 	virtual void* joystickAt(int index, const char** name /* nullable */) = 0;
 
+	/**
+	 * @brief Gets the count of available game controllers.
+	 */
 	virtual int controllerCount(void) = 0;
 	/**
+	 * @brief Gets the game controller at the specific index.
+	 *
+	 * @param[in] index The game controller index.
+	 * @param[out] name The game controller name.
+	 * @param[out] type The game controller type.
+	 * @param[out] attached Whether the game controller is attached.
 	 * @return `SDL_GameController*`.
 	 */
 	virtual void* controllerAt(int index, const char** name /* nullable */, const char** type /* nullable */, bool* attached /* nullable */) = 0;
 
+	/**
+	 * @brief Configures the input system.
+	 *
+	 * @param[in] pads The game pads information.
+	 * @param[in] padCount The game pads information count.
+	 */
 	virtual void config(const Gamepad* pads /* nullable */, int padCount) = 0;
 
+	/**
+	 * @brief Gets the human readable name binded to the specific button.
+	 *
+	 * @param[in] btn The specific button.
+	 */
 	virtual std::string nameOf(const Button &btn) = 0;
 
+	/**
+	 * @brief Gets whether the specific button is being pressed.
+	 *
+	 * @param[in] btn The specific button.
+	 * @return `true` for pressed.
+	 */
 	virtual bool pressed(Button &btn) = 0;
 
+	/**
+	 * @brief Updates the input system.
+	 *
+	 * @param[in] wnd The window structure.
+	 * @param[in] rnd The renderer structure.
+	 * @param[in] clientArea The client area.
+	 * @param[in] canvasSize The canvas size.
+	 * @param[in] scale The scale factor.
+	 */
 	virtual void update(
 		class Window* wnd, class Renderer* rnd,
 		const Math::Rectf* clientArea /* nullable */, const Math::Vec2i* canvasSize /* nullable */,
 		int scale
 	) = 0;
 
+	/**
+	 * @brief Updates the onscreen gamepad.
+	 *
+	 * @param[in] wnd The window structure.
+	 * @param[in] rnd The renderer structure.
+	 * @param[in] font The font to render UI text.
+	 * @param[in] swapAB Whether to swap A-B buttons.
+	 * @param[in] scale The scale factor.
+	 * @param[in] paddingX The x padding factor.
+	 * @param[in] paddingY The y padding factor.
+	 */
 	virtual int updateOnscreenGamepad(
 		class Window* wnd, class Renderer* rnd,
 		struct ImFont* font,
@@ -167,23 +229,47 @@ public:
 	) = 0;
 
 	/**
+	 * @brief Gets whether the specific virtual gamepad button is pressed.
+	 *
 	 * @param[in] btn Button index, -1 to get any button.
 	 */
 	virtual int buttonDown(int btn, int idx) const = 0;
 	/**
+	 * @brief Gets whether the specific virtual gamepad button is released from pressing.
+	 *
 	 * @param[in] btn Button index, -1 to get any button.
 	 */
 	virtual int buttonUp(int btn, int idx) const = 0;
+	/**
+	 * @brief Rumbles the specific virtual gamepad, if any hardware is binded.
+	 */
 	virtual bool rumbleGamepad(int idx, int lowHz, int hiHz, unsigned ms) = 0;
 
+	/**
+	 * @brief Gets whether the specific game controller button is pressed.
+	 */
 	virtual int controllerDown(int btn, int idx) const = 0;
+	/**
+	 * @brief Gets whether the specific game controller button is released from pressing.
+	 */
 	virtual int controllerUp(int btn, int idx) const = 0;
+	/**
+	 * @brief Rumbles the specific game controller.
+	 */
 	virtual bool rumbleController(int idx, int lowHz, int hiHz, unsigned ms) = 0;
 
+	/**
+	 * @brief Gets whether the specific key is pressed.
+	 */
 	virtual bool keyDown(int key) const = 0;
+	/**
+	 * @brief Gets whether the specific key is released from pressing.
+	 */
 	virtual bool keyUp(int key) const = 0;
 
 	/**
+	 * @brief Gets the current mouse or touch states.
+	 *
 	 * @param[out] x
 	 * @param[out] y
 	 * @param[out] b0
@@ -199,8 +285,14 @@ public:
 		int* wheelX /* nullable */, int* wheelY /* nullable */
 	) const = 0;
 
+	/**
+	 * @brief Synchronizes all input states from hardware context (graphics thread) to software context (code thread).
+	 */
 	virtual void sync(void) = 0;
 
+	/**
+	 * @brief Gets the current activity.
+	 */
 	virtual Activities active(void) = 0;
 
 	static Input* create(void);

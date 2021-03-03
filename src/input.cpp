@@ -44,7 +44,11 @@ private:
 		bool attached = false;
 		AxisInitialValues axisInitialValues;
 
-		Controller(SDL_GameController* c, const char* n, bool attached_) : controller(c), name(n), attached(attached_) {
+		Controller(SDL_GameController* c, const char* n, bool attached_) : controller(c), attached(attached_) {
+			if (n)
+				name = n;
+			else
+				name = "Unknown";
 			axisInitialValues.fill(0);
 		}
 	};
@@ -145,31 +149,41 @@ public:
 		const int jsn = SDL_NumJoysticks();
 		for (int i = 0; i < jsn; ++i) {
 			SDL_Joystick* js = SDL_JoystickOpen(i);
-			if (js) {
-				if (SDL_JoystickGetAttached(js)) {
-					_joysticks.push_back(Joystick(js, SDL_JoystickName(js)));
+			if (!js)
+				continue;
 
-					if (SDL_IsGameController(i)) {
-						SDL_GameController* controller = SDL_GameControllerOpen(i);
-						const char* name = SDL_GameControllerNameForIndex(i);
-						const bool attached = !!SDL_GameControllerGetAttached(controller);
-						Controller ctrl(controller, name, attached);
+			if (!SDL_JoystickGetAttached(js))
+				continue;
+
+			_joysticks.push_back(Joystick(js, SDL_JoystickName(js)));
+
+			bool isController = false;
+			if (SDL_IsGameController(i)) {
+				SDL_GameController* controller = SDL_GameControllerOpen(i);
+				if (controller) {
+					const char* name = SDL_GameControllerNameForIndex(i);
+					const bool attached = !!SDL_GameControllerGetAttached(controller);
+					Controller ctrl(controller, name, attached);
 #if SDL_VERSION_ATLEAST(2, 0, 12)
-						const SDL_GameControllerType y = SDL_GameControllerTypeForIndex(i);
-						ctrl.type = y;
+					const SDL_GameControllerType y = SDL_GameControllerTypeForIndex(i);
+					ctrl.type = y;
 #endif /* SDL_VERSION_ATLEAST */
-						_controllers.push_back(ctrl);
-						for (int k = 0; k < SDL_CONTROLLER_AXIS_MAX; ++k) {
-							Sint16 state = 0;
-							if (SDL_JoystickGetAxisInitialState(js, k, &state))
-								ctrl.axisInitialValues[k] = state;
-						}
+					_controllers.push_back(ctrl);
+					for (int k = 0; k < SDL_CONTROLLER_AXIS_MAX; ++k) {
+						Sint16 state = 0;
+						if (SDL_JoystickGetAxisInitialState(js, k, &state))
+							ctrl.axisInitialValues[k] = state;
 					}
-
-					const char* name = SDL_JoystickName(js);
-					if (name)
-						fprintf(stdout, "Joystick \"%s\" connected.\n", name);
+					isController = true;
 				}
+			}
+
+			const char* name = SDL_JoystickName(js);
+			if (name) {
+				if (isController)
+					fprintf(stdout, "Joystick \"%s\" connected as game controller.\n", name);
+				else
+					fprintf(stdout, "Joystick \"%s\" connected.\n", name);
 			}
 		}
 
