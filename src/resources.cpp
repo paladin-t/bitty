@@ -22,6 +22,7 @@
 ** Macros and constants
 */
 
+static_assert(!std::numeric_limits<Resources::Id>::is_signed, "Wrong type.");
 static_assert(sizeof(Resources::Id) == sizeof(Font::Codepoint), "Wrong size.");
 
 /* ===========================================================================} */

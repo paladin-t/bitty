@@ -234,10 +234,18 @@ public:
 					resized = resize(_width, y);
 				if (!resized)
 					return false;
+
+				for (Sub &sub : _subs)
+					sub.valid = false;
+
+				return true;
 			} else {
 				return false;
 			}
 		}
+
+		if (_cels[x + y * _width] == v)
+			return true;
 
 		_cels[x + y * _width] = v;
 
