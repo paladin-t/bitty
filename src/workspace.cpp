@@ -1660,10 +1660,19 @@ bool Workspace::canvas(class Window* wnd, class Renderer* rnd, const class Proje
 			canvasValidation(cvsSize);
 		}
 		ImVec2 wndSize;
+		ImVec2 wndMinSize;
 		if (cvsSize.x > 0) {
 			wndSize.x = cvsSize.x * times + style.WindowBorderSize * 4 + 1;
+			wndMinSize = ImVec2(
+				cvsSize.x * 0.5f,
+				cvsSize.x * 0.5f / canvasRatio + ImGui::TitleBarHeight()
+			);
 		} else {
 			wndSize.x = BITTY_CANVAS_DEFAULT_WIDTH * times + style.WindowBorderSize * 4 + 1;
+			wndMinSize = ImVec2(
+				BITTY_CANVAS_DEFAULT_WIDTH * 0.5f,
+				BITTY_CANVAS_DEFAULT_WIDTH * 0.5f / canvasRatio + ImGui::TitleBarHeight()
+			);
 		}
 		if (cvsSize.y > 0) {
 			wndSize.y = cvsSize.y * times + style.WindowBorderSize * 4 + ImGui::TitleBarHeight();
@@ -1672,13 +1681,7 @@ bool Workspace::canvas(class Window* wnd, class Renderer* rnd, const class Proje
 		}
 		ImGui::SetNextWindowPos(ImVec2((rnd->width() - wndSize.x) * 0.5f, (rnd->height() - wndSize.y) * 0.5f), cond);
 		ImGui::SetNextWindowSize(wndSize, cond);
-		ImGui::SetNextWindowSizeConstraints(
-			ImVec2(
-				rnd->width() * 0.2f,
-				rnd->width() * 0.2f / canvasRatio + ImGui::TitleBarHeight()
-			),
-			ImVec2((float)rnd->width(), (float)rnd->height())
-		);
+		ImGui::SetNextWindowSizeConstraints(wndMinSize, ImVec2((float)rnd->width(), (float)rnd->height()));
 	} else if (*canvasState() == MAXIMIZED || canvasFull()) {
 		flags = WORKSPACE_WND_FLAGS_DOCK_NO_TITLE;
 
