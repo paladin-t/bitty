@@ -1633,7 +1633,7 @@ void Indicator(const ImVec2 &min, const ImVec2 &max, float thickness) {
 	drawList->AddRect(
 		min, max,
 		tick ? IM_COL32_WHITE : IM_COL32_BLACK,
-		0, ImDrawCornerFlags_None,
+		0, ImDrawFlags_RoundCornersNone,
 		thickness
 	);
 }

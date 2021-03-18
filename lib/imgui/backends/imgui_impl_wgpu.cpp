@@ -12,6 +12,7 @@
 
 // CHANGELOG
 // (minor and older changes stripped away, please see git history for details)
+//  2021-02-18: Change blending equation to preserve alpha in output buffer.
 //  2021-01-28: Initial version.
 
 #include "imgui.h"
@@ -638,7 +639,7 @@ bool ImGui_ImplWGPU_CreateDeviceObjects()
     {
         color_state.format = g_renderTargetFormat;
         color_state.alphaBlend.operation = WGPUBlendOperation_Add;
-        color_state.alphaBlend.srcFactor = WGPUBlendFactor_SrcAlpha;
+        color_state.alphaBlend.srcFactor = WGPUBlendFactor_One;
         color_state.alphaBlend.dstFactor = WGPUBlendFactor_OneMinusSrcAlpha;
         color_state.colorBlend.operation = WGPUBlendOperation_Add;
         color_state.colorBlend.srcFactor = WGPUBlendFactor_SrcAlpha;
@@ -730,7 +731,7 @@ void ImGui_ImplWGPU_InvalidateDeviceObjects()
 
 bool ImGui_ImplWGPU_Init(WGPUDevice device, int num_frames_in_flight, WGPUTextureFormat rt_format)
 {
-    // Setup back-end capabilities flags
+    // Setup backend capabilities flags
     ImGuiIO& io = ImGui::GetIO();
     io.BackendRendererName = "imgui_impl_webgpu";
     io.BackendFlags |= ImGuiBackendFlags_RendererHasVtxOffset;  // We can honor the ImDrawCmd::VtxOffset field, allowing for large meshes.
