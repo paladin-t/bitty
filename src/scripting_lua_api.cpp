@@ -731,6 +731,17 @@ static void read_(lua_State* L, rapidjson::Value &val, Index idx, rapidjson::Mem
 		}
 
 		break;
+	case LUA_TUSERDATA: {
+			LightUserdata data;
+			if (isLightuserdata(L, idx)) {
+				read(L, data, idx);
+
+				if (data.data == nullptr)
+					val.SetNull();
+			}
+		}
+
+		break;
 	}
 }
 
@@ -744,10 +755,15 @@ static void read(lua_State* L, rapidjson::Document &doc, Index idx) {
 	read(L, val, idx, doc.GetAllocator());
 }
 
-static int write_(lua_State* L, const rapidjson::Value &val) {
+static int write_(lua_State* L, const rapidjson::Value &val, bool useNull) {
 	switch (val.GetType()) {
 	case rapidjson::kNullType:
-		write(L, nullptr);
+		if (useNull) {
+			const LightUserdata Null;
+			write(L, Null);
+		} else {
+			write(L, nullptr);
+		}
 
 		return 1;
 	case rapidjson::kFalseType:
@@ -766,7 +782,7 @@ static int write_(lua_State* L, const rapidjson::Value &val) {
 				const rapidjson::Value &jk = it->name;
 				const rapidjson::Value &jv = it->value;
 
-				write_(L, jv);
+				write_(L, jv, useNull);
 
 				setTable(L, jk.GetString());
 			}
@@ -780,7 +796,7 @@ static int write_(lua_State* L, const rapidjson::Value &val) {
 			for (rapidjson::SizeType i = 0; i < jarr.Size(); ++i) {
 				const rapidjson::Value &ji = jarr[i];
 
-				write_(L, ji);
+				write_(L, ji, useNull);
 
 				setTable(L, i + 1); // 1-based.
 			}
@@ -813,23 +829,23 @@ static int write_(lua_State* L, const rapidjson::Value &val) {
 }
 
 template<> int write(lua_State* L, const rapidjson::Value &val) {
-	return write_(L, val);
+	return write_(L, val, false);
 }
 
 template<> int write(lua_State* L, rapidjson::Value &val) {
-	return write_(L, val);
+	return write_(L, val, false);
 }
 
 template<> int write(lua_State* L, const rapidjson::Document &doc) {
 	const rapidjson::Value &val = doc;
 
-	return write_(L, val);
+	return write_(L, val, false);
 }
 
 template<> int write(lua_State* L, rapidjson::Document &doc) {
 	rapidjson::Value &val = doc;
 
-	return write_(L, val);
+	return write_(L, val, false);
 }
 
 /**< Walker. */
@@ -4581,13 +4597,18 @@ static int Json_fromString(lua_State* L) {
 }
 
 static int Json_toTable(lua_State* L) {
+	const int n = getTop(L);
 	Json::Ptr* obj = nullptr;
-	read<>(L, obj);
+	bool useNull = false;
+	if (n == 2)
+		read<>(L, obj, useNull);
+	else
+		read<>(L, obj);
 
 	if (obj) {
 		rapidjson::Document doc;
 		if (obj->get()->toJson(doc))
-			return write(L, doc);
+			return write_(L, doc, useNull);
 
 		return 0;
 	}
@@ -4634,6 +4655,14 @@ static void open_Json(lua_State* L) {
 		),
 		nullptr, nullptr
 	);
+
+	getGlobal(L, "Json");
+	const LightUserdata Null;
+	setTable(
+		L,
+		"Null", Null
+	);
+	pop(L);
 }
 
 /**< Math. */
