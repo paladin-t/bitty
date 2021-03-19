@@ -126,6 +126,10 @@ private:
 	Function(lua_State* L);
 };
 
+struct LightUserdata {
+	void* data = nullptr;
+};
+
 typedef void (* ProtectedFunction)(lua_State*, void*);
 
 lua_State* create(lua_Alloc f, void* ud /* nullable */);
@@ -175,6 +179,7 @@ bool isArray(lua_State* L, int idx = 1);
 bool isUserdata(lua_State* L, int idx = 1);
 bool isCFunction(lua_State* L, int idx = 1);
 bool isFunction(lua_State* L, int idx = 1);
+bool isLightuserdata(lua_State* L, int idx = 1);
 
 void check(lua_State* L, Placeholder &ret, Index idx = Index(1));
 void check(lua_State* L, Ref &ret, Index idx = Index(1));
@@ -198,6 +203,7 @@ void check(lua_State* L, lua_CFunction &ret, Index idx = Index(1));
 void check(lua_State* L, Function &ret, Index idx = Index(1));
 void check(lua_State* L, Function::Ptr &ret, Index idx = Index(1));
 void check(lua_State* L, void* &ret, Index idx = Index(1), const char* type = nullptr);
+void check(lua_State* L, LightUserdata &ret, Index idx = Index(1));
 template<typename Class> void check(lua_State* L, Class* &ret, Index idx, const char* type /* nullable */) {
 	ret = nullptr;
 
@@ -246,6 +252,7 @@ void read(lua_State* L, lua_CFunction &ret, Index idx = Index(1));
 void read(lua_State* L, Function &ret, Index idx = Index(1));
 void read(lua_State* L, Function::Ptr &ret, Index idx = Index(1));
 void read(lua_State* L, void* &ret, Index idx = Index(1), const char* type = nullptr);
+void read(lua_State* L, LightUserdata &ret, Index idx = Index(1));
 template<typename Class> void read(lua_State* L, Class* &ret, Index idx, const char* type /* nullable */) {
 	ret = nullptr;
 
@@ -305,6 +312,7 @@ int write(lua_State* L, lua_CFunction val);
 int write(lua_State* L, const Function &val);
 int write(lua_State* L, Function &val);
 int write(lua_State* L, void* &val, size_t size);
+int write(lua_State* L, const LightUserdata &val);
 template<typename Class> int write(lua_State* L, const Class* val);
 template<typename Class> int write(lua_State* L, Class* val);
 template<typename Val> int write(lua_State* L, const Val &val);

@@ -356,6 +356,10 @@ bool isFunction(lua_State* L, int idx) {
 	return !!lua_isfunction(L, idx);
 }
 
+bool isLightuserdata(lua_State* L, int idx) {
+	return !!lua_islightuserdata(L, idx);
+}
+
 void check(lua_State* L, Placeholder &ret, Index idx) {
 	luaL_checkany(L, idx);
 
@@ -506,6 +510,15 @@ void check(lua_State* L, void* &ret, Index idx, const char* type) {
 	}
 }
 
+void check(lua_State* L, LightUserdata &ret, Index idx) {
+	ret.data = nullptr;
+
+	if (lua_islightuserdata(L, idx))
+		ret.data = lua_touserdata(L, idx);
+	else
+		luaL_error(L, "LightUserdata expected.");
+}
+
 void read(lua_State* L, Placeholder &ret, Index idx) {
 	(void)L;
 
@@ -630,6 +643,10 @@ void read(lua_State* L, void* &ret, Index idx, const char* type) {
 		ret = luaL_testudata(L, idx, type);
 	else
 		ret = lua_touserdata(L, idx);
+}
+
+void read(lua_State* L, LightUserdata &ret, Index idx) {
+	ret.data = lua_touserdata(L, idx);
 }
 
 int write(lua_State* L, const Index &val) {
@@ -766,6 +783,12 @@ int write(lua_State* L, Function &val) {
 
 int write(lua_State* L, void* &val, size_t size) {
 	val = lua_newuserdata(L, size);
+
+	return 1;
+}
+
+int write(lua_State* L, const LightUserdata &val) {
+	lua_pushlightuserdata(L, val.data);
 
 	return 1;
 }
