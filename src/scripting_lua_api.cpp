@@ -1075,10 +1075,16 @@ static int LightUserdata_toString(lua_State* L) {
 		read(L, data, Index(1));
 
 		std::string ret;
-		if (data.data == nullptr)
+		if (data.data == nullptr) {
 			ret = "null";
-		else
-			ret = Text::toHex((uintptr_t)data.data, false);
+		} else {
+			constexpr bool IS32BIT = sizeof(uintptr_t) == sizeof(UInt32);
+#if IS32BIT
+			ret = Text::toHex((UInt32)(uintptr_t)data.data, false);
+#else
+			ret = Text::toHex((UInt64)(uintptr_t)data.data, false);
+#endif
+		}
 
 		return write(L, ret);
 	} else {

@@ -1,4 +1,19 @@
-### v1.0.2 Feb. 18 2021
+### v1.0.3 Mar. 20, 2021
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added source index tooltips to the sprite and map editors
+* Added a `rendererReset` entry
+* Added a `Json.Null` value representing null in JSON
+* Added an `allowNull` parameter to the `json:toTable(...)` method
+* Improved colored text rendering
+* Improved canvas sizing
+* Improved performance of batched map setting
+* Fixed a render target reset bug of batched map
+* Fixed a map sizing issue
+* Upgraded ImGui from v1.81 to v1.82
+
+### v1.0.2 Feb. 18, 2021
 
 Enhanced modules, fixed some bugs.
 
@@ -11,7 +26,7 @@ Enhanced modules, fixed some bugs.
 * Fixed an execution issue of the `Platform.execute(...)` function (HTML)
 * Upgraded ImGui from v1.80 to v1.81
 
-### v1.0.1 Feb. 6 2021
+### v1.0.1 Feb. 6, 2021
 
 Enhanced modules, improved usability, fixed some bugs.
 

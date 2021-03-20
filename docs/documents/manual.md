@@ -891,6 +891,10 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 
 ### JSON
 
+**Constants**
+
+* `Json.Null`
+
 **Constructors**
 
 * `Json.new()`: constructs a JSON object
@@ -903,7 +907,8 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 * `json:fromString(txt)`: parses `Json` data from the specific string
 	* `txt`: the text to parse
 	* returns `true` for success, otherwise `false`
-* `json:toTable()`: serializes the `Json` to Lua table
+* `json:toTable(allowNull = false)`: serializes the `Json` to Lua table
+	* `allowNull`: `true` to convert `Json` `null` to `Json.Null`, otherwise to Lua `nil`
 	* returns serialized Lua table
 * `json:fromTable(tbl)`: parses `Json` data from the specific Lua table, ignores incompatible data types
 	* `tbl`: the table to parse
