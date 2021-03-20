@@ -755,10 +755,10 @@ static void read(lua_State* L, rapidjson::Document &doc, Index idx) {
 	read(L, val, idx, doc.GetAllocator());
 }
 
-static int write_(lua_State* L, const rapidjson::Value &val, bool useNull) {
+static int write_(lua_State* L, const rapidjson::Value &val, bool allowNull) {
 	switch (val.GetType()) {
 	case rapidjson::kNullType:
-		if (useNull) {
+		if (allowNull) {
 			const LightUserdata Null;
 			write(L, Null);
 		} else {
@@ -782,7 +782,7 @@ static int write_(lua_State* L, const rapidjson::Value &val, bool useNull) {
 				const rapidjson::Value &jk = it->name;
 				const rapidjson::Value &jv = it->value;
 
-				write_(L, jv, useNull);
+				write_(L, jv, allowNull);
 
 				setTable(L, jk.GetString());
 			}
@@ -796,7 +796,7 @@ static int write_(lua_State* L, const rapidjson::Value &val, bool useNull) {
 			for (rapidjson::SizeType i = 0; i < jarr.Size(); ++i) {
 				const rapidjson::Value &ji = jarr[i];
 
-				write_(L, ji, useNull);
+				write_(L, ji, allowNull);
 
 				setTable(L, i + 1); // 1-based.
 			}
@@ -1066,6 +1066,45 @@ void open(class Executable* exec) {
 namespace Lua {
 
 namespace Libs {
+
+/**< Light userdata. */
+
+static int LightUserdata_toString(lua_State* L) {
+	LightUserdata data;
+	if (isLightuserdata(L, 1)) {
+		read(L, data, Index(1));
+
+		std::string ret;
+		if (data.data == nullptr)
+			ret = "null";
+		else
+			ret = Text::toHex((uintptr_t)data.data, false);
+
+		return write(L, ret);
+	} else {
+		return write(L, "unknown");
+	}
+}
+
+static void open_LightUserdata(lua_State* L) {
+	def(
+		L, "LightUserdata",
+		nullptr,
+		array(
+			luaL_Reg{ "__tostring", LightUserdata_toString },
+			luaL_Reg{ nullptr, nullptr }
+		),
+		array(
+			luaL_Reg{ nullptr, nullptr }
+		),
+		nullptr, nullptr
+	);
+
+	const LightUserdata lightUserdata;
+	write(L, lightUserdata);
+	setMetaOf(L, "LightUserdata");
+	pop(L);
+}
 
 /**< Algorithms. */
 
@@ -4599,16 +4638,16 @@ static int Json_fromString(lua_State* L) {
 static int Json_toTable(lua_State* L) {
 	const int n = getTop(L);
 	Json::Ptr* obj = nullptr;
-	bool useNull = false;
+	bool allowNull = false;
 	if (n == 2)
-		read<>(L, obj, useNull);
+		read<>(L, obj, allowNull);
 	else
 		read<>(L, obj);
 
 	if (obj) {
 		rapidjson::Document doc;
 		if (obj->get()->toJson(doc))
-			return write_(L, doc, useNull);
+			return write_(L, doc, allowNull);
 
 		return 0;
 	}
@@ -7027,6 +7066,9 @@ static void open_Web(lua_State*) {
 void open(class Executable* exec) {
 	// Prepare.
 	lua_State* L = (lua_State*)exec->pointer();
+
+	// Light userdata.
+	open_LightUserdata(L);
 
 	// Algorithms.
 	open_Noiser(L);
