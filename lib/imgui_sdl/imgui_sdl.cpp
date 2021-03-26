@@ -497,10 +497,10 @@ namespace
 			// We can now just calculate the correct source rectangle and draw it.
 
 			const SDL_Rect source = {
-				static_cast<int>(bounding.MinU * textureWidth),
-				static_cast<int>(bounding.MinV * textureHeight),
-				static_cast<int>(bounding.MaxU * textureWidth) - static_cast<int>(bounding.MinU * textureWidth),
-				static_cast<int>(bounding.MaxV * textureHeight) - static_cast<int>(bounding.MinV * textureHeight)
+				static_cast<int>(std::round(bounding.MinU * textureWidth)),
+				static_cast<int>(std::round(bounding.MinV * textureHeight)),
+				static_cast<int>(std::round(bounding.MaxU * textureWidth)) - static_cast<int>(std::round(bounding.MinU * textureWidth)),
+				static_cast<int>(std::round(bounding.MaxV * textureHeight)) - static_cast<int>(std::round(bounding.MinV * textureHeight))
 			};
 
 			const SDL_RendererFlip flip = static_cast<SDL_RendererFlip>((doHorizontalFlip ? SDL_FLIP_HORIZONTAL : 0) | (doVerticalFlip ? SDL_FLIP_VERTICAL : 0));

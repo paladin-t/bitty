@@ -1080,9 +1080,9 @@ static int LightUserdata_toString(lua_State* L) {
 		} else {
 			constexpr bool IS32BIT = sizeof(uintptr_t) == sizeof(UInt32);
 #if IS32BIT
-			ret = Text::toHex((UInt32)(uintptr_t)data.data, false);
+			ret = "0x" + Text::toHex((UInt32)(uintptr_t)data.data, false);
 #else
-			ret = Text::toHex((UInt64)(uintptr_t)data.data, false);
+			ret = "0x" + Text::toHex((UInt64)(uintptr_t)data.data, false);
 #endif
 		}
 
