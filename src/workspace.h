@@ -217,6 +217,7 @@ protected:
 
 	BITTY_PROPERTY(Entry::Dictionary, documents)
 
+	BITTY_PROPERTY(bool, splashCustomized)
 	BITTY_PROPERTY_PTR(Texture, splashBitty)
 	BITTY_PROPERTY_PTR(Texture, splashEngine)
 

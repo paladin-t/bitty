@@ -8,10 +8,12 @@
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
 
+#include "bytes.h"
 #include "document.h"
 #include "datetime.h"
 #include "editable.h"
 #include "encoding.h"
+#include "file_handle.h"
 #include "filesystem.h"
 #include "operations.h"
 #include "platform.h"
@@ -38,6 +40,10 @@
 ** Macros and constants
 */
 
+#ifndef WORKSPACE_SPLASH_FILE
+#	define WORKSPACE_SPLASH_FILE "../splash.png"
+#endif /* WORKSPACE_SPLASH_FILE */
+
 #if !defined IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 #	error "IMGUI_DISABLE_OBSOLETE_FUNCTIONS not defined."
 #endif /* IMGUI_DISABLE_OBSOLETE_FUNCTIONS */
@@ -62,6 +68,26 @@ EM_JS(
 );
 #endif /* BITTY_OS_HTML */
 
+static void workspaceCreateSplash(Window*, Renderer* rnd, Workspace* ws) {
+	if (ws->splashBitty()) {
+		ws->theme()->destroyTexture(rnd, ws->splashBitty());
+		ws->splashBitty(nullptr);
+	}
+
+	if (ws->splashEngine()) {
+		ws->theme()->destroyTexture(rnd, ws->splashEngine());
+		ws->splashEngine(nullptr);
+	}
+
+	File::Ptr file(File::create());
+	if (file->open(WORKSPACE_SPLASH_FILE, Stream::READ)) {
+		Bytes::Ptr bytes(Bytes::create());
+		file->readBytes(bytes.get());
+		file->close();
+
+		ws->splashBitty(ws->theme()->createTexture(rnd, bytes->pointer(), bytes->count()));
+	}
+}
 static void workspaceCreateSplash(Window*, Renderer* rnd, Workspace* ws, int index) {
 	constexpr const Byte* const IMAGES[] = {
 		RES_TOAST_BITTY0, RES_TOAST_BITTY1, RES_TOAST_BITTY2, RES_TOAST_BITTY3, RES_TOAST_BITTY4, RES_TOAST_BITTY5, RES_TOAST_BITTY6
@@ -85,21 +111,25 @@ static void workspaceRenderSplash(Window*, Renderer* rnd, Workspace* ws, std::fu
 	const Color cls(0x00, 0x00, 0x00, 0x00);
 	rnd->clear(&cls);
 
-	const Math::Recti dstBitty = Math::Recti::byXYWH(
-		(rnd->width() - ws->splashBitty()->width()) / 2,
-		(rnd->height() - ws->splashBitty()->height()) / 2,
-		ws->splashBitty()->width(),
-		ws->splashBitty()->height()
-	);
-	rnd->render(ws->splashBitty(), nullptr, &dstBitty, nullptr, nullptr, false, false, nullptr, false, false);
+	if (ws->splashBitty()) {
+		const Math::Recti dstBitty = Math::Recti::byXYWH(
+			(rnd->width() - ws->splashBitty()->width()) / 2,
+			(rnd->height() - ws->splashBitty()->height()) / 2,
+			ws->splashBitty()->width(),
+			ws->splashBitty()->height()
+		);
+		rnd->render(ws->splashBitty(), nullptr, &dstBitty, nullptr, nullptr, false, false, nullptr, false, false);
 
-	const Math::Recti dstEngine = Math::Recti::byXYWH(
-		(rnd->width() - ws->splashEngine()->width()) / 2,
-		dstBitty.yMax() + 16,
-		ws->splashEngine()->width(),
-		ws->splashEngine()->height()
-	);
-	rnd->render(ws->splashEngine(), nullptr, &dstEngine, nullptr, nullptr, false, false, nullptr, false, false);
+		if (ws->splashEngine()) {
+			const Math::Recti dstEngine = Math::Recti::byXYWH(
+				(rnd->width() - ws->splashEngine()->width()) / 2,
+				dstBitty.yMax() + 16,
+				ws->splashEngine()->width(),
+				ws->splashEngine()->height()
+			);
+			rnd->render(ws->splashEngine(), nullptr, &dstEngine, nullptr, nullptr, false, false, nullptr, false, false);
+		}
+	}
 
 	if (post)
 		post(rnd, ws);
@@ -284,6 +314,8 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 	pluginsMenuProjectItemCount(0);
 	pluginsMenuPluginsItemCount(0);
 	pluginsMenuHelpItemCount(0);
+
+	splashCustomized(false);
 
 	menuHeight(0.0f);
 	bannerHeight(0.0f);
@@ -2409,14 +2441,15 @@ void Workspace::scene(class Window* wnd, class Renderer* rnd, const class Projec
 	// Prepare.
 	ImGuiStyle &style = ImGui::GetStyle();
 
+	const float borderSize = style.WindowBorderSize;
 	if (canvasFull())
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
 
 	const ImVec2 regMin = ImGui::GetWindowContentRegionMin();
 	const ImVec2 regMax = ImGui::GetWindowContentRegionMax();
 	const ImVec2 regSize(
-		regMax.x - regMin.x - style.WindowBorderSize * 2,
-		regMax.y - regMin.y - style.WindowBorderSize * (*canvasState() == MAXIMIZED ? 2 : 1)
+		regMax.x - regMin.x - borderSize * 2,
+		regMax.y - regMin.y - borderSize * (*canvasState() == MAXIMIZED ? 2 : 1)
 	);
 
 	// Calculate a proper size and resize the canvas image.
@@ -2470,32 +2503,32 @@ void Workspace::scene(class Window* wnd, class Renderer* rnd, const class Projec
 		if (srcRatio < dstRatio) {
 			const float w = dstSize.x;
 			dstSize.x = dstSize.y * srcRatio;
-			dstSize.x -= style.WindowBorderSize * 2;
-			dstSize.y -= style.WindowBorderSize * 2;
+			dstSize.x -= borderSize * 2;
+			dstSize.y -= borderSize * 2;
 			dstPos.x += (w - dstSize.x) * 0.5f;
 			if (*canvasState() == MAXIMIZED)
-				dstPos.y += style.WindowBorderSize;
+				dstPos.y += borderSize;
 
 			horizontalPadded = true;
 		} else if (srcRatio > dstRatio) {
 			const float h = dstSize.y;
 			dstSize.y = dstSize.x / srcRatio;
-			dstSize.x -= style.WindowBorderSize * 2;
-			dstSize.y -= style.WindowBorderSize * 2;
-			dstPos.x += style.WindowBorderSize;
+			dstSize.x -= borderSize * 2;
+			dstSize.y -= borderSize * 2;
+			dstPos.x += borderSize;
 			dstPos.y += (h - dstSize.y) * 0.5f;
 
 			verticalPadded = true;
 		} else {
-			dstSize.x -= style.WindowBorderSize * 2;
-			dstSize.y -= style.WindowBorderSize * 2;
-			dstPos.x += style.WindowBorderSize;
+			dstSize.x -= borderSize * 2;
+			dstSize.y -= borderSize * 2;
+			dstPos.x += borderSize;
 		}
 	} else {
-		dstSize.x -= style.WindowBorderSize * 2;
-		dstSize.y -= style.WindowBorderSize * 2;
-		dstPos.x += style.WindowBorderSize;
-		dstPos.y += style.WindowBorderSize;
+		dstSize.x -= borderSize * 2;
+		dstSize.y -= borderSize * 2;
+		dstPos.x += borderSize;
+		dstPos.y += borderSize;
 	}
 
 	// Commit to the canvas image.
@@ -3122,41 +3155,74 @@ void Workspace::resolveAssetRef(class Window* /* wnd */, class Renderer* rnd, co
 }
 
 void Workspace::beginSplash(class Window* wnd, class Renderer* rnd, const class Project* project) {
-	workspaceCreateSplash(wnd, rnd, this, 0);
-	workspaceRenderSplash(wnd, rnd, this, nullptr);
+#if BITTY_SPLASH_ENABLED
+	if (Path::existsFile(WORKSPACE_SPLASH_FILE)) {
+		splashCustomized(true);
 
-	workspaceWaitSplash(wnd, rnd, this, project);
-}
-
-void Workspace::endSplash(class Window* wnd, class Renderer* rnd) {
-	constexpr const int INDICES[] = {
-		1, 2, 3, 4, 5,
-		0, 0, 6, 6, 6,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	};
-
-	Sfx::Ptr sfx(Sfx::create());
-	sfx->fromBytes(RES_SOUND_SPLASH, BITTY_COUNTOF(RES_SOUND_SPLASH));
-	sfx->play(false, nullptr, -1);
-
-	for (int i = 0; i < BITTY_COUNTOF(INDICES); ++i) {
-		const long long begin = DateTime::ticks();
-		const long long end = begin + DateTime::fromSeconds(0.05);
-		while (DateTime::ticks() < end) {
-			constexpr const int STEP = 20;
-			DateTime::sleep(STEP);
-			Platform::idle();
-		}
-
-		workspaceCreateSplash(wnd, rnd, this, INDICES[i]);
+		workspaceCreateSplash(wnd, rnd, this);
+		workspaceRenderSplash(wnd, rnd, this, nullptr);
+	} else {
+		workspaceCreateSplash(wnd, rnd, this, 0);
 		workspaceRenderSplash(wnd, rnd, this, nullptr);
 	}
 
-	theme()->destroyTexture(rnd, splashBitty());
-	splashBitty(nullptr);
+	workspaceWaitSplash(wnd, rnd, this, project);
+#else /* BITTY_SPLASH_ENABLED */
+	const Color color(0x00, 0x00, 0x00, 0x00);
+	rnd->clear(&color);
+#endif /* BITTY_SPLASH_ENABLED */
+}
 
-	theme()->destroyTexture(rnd, splashEngine());
-	splashEngine(nullptr);
+void Workspace::endSplash(class Window* wnd, class Renderer* rnd) {
+#if BITTY_SPLASH_ENABLED
+	if (splashCustomized()) {
+		if (splashBitty()) {
+			theme()->destroyTexture(rnd, splashBitty());
+			splashBitty(nullptr);
+		}
+
+		if (splashEngine()) {
+			theme()->destroyTexture(rnd, splashEngine());
+			splashEngine(nullptr);
+		}
+	} else {
+		constexpr const int INDICES[] = {
+			1, 2, 3, 4, 5,
+			0, 0, 6, 6, 6,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+		};
+
+		Sfx::Ptr sfx(Sfx::create());
+		sfx->fromBytes(RES_SOUND_SPLASH, BITTY_COUNTOF(RES_SOUND_SPLASH));
+		sfx->play(false, nullptr, -1);
+
+		for (int i = 0; i < BITTY_COUNTOF(INDICES); ++i) {
+			const long long begin = DateTime::ticks();
+			const long long end = begin + DateTime::fromSeconds(0.05);
+			while (DateTime::ticks() < end) {
+				constexpr const int STEP = 20;
+				DateTime::sleep(STEP);
+				Platform::idle();
+			}
+
+			workspaceCreateSplash(wnd, rnd, this, INDICES[i]);
+			workspaceRenderSplash(wnd, rnd, this, nullptr);
+		}
+
+		if (splashBitty()) {
+			theme()->destroyTexture(rnd, splashBitty());
+			splashBitty(nullptr);
+		}
+
+		if (splashEngine()) {
+			theme()->destroyTexture(rnd, splashEngine());
+			splashEngine(nullptr);
+		}
+	}
+#else /* BITTY_SPLASH_ENABLED */
+	const Color color(0x00, 0x00, 0x00, 0x00);
+	rnd->clear(&color);
+#endif /* BITTY_SPLASH_ENABLED */
 }
 
 void Workspace::loadProject(class Renderer* rnd, const class Project* project, Executable* exec) {

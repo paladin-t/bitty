@@ -117,6 +117,7 @@ There are some customizable macros:
 * `BITTY_DEBUG_ENABLED[=1]`: indicates whether project code debug is enabled; requires `BITTY_MULTITHREAD_ENABLED==1`; disable this to build a pure runner
 * `BITTY_NETWORK_ENABLED[=1]`: indicates whether the `Network` API is enabled
 * `BITTY_WEB_ENABLED[=1]`: indicates whether the `Web` API is enabled; disable this if you don't need web accessibility
+* `BITTY_SPLASH_ENABLED[=1]`: indicates whether the splash is enabled
 * `BITTY_PROJECT_STRATEGY_MAP_BATCH_ENABLED[=0]`: indicates whether map batch is preferred; it might speed up map rendering if enabled, but requires more memory and could be slow with `mset(...)`
 
 ### Startup project
