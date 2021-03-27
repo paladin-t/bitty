@@ -81,6 +81,8 @@ Bitty Engine helps you to make standalone binaries for Windows, MacOS, Linux, an
 
 Everything is done with Bitty Engine (pro) by nothing more than a few mouse clicks.
 
+Put an image at "../icon.png" relative to executables to customize the icon dynamically. Put an image at "../splash.png" as well to customize the splash; the image could be transparent.
+
 ## Getting Bitty Engine
 
 The pro version is available on [Steam](https://store.steampowered.com/app/1386180/).
@@ -93,8 +95,8 @@ Get the trial version from [Steam](https://store.steampowered.com/app/1386180/) 
 
 You can compile a core version from this repository, and customize redistributable binary to:
 
-* Change application icon
-* Change splash (keeping is thankful)
+* Change application icon natively
+* Change splash natively (keeping is thankful)
 * Encrypt assets in your own way
 * Link with 3rd-party libraries
 * Introduce your own API
