@@ -1975,6 +1975,7 @@ promise::Defer Operations::projectAddAsset(class Renderer* rnd, Workspace* ws, c
 	return promise::newPromise(
 		[&] (promise::Defer df) -> void {
 			std::string path = OPERATIONS_ASSET_DEFAULT_NAME;
+			unsigned type = 0;
 			do {
 				LockGuard<RecursiveMutex>::UniquePtr acquired;
 				Project* prj = project->acquire(acquired);
@@ -1985,6 +1986,7 @@ promise::Defer Operations::projectAddAsset(class Renderer* rnd, Workspace* ws, c
 				if (!asset)
 					break;
 
+				type = asset->type();
 				path = asset->entry().name();
 				Path::split(path, nullptr, nullptr, &path);
 				path = Path::combine(path.c_str(), OPERATIONS_ASSET_DEFAULT_NAME);
@@ -2207,12 +2209,20 @@ promise::Defer Operations::projectAddAsset(class Renderer* rnd, Workspace* ws, c
 				Math::Vec2i()
 			};
 			operationsAppendCustomAssetType(rnd, ws, project, types, typeNames, typeExtensions, defaultSizes, maxSizes, defaultSizes2, maxSizes2);
+			int typeIndex = 0;
+			for (int i = 0; i < (int)types.size(); ++i) {
+				if (types[i] == type) {
+					typeIndex = i;
+
+					break;
+				}
+			}
 			ws->popupBox(
 				ImGui::PopupBox::Ptr(
 					new ImGui::AddAssetPopupBox(
 						project,
 						BITTY_NAME,
-						ws->theme()->dialogItem_Type(), types, typeNames, typeExtensions,
+						ws->theme()->dialogItem_Type(), types, typeNames, typeExtensions, typeIndex,
 						ws->theme()->dialogItem_Size(), defaultSizes, maxSizes,
 						ws->theme()->dialogItem_TileSize(), defaultSizes2, maxSizes2,
 						ws->theme()->dialogItem_InputAssetName(), path,

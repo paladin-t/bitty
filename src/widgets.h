@@ -259,7 +259,7 @@ public:
 	AddAssetPopupBox(
 		const class Project* project,
 		const std::string &title,
-		const std::string &type, const Types &types, const TypeNames &typeNames, const TypeExtensions &typeExtensions,
+		const std::string &type, const Types &types, const TypeNames &typeNames, const TypeExtensions &typeExtensions, int typeIndex,
 		const std::string &size, const Vec2s &defaultSizes, const Vec2s &maxSizes,
 		const std::string &size2, const Vec2s &defaultSizes2, const Vec2s &maxSizes2,
 		const std::string &content, const std::string &default_,

@@ -351,7 +351,7 @@ void InputPopupBox::update(void) {
 AddAssetPopupBox::AddAssetPopupBox(
 	const class Project* project,
 	const std::string &title,
-	const std::string &type, const Types &types, const TypeNames &typeNames, const TypeExtensions &typeExtensions,
+	const std::string &type, const Types &types, const TypeNames &typeNames, const TypeExtensions &typeExtensions, int typeIndex,
 	const std::string &size, const Vec2s &defaultSizes, const Vec2s &maxSizes,
 	const std::string &size2, const Vec2s &defaultSizes2, const Vec2s &maxSizes2,
 	const std::string &content, const std::string &default_,
@@ -361,7 +361,7 @@ AddAssetPopupBox::AddAssetPopupBox(
 	const char* confirmTxt, const char* cancelTxt
 ) : _project(project),
 	_title(title),
-	_type(type), _types(types), _typeNames(typeNames), _typeExtensions(typeExtensions),
+	_type(type), _types(types), _typeNames(typeNames), _typeExtensions(typeExtensions), _typeIndex(typeIndex),
 	_size(size), _defaultSizes(defaultSizes), _maxSizes(maxSizes),
 	_size2(size2), _defaultSizes2(defaultSizes2), _maxSizes2(maxSizes2),
 	_none(none), _reference(reference), _palette(palette),
@@ -369,8 +369,14 @@ AddAssetPopupBox::AddAssetPopupBox(
 	_tooltipRefPalette(tooltipRefPalette), _tooltipRefImage(tooltipRefImage), _tooltipSize(tooltipSize), _tooltipPath(tooltipPath),
 	_confirmHandler(confirm), _cancelHandler(cancel)
 {
-	_sizeVec = Math::Vec2i(0, 0);
-	_sizeVec2 = Math::Vec2i(0, 0);
+	if (_typeIndex < 0 || _typeIndex >= (int)_defaultSizes.size()) {
+		_typeIndex = 0;
+		_sizeVec = Math::Vec2i(0, 0);
+		_sizeVec2 = Math::Vec2i(0, 0);
+	} else {
+		_sizeVec = _defaultSizes[_typeIndex];
+		_sizeVec2 = _defaultSizes2[_typeIndex];
+	}
 
 	memset(_buffer, 0, sizeof(_buffer));
 	memcpy(_buffer, _default.c_str(), std::min(sizeof(_buffer), _default.length()));
