@@ -2876,7 +2876,7 @@ void Workspace::filterAssets(class Window*, class Renderer* rnd, const class Pro
 			pattern = Text::trim(pattern);
 			if (!pattern.empty()) {
 				if (Text::indexOf(pattern, "*") == std::string::npos && Text::indexOf(pattern, "?") == std::string::npos)
-					pattern += "*";
+					pattern = "*" + pattern + "*";
 				assetsFilterPatterns().push_back(pattern);
 			}
 		}
