@@ -195,6 +195,11 @@
 #	define BITTY_WEB_ENABLED 1
 #endif /* BITTY_WEB_ENABLED */
 
+// Indicates whether the splash is enabled.
+#ifndef BITTY_SPLASH_ENABLED
+#	define BITTY_SPLASH_ENABLED 1
+#endif /* BITTY_SPLASH_ENABLED */
+
 // Indicates whether map batch is preferred.
 #ifndef BITTY_PROJECT_STRATEGY_MAP_BATCH_ENABLED
 #	define BITTY_PROJECT_STRATEGY_MAP_BATCH_ENABLED 0

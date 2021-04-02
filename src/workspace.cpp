@@ -68,6 +68,7 @@ EM_JS(
 );
 #endif /* BITTY_OS_HTML */
 
+#if BITTY_SPLASH_ENABLED
 static void workspaceCreateSplash(Window*, Renderer* rnd, Workspace* ws) {
 	if (ws->splashBitty()) {
 		ws->theme()->destroyTexture(rnd, ws->splashBitty());
@@ -229,6 +230,7 @@ static void workspaceWaitSplash(Window* wnd, Renderer* rnd, Workspace* ws, const
 	(void)project;
 #endif /* BITTY_OS_HTML */
 }
+#endif /* BITTY_SPLASH_ENABLED */
 
 /* ===========================================================================} */
 
@@ -3168,6 +3170,9 @@ void Workspace::beginSplash(class Window* wnd, class Renderer* rnd, const class 
 
 	workspaceWaitSplash(wnd, rnd, this, project);
 #else /* BITTY_SPLASH_ENABLED */
+	(void)wnd;
+	(void)project;
+
 	const Color color(0x00, 0x00, 0x00, 0x00);
 	rnd->clear(&color);
 #endif /* BITTY_SPLASH_ENABLED */
@@ -3220,6 +3225,8 @@ void Workspace::endSplash(class Window* wnd, class Renderer* rnd) {
 		}
 	}
 #else /* BITTY_SPLASH_ENABLED */
+	(void)wnd;
+
 	const Color color(0x00, 0x00, 0x00, 0x00);
 	rnd->clear(&color);
 #endif /* BITTY_SPLASH_ENABLED */
