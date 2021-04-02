@@ -31,6 +31,9 @@
 #ifndef _POSIX_C_SOURCE
 #   define _POSIX_C_SOURCE 2 // for popen()
 #endif
+#ifdef __APPLE__
+#   define _DARWIN_C_SOURCE
+#endif
 #include <cstdio>     // popen()
 #include <cstdlib>    // std::getenv()
 #include <fcntl.h>    // fcntl()
@@ -1200,8 +1203,8 @@ inline std::string internal::file_dialog::string_result()
     auto ret = m_async->result();
     // Strip potential trailing newline (zenity). Also strip trailing slash
     // added by osascript for consistency with other backends.
-    while (ret.back() == '\n' || ret.back() == '/')
-        ret = ret.substr(0, ret.size() - 1);
+    while (!ret.empty() && (ret.back() == '\n' || ret.back() == '/'))
+        ret.pop_back();
     return ret;
 #endif
 }
