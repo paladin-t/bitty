@@ -222,6 +222,7 @@
 		0359C58125825A7F0024E290 /* libcurl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libcurl.framework; path = lib/curl/libcurl.framework; sourceTree = "<group>"; };
 		0373C5712590576D00F6065C /* raycaster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = raycaster.h; path = src/raycaster.h; sourceTree = "<group>"; };
 		0373C5722590577E00F6065C /* raycaster.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = raycaster.cpp; path = src/raycaster.cpp; sourceTree = "<group>"; };
+		038598B726199354007E1603 /* stb_hexwave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_hexwave.h; path = lib/stb/stb_hexwave.h; sourceTree = "<group>"; };
 		038E72612581E04300A94374 /* bitty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = bitty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		038E72B825820C3800A94374 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = src/mac/AppDelegate.h; sourceTree = "<group>"; };
 		038E72B925820C3900A94374 /* bitty.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = bitty.entitlements; path = src/mac/bitty.entitlements; sourceTree = "<group>"; };
@@ -574,7 +575,6 @@
 		038E773E2582130F00A94374 /* stb_image_write.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_image_write.h; path = lib/stb/stb_image_write.h; sourceTree = "<group>"; };
 		038E773F2582130F00A94374 /* stb_voxel_render.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_voxel_render.h; path = lib/stb/stb_voxel_render.h; sourceTree = "<group>"; };
 		038E77402582130F00A94374 /* stb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb.h; path = lib/stb/stb.h; sourceTree = "<group>"; };
-		038E77412582130F00A94374 /* stretchy_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stretchy_buffer.h; path = lib/stb/stretchy_buffer.h; sourceTree = "<group>"; };
 		038E77422582130F00A94374 /* stb_herringbone_wang_tile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_herringbone_wang_tile.h; path = lib/stb/stb_herringbone_wang_tile.h; sourceTree = "<group>"; };
 		038E77432582130F00A94374 /* stb_rect_pack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_rect_pack.h; path = lib/stb/stb_rect_pack.h; sourceTree = "<group>"; };
 		038E77442582130F00A94374 /* stb_c_lexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_c_lexer.h; path = lib/stb/stb_c_lexer.h; sourceTree = "<group>"; };
@@ -1231,6 +1231,7 @@
 				038E77462582130F00A94374 /* stb_dxt.h */,
 				038E77322582130C00A94374 /* stb_easy_font.h */,
 				038E77422582130F00A94374 /* stb_herringbone_wang_tile.h */,
+				038598B726199354007E1603 /* stb_hexwave.h */,
 				038E77352582130D00A94374 /* stb_image_resize.h */,
 				038E773E2582130F00A94374 /* stb_image_write.h */,
 				038E77312582130C00A94374 /* stb_image.h */,
@@ -1245,7 +1246,6 @@
 				038E77392582130E00A94374 /* stb_vorbis.c */,
 				038E773F2582130F00A94374 /* stb_voxel_render.h */,
 				038E77402582130F00A94374 /* stb.h */,
-				038E77412582130F00A94374 /* stretchy_buffer.h */,
 			);
 			name = stb;
 			sourceTree = "<group>";
