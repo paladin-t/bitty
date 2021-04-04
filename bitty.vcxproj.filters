@@ -1328,9 +1328,6 @@
     <ClInclude Include="lib\stb\stb_voxel_render.h">
       <Filter>lib\stb</Filter>
     </ClInclude>
-    <ClInclude Include="lib\stb\stretchy_buffer.h">
-      <Filter>lib\stb</Filter>
-    </ClInclude>
     <ClInclude Include="lib\zlib\crc32.h">
       <Filter>lib\zlib</Filter>
     </ClInclude>
@@ -2557,6 +2554,9 @@
     </ClInclude>
     <ClInclude Include="src\editor_plugin.h">
       <Filter>src\workspace\editors</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb\stb_hexwave.h">
+      <Filter>lib\stb</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

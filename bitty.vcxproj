@@ -2467,6 +2467,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClInclude Include="lib\stb\stb_dxt.h" />
     <ClInclude Include="lib\stb\stb_easy_font.h" />
     <ClInclude Include="lib\stb\stb_herringbone_wang_tile.h" />
+    <ClInclude Include="lib\stb\stb_hexwave.h" />
     <ClInclude Include="lib\stb\stb_image.h" />
     <ClInclude Include="lib\stb\stb_image_resize.h" />
     <ClInclude Include="lib\stb\stb_image_write.h" />
@@ -2479,7 +2480,6 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClInclude Include="lib\stb\stb_tilemap_editor.h" />
     <ClInclude Include="lib\stb\stb_truetype.h" />
     <ClInclude Include="lib\stb\stb_voxel_render.h" />
-    <ClInclude Include="lib\stb\stretchy_buffer.h" />
     <ClInclude Include="lib\zlib\contrib\minizip\crypt.h" />
     <ClInclude Include="lib\zlib\contrib\minizip\ioapi.h" />
     <ClInclude Include="lib\zlib\contrib\minizip\iowin32.h" />
