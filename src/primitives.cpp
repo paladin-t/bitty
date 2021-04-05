@@ -2233,6 +2233,10 @@ public:
 		return true;
 	}
 
+	virtual class Window* window(void) override {
+		return _window;
+	}
+
 	virtual Input* input(void) override {
 		return _input;
 	}

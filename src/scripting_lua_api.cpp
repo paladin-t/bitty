@@ -28,6 +28,7 @@
 #include "scripting_lua_api.h"
 #include "walker.h"
 #include "web.h"
+#include "window.h"
 #include "resource/inline_resource.h"
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
@@ -9351,6 +9352,48 @@ static int Application_setCursor(lua_State* L) {
 	return 0;
 }
 
+static int Application_resize(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	const int n = getTop(L);
+	int w = 0, h = 0;
+	std::string s;
+	if (n == 2)
+		read<>(L, w, h);
+	else
+		read<>(L, s);
+
+	if (n == 2) {
+		if (w <= 0 || h <= 0) {
+			error(L, "Invalid size.");
+
+			return 0;
+		}
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				Window* wnd = impl->primitives()->window();
+				wnd->fullscreen(false);
+				wnd->size(Math::Vec2i(w, h));
+				wnd->centralize();
+			},
+			nullptr
+		);
+	} else if (s == "fullscreen") {
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				Window* wnd = impl->primitives()->window();
+				wnd->fullscreen(true);
+			},
+			nullptr
+		);
+	} else {
+		error(L, "Invalid size.");
+	}
+
+	return 0;
+}
+
 static void open_Application(lua_State* L) {
 	req(
 		L,
@@ -9360,6 +9403,7 @@ static void open_Application(lua_State* L) {
 				LUA_LIB(
 					array(
 						luaL_Reg{ "setCursor", Application_setCursor }, // Frame synchronized.
+						luaL_Reg{ "resize", Application_resize }, // Frame synchronized.
 						luaL_Reg{ nullptr, nullptr }
 					)
 				)

@@ -63,6 +63,13 @@ public:
 	virtual bool close(void) = 0;
 
 	/**
+	 * @brief Gets the window object.
+	 *
+	 * @note By the graphics thread.
+	 */
+	virtual class Window* window(void) = 0;
+
+	/**
 	 * @brief Gets the input object.
 	 *
 	 * @note By the graphics thread.

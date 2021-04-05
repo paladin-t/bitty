@@ -96,6 +96,11 @@ public:
 		SDL_SetWindowPosition(_window, SDL_WINDOWPOS_CENTERED_DISPLAY(idx), SDL_WINDOWPOS_CENTERED_DISPLAY(idx));
 	}
 
+	virtual void centralize(void) override {
+		const int idx = SDL_GetWindowDisplayIndex(_window);
+		SDL_SetWindowPosition(_window, SDL_WINDOWPOS_CENTERED_DISPLAY(idx), SDL_WINDOWPOS_CENTERED_DISPLAY(idx));
+	}
+
 	virtual Math::Vec2i position(void) const override {
 		int x = 0, y = 0;
 		SDL_GetWindowPosition(_window, &x, &y);

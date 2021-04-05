@@ -86,6 +86,11 @@ public:
 	virtual void displayIndex(int idx) = 0;
 
 	/**
+	 * @brief Centralize of the window.
+	 */
+	virtual void centralize(void) = 0;
+
+	/**
 	 * @brief Gets the current position index of the window.
 	 */
 	virtual Math::Vec2i position(void) const = 0;
