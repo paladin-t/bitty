@@ -34,9 +34,8 @@ public:
 	virtual bool open(
 		const char* title,
 		int displayIndex, int width, int height,
-		int minWidth, int minHeight,
-		bool borderless,
-		bool highDpi
+		int minWidth, int minHeight, bool borderless,
+		bool highDpi, bool opengl
 	) override {
 		if (_window)
 			return false;
@@ -45,12 +44,16 @@ public:
 		Uint32 flags = SDL_WINDOW_RESIZABLE;
 		if (borderless)
 			flags |= SDL_WINDOW_BORDERLESS;
+		if (opengl)
+			flags |= SDL_WINDOW_OPENGL;
 #else /* BITTY_OS_HTML */
 		Uint32 flags = SDL_WINDOW_RESIZABLE;
 		if (borderless)
 			flags |= SDL_WINDOW_BORDERLESS;
 		if (highDpi)
 			flags |= SDL_WINDOW_ALLOW_HIGHDPI;
+		if (opengl)
+			flags |= SDL_WINDOW_OPENGL;
 #endif /* BITTY_OS_HTML */
 		_window = SDL_CreateWindow(
 			title,

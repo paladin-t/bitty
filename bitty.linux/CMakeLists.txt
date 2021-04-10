@@ -82,6 +82,10 @@ list(
   "../lib/b64/encode.c"
 )
 list(
+  APPEND BITTY_LIB_GL3W
+  "../lib/gl3w/GL/gl3w.c"
+)
+list(
   APPEND BITTY_LIB_IMGUI
   "../lib/imgui/imgui.cpp"
   "../lib/imgui/imgui_demo.cpp"
@@ -204,6 +208,7 @@ list(
 )
 list(
   APPEND BITTY_SRC_GRAPHICS
+  "../src/effects.cpp"
   "../src/primitives.cpp"
   "../src/renderer.cpp"
   "../src/texture.cpp"
@@ -294,6 +299,7 @@ list(
 add_executable(
   bitty
   ${BITTY_LIB_B64}
+  ${BITTY_LIB_GL3W}
   ${BITTY_LIB_IMGUI}
   ${BITTY_LIB_IMGUI_CODE_EDITOR}
   ${BITTY_LIB_IMGUI_SDL}
@@ -340,6 +346,7 @@ set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 # Linkage.
 list(
   APPEND BITTY_LIB
+  dl
   m
   pthread
   rt

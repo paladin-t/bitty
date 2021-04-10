@@ -20,6 +20,8 @@
 		0359C57F25824EDE0024E290 /* gzread.c in Sources */ = {isa = PBXBuildFile; fileRef = 038E775C2582133B00A94374 /* gzread.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		0359C58025824EE10024E290 /* gzwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 038E77522582133A00A94374 /* gzwrite.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		0373C5732590577F00F6065C /* raycaster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0373C5722590577E00F6065C /* raycaster.cpp */; };
+		037C5EE82621D59A0028C4BB /* gl3w.c in Sources */ = {isa = PBXBuildFile; fileRef = 037C5EE52621D59A0028C4BB /* gl3w.c */; };
+		037C5EEB2621D5BE0028C4BB /* effects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 037C5EE92621D5BD0028C4BB /* effects.cpp */; };
 		038E72BD25820C3900A94374 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 038E72BA25820C3900A94374 /* Assets.xcassets */; };
 		038E72BE25820C3900A94374 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 038E72BB25820C3900A94374 /* AppDelegate.m */; };
 		038E733625820E1200A94374 /* inline_resource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 038E733425820E1100A94374 /* inline_resource.cpp */; };
@@ -222,6 +224,11 @@
 		0359C58125825A7F0024E290 /* libcurl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libcurl.framework; path = lib/curl/libcurl.framework; sourceTree = "<group>"; };
 		0373C5712590576D00F6065C /* raycaster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = raycaster.h; path = src/raycaster.h; sourceTree = "<group>"; };
 		0373C5722590577E00F6065C /* raycaster.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = raycaster.cpp; path = src/raycaster.cpp; sourceTree = "<group>"; };
+		037C5EE52621D59A0028C4BB /* gl3w.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gl3w.c; path = lib/gl3w/GL/gl3w.c; sourceTree = "<group>"; };
+		037C5EE62621D59A0028C4BB /* gl3w.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl3w.h; path = lib/gl3w/GL/gl3w.h; sourceTree = "<group>"; };
+		037C5EE72621D59A0028C4BB /* glcorearb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glcorearb.h; path = lib/gl3w/GL/glcorearb.h; sourceTree = "<group>"; };
+		037C5EE92621D5BD0028C4BB /* effects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = effects.cpp; path = src/effects.cpp; sourceTree = "<group>"; };
+		037C5EEA2621D5BE0028C4BB /* effects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = effects.h; path = src/effects.h; sourceTree = "<group>"; };
 		038598B726199354007E1603 /* stb_hexwave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_hexwave.h; path = lib/stb/stb_hexwave.h; sourceTree = "<group>"; };
 		038E72612581E04300A94374 /* bitty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = bitty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		038E72B825820C3800A94374 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = src/mac/AppDelegate.h; sourceTree = "<group>"; };
@@ -697,6 +704,8 @@
 		031B4EB425833D40002EF476 /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				037C5EE92621D5BD0028C4BB /* effects.cpp */,
+				037C5EEA2621D5BE0028C4BB /* effects.h */,
 				038E73BD25820E4C00A94374 /* primitives.cpp */,
 				038E735825820E3B00A94374 /* primitives.h */,
 				038E73B025820E4B00A94374 /* renderer.cpp */,
@@ -965,6 +974,24 @@
 			name = sketchbook;
 			sourceTree = "<group>";
 		};
+		037C5EE32621D57D0028C4BB /* gl3w */ = {
+			isa = PBXGroup;
+			children = (
+				037C5EE42621D58B0028C4BB /* GL */,
+			);
+			name = gl3w;
+			sourceTree = "<group>";
+		};
+		037C5EE42621D58B0028C4BB /* GL */ = {
+			isa = PBXGroup;
+			children = (
+				037C5EE52621D59A0028C4BB /* gl3w.c */,
+				037C5EE62621D59A0028C4BB /* gl3w.h */,
+				037C5EE72621D59A0028C4BB /* glcorearb.h */,
+			);
+			name = GL;
+			sourceTree = "<group>";
+		};
 		038E72582581E04300A94374 = {
 			isa = PBXGroup;
 			children = (
@@ -999,6 +1026,7 @@
 				038E745825820E8700A94374 /* b64 */,
 				038E745A25820E9100A94374 /* dirent */,
 				03CC1EE625A6F03D00A73AD3 /* fast_noise */,
+				037C5EE32621D57D0028C4BB /* gl3w */,
 				038E745B25820E9800A94374 /* imgui */,
 				038E745C25820E9F00A94374 /* imgui_code_editor */,
 				038E745D25820EA700A94374 /* imgui_sdl */,
@@ -1705,6 +1733,7 @@
 				038E741525820E5200A94374 /* promise.cpp in Sources */,
 				031B4EAB25833CB2002EF476 /* mztools.c in Sources */,
 				038E741625820E5200A94374 /* network_mongoose.cpp in Sources */,
+				037C5EE82621D59A0028C4BB /* gl3w.c in Sources */,
 				038E742425820E5200A94374 /* updatable.cpp in Sources */,
 				038E745225820E5200A94374 /* code.cpp in Sources */,
 				038E740925820E5200A94374 /* either.cpp in Sources */,
@@ -1746,6 +1775,7 @@
 				031B4EAF25833CB2002EF476 /* unzip.c in Sources */,
 				038E76B12582111700A94374 /* liolib.c in Sources */,
 				038E765B258210B600A94374 /* imgui_sdl.cpp in Sources */,
+				037C5EEB2621D5BE0028C4BB /* effects.cpp in Sources */,
 				038E747125820F3400A94374 /* decode.c in Sources */,
 				038E776D2582133D00A94374 /* infback.c in Sources */,
 				038E765E258210C500A94374 /* jo_gif.cpp in Sources */,

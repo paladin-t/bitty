@@ -19,7 +19,8 @@ scripting_lua_dbg          _|          |                                   |
 plugin                     ____________|                                   |
 scripting                  ____________|                                   |
                                                                            |
-primitives                 __ Graphics                                    _|
+effects                    __ Graphics                                    _|
+primitives                 _|                                              |
 renderer                   _|                                              |
 texture                    _|                                              |
 window                     _|                                              |

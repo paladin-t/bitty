@@ -11,6 +11,7 @@
 #include "application.h"
 #include "bytes.h"
 #include "datetime.h"
+#include "effects.h"
 #include "encoding.h"
 #include "file_handle.h"
 #include "filesystem.h"
@@ -130,6 +131,7 @@ private:
 	Primitives* _primitives = nullptr;
 	Executable* _executable = nullptr;
 	Workspace* _workspace = nullptr;
+	Effects* _effects = nullptr;
 
 	Context _context;
 
@@ -178,13 +180,17 @@ public:
 		else if (options.find(WORKSPACE_OPTION_RENDERER_X3_KEY) != options.end())
 			scale = 3;
 		const bool highDpi = options.find(WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY) == options.end();
+#if BITTY_EFFECTS_ENABLED
+		const bool opengl = true;
+#else /* BITTY_EFFECTS_ENABLED */
+		const bool opengl = false;
+#endif /* BITTY_EFFECTS_ENABLED */
 		_window = Window::create();
 		_window->open(
 			BITTY_TITLE " v" BITTY_VERSION_STRING,
 			0, WINDOW_DEFAULT_WIDTH, WINDOW_DEFAULT_HEIGHT,
-			WINDOW_MIN_WIDTH * scale, WINDOW_MIN_HEIGHT * scale,
-			borderless,
-			highDpi
+			WINDOW_MIN_WIDTH * scale, WINDOW_MIN_HEIGHT * scale, borderless,
+			highDpi, opengl
 		);
 
 		_renderer = Renderer::create();
@@ -253,6 +259,10 @@ public:
 		_workspace->load(_window, _renderer, _project, _primitives);
 		_workspace->open(_window, _renderer, _project, _executable, _primitives, options);
 
+		// Initialize effects.
+		_effects = Effects::create();
+		_effects->open(_window, _renderer, _workspace);
+
 		// Finish.
 		return true;
 	}
@@ -287,11 +297,24 @@ public:
 		// Dispose the timestamp.
 		_stamp = 0;
 
+		// Dispose the effects.
+		if (_effects) {
+			_effects->close();
+			Effects::destroy(_effects);
+			_effects = nullptr;
+		}
+
 		// Dispose the window and renderer.
-		if (_renderer)
+		if (_renderer) {
+			_renderer->close();
 			Renderer::destroy(_renderer);
-		if (_window)
+			_renderer = nullptr;
+		}
+		if (_window) {
+			_window->close();
 			Window::destroy(_window);
+			_window = nullptr;
+		}
 
 		// Finish.
 		return true;
@@ -316,7 +339,11 @@ public:
 		const bool alive = updateImGui(_context.delta, _context.mouseCursorIndicated);
 
 		const Color cls(0x2e, 0x32, 0x38, 0xff);
+#if BITTY_EFFECTS_ENABLED
+		_effects->prepare(_window, _renderer, _context.delta);
+#else /* BITTY_EFFECTS_ENABLED */
 		_renderer->target(nullptr);
+#endif /* BITTY_EFFECTS_ENABLED */
 		_renderer->clip(0, 0, _renderer->width(), _renderer->height());
 		_renderer->clear(&cls);
 		{
@@ -336,7 +363,11 @@ public:
 
 			ImGuiSDL::Render(ImGui::GetDrawData());
 		}
+#if BITTY_EFFECTS_ENABLED
+		_effects->finish(_window, _renderer);
+#else /* BITTY_EFFECTS_ENABLED */
 		_renderer->flush();
+#endif /* BITTY_EFFECTS_ENABLED */
 
 		const long long end = DateTime::ticks();
 		const long long diff = end >= begin ? end - begin : 0;

@@ -141,8 +141,8 @@
 
 #ifndef BITTY_VERSION
 #	define BITTY_VER_MAJOR 1
-#	define BITTY_VER_MINOR 0
-#	define BITTY_VER_REVISION 3
+#	define BITTY_VER_MINOR 1
+#	define BITTY_VER_REVISION 0
 #	define BITTY_VER_SUFFIX
 #	define BITTY_VERSION ((BITTY_VER_MAJOR * 0x01000000) + (BITTY_VER_MINOR * 0x00010000) + (BITTY_VER_REVISION))
 #	define BITTY_MAKE_STRINGIZE(A) #A
@@ -199,6 +199,11 @@
 #ifndef BITTY_SPLASH_ENABLED
 #	define BITTY_SPLASH_ENABLED 1
 #endif /* BITTY_SPLASH_ENABLED */
+
+// Indicates whether full screen effects is enabled.
+#ifndef BITTY_EFFECTS_ENABLED
+#	define BITTY_EFFECTS_ENABLED 1
+#endif /* BITTY_EFFECTS_ENABLED */
 
 // Indicates whether map batch is preferred.
 #ifndef BITTY_PROJECT_STRATEGY_MAP_BATCH_ENABLED

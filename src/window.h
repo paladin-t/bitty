@@ -58,9 +58,8 @@ public:
 	virtual bool open(
 		const char* title,
 		int displayIndex, int width, int height,
-		int minWidth, int minHeight,
-		bool borderless,
-		bool highDpi
+		int minWidth, int minHeight, bool borderless,
+		bool highDpi, bool opengl
 	) = 0;
 	/**
 	 * @brief Closes the window after all operations.
