@@ -937,6 +937,9 @@
     <ClCompile Include="lib\imgui\imgui_tables.cpp">
       <Filter>lib\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="src\effects.cpp">
+      <Filter>src\graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -1142,6 +1145,15 @@
     </Filter>
     <Filter Include="lib\fast_noise\Cpp">
       <UniqueIdentifier>{70271e75-d0d6-49d7-b422-1c90da716a86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\glew">
+      <UniqueIdentifier>{51819544-11f6-4e58-bb29-720ce6f64427}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\glew\include">
+      <UniqueIdentifier>{377c4d09-16c4-408e-b2bc-9cbd28bef577}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\glew\include\GL">
+      <UniqueIdentifier>{222e9595-c99f-462a-93e7-2cad0e81ac79}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2557,6 +2569,21 @@
     </ClInclude>
     <ClInclude Include="lib\stb\stb_hexwave.h">
       <Filter>lib\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="src\effects.h">
+      <Filter>src\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\glew\include\GL\eglew.h">
+      <Filter>lib\glew\include\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\glew\include\GL\glew.h">
+      <Filter>lib\glew\include\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\glew\include\GL\glxew.h">
+      <Filter>lib\glew\include\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\glew\include\GL\wglew.h">
+      <Filter>lib\glew\include\GL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

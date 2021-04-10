@@ -110,7 +110,8 @@
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "lib\sdl\lib\$(PlatformTarget)\*.dll" "$(OutDir)*.*"
+      <Command>copy /y "lib\glew\bin\Release\$(Platform)\*.dll" "$(OutDir)*.*"
+copy /y "lib\sdl\lib\$(PlatformTarget)\*.dll" "$(OutDir)*.*"
 copy /y "lib\sdl_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)*.*"
 copy /y "studio\lib\steam\sdk\redistributable_bin\steam_api.dll" "$(OutDir)*.*"
 
@@ -139,7 +140,8 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "lib\sdl\lib\$(PlatformTarget)\*.dll" "$(OutDir)*.*"
+      <Command>copy /y "lib\glew\bin\Release\$(Platform)\*.dll" "$(OutDir)*.*"
+copy /y "lib\sdl\lib\$(PlatformTarget)\*.dll" "$(OutDir)*.*"
 copy /y "lib\sdl_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)*.*"
 copy /y "studio\lib\steam\sdk\redistributable_bin\win64\steam_api64.dll" "$(OutDir)*.*"
 
@@ -172,7 +174,8 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "lib\sdl\lib\$(PlatformTarget)\*.dll" "$(OutDir)*.*"
+      <Command>copy /y "lib\glew\bin\Release\$(Platform)\*.dll" "$(OutDir)*.*"
+copy /y "lib\sdl\lib\$(PlatformTarget)\*.dll" "$(OutDir)*.*"
 copy /y "lib\sdl_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)*.*"
 copy /y "studio\lib\steam\sdk\redistributable_bin\steam_api.dll" "$(OutDir)*.*"
 
@@ -205,7 +208,8 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "lib\sdl\lib\$(PlatformTarget)\*.dll" "$(OutDir)*.*"
+      <Command>copy /y "lib\glew\bin\Release\$(Platform)\*.dll" "$(OutDir)*.*"
+copy /y "lib\sdl\lib\$(PlatformTarget)\*.dll" "$(OutDir)*.*"
 copy /y "lib\sdl_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)*.*"
 copy /y "studio\lib\steam\sdk\redistributable_bin\win64\steam_api64.dll" "$(OutDir)*.*"
 
@@ -1945,6 +1949,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
       </ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="src\editor_text.cpp" />
+    <ClCompile Include="src\effects.cpp" />
     <ClCompile Include="src\either.cpp" />
     <ClCompile Include="src\entry.cpp" />
     <ClCompile Include="src\executable.cpp" />
@@ -2276,6 +2281,10 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClInclude Include="lib\curl\lib\x509asn1.h" />
     <ClInclude Include="lib\dirent\include\dirent.h" />
     <ClInclude Include="lib\fast_noise\Cpp\FastNoiseLite.h" />
+    <ClInclude Include="lib\glew\include\GL\eglew.h" />
+    <ClInclude Include="lib\glew\include\GL\glew.h" />
+    <ClInclude Include="lib\glew\include\GL\glxew.h" />
+    <ClInclude Include="lib\glew\include\GL\wglew.h" />
     <ClInclude Include="lib\imgui\imconfig.h" />
     <ClInclude Include="lib\imgui\imgui.h" />
     <ClInclude Include="lib\imgui\imgui_internal.h" />
@@ -2524,6 +2533,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClInclude Include="src\editor_sound.h" />
     <ClInclude Include="src\editor_sprite.h" />
     <ClInclude Include="src\editor_text.h" />
+    <ClInclude Include="src\effects.h" />
     <ClInclude Include="src\either.h" />
     <ClInclude Include="src\entry.h" />
     <ClInclude Include="src\executable.h" />
