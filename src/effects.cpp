@@ -27,7 +27,9 @@
 #			pragma comment(lib, "Opengl32.lib")
 #		endif /* BITTY_OS_WIN64 */
 #	elif defined BITTY_OS_MAC
+#		include "../lib/gl3w/GL/gl3w.h"
 #	elif defined BITTY_OS_LINUX
+#		include "../lib/gl3w/GL/gl3w.h"
 #	endif /* Platform macro. */
 #endif /* BITTY_EFFECTS_ENABLED */
 #include "../lib/jpath/jpath.hpp"
@@ -230,7 +232,11 @@ public:
 		}
 #if defined BITTY_OS_WIN
 		glewInit();
-#endif /* BITTY_OS_WIN */
+#elif defined BITTY_OS_MAC
+		gl3wInit();
+#elif defined BITTY_OS_LINUX
+		gl3wInit();
+#endif /* Platform macro. */
 		SDL_GL_SetSwapInterval(0);
 		SDL_GL_MakeCurrent(window, _glContext);
 
@@ -373,6 +379,11 @@ public:
 
 			return;
 		}
+		if (!_material.valid) {
+			rnd->flush();
+
+			return;
+		}
 
 		SDL_Window* window = (SDL_Window*)wnd->pointer();
 
@@ -385,6 +396,11 @@ public:
 	}
 	virtual void finish(class Window* wnd, class Renderer* rnd) override {
 		if (!_glContext || !_texture) {
+			rnd->flush();
+
+			return;
+		}
+		if (!_material.valid) {
 			rnd->flush();
 
 			return;
@@ -411,86 +427,84 @@ public:
 			GL_UNSIGNED_BYTE, _pixels->pointer()
 		);
 
-		if (_material.valid) {
-			glEnable(GL_BLEND);
-			glBlendEquation(GL_FUNC_ADD);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glDisable(GL_CULL_FACE);
-			glDisable(GL_DEPTH_TEST);
-			glDisable(GL_SCISSOR_TEST);
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_SCISSOR_TEST);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-			glViewport(0, 0, width, height);
-			const GLfloat resolution[4] = {
-				(GLfloat)width, (GLfloat)height, 1.0f / width, 1.0f / height
-			};
-			const GLfloat time[3] = {
-				(GLfloat)_ticks.x, (GLfloat)_ticks.y, (GLfloat)_ticks.z
-			};
-			const GLfloat orthoProjection[4][4] = {
-				{ 2.0f / width, 0.0f,           0.0f, 0.0f },
-				{ 0.0f,         2.0f / -height, 0.0f, 0.0f },
-				{ 0.0f,         0.0f,          -1.0f, 0.0f },
-				{ -1.0f,        1.0f,           0.0f, 1.0f }
-			};
-			glUseProgram(_material.program);
-			glUniform1i(_material.attribTex, 0);
-			glUniform4fv(_material.attribResolution, 1, (GLfloat*)&resolution);
-			glUniform3fv(_material.attribTime, 1, (GLfloat*)&time);
-			glUniformMatrix4fv(_material.attribProjMatrix, 1, GL_FALSE, &orthoProjection[0][0]);
-			glBindSampler(0, 0);
+		glViewport(0, 0, width, height);
+		const GLfloat resolution[4] = {
+			(GLfloat)width, (GLfloat)height, 1.0f / width, 1.0f / height
+		};
+		const GLfloat time[3] = {
+			(GLfloat)_ticks.x, (GLfloat)_ticks.y, (GLfloat)_ticks.z
+		};
+		const GLfloat orthoProjection[4][4] = {
+			{ 2.0f / width, 0.0f,           0.0f, 0.0f },
+			{ 0.0f,         2.0f / -height, 0.0f, 0.0f },
+			{ 0.0f,         0.0f,          -1.0f, 0.0f },
+			{ -1.0f,        1.0f,           0.0f, 1.0f }
+		};
+		glUseProgram(_material.program);
+		glUniform1i(_material.attribTex, 0);
+		glUniform4fv(_material.attribResolution, 1, (GLfloat*)&resolution);
+		glUniform3fv(_material.attribTime, 1, (GLfloat*)&time);
+		glUniformMatrix4fv(_material.attribProjMatrix, 1, GL_FALSE, &orthoProjection[0][0]);
+		glBindSampler(0, 0);
 
-			GLuint vao = 0;
-			glGenVertexArrays(1, &vao);
-			glBindVertexArray(vao);
-			glBindBuffer(GL_ARRAY_BUFFER, _material.vbo);
-			glEnableVertexAttribArray(_material.attribPosition);
-			glEnableVertexAttribArray(_material.attribUv);
-			glEnableVertexAttribArray(_material.attribColor);
-			glVertexAttribPointer(_material.attribPosition, 2, GL_FLOAT, GL_FALSE, sizeof(Vert), (GLvoid*)EFFECTS_OFFSETOF(Vert, position));
-			glVertexAttribPointer(_material.attribUv, 2, GL_FLOAT, GL_FALSE, sizeof(Vert), (GLvoid*)EFFECTS_OFFSETOF(Vert, uv));
-			glVertexAttribPointer(_material.attribColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vert), (GLvoid*)EFFECTS_OFFSETOF(Vert, color));
+		GLuint vao = 0;
+		glGenVertexArrays(1, &vao);
+		glBindVertexArray(vao);
+		glBindBuffer(GL_ARRAY_BUFFER, _material.vbo);
+		glEnableVertexAttribArray(_material.attribPosition);
+		glEnableVertexAttribArray(_material.attribUv);
+		glEnableVertexAttribArray(_material.attribColor);
+		glVertexAttribPointer(_material.attribPosition, 2, GL_FLOAT, GL_FALSE, sizeof(Vert), (GLvoid*)EFFECTS_OFFSETOF(Vert, position));
+		glVertexAttribPointer(_material.attribUv, 2, GL_FLOAT, GL_FALSE, sizeof(Vert), (GLvoid*)EFFECTS_OFFSETOF(Vert, uv));
+		glVertexAttribPointer(_material.attribColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vert), (GLvoid*)EFFECTS_OFFSETOF(Vert, color));
 
-			const Vert vertexes[] = {
-				Vert(Math::Vec2<float>(0, 0), Math::Vec2<float>(0, 0), 0xffffffff),
-				Vert(Math::Vec2<float>((float)width, 0), Math::Vec2<float>(1, 0), 0xffffffff),
-				Vert(Math::Vec2<float>(0, (float)height), Math::Vec2<float>(0, 1), 0xffffffff),
-				Vert(Math::Vec2<float>((float)width, (float)height), Math::Vec2<float>(1, 1), 0xffffffff)
-			};
-			const unsigned short indices[] = {
-				0, 2, 3,
-				0, 3, 1
-			};
-			glBindBuffer(GL_ARRAY_BUFFER, _material.vbo);
-			glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)BITTY_COUNTOF(vertexes) * sizeof(Vert), (const GLvoid*)vertexes, GL_STREAM_DRAW);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _material.elements);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)BITTY_COUNTOF(indices) * sizeof(unsigned short), (const GLvoid*)indices, GL_STREAM_DRAW);
-			glBindTexture(GL_TEXTURE_2D, _glTexture);
-			glDrawElements(GL_TRIANGLES, (GLsizei)6, GL_UNSIGNED_SHORT, 0);
+		const Vert vertexes[] = {
+			Vert(Math::Vec2<float>(0, 0), Math::Vec2<float>(0, 0), 0xffffffff),
+			Vert(Math::Vec2<float>((float)width, 0), Math::Vec2<float>(1, 0), 0xffffffff),
+			Vert(Math::Vec2<float>(0, (float)height), Math::Vec2<float>(0, 1), 0xffffffff),
+			Vert(Math::Vec2<float>((float)width, (float)height), Math::Vec2<float>(1, 1), 0xffffffff)
+		};
+		const unsigned short indices[] = {
+			0, 2, 3,
+			0, 3, 1
+		};
+		glBindBuffer(GL_ARRAY_BUFFER, _material.vbo);
+		glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)BITTY_COUNTOF(vertexes) * sizeof(Vert), (const GLvoid*)vertexes, GL_STREAM_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _material.elements);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)BITTY_COUNTOF(indices) * sizeof(unsigned short), (const GLvoid*)indices, GL_STREAM_DRAW);
+		glBindTexture(GL_TEXTURE_2D, _glTexture);
+		glDrawElements(GL_TRIANGLES, (GLsizei)6, GL_UNSIGNED_SHORT, 0);
 
-			glDeleteVertexArrays(1, &vao);
-		} else {
-			glViewport(0, 0, width, height);
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
+		glDeleteVertexArrays(1, &vao);
 
-			glEnable(GL_TEXTURE_2D);
-			glActiveTexture(GL_TEXTURE0);
-			glClearColor(1, 1, 1, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
-			glBindTexture(GL_TEXTURE_2D, _glTexture);
-			glBegin(GL_QUADS);
-			glTexCoord2i(0, 0); glVertex2i(0, 0);
-			glTexCoord2i(0, 1); glVertex2i(0, height);
-			glTexCoord2i(1, 1); glVertex2i(width, height);
-			glTexCoord2i(1, 0); glVertex2i(width, 0);
-			glEnd();
-			glDisable(GL_TEXTURE_2D);
-			glBindTexture(GL_TEXTURE_2D, 0);
-		}
+		/*glViewport(0, 0, width, height);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		glEnable(GL_TEXTURE_2D);
+		glActiveTexture(GL_TEXTURE0);
+		glClearColor(1, 1, 1, 1);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glBindTexture(GL_TEXTURE_2D, _glTexture);
+		glBegin(GL_QUADS);
+		glTexCoord2i(0, 0); glVertex2i(0, 0);
+		glTexCoord2i(0, 1); glVertex2i(0, height);
+		glTexCoord2i(1, 1); glVertex2i(width, height);
+		glTexCoord2i(1, 0); glVertex2i(width, 0);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);*/
 
 		SDL_GL_SwapWindow(window);
 	}
