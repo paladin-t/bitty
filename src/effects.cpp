@@ -89,10 +89,10 @@ private:
 			glShaderSource(vert, BITTY_COUNTOF(verVert), verVert, NULL);
 			glShaderSource(frag, BITTY_COUNTOF(verFrag), verFrag, NULL);
 			glCompileShader(vert);
-			if (!getError(vert, workspace))
+			if (!getError(workspace, vert, "Vertex shader:"))
 				return;
 			glCompileShader(frag);
-			if (!getError(frag, workspace))
+			if (!getError(workspace, frag, "Fragment shader:"))
 				return;
 			glAttachShader(program, vert);
 			glAttachShader(program, frag);
@@ -151,7 +151,7 @@ private:
 			valid = false;
 		}
 
-		bool getError(GLuint obj, Workspace* workspace) {
+		bool getError(Workspace* workspace, GLuint obj, const char* prefix) {
 			int status = 0;
 			glGetShaderiv(obj, GL_COMPILE_STATUS, &status);
 
@@ -162,7 +162,8 @@ private:
 				glGetShaderInfoLog(obj, BITTY_COUNTOF(msg), &len, msg);
 				fprintf(stderr, "%s\n", msg);
 
-				std::string msg_ = "Effects:\n";
+				std::string msg_ = prefix;
+				msg_ += "\n";
 				msg_ += msg;
 				workspace->error(msg_.c_str());
 
@@ -262,10 +263,35 @@ public:
 				file->readString(fx);
 				file->close();
 
-				if (use(fx.c_str(), workspace))
+				if (use(workspace, fx.c_str()))
 					return true;
 			}
 		}
+		const GLchar* vertSrc =
+			"#version 150\n"
+			"uniform mat4 ProjMatrix;\n"
+			"in vec2 Position;\n"
+			"in vec2 UV;\n"
+			"in vec4 Color;\n"
+			"out vec2 Frag_UV;\n"
+			"out vec4 Frag_Color;\n"
+			"void main()\n"
+			"{\n"
+			"	Frag_UV = UV;\n"
+			"	Frag_Color = Color;\n"
+			"	gl_Position = ProjMatrix * vec4(Position.xy, 0, 1);\n"
+			"}\n";
+		const GLchar* fragSrc =
+			"#version 150\n"
+			"uniform sampler2D Texture;\n"
+			"in vec2 Frag_UV;\n"
+			"in vec4 Frag_Color;\n"
+			"out vec4 Out_Color;\n"
+			"void main()\n"
+			"{\n"
+			"	Out_Color = Frag_Color * texture(Texture, Frag_UV.st);\n"
+			"}\n";
+		_material.open(vertSrc, fragSrc, workspace);
 
 		return true;
 	}
@@ -295,7 +321,7 @@ public:
 		return true;
 	}
 
-	virtual bool use(const char* config, class Workspace* workspace) override {
+	virtual bool use(class Workspace* workspace, const char* config) override {
 		Json::Ptr json(Json::create());
 		if (!json->fromString(config))
 			return false;
@@ -304,9 +330,9 @@ public:
 			return false;
 
 		std::string vert, frag;
-		if (!Jpath::get(doc, vert, "vert"))
+		if (!Jpath::get(doc, vert, "vs"))
 			return false;
-		if (!Jpath::get(doc, frag, "frag"))
+		if (!Jpath::get(doc, frag, "fs"))
 			return false;
 
 		File::Ptr file(File::create());
@@ -478,7 +504,7 @@ public:
 		return false;
 	}
 
-	virtual bool use(const char*, class Workspace*) override {
+	virtual bool use(class Workspace*, const char*) override {
 		return false;
 	}
 

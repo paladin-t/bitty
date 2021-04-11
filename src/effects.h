@@ -35,7 +35,7 @@ public:
 	/**
 	 * @brief Configures the effects.
 	 */
-	virtual bool use(const char* config, class Workspace* workspace) = 0;
+	virtual bool use(class Workspace* workspace, const char* config) = 0;
 
 	/**
 	 * @brief Prepares the effects before rendering new frame.
