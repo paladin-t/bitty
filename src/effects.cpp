@@ -40,6 +40,10 @@
 ** Macros and constants
 */
 
+#if BITTY_EFFECTS_ENABLED
+#	pragma message("Effects enabled.")
+#endif /* BITTY_EFFECTS_ENABLED */
+
 #ifndef EFFECTS_DEFAULT_FILE
 #	define EFFECTS_DEFAULT_FILE "../effects/default.json"
 #endif /* EFFECTS_DEFAULT_FILE */
@@ -267,31 +271,7 @@ public:
 					return true;
 			}
 		}
-		const GLchar* vertSrc =
-			"#version 150\n"
-			"uniform mat4 ProjMatrix;\n"
-			"in vec2 Position;\n"
-			"in vec2 UV;\n"
-			"in vec4 Color;\n"
-			"out vec2 Frag_UV;\n"
-			"out vec4 Frag_Color;\n"
-			"void main()\n"
-			"{\n"
-			"	Frag_UV = UV;\n"
-			"	Frag_Color = Color;\n"
-			"	gl_Position = ProjMatrix * vec4(Position.xy, 0, 1);\n"
-			"}\n";
-		const GLchar* fragSrc =
-			"#version 150\n"
-			"uniform sampler2D Texture;\n"
-			"in vec2 Frag_UV;\n"
-			"in vec4 Frag_Color;\n"
-			"out vec4 Out_Color;\n"
-			"void main()\n"
-			"{\n"
-			"	Out_Color = Frag_Color * texture(Texture, Frag_UV.st);\n"
-			"}\n";
-		_material.open(vertSrc, fragSrc, workspace);
+		useDefault(workspace);
 
 		return true;
 	}
@@ -321,9 +301,15 @@ public:
 		return true;
 	}
 
-	virtual bool use(class Workspace* workspace, const char* config) override {
+	virtual bool use(class Workspace* workspace, const char* material) override {
+		if (!material) {
+			useDefault(workspace);
+
+			return true;
+		}
+
 		Json::Ptr json(Json::create());
-		if (!json->fromString(config))
+		if (!json->fromString(material))
 			return false;
 		rapidjson::Document doc;
 		if (!json->toJson(doc))
@@ -487,6 +473,35 @@ public:
 		glDeleteVertexArrays(1, &vao);
 
 		SDL_GL_SwapWindow(window);
+	}
+
+private:
+	void useDefault(Workspace* workspace) {
+		const GLchar* vertSrc =
+			"#version 150\n"
+			"uniform mat4 ProjMatrix;\n"
+			"in vec2 Position;\n"
+			"in vec2 UV;\n"
+			"in vec4 Color;\n"
+			"out vec2 Frag_UV;\n"
+			"out vec4 Frag_Color;\n"
+			"void main()\n"
+			"{\n"
+			"	Frag_UV = UV;\n"
+			"	Frag_Color = Color;\n"
+			"	gl_Position = ProjMatrix * vec4(Position.xy, 0, 1);\n"
+			"}\n";
+		const GLchar* fragSrc =
+			"#version 150\n"
+			"uniform sampler2D Texture;\n"
+			"in vec2 Frag_UV;\n"
+			"in vec4 Frag_Color;\n"
+			"out vec4 Out_Color;\n"
+			"void main()\n"
+			"{\n"
+			"	Out_Color = Frag_Color * texture(Texture, Frag_UV.st);\n"
+			"}\n";
+		_material.open(vertSrc, fragSrc, workspace);
 	}
 };
 #else /* BITTY_EFFECTS_ENABLED && Platform macro. */

@@ -319,6 +319,8 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 
 	splashCustomized(false);
 
+	effectCustomized(false);
+
 	menuHeight(0.0f);
 	bannerHeight(0.0f);
 	bannerVisible(&settings()->bannerVisible);
@@ -695,6 +697,16 @@ bool Workspace::resize(const Math::Vec2i &size) {
 	canvasSize(size);
 
 	return true;
+}
+
+void Workspace::effect(const char* material) {
+	if (material) {
+		effectCustomized(true);
+		effectConfig(material);
+	} else {
+		effectCustomized(true);
+		effectConfig().clear();
+	}
 }
 
 void Workspace::focusGained(class Window* /* wnd */, class Renderer* /* rnd */, const class Project* /* project */, Executable* /* exec */, class Primitives* /* primitives */) {

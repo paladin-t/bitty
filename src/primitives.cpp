@@ -2705,14 +2705,17 @@ public:
 
 		commit(var, nullptr, true);
 	}
-	virtual void function(Function func, const Variant &arg) const override {
+	virtual void function(Function func, const Variant &arg, bool block) const override {
 		if (!func)
 			return;
 
 		CmdVariant var;
 		new (&var.function) CmdFunction(func, arg);
 
-		commit(var, nullptr, true);
+		if (block)
+			commit(var, nullptr, block);
+		else
+			commit(var, nullptr);
 	}
 
 	virtual int newFrame(void) override {

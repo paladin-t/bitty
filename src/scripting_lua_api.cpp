@@ -9377,7 +9377,8 @@ static int Application_resize(lua_State* L) {
 				wnd->size(Math::Vec2i(w, h));
 				wnd->centralize();
 			},
-			nullptr
+			nullptr,
+			true
 		);
 	} else if (s == "fullscreen") {
 		impl->primitives()->function(
@@ -9385,11 +9386,44 @@ static int Application_resize(lua_State* L) {
 				Window* wnd = impl->primitives()->window();
 				wnd->fullscreen(true);
 			},
-			nullptr
+			nullptr,
+			true
 		);
 	} else {
 		error(L, "Invalid size.");
 	}
+
+	return 0;
+}
+
+static int Application_useEffect(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	const char* material = nullptr;
+	read<>(L, material);
+
+#if BITTY_EFFECTS_ENABLED
+	if (material) {
+		const std::string material_ = material;
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				impl->observer()->effect(material_.c_str());
+			},
+			nullptr,
+			true
+		);
+	} else {
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				impl->observer()->effect(nullptr);
+			},
+			nullptr,
+			true
+		);
+	}
+#else /* BITTY_EFFECTS_ENABLED */
+	error(L, "Effects is not available.");
+#endif /* BITTY_EFFECTS_ENABLED */
 
 	return 0;
 }
@@ -9404,6 +9438,7 @@ static void open_Application(lua_State* L) {
 					array(
 						luaL_Reg{ "setCursor", Application_setCursor }, // Frame synchronized.
 						luaL_Reg{ "resize", Application_resize }, // Frame synchronized.
+						luaL_Reg{ "useEffect", Application_useEffect }, // Undocumented. Frame synchronized.
 						luaL_Reg{ nullptr, nullptr }
 					)
 				)

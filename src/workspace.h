@@ -221,6 +221,9 @@ protected:
 	BITTY_PROPERTY_PTR(Texture, splashBitty)
 	BITTY_PROPERTY_PTR(Texture, splashEngine)
 
+	BITTY_PROPERTY(bool, effectCustomized)
+	BITTY_PROPERTY(std::string, effectConfig)
+
 	BITTY_PROPERTY_READONLY(ImGui::PopupBox::Ptr, popupBox)
 	BITTY_PROPERTY(ImGui::Initializer, popupPromiseInit)
 	BITTY_PROPERTY(PopupPromiseTypes, popupPromiseType)
@@ -388,6 +391,10 @@ public:
 	 * @brief Implements `Executable::Observer`. Sets the size of the rendering canvas.
 	 */
 	virtual bool resize(const Math::Vec2i &size) override;
+	/**
+	 * @brief Implements `Executable::Observer`. Sets fullscreen effect.
+	 */
+	virtual void effect(const char* material) override;
 
 	/**
 	 * @brief Callback for focus gained.

@@ -365,6 +365,12 @@ public:
 		}
 #if BITTY_EFFECTS_ENABLED
 		_effects->finish(_window, _renderer);
+		if (_workspace->effectCustomized()) {
+			const std::string &material = _workspace->effectConfig();
+			_effects->use(_workspace, material.empty() ? nullptr : material.c_str());
+			_workspace->effectCustomized(false);
+			_workspace->effectConfig().clear();
+		}
 #else /* BITTY_EFFECTS_ENABLED */
 		_renderer->flush();
 #endif /* BITTY_EFFECTS_ENABLED */

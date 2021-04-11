@@ -107,6 +107,10 @@ public:
 		 * @brief Sets canvas size.
 		 */
 		virtual bool resize(const Math::Vec2i &size) = 0;
+		/**
+		 * @brief Sets fullscreen effect.
+		 */
+		virtual void effect(const char* material) = 0;
 	};
 
 	typedef std::function<void(const char*, int)> BreakpointGetter;

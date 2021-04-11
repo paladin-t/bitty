@@ -357,7 +357,7 @@ public:
 	/**
 	 * @brief Schedules with a custom C++ function.
 	 */
-	virtual void function(Function func, const Variant &arg /* nullable */) const = 0;
+	virtual void function(Function func, const Variant &arg /* nullable */, bool block) const = 0;
 
 	/**
 	 * @brief Begins a new frame.
