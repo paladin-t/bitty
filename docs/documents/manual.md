@@ -1740,6 +1740,11 @@ See [keycodes](https://paladin-t.github.io/bitty/keycodes.html) for more.
 	* `img`: the specific `Image` to set, `nil` to reset
 	* `x`: the spot x, with range of values from 0.0 to 1.0
 	* `y`: the spot y, with range of values from 0.0 to 1.0
+* `Application.resize(w, h)`: resizes the application window
+	* `w`: the expected width
+	* `h`: the expected height
+* `Application.resize(size)`: resizes the application window
+	* `size`: can be "fullscreen"
 
 ### Canvas
 

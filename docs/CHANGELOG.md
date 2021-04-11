@@ -1,3 +1,18 @@
+### v1.1 Apr. 10, 2021
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added an `Application.resize(...)` method
+* Added support for splash customization dynamically
+* Fixed a UV calculation bug
+* Fixed an exiting issue of built binary
+* Fixed a canvas border issue of built binary
+* Fixed an unexpected deleting issue of the image editor
+* Fixed an unexpected deleting issue of the sprite editor
+* Improved asset creating
+* Improved assets filtering when no wildcard provided
+* Upgraded Lua from v5.4.2 to v5.4.3
+
 ### v1.0.3 Mar. 20, 2021
 
 Enhanced modules, improved usability, fixed some bugs.

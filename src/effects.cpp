@@ -40,13 +40,13 @@
 ** Macros and constants
 */
 
-#ifndef EFFECTS_OFFSETOF
-#	define EFFECTS_OFFSETOF(TYPE, MEMBER)  ((size_t)&(((TYPE*)0)->MEMBER))
-#endif /* EFFECTS_OFFSETOF */
-
 #ifndef EFFECTS_DEFAULT_FILE
 #	define EFFECTS_DEFAULT_FILE "../effects/default.json"
 #endif /* EFFECTS_DEFAULT_FILE */
+
+#ifndef EFFECTS_OFFSETOF
+#	define EFFECTS_OFFSETOF(T, M) ((size_t)&(((T*)0)->M))
+#endif /* EFFECTS_OFFSETOF */
 
 /* ===========================================================================} */
 
@@ -266,31 +266,6 @@ public:
 					return true;
 			}
 		}
-		const GLchar* vertsrc =
-			"#version 150\n"
-			"uniform mat4 ProjMatrix;\n"
-			"in vec2 Position;\n"
-			"in vec2 UV;\n"
-			"in vec4 Color;\n"
-			"out vec2 Frag_UV;\n"
-			"out vec4 Frag_Color;\n"
-			"void main()\n"
-			"{\n"
-			"	Frag_UV = UV;\n"
-			"	Frag_Color = Color;\n"
-			"	gl_Position = ProjMatrix * vec4(Position.xy, 0, 1);\n"
-			"}\n";
-		const GLchar* fragSrc =
-			"#version 150\n"
-			"uniform sampler2D Texture;\n"
-			"in vec2 Frag_UV;\n"
-			"in vec4 Frag_Color;\n"
-			"out vec4 Out_Color;\n"
-			"void main()\n"
-			"{\n"
-			"	Out_Color = Frag_Color * texture(Texture, Frag_UV.st);\n"
-			"}\n";
-		_material.open(vertsrc, fragSrc, workspace);
 
 		return true;
 	}
@@ -443,10 +418,10 @@ public:
 			(GLfloat)_ticks.x, (GLfloat)_ticks.y, (GLfloat)_ticks.z
 		};
 		const GLfloat orthoProjection[4][4] = {
-			{ 2.0f / width, 0.0f,           0.0f, 0.0f },
-			{ 0.0f,         2.0f / -height, 0.0f, 0.0f },
-			{ 0.0f,         0.0f,          -1.0f, 0.0f },
-			{ -1.0f,        1.0f,           0.0f, 1.0f }
+			{ 2.0f / width, 0.0f,            0.0f, 0.0f },
+			{ 0.0f,         2.0f / -height,  0.0f, 0.0f },
+			{ 0.0f,         0.0f,           -1.0f, 0.0f },
+			{ -1.0f,        1.0f,            0.0f, 1.0f }
 		};
 		glUseProgram(_material.program);
 		glUniform1i(_material.attribTex, 0);
@@ -484,27 +459,6 @@ public:
 		glDrawElements(GL_TRIANGLES, (GLsizei)6, GL_UNSIGNED_SHORT, 0);
 
 		glDeleteVertexArrays(1, &vao);
-
-		/*glViewport(0, 0, width, height);
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-
-		glEnable(GL_TEXTURE_2D);
-		glActiveTexture(GL_TEXTURE0);
-		glClearColor(1, 1, 1, 1);
-		glClear(GL_COLOR_BUFFER_BIT);
-		glBindTexture(GL_TEXTURE_2D, _glTexture);
-		glBegin(GL_QUADS);
-		glTexCoord2i(0, 0); glVertex2i(0, 0);
-		glTexCoord2i(0, 1); glVertex2i(0, height);
-		glTexCoord2i(1, 1); glVertex2i(width, height);
-		glTexCoord2i(1, 0); glVertex2i(width, 0);
-		glEnd();
-		glDisable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, 0);*/
 
 		SDL_GL_SwapWindow(window);
 	}
