@@ -189,6 +189,7 @@ private:
 	};
 
 private:
+	GLint _glVersion = 0;
 	SDL_GLContext _glContext = nullptr;
 	GLuint _glTexture = 0;
 
@@ -204,28 +205,8 @@ public:
 	}
 
 	virtual bool open(class Window* wnd, class Renderer* rnd, class Workspace* workspace) override {
-#if defined BITTY_OS_WIN
-		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-#elif defined BITTY_OS_MAC
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-#elif defined BITTY_OS_LINUX
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-#endif /* Platform macro. */
 		SDL_Window* window = (SDL_Window*)wnd->pointer();
+
 		_glContext = SDL_GL_CreateContext(window);
 		if (!_glContext) {
 			std::string msg = "Cannot create OpenGL context: ";
@@ -235,6 +216,8 @@ public:
 
 			return false;
 		}
+		SDL_GL_MakeCurrent(window, _glContext);
+		SDL_GL_SetSwapInterval(0);
 #if defined BITTY_OS_WIN
 		glewInit();
 #elif defined BITTY_OS_MAC
@@ -242,8 +225,23 @@ public:
 #elif defined BITTY_OS_LINUX
 		gl3wInit();
 #endif /* Platform macro. */
-		SDL_GL_SetSwapInterval(0);
-		SDL_GL_MakeCurrent(window, _glContext);
+
+		GLint major = 0;
+		GLint minor = 0;
+		glGetIntegerv(GL_MAJOR_VERSION, &major);
+		glGetIntegerv(GL_MINOR_VERSION, &minor);
+		if (major == 0 && minor == 0) {
+			const char* glVersion = (const char*)glGetString(GL_VERSION);
+			if (glVersion) {
+				const Text::Array parts = Text::split(glVersion, ".");
+				if (parts.size() >= 2) {
+					Text::fromString(parts[0], major);
+					Text::fromString(parts[1], minor);
+				}
+			}
+		}
+		_glVersion = (GLuint)(major * 100 + minor * 10);
+		fprintf(stdout, "OpenGL version: %d.\n", (int)_glVersion);
 
 		_texture = Texture::create();
 		const Color color[] = { Color(), Color(), Color(), Color() };
@@ -253,6 +251,7 @@ public:
 		int width = 0, height = 0;
 		SDL_GL_GetDrawableSize(window, &width, &height);
 		_texture->resize(rnd, width, height);
+		fprintf(stdout, "OpenGL drawable size: %dx%d.\n", width, height);
 
 		_pixels = Bytes::create();
 
@@ -268,12 +267,12 @@ public:
 				file->close();
 
 				if (use(workspace, fx.c_str()))
-					return true;
+					return _material.valid;
 			}
 		}
 		useDefault(workspace);
 
-		return true;
+		return _material.valid;
 	}
 	virtual bool close(void) override {
 		_material.close();
@@ -304,6 +303,8 @@ public:
 	virtual bool use(class Workspace* workspace, const char* material) override {
 		if (!material) {
 			useDefault(workspace);
+
+			_ticks = Math::Vec3<double>(0, 0, 0);
 
 			return true;
 		}
@@ -347,10 +348,25 @@ public:
 		std::swap(mat, _material);
 		mat.close();
 
+		_ticks = Math::Vec3<double>(0, 0, 0);
+
 		return true;
 	}
 
 	virtual void prepare(class Window* wnd, class Renderer* rnd, double delta) override {
+		SDL_Window* window = (SDL_Window*)wnd->pointer();
+
+		if (!_glContext || !_texture) {
+			rnd->target(nullptr);
+
+			return;
+		}
+		if (!_material.valid) {
+			rnd->target(nullptr);
+
+			return;
+		}
+
 		_ticks.x += delta;
 		if (_ticks.x >= 1) {
 			_ticks.x -= 1;
@@ -361,19 +377,6 @@ public:
 			}
 		}
 
-		if (!_glContext || !_texture) {
-			rnd->target(nullptr);
-
-			return;
-		}
-		if (!_material.valid) {
-			rnd->flush();
-
-			return;
-		}
-
-		SDL_Window* window = (SDL_Window*)wnd->pointer();
-
 		int width = 0, height = 0;
 		SDL_GL_GetDrawableSize(window, &width, &height);
 		if (_texture->width() != width || _texture->height() != height)
@@ -382,18 +385,22 @@ public:
 		rnd->target(_texture);
 	}
 	virtual void finish(class Window* wnd, class Renderer* rnd) override {
+		SDL_Window* window = (SDL_Window*)wnd->pointer();
+
 		if (!_glContext || !_texture) {
 			rnd->flush();
+
+			SDL_GL_SwapWindow(window);
 
 			return;
 		}
 		if (!_material.valid) {
 			rnd->flush();
 
+			SDL_GL_SwapWindow(window);
+
 			return;
 		}
-
-		SDL_Window* window = (SDL_Window*)wnd->pointer();
 
 		SDL_GL_MakeCurrent(window, _glContext);
 		int width = 0, height = 0;
@@ -414,71 +421,141 @@ public:
 			GL_UNSIGNED_BYTE, _pixels->pointer()
 		);
 
-		glEnable(GL_BLEND);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDisable(GL_CULL_FACE);
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_SCISSOR_TEST);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		GLenum lastActiveTexture; glGetIntegerv(GL_ACTIVE_TEXTURE, (GLint*)&lastActiveTexture);
+		glActiveTexture(GL_TEXTURE0);
+		GLuint lastProgram; glGetIntegerv(GL_CURRENT_PROGRAM, (GLint*)&lastProgram);
+		GLuint lastTexture; glGetIntegerv(GL_TEXTURE_BINDING_2D, (GLint*)&lastTexture);
+#if defined GL_VERSION_3_3
+		GLuint lastSampler; if (_glVersion >= 330) { glGetIntegerv(GL_SAMPLER_BINDING, (GLint*)&lastSampler); } else { lastSampler = 0; }
+#endif /* GL_VERSION_3_3 */
+		GLuint lastArrayBuffer; glGetIntegerv(GL_ARRAY_BUFFER_BINDING, (GLint*)&lastArrayBuffer);
+		GLuint lastVertexArrayObject; glGetIntegerv(GL_VERTEX_ARRAY_BINDING, (GLint*)&lastVertexArrayObject);
+#if defined GL_POLYGON_MODE
+		GLint lastPolygonMode[2]; glGetIntegerv(GL_POLYGON_MODE, lastPolygonMode);
+#endif /* GL_POLYGON_MODE */
+		GLint lastViewport[4]; glGetIntegerv(GL_VIEWPORT, lastViewport);
+		GLint lastScissorBox[4]; glGetIntegerv(GL_SCISSOR_BOX, lastScissorBox);
+		GLenum lastBlendSrcRgb; glGetIntegerv(GL_BLEND_SRC_RGB, (GLint*)&lastBlendSrcRgb);
+		GLenum lastBlendDstRgb; glGetIntegerv(GL_BLEND_DST_RGB, (GLint*)&lastBlendDstRgb);
+		GLenum lastBlendSrcAlpha; glGetIntegerv(GL_BLEND_SRC_ALPHA, (GLint*)&lastBlendSrcAlpha);
+		GLenum lastBlendDstAlpha; glGetIntegerv(GL_BLEND_DST_ALPHA, (GLint*)&lastBlendDstAlpha);
+		GLenum lastBlendEquationRgb; glGetIntegerv(GL_BLEND_EQUATION_RGB, (GLint*)&lastBlendEquationRgb);
+		GLenum lastBlendEquationAlpha; glGetIntegerv(GL_BLEND_EQUATION_ALPHA, (GLint*)&lastBlendEquationAlpha);
+		GLboolean lastEnableBlend = glIsEnabled(GL_BLEND);
+		GLboolean lastEnableCullFace = glIsEnabled(GL_CULL_FACE);
+		GLboolean lastEnableDepthTest = glIsEnabled(GL_DEPTH_TEST);
+		GLboolean lastEnableStencilTest = glIsEnabled(GL_STENCIL_TEST);
+		GLboolean lastEnableScissorTest = glIsEnabled(GL_SCISSOR_TEST);
+#if defined GL_VERSION_3_1
+		GLboolean lastEnablePrimitiveRestart = _glVersion >= 310 ? glIsEnabled(GL_PRIMITIVE_RESTART) : GL_FALSE;
+#endif /* GL_VERSION_3_1 */
+		{
+			glEnable(GL_BLEND);
+			glBlendEquation(GL_FUNC_ADD);
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			glDisable(GL_CULL_FACE);
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_SCISSOR_TEST);
+#if defined GL_POLYGON_MODE
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+#endif /* GL_POLYGON_MODE */
 
-		glViewport(0, 0, width, height);
-		const GLfloat resolution[4] = {
-			(GLfloat)width, (GLfloat)height, 1.0f / width, 1.0f / height
-		};
-		const GLfloat time[3] = {
-			(GLfloat)_ticks.x, (GLfloat)_ticks.y, (GLfloat)_ticks.z
-		};
-		const GLfloat orthoProjection[4][4] = {
-			{ 2.0f / width, 0.0f,            0.0f, 0.0f },
-			{ 0.0f,         2.0f / -height,  0.0f, 0.0f },
-			{ 0.0f,         0.0f,           -1.0f, 0.0f },
-			{ -1.0f,        1.0f,            0.0f, 1.0f }
-		};
-		glUseProgram(_material.program);
-		glUniform1i(_material.attribTex, 0);
-		glUniform4fv(_material.attribResolution, 1, (GLfloat*)&resolution);
-		glUniform3fv(_material.attribTime, 1, (GLfloat*)&time);
-		glUniformMatrix4fv(_material.attribProjMatrix, 1, GL_FALSE, &orthoProjection[0][0]);
-		glBindSampler(0, 0);
+			glViewport(0, 0, width, height);
+			const GLfloat resolution[4] = {
+				(GLfloat)width, (GLfloat)height, 1.0f / width, 1.0f / height
+			};
+			const GLfloat time[3] = {
+				(GLfloat)_ticks.x, (GLfloat)_ticks.y, (GLfloat)_ticks.z
+			};
+			const GLfloat orthoProjection[4][4] = {
+				{ 2.0f / width, 0.0f,            0.0f, 0.0f },
+				{ 0.0f,         2.0f / -height,  0.0f, 0.0f },
+				{ 0.0f,         0.0f,           -1.0f, 0.0f },
+				{ -1.0f,        1.0f,            0.0f, 1.0f }
+			};
+			glUseProgram(_material.program);
+			glUniform1i(_material.attribTex, 0);
+			glUniform4fv(_material.attribResolution, 1, (GLfloat*)&resolution);
+			glUniform3fv(_material.attribTime, 1, (GLfloat*)&time);
+			glUniformMatrix4fv(_material.attribProjMatrix, 1, GL_FALSE, &orthoProjection[0][0]);
+#if defined GL_VERSION_3_3
+			if (_glVersion >= 330)
+				glBindSampler(0, 0);
+#endif /* GL_VERSION_3_3 */
 
-		GLuint vao = 0;
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
-		glBindBuffer(GL_ARRAY_BUFFER, _material.vbo);
-		glEnableVertexAttribArray(_material.attribPosition);
-		glEnableVertexAttribArray(_material.attribUv);
-		glEnableVertexAttribArray(_material.attribColor);
-		glVertexAttribPointer(_material.attribPosition, 2, GL_FLOAT, GL_FALSE, sizeof(Vert), (GLvoid*)EFFECTS_OFFSETOF(Vert, position));
-		glVertexAttribPointer(_material.attribUv, 2, GL_FLOAT, GL_FALSE, sizeof(Vert), (GLvoid*)EFFECTS_OFFSETOF(Vert, uv));
-		glVertexAttribPointer(_material.attribColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vert), (GLvoid*)EFFECTS_OFFSETOF(Vert, color));
+			GLuint vao = 0;
+			glGenVertexArrays(1, &vao);
+			glBindVertexArray(vao);
+			glBindBuffer(GL_ARRAY_BUFFER, _material.vbo);
+			glEnableVertexAttribArray(_material.attribPosition);
+			glEnableVertexAttribArray(_material.attribUv);
+			glEnableVertexAttribArray(_material.attribColor);
+			glVertexAttribPointer(_material.attribPosition, 2, GL_FLOAT, GL_FALSE, sizeof(Vert), (GLvoid*)EFFECTS_OFFSETOF(Vert, position));
+			glVertexAttribPointer(_material.attribUv, 2, GL_FLOAT, GL_FALSE, sizeof(Vert), (GLvoid*)EFFECTS_OFFSETOF(Vert, uv));
+			glVertexAttribPointer(_material.attribColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vert), (GLvoid*)EFFECTS_OFFSETOF(Vert, color));
 
-		const Vert vertexes[] = {
-			Vert(Math::Vec2<float>(0, 0), Math::Vec2<float>(0, 0), 0xffffffff),
-			Vert(Math::Vec2<float>((float)width, 0), Math::Vec2<float>(1, 0), 0xffffffff),
-			Vert(Math::Vec2<float>(0, (float)height), Math::Vec2<float>(0, 1), 0xffffffff),
-			Vert(Math::Vec2<float>((float)width, (float)height), Math::Vec2<float>(1, 1), 0xffffffff)
-		};
-		const unsigned short indices[] = {
-			0, 2, 3,
-			0, 3, 1
-		};
-		glBindBuffer(GL_ARRAY_BUFFER, _material.vbo);
-		glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)BITTY_COUNTOF(vertexes) * sizeof(Vert), (const GLvoid*)vertexes, GL_STREAM_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _material.elements);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)BITTY_COUNTOF(indices) * sizeof(unsigned short), (const GLvoid*)indices, GL_STREAM_DRAW);
-		glBindTexture(GL_TEXTURE_2D, _glTexture);
-		glDrawElements(GL_TRIANGLES, (GLsizei)6, GL_UNSIGNED_SHORT, 0);
+			const Vert vertexes[] = {
+				Vert(Math::Vec2<float>(0, 0), Math::Vec2<float>(0, 0), 0xffffffff),
+				Vert(Math::Vec2<float>((float)width, 0), Math::Vec2<float>(1, 0), 0xffffffff),
+				Vert(Math::Vec2<float>(0, (float)height), Math::Vec2<float>(0, 1), 0xffffffff),
+				Vert(Math::Vec2<float>((float)width, (float)height), Math::Vec2<float>(1, 1), 0xffffffff)
+			};
+			const unsigned short indices[] = {
+				0, 2, 3,
+				0, 3, 1
+			};
+			glBindBuffer(GL_ARRAY_BUFFER, _material.vbo);
+			glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)BITTY_COUNTOF(vertexes) * sizeof(Vert), (const GLvoid*)vertexes, GL_STREAM_DRAW);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _material.elements);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)BITTY_COUNTOF(indices) * sizeof(unsigned short), (const GLvoid*)indices, GL_STREAM_DRAW);
+			glBindTexture(GL_TEXTURE_2D, _glTexture);
+#if defined GL_VERSION_3_2
+			if (_glVersion >= 320)
+				glDrawElementsBaseVertex(GL_TRIANGLES, (GLsizei)6, GL_UNSIGNED_SHORT, 0, 0);
+#endif /* GL_VERSION_3_2 */
+			glDrawElements(GL_TRIANGLES, (GLsizei)6, GL_UNSIGNED_SHORT, 0);
 
-		glDeleteVertexArrays(1, &vao);
+			glDeleteVertexArrays(1, &vao);
+		}
+		glUseProgram(lastProgram);
+		glBindTexture(GL_TEXTURE_2D, lastTexture);
+#if defined GL_VERSION_3_3
+		if (_glVersion >= 330) glBindSampler(0, lastSampler);
+#endif /* GL_VERSION_3_3 */
+		glActiveTexture(lastActiveTexture);
+		glBindVertexArray(lastVertexArrayObject);
+		glBindBuffer(GL_ARRAY_BUFFER, lastArrayBuffer);
+		glBlendEquationSeparate(lastBlendEquationRgb, lastBlendEquationAlpha);
+		glBlendFuncSeparate(lastBlendSrcRgb, lastBlendDstRgb, lastBlendSrcAlpha, lastBlendDstAlpha);
+		if (lastEnableBlend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
+		if (lastEnableCullFace) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
+		if (lastEnableDepthTest) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
+		if (lastEnableStencilTest) glEnable(GL_STENCIL_TEST); else glDisable(GL_STENCIL_TEST);
+		if (lastEnableScissorTest) glEnable(GL_SCISSOR_TEST); else glDisable(GL_SCISSOR_TEST);
+#if defined GL_VERSION_3_1
+		if (_glVersion >= 310) { if (lastEnablePrimitiveRestart) glEnable(GL_PRIMITIVE_RESTART); else glDisable(GL_PRIMITIVE_RESTART); }
+#endif /* GL_VERSION_3_1 */
+#if defined GL_POLYGON_MODE
+		glPolygonMode(GL_FRONT_AND_BACK, (GLenum)lastPolygonMode[0]);
+#endif /* GL_POLYGON_MODE */
+		glViewport(lastViewport[0], lastViewport[1], (GLsizei)lastViewport[2], (GLsizei)lastViewport[3]);
+		glScissor(lastScissorBox[0], lastScissorBox[1], (GLsizei)lastScissorBox[2], (GLsizei)lastScissorBox[3]);
 
 		SDL_GL_SwapWindow(window);
 	}
 
 private:
 	void useDefault(Workspace* workspace) {
+#if defined BITTY_OS_WIN
+#	define _GLSL_VERSION "130"
+#elif defined BITTY_OS_MAC
+#	define _GLSL_VERSION "150"
+#elif defined BITTY_OS_LINUX
+#	define _GLSL_VERSION "130"
+#endif /* Platform macro. */
+
 		const GLchar* vertSrc =
-			"#version 150\n"
+			"#version " _GLSL_VERSION "\n"
 			"uniform mat4 ProjMatrix;\n"
 			"in vec2 Position;\n"
 			"in vec2 UV;\n"
@@ -492,7 +569,7 @@ private:
 			"	gl_Position = ProjMatrix * vec4(Position.xy, 0, 1);\n"
 			"}\n";
 		const GLchar* fragSrc =
-			"#version 150\n"
+			"#version " _GLSL_VERSION "\n"
 			"uniform sampler2D Texture;\n"
 			"in vec2 Frag_UV;\n"
 			"in vec4 Frag_Color;\n"
@@ -502,6 +579,8 @@ private:
 			"	Out_Color = Frag_Color * texture(Texture, Frag_UV.st);\n"
 			"}\n";
 		_material.open(vertSrc, fragSrc, workspace);
+
+#undef _GLSL_VERSION
 	}
 };
 #else /* BITTY_EFFECTS_ENABLED && Platform macro. */
