@@ -9422,6 +9422,8 @@ static int Application_useEffect(lua_State* L) {
 		);
 	}
 #else /* BITTY_EFFECTS_ENABLED */
+	(void)impl;
+
 	error(L, "Effects is not available.");
 #endif /* BITTY_EFFECTS_ENABLED */
 

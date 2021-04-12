@@ -12,6 +12,7 @@
 #include "effects.h"
 #include "file_handle.h"
 #include "filesystem.h"
+#include "image.h"
 #include "renderer.h"
 #include "window.h"
 #include "workspace.h"
@@ -63,29 +64,69 @@
 class EffectsImpl : public Effects {
 private:
 	struct Material {
+		typedef std::vector<GLint> Attributes;
+		typedef std::vector<GLuint> Textures;
+
 		bool valid = false;
+
+		bool hasClearColor = true;
+		Math::Vec4<GLclampf> clearColor;
+		GLint textureMinFilter = GL_NEAREST;
+		GLint textureMagFilter = GL_NEAREST;
+		GLint textureWrapS = GL_CLAMP_TO_EDGE;
+		GLint textureWrapT = GL_CLAMP_TO_EDGE;
 
 		GLuint program = 0;
 		GLuint vert = 0;
 		GLuint frag = 0;
 
-		GLuint attribTex = 0;
-		GLuint attribResolution = 0;
-		GLuint attribTime = 0;
-		GLuint attribProjMatrix = 0;
-		GLuint attribPosition = 0;
-		GLuint attribUv = 0;
-		GLuint attribColor = 0;
+		GLint uniformTexture = 0;
+		Attributes uniformExtraTextures;
+		GLint uniformResolution = 0;
+		GLint uniformTime = 0;
+		GLint uniformProjMatrix = 0;
+		GLint attribPosition = 0;
+		GLint attribUv = 0;
+		GLint attribColor = 0;
 
 		GLuint vbo = 0;
 		GLuint elements = 0;
+		GLuint texture = 0;
+		Textures extraTextures;
 
-		void open(const GLchar* vertSrc, const GLchar* fragSrc, Workspace* workspace) {
+		Material() {
+			clearColor = Math::Vec4<GLclampf>(0.118f, 0.118f, 0.118f, 1.0f);
+		}
+
+		void open(Workspace* workspace, const GLchar* vertSrc, const GLchar* fragSrc, const std::vector<Image::Ptr>* images /* nullable */) {
 			if (!glCreateProgram)
 				return;
 
 			const GLchar* verVert[1] = { vertSrc };
 			const GLchar* verFrag[1] = { fragSrc };
+
+			glEnable(GL_TEXTURE_2D);
+			glGenTextures(1, &texture);
+			if (images) {
+				for (int i = 0; i < (int)images->size(); ++i) {
+					GLuint tex = 0;
+					glGenTextures(1, &tex);
+					extraTextures.push_back(tex);
+					const Image::Ptr &img = images->at(i);
+					glBindTexture(GL_TEXTURE_2D, tex);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, textureMinFilter);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, textureMagFilter);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureWrapS);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureWrapT);
+					glTexImage2D(
+						GL_TEXTURE_2D, 0, GL_RGBA,
+						img->width(), img->height(),
+						0,
+						GL_RGBA,
+						GL_UNSIGNED_BYTE, (const void*)img->pixels()
+					);
+				}
+			}
 
 			program = glCreateProgram();
 			vert = glCreateShader(GL_VERTEX_SHADER);
@@ -102,10 +143,19 @@ private:
 			glAttachShader(program, frag);
 			glLinkProgram(program);
 
-			attribTex = glGetUniformLocation(program, "Texture");
-			attribResolution = glGetUniformLocation(program, "Resolution");
-			attribTime = glGetUniformLocation(program, "Time");
-			attribProjMatrix = glGetUniformLocation(program, "ProjMatrix");
+			uniformTexture = glGetUniformLocation(program, "Texture");
+			int i = 1;
+			while (true) {
+				const std::string entry = std::string("Texture") + Text::toString(i);
+				const GLint tex = glGetUniformLocation(program, entry.c_str());
+				if (tex == -1)
+					break;
+				uniformExtraTextures.push_back(tex);
+				++i;
+			}
+			uniformResolution = glGetUniformLocation(program, "Resolution");
+			uniformTime = glGetUniformLocation(program, "Time");
+			uniformProjMatrix = glGetUniformLocation(program, "ProjMatrix");
 			attribPosition = glGetAttribLocation(program, "Position");
 			attribUv = glGetAttribLocation(program, "UV");
 			attribColor = glGetAttribLocation(program, "Color");
@@ -125,10 +175,11 @@ private:
 				elements = 0;
 			}
 
-			attribTex = 0;
-			attribResolution = 0;
-			attribTime = 0;
-			attribProjMatrix = 0;
+			uniformTexture = 0;
+			uniformExtraTextures.clear();
+			uniformResolution = 0;
+			uniformTime = 0;
+			uniformProjMatrix = 0;
 			attribPosition = 0;
 			attribUv = 0;
 			attribColor = 0;
@@ -151,6 +202,22 @@ private:
 				glDeleteProgram(program);
 				program = 0;
 			}
+
+			for (GLuint tex : extraTextures)
+				glDeleteTextures(1, &tex);
+			extraTextures.clear();
+			if (texture) {
+				glDeleteTextures(1, &texture);
+				texture = 0;
+			}
+
+			textureMinFilter = GL_NEAREST;
+			textureMagFilter = GL_NEAREST;
+			textureWrapS = GL_CLAMP_TO_EDGE;
+			textureWrapT = GL_CLAMP_TO_EDGE;
+
+			hasClearColor = true;
+			clearColor = Math::Vec4<GLclampf>(0.118f, 0.118f, 0.118f, 1.0f);
 
 			valid = false;
 		}
@@ -178,20 +245,19 @@ private:
 		}
 	};
 	struct Vert {
-		Math::Vec2<float> position;
-		Math::Vec2<float> uv;
+		Math::Vec2<GLfloat> position;
+		Math::Vec2<GLfloat> uv;
 		UInt32 color = 0;
 
 		Vert() {
 		}
-		Vert(const Math::Vec2<float> &pos, const Math::Vec2<float> &uv_, UInt32 col) : position(pos), uv(uv_), color(col) {
+		Vert(const Math::Vec2<GLfloat> &pos, const Math::Vec2<GLfloat> &uv_, UInt32 col) : position(pos), uv(uv_), color(col) {
 		}
 	};
 
 private:
 	GLint _glVersion = 0;
 	SDL_GLContext _glContext = nullptr;
-	GLuint _glTexture = 0;
 
 	Material _material;
 	Math::Vec3<double> _ticks;
@@ -251,12 +317,9 @@ public:
 		int width = 0, height = 0;
 		SDL_GL_GetDrawableSize(window, &width, &height);
 		_texture->resize(rnd, width, height);
-		fprintf(stdout, "OpenGL drawable size: %dx%d.\n", width, height);
+		fprintf(stdout, "OpenGL initial drawable size: %dx%d.\n", width, height);
 
 		_pixels = Bytes::create();
-
-		glEnable(GL_TEXTURE_2D);
-		glGenTextures(1, &_glTexture);
 
 		_ticks = Math::Vec3<double>(0, 0, 0);
 		if (Path::existsFile(EFFECTS_DEFAULT_FILE)) {
@@ -276,11 +339,6 @@ public:
 	}
 	virtual bool close(void) override {
 		_material.close();
-
-		if (_glTexture) {
-			glDeleteTextures(1, &_glTexture);
-			_glTexture = 0;
-		}
 
 		if (_pixels) {
 			Bytes::destroy(_pixels);
@@ -321,7 +379,6 @@ public:
 			return false;
 		if (!Jpath::get(doc, frag, "fs"))
 			return false;
-
 		File::Ptr file(File::create());
 		if (!file->open(vert.c_str(), Stream::READ))
 			return false;
@@ -340,8 +397,63 @@ public:
 		}
 		file->close();
 
+		std::vector<Image::Ptr> images;
+		Text::Array textures;
+		Jpath::get(doc, textures, "textures");
+		for (const std::string &tex : textures) {
+			if (!file->open(tex.c_str(), Stream::READ))
+				break;
+			Bytes::Ptr bytes(Bytes::create());
+			file->readBytes(bytes.get());
+			Image::Ptr img(Image::create(nullptr));
+			if (img->fromBytes(bytes.get()))
+				images.push_back(img);
+			file->close();
+		}
+
 		Material mat;
-		mat.open(vert.c_str(), frag.c_str(), workspace);
+		std::vector<int> color;
+		if (Jpath::get(doc, color, "clear_color") && color.size() >= 4) {
+			mat.hasClearColor = true;
+			mat.clearColor = Math::Vec4<GLclampf>(
+				Math::clamp((GLclampf)(color[0] / 255.0f), (GLclampf)0, (GLclampf)1),
+				Math::clamp((GLclampf)(color[1] / 255.0f), (GLclampf)0, (GLclampf)1),
+				Math::clamp((GLclampf)(color[2] / 255.0f), (GLclampf)0, (GLclampf)1),
+				Math::clamp((GLclampf)(color[3] / 255.0f), (GLclampf)0, (GLclampf)1)
+			);
+		} else {
+			mat.hasClearColor = false;
+		}
+		std::string param;
+		if (Jpath::get(doc, param, "texture_min_filter")) {
+			if (param == "nearest")
+				mat.textureMinFilter = GL_NEAREST;
+			else if (param == "linear")
+				mat.textureMinFilter = GL_LINEAR;
+		}
+		if (Jpath::get(doc, param, "texture_mag_filter")) {
+			if (param == "nearest")
+				mat.textureMagFilter = GL_NEAREST;
+			else if (param == "linear")
+				mat.textureMagFilter = GL_LINEAR;
+		}
+		if (Jpath::get(doc, param, "texture_wrap_s")) {
+			if (param == "repeat")
+				mat.textureWrapS = GL_REPEAT;
+			else if (param == "clamp")
+				mat.textureWrapS = GL_CLAMP;
+			else if (param == "clamp_to_edge")
+				mat.textureWrapS = GL_CLAMP_TO_EDGE;
+		}
+		if (Jpath::get(doc, param, "texture_wrap_t")) {
+			if (param == "repeat")
+				mat.textureWrapT = GL_REPEAT;
+			else if (param == "clamp")
+				mat.textureWrapT = GL_CLAMP;
+			else if (param == "clamp_to_edge")
+				mat.textureWrapT = GL_CLAMP_TO_EDGE;
+		}
+		mat.open(workspace, vert.c_str(), frag.c_str(), &images);
 		if (!mat.valid)
 			return false;
 
@@ -406,23 +518,7 @@ public:
 		int width = 0, height = 0;
 		SDL_GL_GetDrawableSize(window, &width, &height);
 
-		_pixels->resize(width * height * sizeof(Color));
-		_texture->toBytes(rnd, _pixels->pointer());
-		glBindTexture(GL_TEXTURE_2D, _glTexture);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexImage2D(
-			GL_TEXTURE_2D, 0, GL_RGBA,
-			width, height,
-			0,
-			GL_RGBA,
-			GL_UNSIGNED_BYTE, _pixels->pointer()
-		);
-
 		GLenum lastActiveTexture; glGetIntegerv(GL_ACTIVE_TEXTURE, (GLint*)&lastActiveTexture);
-		glActiveTexture(GL_TEXTURE0);
 		GLuint lastProgram; glGetIntegerv(GL_CURRENT_PROGRAM, (GLint*)&lastProgram);
 		GLuint lastTexture; glGetIntegerv(GL_TEXTURE_BINDING_2D, (GLint*)&lastTexture);
 #if defined GL_VERSION_3_3
@@ -450,6 +546,21 @@ public:
 		GLboolean lastEnablePrimitiveRestart = _glVersion >= 310 ? glIsEnabled(GL_PRIMITIVE_RESTART) : GL_FALSE;
 #endif /* GL_VERSION_3_1 */
 		{
+			_pixels->resize(width * height * sizeof(Color));
+			_texture->toBytes(rnd, _pixels->pointer());
+			glBindTexture(GL_TEXTURE_2D, _material.texture);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _material.textureMinFilter);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _material.textureMagFilter);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, _material.textureWrapS);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _material.textureWrapT);
+			glTexImage2D(
+				GL_TEXTURE_2D, 0, GL_RGBA,
+				width, height,
+				0,
+				GL_RGBA,
+				GL_UNSIGNED_BYTE, (const void*)_pixels->pointer()
+			);
+
 			glEnable(GL_BLEND);
 			glBlendEquation(GL_FUNC_ADD);
 			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -461,6 +572,10 @@ public:
 #endif /* GL_POLYGON_MODE */
 
 			glViewport(0, 0, width, height);
+			if (_material.hasClearColor) {
+				glClearColor(_material.clearColor.x, _material.clearColor.y, _material.clearColor.z, _material.clearColor.w);
+				glClear(GL_COLOR_BUFFER_BIT);
+			}
 			const GLfloat resolution[4] = {
 				(GLfloat)width, (GLfloat)height, 1.0f / width, 1.0f / height
 			};
@@ -474,10 +589,12 @@ public:
 				{ -1.0f,        1.0f,            0.0f, 1.0f }
 			};
 			glUseProgram(_material.program);
-			glUniform1i(_material.attribTex, 0);
-			glUniform4fv(_material.attribResolution, 1, (GLfloat*)&resolution);
-			glUniform3fv(_material.attribTime, 1, (GLfloat*)&time);
-			glUniformMatrix4fv(_material.attribProjMatrix, 1, GL_FALSE, &orthoProjection[0][0]);
+			glUniform1i(_material.uniformTexture, 0);
+			for (int i = 0; i < (int)_material.uniformExtraTextures.size(); ++i)
+				glUniform1i(_material.uniformExtraTextures[i], i + 1);
+			glUniform4fv(_material.uniformResolution, 1, (GLfloat*)&resolution);
+			glUniform3fv(_material.uniformTime, 1, (GLfloat*)&time);
+			glUniformMatrix4fv(_material.uniformProjMatrix, 1, GL_FALSE, &orthoProjection[0][0]);
 #if defined GL_VERSION_3_3
 			if (_glVersion >= 330)
 				glBindSampler(0, 0);
@@ -495,20 +612,25 @@ public:
 			glVertexAttribPointer(_material.attribColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vert), (GLvoid*)EFFECTS_OFFSETOF(Vert, color));
 
 			const Vert vertexes[] = {
-				Vert(Math::Vec2<float>(0, 0), Math::Vec2<float>(0, 0), 0xffffffff),
-				Vert(Math::Vec2<float>((float)width, 0), Math::Vec2<float>(1, 0), 0xffffffff),
-				Vert(Math::Vec2<float>(0, (float)height), Math::Vec2<float>(0, 1), 0xffffffff),
-				Vert(Math::Vec2<float>((float)width, (float)height), Math::Vec2<float>(1, 1), 0xffffffff)
+				Vert(Math::Vec2<GLfloat>(0, 0),                            Math::Vec2<GLfloat>(0, 0), 0xffffffff),
+				Vert(Math::Vec2<GLfloat>((GLfloat)width, 0),               Math::Vec2<GLfloat>(1, 0), 0xffffffff),
+				Vert(Math::Vec2<GLfloat>(0, (GLfloat)height),              Math::Vec2<GLfloat>(0, 1), 0xffffffff),
+				Vert(Math::Vec2<GLfloat>((GLfloat)width, (GLfloat)height), Math::Vec2<GLfloat>(1, 1), 0xffffffff)
 			};
-			const unsigned short indices[] = {
+			const GLushort indices[] = {
 				0, 2, 3,
 				0, 3, 1
 			};
 			glBindBuffer(GL_ARRAY_BUFFER, _material.vbo);
 			glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)BITTY_COUNTOF(vertexes) * sizeof(Vert), (const GLvoid*)vertexes, GL_STREAM_DRAW);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _material.elements);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)BITTY_COUNTOF(indices) * sizeof(unsigned short), (const GLvoid*)indices, GL_STREAM_DRAW);
-			glBindTexture(GL_TEXTURE_2D, _glTexture);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)BITTY_COUNTOF(indices) * sizeof(GLushort), (const GLvoid*)indices, GL_STREAM_DRAW);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, _material.texture);
+			for (int i = 0; i < (int)_material.extraTextures.size(); ++i) {
+				glActiveTexture(GL_TEXTURE0 + 1);
+				glBindTexture(GL_TEXTURE_2D, _material.extraTextures[i]);
+			}
 #if defined GL_VERSION_3_2
 			if (_glVersion >= 320)
 				glDrawElementsBaseVertex(GL_TRIANGLES, (GLsizei)6, GL_UNSIGNED_SHORT, 0, 0);
@@ -578,7 +700,8 @@ private:
 			"{\n"
 			"	Out_Color = Frag_Color * texture(Texture, Frag_UV.st);\n"
 			"}\n";
-		_material.open(vertSrc, fragSrc, workspace);
+		_material.close();
+		_material.open(workspace, vertSrc, fragSrc, nullptr);
 
 #undef _GLSL_VERSION
 	}
