@@ -98,7 +98,7 @@ private:
 			clearColor = Math::Vec4<GLclampf>(0.118f, 0.118f, 0.118f, 1.0f);
 		}
 
-		void open(Workspace* workspace, const GLchar* vertSrc, const GLchar* fragSrc, const std::vector<Image::Ptr>* images /* nullable */) {
+		void open(Workspace* ws, const GLchar* vertSrc, const GLchar* fragSrc, const std::vector<Image::Ptr>* images /* nullable */) {
 			if (!glCreateProgram)
 				return;
 
@@ -134,10 +134,10 @@ private:
 			glShaderSource(vert, BITTY_COUNTOF(verVert), verVert, NULL);
 			glShaderSource(frag, BITTY_COUNTOF(verFrag), verFrag, NULL);
 			glCompileShader(vert);
-			if (!getError(workspace, vert, "Vertex shader:"))
+			if (!getError(ws, vert, "Vertex shader:"))
 				return;
 			glCompileShader(frag);
-			if (!getError(workspace, frag, "Fragment shader:"))
+			if (!getError(ws, frag, "Fragment shader:"))
 				return;
 			glAttachShader(program, vert);
 			glAttachShader(program, frag);
@@ -222,7 +222,7 @@ private:
 			valid = false;
 		}
 
-		bool getError(Workspace* workspace, GLuint obj, const char* prefix) {
+		bool getError(Workspace* ws, GLuint obj, const char* prefix) {
 			int status = 0;
 			glGetShaderiv(obj, GL_COMPILE_STATUS, &status);
 
@@ -236,7 +236,7 @@ private:
 				std::string msg_ = prefix;
 				msg_ += "\n";
 				msg_ += msg;
-				workspace->error(msg_.c_str());
+				ws->error(msg_.c_str());
 
 				return false;
 			}
@@ -270,14 +270,14 @@ public:
 	virtual ~EffectsImpl() {
 	}
 
-	virtual bool open(class Window* wnd, class Renderer* rnd, class Workspace* workspace) override {
+	virtual bool open(class Window* wnd, class Renderer*, class Workspace* ws) override {
 		SDL_Window* window = (SDL_Window*)wnd->pointer();
 
 		_glContext = SDL_GL_CreateContext(window);
 		if (!_glContext) {
 			std::string msg = "Cannot create OpenGL context: ";
 			msg += SDL_GetError();
-			workspace->error(msg.c_str());
+			ws->error(msg.c_str());
 			fprintf(stderr, "%s\n", msg.c_str());
 
 			return false;
@@ -309,14 +309,8 @@ public:
 		_glVersion = (GLuint)(major * 100 + minor * 10);
 		fprintf(stdout, "OpenGL version: %d.\n", (int)_glVersion);
 
-		_texture = Texture::create();
-		const Color color[] = { Color(), Color(), Color(), Color() };
-		_texture->fromBytes(rnd, Texture::TARGET, (Byte*)color, 2, 2, 0);
-		_texture->blend(Texture::BLEND);
-
 		int width = 0, height = 0;
 		SDL_GL_GetDrawableSize(window, &width, &height);
-		_texture->resize(rnd, width, height);
 		fprintf(stdout, "OpenGL initial drawable size: %dx%d.\n", width, height);
 
 		_pixels = Bytes::create();
@@ -329,11 +323,11 @@ public:
 				file->readString(fx);
 				file->close();
 
-				if (use(workspace, fx.c_str()))
+				if (use(ws, fx.c_str()))
 					return _material.valid;
 			}
 		}
-		useDefault(workspace);
+		useDefault(ws);
 
 		return _material.valid;
 	}
@@ -358,9 +352,9 @@ public:
 		return true;
 	}
 
-	virtual bool use(class Workspace* workspace, const char* material) override {
+	virtual bool use(class Workspace* ws, const char* material) override {
 		if (!material) {
-			useDefault(workspace);
+			useDefault(ws);
 
 			_ticks = Math::Vec3<double>(0, 0, 0);
 
@@ -453,7 +447,7 @@ public:
 			else if (param == "clamp_to_edge")
 				mat.textureWrapT = GL_CLAMP_TO_EDGE;
 		}
-		mat.open(workspace, vert.c_str(), frag.c_str(), &images);
+		mat.open(ws, vert.c_str(), frag.c_str(), &images);
 		if (!mat.valid)
 			return false;
 
@@ -465,10 +459,10 @@ public:
 		return true;
 	}
 
-	virtual void prepare(class Window* wnd, class Renderer* rnd, double delta) override {
+	virtual void prepare(class Window* wnd, class Renderer* rnd, class Workspace*, double delta) override {
 		SDL_Window* window = (SDL_Window*)wnd->pointer();
 
-		if (!_glContext || !_texture) {
+		if (!_glContext) {
 			rnd->target(nullptr);
 
 			return;
@@ -489,6 +483,12 @@ public:
 			}
 		}
 
+		if (!_texture) {
+			_texture = Texture::create();
+			const Color color[] = { Color(), Color(), Color(), Color() };
+			_texture->fromBytes(rnd, Texture::TARGET, (Byte*)color, 2, 2, 0);
+			_texture->blend(Texture::BLEND);
+		}
 		int width = 0, height = 0;
 		SDL_GL_GetDrawableSize(window, &width, &height);
 		if (_texture->width() != width || _texture->height() != height)
@@ -496,10 +496,10 @@ public:
 
 		rnd->target(_texture);
 	}
-	virtual void finish(class Window* wnd, class Renderer* rnd) override {
+	virtual void finish(class Window* wnd, class Renderer* rnd, class Workspace* ws) override {
 		SDL_Window* window = (SDL_Window*)wnd->pointer();
 
-		if (!_glContext || !_texture) {
+		if (!_glContext) {
 			rnd->flush();
 
 			SDL_GL_SwapWindow(window);
@@ -664,10 +664,32 @@ public:
 		glScissor(lastScissorBox[0], lastScissorBox[1], (GLsizei)lastScissorBox[2], (GLsizei)lastScissorBox[3]);
 
 		SDL_GL_SwapWindow(window);
+
+		rnd->target(nullptr);
+
+		if (ws->effectCustomized()) {
+			const std::string &material = ws->effectConfig();
+			use(ws, material.empty() ? nullptr : material.c_str());
+			ws->effectCustomized(false);
+			ws->effectConfig().clear();
+		}
+	}
+
+	virtual void renderTargetsReset(void) override {
+		if (_material.texture) {
+			glDeleteTextures(1, &_material.texture);
+			_material.texture = 0;
+		}
+		glGenTextures(1, &_material.texture);
+
+		if (_texture) {
+			Texture::destroy(_texture);
+			_texture = nullptr;
+		}
 	}
 
 private:
-	void useDefault(Workspace* workspace) {
+	void useDefault(Workspace* ws) {
 #if defined BITTY_OS_WIN
 #	define _GLSL_VERSION "130"
 #elif defined BITTY_OS_MAC
@@ -701,7 +723,7 @@ private:
 			"	Out_Color = Frag_Color * texture(Texture, Frag_UV.st);\n"
 			"}\n";
 		_material.close();
-		_material.open(workspace, vertSrc, fragSrc, nullptr);
+		_material.open(ws, vertSrc, fragSrc, nullptr);
 
 #undef _GLSL_VERSION
 	}
@@ -725,11 +747,14 @@ public:
 		return false;
 	}
 
-	virtual void prepare(class Window*, class Renderer* rnd, double) override {
+	virtual void prepare(class Window*, class Renderer* rnd, class Workspace*, double) override {
 		rnd->target(nullptr);
 	}
-	virtual void finish(class Window*, class Renderer* rnd) override {
+	virtual void finish(class Window*, class Renderer* rnd, class Workspace*) override {
 		rnd->flush();
+	}
+
+	virtual void renderTargetsReset(void) override {
 	}
 };
 #endif /* BITTY_EFFECTS_ENABLED && Platform macro. */

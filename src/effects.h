@@ -26,7 +26,7 @@ public:
 	/**
 	 * @brief Opens the effects for further operation.
 	 */
-	virtual bool open(class Window* wnd, class Renderer* rnd, class Workspace* workspace) = 0;
+	virtual bool open(class Window* wnd, class Renderer* rnd, class Workspace* ws) = 0;
 	/**
 	 * @brief Closes the effects after all operations.
 	 */
@@ -35,16 +35,21 @@ public:
 	/**
 	 * @brief Configures the effects.
 	 */
-	virtual bool use(class Workspace* workspace, const char* material) = 0;
+	virtual bool use(class Workspace* ws, const char* material) = 0;
 
 	/**
 	 * @brief Prepares the effects before rendering new frame.
 	 */
-	virtual void prepare(class Window* wnd, class Renderer* rnd, double delta) = 0;
+	virtual void prepare(class Window* wnd, class Renderer* rnd, class Workspace* ws, double delta) = 0;
 	/**
 	 * @brief Finishes and presents the effects after rendering a frame.
 	 */
-	virtual void finish(class Window* wnd, class Renderer* rnd) = 0;
+	virtual void finish(class Window* wnd, class Renderer* rnd, class Workspace* ws) = 0;
+
+	/**
+	 * @brief Callback for render targets reset.
+	 */
+	virtual void renderTargetsReset(void) = 0;
 
 	static Effects* create(void);
 	static void destroy(Effects* ptr);

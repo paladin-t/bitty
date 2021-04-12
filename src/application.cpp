@@ -362,11 +362,7 @@ public:
 		const bool alive = updateImGui(_context.delta, _context.mouseCursorIndicated);
 
 		const Color cls(0x2e, 0x32, 0x38, 0xff);
-#if BITTY_EFFECTS_ENABLED
-		_effects->prepare(_window, _renderer, _context.delta);
-#else /* BITTY_EFFECTS_ENABLED */
-		_renderer->target(nullptr);
-#endif /* BITTY_EFFECTS_ENABLED */
+		_effects->prepare(_window, _renderer, _workspace, _context.delta);
 		_renderer->clip(0, 0, _renderer->width(), _renderer->height());
 		_renderer->clear(&cls);
 		{
@@ -386,17 +382,8 @@ public:
 
 			ImGuiSDL::Render(ImGui::GetDrawData());
 		}
-#if BITTY_EFFECTS_ENABLED
-		_effects->finish(_window, _renderer);
-		if (_workspace->effectCustomized()) {
-			const std::string &material = _workspace->effectConfig();
-			_effects->use(_workspace, material.empty() ? nullptr : material.c_str());
-			_workspace->effectCustomized(false);
-			_workspace->effectConfig().clear();
-		}
-#else /* BITTY_EFFECTS_ENABLED */
-		_renderer->flush();
-#endif /* BITTY_EFFECTS_ENABLED */
+		_effects->finish(_window, _renderer, _workspace);
+		_window->update();
 
 		const long long end = DateTime::ticks();
 		const long long diff = end >= begin ? end - begin : 0;
@@ -653,12 +640,12 @@ private:
 			}
 
 			if (reset) {
-				// FIXME: remove this temporary patch.
-				// Added this patch to fix an issue produced on some Intel's GPU that
-				// render target went invalid after resizing the app window.
-				ImGuiSDL::Reset();
+				ImGuiSDL::Reset(); // Added this patch to fix an issue produced on some Intel's GPU that
+				                   // render target went invalid after resizing the app window.
 
 				_resources->resetRenderTargets();
+
+				_effects->renderTargetsReset();
 			}
 		}
 

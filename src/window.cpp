@@ -22,6 +22,10 @@ private:
 	int _scale = 1;
 
 	bool _resizable = true;
+#if WINDOW_LAZY_TOGGLE_FULLSCREEN
+	bool _lazySetFullscreen = false;
+	bool _lazyFullscreenValue = false;
+#endif /* WINDOW_LAZY_TOGGLE_FULLSCREEN */
 
 public:
 	virtual ~WindowImpl() {
@@ -162,6 +166,10 @@ public:
 		return !!(flags & SDL_WINDOW_FULLSCREEN_DESKTOP);
 	}
 	virtual void fullscreen(bool val) override {
+#if WINDOW_LAZY_TOGGLE_FULLSCREEN
+		_lazySetFullscreen = true;
+		_lazyFullscreenValue = val;
+#else /* WINDOW_LAZY_TOGGLE_FULLSCREEN */
 		if (val) {
 			Uint32 flags = SDL_GetWindowFlags(_window);
 			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
@@ -171,6 +179,7 @@ public:
 			flags &= ~SDL_WINDOW_FULLSCREEN_DESKTOP;
 			SDL_SetWindowFullscreen(_window, flags);
 		}
+#endif /* WINDOW_LAZY_TOGGLE_FULLSCREEN */
 	}
 
 	virtual int width(void) const override {
@@ -195,6 +204,23 @@ public:
 			return;
 
 		_scale = val;
+	}
+
+	virtual void update(void) override {
+#if WINDOW_LAZY_TOGGLE_FULLSCREEN
+		if (_lazySetFullscreen) {
+			_lazySetFullscreen = false;
+			if (_lazyFullscreenValue) {
+				Uint32 flags = SDL_GetWindowFlags(_window);
+				flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+				SDL_SetWindowFullscreen(_window, flags);
+			} else {
+				Uint32 flags = SDL_GetWindowFlags(_window);
+				flags &= ~SDL_WINDOW_FULLSCREEN_DESKTOP;
+				SDL_SetWindowFullscreen(_window, flags);
+			}
+		}
+#endif /* WINDOW_LAZY_TOGGLE_FULLSCREEN */
 	}
 };
 

@@ -33,6 +33,14 @@
 #	define WINDOW_DEFAULT_HEIGHT 600
 #endif /* WINDOW_DEFAULT_HEIGHT */
 
+#ifndef WINDOW_LAZY_TOGGLE_FULLSCREEN
+#	if BITTY_EFFECTS_ENABLED
+#		define WINDOW_LAZY_TOGGLE_FULLSCREEN 1
+#	else /* BITTY_EFFECTS_ENABLED */
+#		define WINDOW_LAZY_TOGGLE_FULLSCREEN 0
+#	endif /* BITTY_EFFECTS_ENABLED */
+#endif /* WINDOW_LAZY_TOGGLE_FULLSCREEN */
+
 /* ===========================================================================} */
 
 /*
@@ -162,6 +170,11 @@ public:
 	 * @brief Sets the scale of the window.
 	 */
 	virtual void scale(int val) = 0;
+
+	/**
+	 * @brief Updates the window.
+	 */
+	virtual void update(void) = 0;
 
 	static Window* create(void);
 	static void destroy(Window* ptr);

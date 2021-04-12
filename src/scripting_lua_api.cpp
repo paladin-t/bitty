@@ -9396,7 +9396,7 @@ static int Application_resize(lua_State* L) {
 	return 0;
 }
 
-static int Application_useEffect(lua_State* L) {
+static int Application_setEffect(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
 	const char* material = nullptr;
@@ -9440,7 +9440,7 @@ static void open_Application(lua_State* L) {
 					array(
 						luaL_Reg{ "setCursor", Application_setCursor }, // Frame synchronized.
 						luaL_Reg{ "resize", Application_resize }, // Frame synchronized.
-						luaL_Reg{ "useEffect", Application_useEffect }, // Undocumented. Frame synchronized.
+						luaL_Reg{ "setEffect", Application_setEffect }, // Undocumented. Frame synchronized.
 						luaL_Reg{ nullptr, nullptr }
 					)
 				)
