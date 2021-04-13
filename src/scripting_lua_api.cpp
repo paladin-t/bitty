@@ -13,6 +13,7 @@
 #include "code.h"
 #include "datetime.h"
 #include "editable.h"
+#include "effects.h"
 #include "encoding.h"
 #include "file_handle.h"
 #include "filesystem.h"
@@ -9430,6 +9431,74 @@ static int Application_setEffect(lua_State* L) {
 	return 0;
 }
 
+static int Application_setEffectUniform(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	float number = 0;
+	Math::Vec2f* vec2 = nullptr;
+	Math::Vec3f* vec3 = nullptr;
+	Math::Vec4f* vec4 = nullptr;
+	const char* name = nullptr;
+	read<>(L, name);
+	read<2>(L, number);
+	read<2>(L, vec2);
+	read<2>(L, vec3);
+	read<2>(L, vec4);
+
+#if BITTY_EFFECTS_ENABLED
+	if (name) {
+		const std::string name_ = name;
+		if (vec4) {
+			const Math::Vec4f data = *vec4;
+			impl->primitives()->function(
+				[=] (const Variant &) -> void {
+					Effects* effects = impl->primitives()->effects();
+					effects->inject(name_.c_str(), data);
+				},
+				nullptr,
+				true
+			);
+		} else if (vec3) {
+			const Math::Vec3f data = *vec3;
+			impl->primitives()->function(
+				[=] (const Variant &) -> void {
+					Effects* effects = impl->primitives()->effects();
+					effects->inject(name_.c_str(), data);
+				},
+				nullptr,
+				true
+			);
+		} else if (vec2) {
+			const Math::Vec2f data = *vec2;
+			impl->primitives()->function(
+				[=] (const Variant &) -> void {
+					Effects* effects = impl->primitives()->effects();
+					effects->inject(name_.c_str(), data);
+				},
+				nullptr,
+				true
+			);
+		} else {
+			const float data = number;
+			impl->primitives()->function(
+				[=] (const Variant &) -> void {
+					Effects* effects = impl->primitives()->effects();
+					effects->inject(name_.c_str(), data);
+				},
+				nullptr,
+				true
+			);
+		}
+	}
+#else /* BITTY_EFFECTS_ENABLED */
+	(void)impl;
+
+	error(L, "Effects is not available.");
+#endif /* BITTY_EFFECTS_ENABLED */
+
+	return 0;
+}
+
 static void open_Application(lua_State* L) {
 	req(
 		L,
@@ -9441,6 +9510,7 @@ static void open_Application(lua_State* L) {
 						luaL_Reg{ "setCursor", Application_setCursor }, // Frame synchronized.
 						luaL_Reg{ "resize", Application_resize }, // Frame synchronized.
 						luaL_Reg{ "setEffect", Application_setEffect }, // Undocumented. Frame synchronized.
+						luaL_Reg{ "setEffectUniform", Application_setEffectUniform }, // Undocumented. Frame synchronized.
 						luaL_Reg{ nullptr, nullptr }
 					)
 				)

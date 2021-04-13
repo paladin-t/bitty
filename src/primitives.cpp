@@ -2137,6 +2137,7 @@ private:
 	Renderer* _renderer = nullptr; // Foreign.
 	const Project* _project = nullptr; // Foreign.
 	Resources* _resources = nullptr; // Foreign.
+	class Effects* _effects = nullptr; // Foreign.
 	Audio* _audio = nullptr;
 	Input* _input = nullptr;
 
@@ -2198,7 +2199,7 @@ public:
 		}
 	}
 
-	virtual bool open(class Window* wnd, class Renderer* rnd, const class Project* project, Resources* res) override {
+	virtual bool open(class Window* wnd, class Renderer* rnd, const class Project* project, Resources* res, class Effects* effects) override {
 		if (_opened)
 			return false;
 		_opened = true;
@@ -2207,6 +2208,7 @@ public:
 		_renderer = rnd;
 		_project = project;
 		_resources = res;
+		_effects = effects;
 		if (_audio)
 			_audio->open();
 		_input->open();
@@ -2223,6 +2225,7 @@ public:
 		_input->close();
 		if (_audio)
 			_audio->close();
+		_effects = nullptr;
 		_resources = nullptr;
 		_project = nullptr;
 		_renderer = nullptr;
@@ -2235,6 +2238,10 @@ public:
 
 	virtual class Window* window(void) override {
 		return _window;
+	}
+
+	virtual class Effects* effects(void) override {
+		return _effects;
 	}
 
 	virtual Input* input(void) override {

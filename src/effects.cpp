@@ -10,6 +10,7 @@
 
 #include "bytes.h"
 #include "effects.h"
+#include "encoding.h"
 #include "file_handle.h"
 #include "filesystem.h"
 #include "image.h"
@@ -63,9 +64,72 @@
 #if BITTY_EFFECTS_ENABLED && (defined BITTY_OS_WIN || defined BITTY_OS_MAC || defined BITTY_OS_LINUX)
 class EffectsImpl : public Effects {
 private:
+	struct Uniform {
+		enum Types {
+			NUMBER,
+			VEC2,
+			VEC3,
+			VEC4
+		};
+		union Data {
+			GLfloat number;
+			Math::Vec2<GLfloat> vec2;
+			Math::Vec3<GLfloat> vec3;
+			Math::Vec4<GLfloat> vec4;
+
+			Data() {
+				vec4 = Math::Vec4<GLfloat>(0, 0, 0, 0);
+			}
+		};
+
+		Types type = VEC4;
+		Data data;
+
+		Uniform() {
+		}
+		Uniform(const std::string &y) {
+			if (y == "number")
+				type = NUMBER;
+			else if (y == "vec2")
+				type = VEC2;
+			else if (y == "vec3")
+				type = VEC3;
+			else if (y == "vec4")
+				type = VEC4;
+			else
+				type = VEC4;
+		}
+
+		Uniform &operator = (const Uniform &other) {
+			type = other.type;
+			switch (type) {
+			case NUMBER:
+				data.number = other.data.number;
+
+				break;
+			case VEC2:
+				data.vec2 = other.data.vec2;
+
+				break;
+			case VEC3:
+				data.vec3 = other.data.vec3;
+
+				break;
+			case VEC4:
+				data.vec4 = other.data.vec4;
+
+				break;
+			}
+
+			return *this;
+		}
+	};
 	struct Material {
-		typedef std::vector<GLint> Attributes;
-		typedef std::vector<GLuint> Textures;
+		typedef std::vector<GLint> TextureUniforms;
+		typedef std::vector<GLuint> TextureHandles;
+
+		typedef std::map<std::string, GLint> ExtraUniforms;
+		typedef std::map<std::string, Uniform> ExtraDatas;
 
 		bool valid = false;
 
@@ -81,10 +145,11 @@ private:
 		GLuint frag = 0;
 
 		GLint uniformTexture = 0;
-		Attributes uniformExtraTextures;
+		TextureUniforms uniformExtraTextures;
 		GLint uniformResolution = 0;
 		GLint uniformTime = 0;
 		GLint uniformProjMatrix = 0;
+		ExtraUniforms uniformExtraDatas;
 		GLint attribPosition = 0;
 		GLint attribUv = 0;
 		GLint attribColor = 0;
@@ -92,13 +157,14 @@ private:
 		GLuint vbo = 0;
 		GLuint elements = 0;
 		GLuint texture = 0;
-		Textures extraTextures;
+		TextureHandles extraTextures;
+		ExtraDatas extraDatas;
 
 		Material() {
 			clearColor = Math::Vec4<GLclampf>(0.118f, 0.118f, 0.118f, 1.0f);
 		}
 
-		void open(Workspace* ws, const GLchar* vertSrc, const GLchar* fragSrc, const std::vector<Image::Ptr>* images /* nullable */) {
+		void open(Workspace* ws, const GLchar* vertSrc, const GLchar* fragSrc, const std::vector<Image::Ptr>* images /* nullable */, const rapidjson::Value* uniforms /* nullable */) {
 			if (!glCreateProgram)
 				return;
 
@@ -159,6 +225,20 @@ private:
 			attribPosition = glGetAttribLocation(program, "Position");
 			attribUv = glGetAttribLocation(program, "UV");
 			attribColor = glGetAttribLocation(program, "Color");
+			if (uniforms) {
+				for (int j = 0; j < (int)uniforms->Capacity(); ++j) {
+					std::string name;
+					std::string type;
+					if (!Jpath::get(*uniforms, name, j, "name"))
+						continue;
+					if (!Jpath::get(*uniforms, type, j, "type"))
+						continue;
+					if (name.empty() || type.empty())
+						continue;
+					uniformExtraDatas[name] = glGetUniformLocation(program, name.c_str());
+					extraDatas[name] = Uniform(type);
+				}
+			}
 
 			glGenBuffers(1, &vbo);
 			glGenBuffers(1, &elements);
@@ -353,6 +433,7 @@ public:
 	}
 
 	virtual bool use(class Workspace* ws, const char* material) override {
+		// Use default material.
 		if (!material) {
 			useDefault(ws);
 
@@ -361,6 +442,7 @@ public:
 			return true;
 		}
 
+		// Prepare.
 		Json::Ptr json(Json::create());
 		if (!json->fromString(material))
 			return false;
@@ -368,43 +450,67 @@ public:
 		if (!json->toJson(doc))
 			return false;
 
+		// Load shader source.
 		std::string vert, frag;
-		if (!Jpath::get(doc, vert, "vs"))
-			return false;
-		if (!Jpath::get(doc, frag, "fs"))
-			return false;
-		File::Ptr file(File::create());
-		if (!file->open(vert.c_str(), Stream::READ))
-			return false;
-		if (!file->readString(vert)) {
+		if (!Jpath::get(doc, vert, "vs_source")) {
+			if (!Jpath::get(doc, vert, "vs"))
+				return false;
+			File::Ptr file(File::create());
+			if (!file->open(vert.c_str(), Stream::READ))
+				return false;
+			if (!file->readString(vert)) {
+				file->close();
+
+				return false;
+			}
 			file->close();
-
-			return false;
 		}
-		file->close();
-		if (!file->open(frag.c_str(), Stream::READ))
-			return false;
-		if (!file->readString(frag)) {
+		if (!Jpath::get(doc, frag, "fs_source")) {
+			if (!Jpath::get(doc, frag, "fs"))
+				return false;
+			File::Ptr file(File::create());
+			if (!file->open(frag.c_str(), Stream::READ))
+				return false;
+			if (!file->readString(frag)) {
+				file->close();
+
+				return false;
+			}
 			file->close();
-
-			return false;
 		}
-		file->close();
 
+		// Load extra textures.
 		std::vector<Image::Ptr> images;
 		Text::Array textures;
 		Jpath::get(doc, textures, "textures");
 		for (const std::string &tex : textures) {
-			if (!file->open(tex.c_str(), Stream::READ))
+			if (Path::existsFile(tex.c_str())) {
+				File::Ptr file(File::create());
+				if (!file->open(tex.c_str(), Stream::READ))
+					break;
+				Bytes::Ptr bytes(Bytes::create());
+				file->readBytes(bytes.get());
+				Image::Ptr img(Image::create(nullptr));
+				if (img->fromBytes(bytes.get()))
+					images.push_back(img);
+				file->close();
+			} else {
+				Bytes::Ptr bytes(Bytes::create());
+				if (!Base64::toBytes(bytes.get(), tex))
+					break;
+				Image::Ptr img(Image::create(nullptr));
+				if (img->fromBytes(bytes.get()))
+					images.push_back(img);
+			}
+			if (1 + images.size() >= 32) // Up to 32 textures totally.
 				break;
-			Bytes::Ptr bytes(Bytes::create());
-			file->readBytes(bytes.get());
-			Image::Ptr img(Image::create(nullptr));
-			if (img->fromBytes(bytes.get()))
-				images.push_back(img);
-			file->close();
 		}
 
+		// Load extra uniforms.
+		const rapidjson::Value* uniforms = nullptr;
+		Jpath::get(doc, uniforms, "uniforms");
+
+		// Load rendering attributes.
 		Material mat;
 		std::vector<int> color;
 		if (Jpath::get(doc, color, "clear_color") && color.size() >= 4) {
@@ -447,19 +553,64 @@ public:
 			else if (param == "clamp_to_edge")
 				mat.textureWrapT = GL_CLAMP_TO_EDGE;
 		}
-		mat.open(ws, vert.c_str(), frag.c_str(), &images);
+		mat.open(ws, vert.c_str(), frag.c_str(), &images, uniforms);
 		if (!mat.valid)
 			return false;
 
+		// Active the material.
 		std::swap(mat, _material);
 		mat.close();
 
+		// Initialize ticks.
 		_ticks = Math::Vec3<double>(0, 0, 0);
 
+		// Finish.
 		return true;
 	}
 
+	virtual void inject(const char* entry, float arg) override {
+		if (!_material.valid)
+			return;
+		Material::ExtraDatas::iterator it = _material.extraDatas.find(entry);
+		if (it == _material.extraDatas.end())
+			return;
+
+		Uniform &uniform = it->second;
+		uniform.data.number = (GLfloat)arg;
+	}
+	virtual void inject(const char* entry, const Math::Vec2f &arg) override {
+		if (!_material.valid)
+			return;
+		Material::ExtraDatas::iterator it = _material.extraDatas.find(entry);
+		if (it == _material.extraDatas.end())
+			return;
+
+		Uniform &uniform = it->second;
+		uniform.data.vec2 = Math::Vec2<GLfloat>((GLfloat)arg.x, (GLfloat)arg.y);
+	}
+	virtual void inject(const char* entry, const Math::Vec3f &arg) override {
+		if (!_material.valid)
+			return;
+		Material::ExtraDatas::iterator it = _material.extraDatas.find(entry);
+		if (it == _material.extraDatas.end())
+			return;
+
+		Uniform &uniform = it->second;
+		uniform.data.vec3 = Math::Vec3<GLfloat>((GLfloat)arg.x, (GLfloat)arg.y, (GLfloat)arg.z);
+	}
+	virtual void inject(const char* entry, const Math::Vec4f &arg) override {
+		if (!_material.valid)
+			return;
+		Material::ExtraDatas::iterator it = _material.extraDatas.find(entry);
+		if (it == _material.extraDatas.end())
+			return;
+
+		Uniform &uniform = it->second;
+		uniform.data.vec4 = Math::Vec4<GLfloat>((GLfloat)arg.x, (GLfloat)arg.y, (GLfloat)arg.z, (GLfloat)arg.w);
+	}
+
 	virtual void prepare(class Window* wnd, class Renderer* rnd, class Workspace*, double delta) override {
+		// Prepare.
 		SDL_Window* window = (SDL_Window*)wnd->pointer();
 
 		if (!_glContext) {
@@ -473,6 +624,7 @@ public:
 			return;
 		}
 
+		// Tick.
 		_ticks.x += delta;
 		if (_ticks.x >= 1) {
 			_ticks.x -= 1;
@@ -483,6 +635,7 @@ public:
 			}
 		}
 
+		// Initialize frame target.
 		if (!_texture) {
 			_texture = Texture::create();
 			const Color color[] = { Color(), Color(), Color(), Color() };
@@ -494,9 +647,11 @@ public:
 		if (_texture->width() != width || _texture->height() != height)
 			_texture->resize(rnd, width, height);
 
+		// Set frame target.
 		rnd->target(_texture);
 	}
 	virtual void finish(class Window* wnd, class Renderer* rnd, class Workspace* ws) override {
+		// Prepare.
 		SDL_Window* window = (SDL_Window*)wnd->pointer();
 
 		if (!_glContext) {
@@ -518,6 +673,7 @@ public:
 		int width = 0, height = 0;
 		SDL_GL_GetDrawableSize(window, &width, &height);
 
+		// Reserve render states.
 		GLenum lastActiveTexture; glGetIntegerv(GL_ACTIVE_TEXTURE, (GLint*)&lastActiveTexture);
 		GLuint lastProgram; glGetIntegerv(GL_CURRENT_PROGRAM, (GLint*)&lastProgram);
 		GLuint lastTexture; glGetIntegerv(GL_TEXTURE_BINDING_2D, (GLint*)&lastTexture);
@@ -545,7 +701,9 @@ public:
 #if defined GL_VERSION_3_1
 		GLboolean lastEnablePrimitiveRestart = _glVersion >= 310 ? glIsEnabled(GL_PRIMITIVE_RESTART) : GL_FALSE;
 #endif /* GL_VERSION_3_1 */
+		// Render.
 		{
+			// Fill frame buffer.
 			_pixels->resize(width * height * sizeof(Color));
 			_texture->toBytes(rnd, _pixels->pointer());
 			glBindTexture(GL_TEXTURE_2D, _material.texture);
@@ -561,6 +719,7 @@ public:
 				GL_UNSIGNED_BYTE, (const void*)_pixels->pointer()
 			);
 
+			// Initialize render states.
 			glEnable(GL_BLEND);
 			glBlendEquation(GL_FUNC_ADD);
 			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -571,6 +730,7 @@ public:
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 #endif /* GL_POLYGON_MODE */
 
+			// Initialize rendering data.
 			glViewport(0, 0, width, height);
 			if (_material.hasClearColor) {
 				glClearColor(_material.clearColor.x, _material.clearColor.y, _material.clearColor.z, _material.clearColor.w);
@@ -595,11 +755,39 @@ public:
 			glUniform4fv(_material.uniformResolution, 1, (GLfloat*)&resolution);
 			glUniform3fv(_material.uniformTime, 1, (GLfloat*)&time);
 			glUniformMatrix4fv(_material.uniformProjMatrix, 1, GL_FALSE, &orthoProjection[0][0]);
+			for (Material::ExtraDatas::iterator it = _material.extraDatas.begin(); it != _material.extraDatas.end(); ++it) {
+				const std::string &name = it->first;
+				const Uniform &uniform = it->second;
+				Material::ExtraUniforms::iterator uit = _material.uniformExtraDatas.find(name);
+				if (uit == _material.uniformExtraDatas.end())
+					continue;
+
+				GLint handle = uit->second;
+				switch (uniform.type) {
+				case Uniform::NUMBER:
+					glUniform1fv(handle, 1, (GLfloat*)&uniform.data.number);
+
+					break;
+				case Uniform::VEC2:
+					glUniform2fv(handle, 1, (GLfloat*)&uniform.data.vec2);
+
+					break;
+				case Uniform::VEC3:
+					glUniform3fv(handle, 1, (GLfloat*)&uniform.data.vec3);
+
+					break;
+				case Uniform::VEC4:
+					glUniform4fv(handle, 1, (GLfloat*)&uniform.data.vec4);
+
+					break;
+				}
+			}
 #if defined GL_VERSION_3_3
 			if (_glVersion >= 330)
 				glBindSampler(0, 0);
 #endif /* GL_VERSION_3_3 */
 
+			// Bind rendering data.
 			GLuint vao = 0;
 			glGenVertexArrays(1, &vao);
 			glBindVertexArray(vao);
@@ -611,6 +799,7 @@ public:
 			glVertexAttribPointer(_material.attribUv, 2, GL_FLOAT, GL_FALSE, sizeof(Vert), (GLvoid*)EFFECTS_OFFSETOF(Vert, uv));
 			glVertexAttribPointer(_material.attribColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vert), (GLvoid*)EFFECTS_OFFSETOF(Vert, color));
 
+			// Draw elements.
 			const Vert vertexes[] = {
 				Vert(Math::Vec2<GLfloat>(0, 0),                            Math::Vec2<GLfloat>(0, 0), 0xffffffff),
 				Vert(Math::Vec2<GLfloat>((GLfloat)width, 0),               Math::Vec2<GLfloat>(1, 0), 0xffffffff),
@@ -637,8 +826,10 @@ public:
 #endif /* GL_VERSION_3_2 */
 			glDrawElements(GL_TRIANGLES, (GLsizei)6, GL_UNSIGNED_SHORT, 0);
 
+			// Unbind rendering data.
 			glDeleteVertexArrays(1, &vao);
 		}
+		// Restore render states.
 		glUseProgram(lastProgram);
 		glBindTexture(GL_TEXTURE_2D, lastTexture);
 #if defined GL_VERSION_3_3
@@ -663,6 +854,7 @@ public:
 		glViewport(lastViewport[0], lastViewport[1], (GLsizei)lastViewport[2], (GLsizei)lastViewport[3]);
 		glScissor(lastScissorBox[0], lastScissorBox[1], (GLsizei)lastScissorBox[2], (GLsizei)lastScissorBox[3]);
 
+		// Finish.
 		SDL_GL_SwapWindow(window);
 
 		rnd->target(nullptr);
@@ -723,7 +915,7 @@ private:
 			"	Out_Color = Frag_Color * texture(Texture, Frag_UV.st);\n"
 			"}\n";
 		_material.close();
-		_material.open(ws, vertSrc, fragSrc, nullptr);
+		_material.open(ws, vertSrc, fragSrc, nullptr, nullptr);
 
 #undef _GLSL_VERSION
 	}
@@ -745,6 +937,15 @@ public:
 
 	virtual bool use(class Workspace*, const char*) override {
 		return false;
+	}
+
+	virtual void inject(const char*, float) override {
+	}
+	virtual void inject(const char*, const Math::Vec2f &) override {
+	}
+	virtual void inject(const char*, const Math::Vec3f &) override {
+	}
+	virtual void inject(const char*, const Math::Vec4f &) override {
 	}
 
 	virtual void prepare(class Window*, class Renderer* rnd, class Workspace*, double) override {

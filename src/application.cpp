@@ -124,6 +124,7 @@ private:
 
 	Window* _window = nullptr;
 	Renderer* _renderer = nullptr;
+	Effects* _effects = nullptr;
 	long long _stamp = 0;
 
 	Project* _project = nullptr;
@@ -131,7 +132,6 @@ private:
 	Primitives* _primitives = nullptr;
 	Executable* _executable = nullptr;
 	Workspace* _workspace = nullptr;
-	Effects* _effects = nullptr;
 
 	Context _context;
 
@@ -235,6 +235,9 @@ public:
 		if (wndScale != 1)
 			_window->scale(wndScale); // Scale the window (on high-DPI monitor).
 
+		// Create the effects.
+		_effects = Effects::create();
+
 		// Initialize the icon.
 		if (Path::existsFile(APPLICATION_ICON_FILE)) {
 			File::Ptr file(File::create());
@@ -268,7 +271,7 @@ public:
 		_resources->open();
 
 		// Initialize the primitives module.
-		_primitives->open(_window, _renderer, _project, _resources);
+		_primitives->open(_window, _renderer, _project, _resources, _effects);
 
 		// Initialize the executable module.
 		_executable->open(_workspace, _project, nullptr, _primitives);
@@ -282,8 +285,7 @@ public:
 		_workspace->load(_window, _renderer, _project, _primitives);
 		_workspace->open(_window, _renderer, _project, _executable, _primitives, options);
 
-		// Initialize effects.
-		_effects = Effects::create();
+		// Initialize the effects.
 		_effects->open(_window, _renderer, _workspace);
 
 		// Finish.

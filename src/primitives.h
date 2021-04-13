@@ -56,7 +56,7 @@ public:
 	/**
 	 * @brief Opens the primitives.
 	 */
-	virtual bool open(class Window* wnd, class Renderer* rnd, const class Project* project, Resources* res) = 0;
+	virtual bool open(class Window* wnd, class Renderer* rnd, const class Project* project, Resources* res, class Effects* effects) = 0;
 	/**
 	 * @brief Closes the primitives.
 	 */
@@ -68,6 +68,13 @@ public:
 	 * @note By the graphics thread.
 	 */
 	virtual class Window* window(void) = 0;
+
+	/**
+	 * @brief Gets the effects object.
+	 *
+	 * @note By the graphics thread.
+	 */
+	virtual class Effects* effects(void) = 0;
 
 	/**
 	 * @brief Gets the input object.

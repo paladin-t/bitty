@@ -38,6 +38,23 @@ public:
 	virtual bool use(class Workspace* ws, const char* material) = 0;
 
 	/**
+	 * @brief Injects uniform data to the effects.
+	 */
+	virtual void inject(const char* entry, float arg) = 0;
+	/**
+	 * @brief Injects uniform data to the effects.
+	 */
+	virtual void inject(const char* entry, const Math::Vec2f &arg) = 0;
+	/**
+	 * @brief Injects uniform data to the effects.
+	 */
+	virtual void inject(const char* entry, const Math::Vec3f &arg) = 0;
+	/**
+	 * @brief Injects uniform data to the effects.
+	 */
+	virtual void inject(const char* entry, const Math::Vec4f &arg) = 0;
+
+	/**
 	 * @brief Prepares the effects before rendering new frame.
 	 */
 	virtual void prepare(class Window* wnd, class Renderer* rnd, class Workspace* ws, double delta) = 0;
