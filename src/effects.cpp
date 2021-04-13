@@ -147,6 +147,7 @@ private:
 		GLint uniformTexture = 0;
 		TextureUniforms uniformExtraTextures;
 		GLint uniformResolution = 0;
+		GLint uniformCanvas = 0;
 		GLint uniformTime = 0;
 		GLint uniformProjMatrix = 0;
 		ExtraUniforms uniformExtraDatas;
@@ -220,6 +221,7 @@ private:
 				++i;
 			}
 			uniformResolution = glGetUniformLocation(program, "Resolution");
+			uniformCanvas = glGetUniformLocation(program, "Canvas");
 			uniformTime = glGetUniformLocation(program, "Time");
 			uniformProjMatrix = glGetUniformLocation(program, "ProjMatrix");
 			attribPosition = glGetAttribLocation(program, "Position");
@@ -258,8 +260,10 @@ private:
 			uniformTexture = 0;
 			uniformExtraTextures.clear();
 			uniformResolution = 0;
+			uniformCanvas = 0;
 			uniformTime = 0;
 			uniformProjMatrix = 0;
+			uniformExtraDatas.clear();
 			attribPosition = 0;
 			attribUv = 0;
 			attribColor = 0;
@@ -290,6 +294,7 @@ private:
 				glDeleteTextures(1, &texture);
 				texture = 0;
 			}
+			extraDatas.clear();
 
 			textureMinFilter = GL_NEAREST;
 			textureMagFilter = GL_NEAREST;
@@ -739,6 +744,9 @@ public:
 			const GLfloat resolution[4] = {
 				(GLfloat)width, (GLfloat)height, 1.0f / width, 1.0f / height
 			};
+			const GLfloat canvas[4] = {
+				(GLfloat)ws->canvasValidation().x, (GLfloat)ws->canvasValidation().y, 1.0f / ws->canvasValidation().x, 1.0f / ws->canvasValidation().y
+			};
 			const GLfloat time[3] = {
 				(GLfloat)_ticks.x, (GLfloat)_ticks.y, (GLfloat)_ticks.z
 			};
@@ -753,6 +761,7 @@ public:
 			for (int i = 0; i < (int)_material.uniformExtraTextures.size(); ++i)
 				glUniform1i(_material.uniformExtraTextures[i], i + 1);
 			glUniform4fv(_material.uniformResolution, 1, (GLfloat*)&resolution);
+			glUniform4fv(_material.uniformCanvas, 1, (GLfloat*)&canvas);
 			glUniform3fv(_material.uniformTime, 1, (GLfloat*)&time);
 			glUniformMatrix4fv(_material.uniformProjMatrix, 1, GL_FALSE, &orthoProjection[0][0]);
 			for (Material::ExtraDatas::iterator it = _material.extraDatas.begin(); it != _material.extraDatas.end(); ++it) {
