@@ -324,7 +324,7 @@ unsigned WorkspaceSketchbook::update(class Window* wnd, class Renderer* rnd, con
 
 	// Body.
 	{
-		assets(wnd, rnd, project, exec);
+		assets(wnd, rnd, project, exec, primitives);
 
 		const float assetW = *assetsVisible() ? assetsWidth() : 0.0f;
 		bodyArea(Rect(assetW, menuHeight() + bannerHeight(), (float)rnd->width(), (float)rnd->height()));
@@ -953,6 +953,11 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 			}
 #endif /* BITTY_TRIAL_ENABLED */
 			ImGui::Separator();
+			if (ImGui::MenuItem(_theme->menuProject_Reload(), nullptr, nullptr, prjPersisted)) {
+				Operations::projectStop(rnd, this, project, exec, primitives);
+
+				Operations::projectReload(rnd, this, project, exec);
+			}
 			if (ImGui::MenuItem(_theme->menuProject_Browse(), nullptr, nullptr, prjPersisted)) {
 				Operations::projectBrowse(rnd, this, project);
 			}

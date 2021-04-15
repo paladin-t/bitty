@@ -204,6 +204,7 @@ bool Theme::open(class Renderer* rnd) {
 	menuProject_AddFile("Add File...");
 	menuProject_Import("Import...");
 	menuProject_Export("Export...");
+	menuProject_Reload("Reload");
 	menuProject_Browse("Browse...");
 	menuProject_Explore("Explore...");
 

@@ -445,7 +445,7 @@ protected:
 	void prepare(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 	void dialog(class Window* wnd, class Renderer* rnd, const class Project* project);
 	void banner(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
-	void assets(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec);
+	void assets(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 	void editing(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, bool* indicated);
 	bool canvas(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, bool* indicated);
 	void debug(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, unsigned fps);
@@ -515,7 +515,7 @@ protected:
 	) const;
 	int withEditingAsset(const class Project* project, EditorHandler handler) const;
 	void fillAssetEditorSettings(Editable* editor) const;
-	void showAssetContextMenu(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec);
+	void showAssetContextMenu(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 	void filterAssets(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec);
 	void resizeAsset(class Window* wnd, class Renderer* rnd, const class Project* project, Asset::List::Index index);
 	void resizeAssetTile(class Window* wnd, class Renderer* rnd, const class Project* project, Asset::List::Index index);

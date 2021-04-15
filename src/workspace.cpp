@@ -1155,7 +1155,7 @@ void Workspace::banner(class Window* /* wnd */, class Renderer* rnd, const class
 	}
 }
 
-void Workspace::assets(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec) {
+void Workspace::assets(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
 	assetsFocused(false);
 
 	if (!*assetsVisible())
@@ -1317,7 +1317,7 @@ void Workspace::assets(class Window* wnd, class Renderer* rnd, const class Proje
 		if (assetsContextIndex >= 0 || (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)))
 			ImGui::OpenPopup("@Asts/Ctx");
 
-		showAssetContextMenu(wnd, rnd, project, exec);
+		showAssetContextMenu(wnd, rnd, project, exec, primitives);
 
 		hierarchy.finish();
 
@@ -2833,7 +2833,7 @@ void Workspace::fillAssetEditorSettings(Editable* editor) const {
 	editor->post(Editable::SET_SHOW_SPACES, settings()->editorShowWhiteSpaces);
 }
 
-void Workspace::showAssetContextMenu(class Window*, class Renderer* rnd, const class Project* project, Executable* exec) {
+void Workspace::showAssetContextMenu(class Window*, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
 	ImGuiIO &io = ImGui::GetIO();
 	ImGuiStyle &style = ImGui::GetStyle();
 
@@ -2841,6 +2841,9 @@ void Workspace::showAssetContextMenu(class Window*, class Renderer* rnd, const c
 	VariableGuard<decltype(style.ItemSpacing)> guardItemSpacing(&style.ItemSpacing, style.ItemSpacing, ImVec2(8, 4));
 
 	if (ImGui::BeginPopup("@Asts/Ctx")) {
+		bool prjPersisted = false;
+		projectStates(project, nullptr, &prjPersisted, nullptr, nullptr);
+
 		if (ImGui::MenuItem(theme()->menuProject_NewAsset())) {
 			Operations::projectAddAsset(rnd, this, project, assetsSelectedIndex());
 		}
@@ -2871,6 +2874,14 @@ void Workspace::showAssetContextMenu(class Window*, class Renderer* rnd, const c
 			Operations::projectExport(rnd, this, project);
 		}
 #endif /* BITTY_TRIAL_ENABLED */
+		if (prjPersisted) {
+			ImGui::Separator();
+			if (ImGui::MenuItem(theme()->menuProject_Reload())) {
+				Operations::projectStop(rnd, this, project, exec, primitives);
+
+				Operations::projectReload(rnd, this, project, exec);
+			}
+		}
 
 		ImGui::EndPopup();
 	}

@@ -137,6 +137,7 @@ public:
 	BITTY_PROPERTY_READONLY(std::string, menuProject_AddFile)
 	BITTY_PROPERTY_READONLY(std::string, menuProject_Import)
 	BITTY_PROPERTY_READONLY(std::string, menuProject_Export)
+	BITTY_PROPERTY_READONLY(std::string, menuProject_Reload)
 	BITTY_PROPERTY_READONLY(std::string, menuProject_Browse)
 	BITTY_PROPERTY_READONLY(std::string, menuProject_Explore)
 

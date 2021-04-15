@@ -3001,6 +3001,76 @@ promise::Defer Operations::projectExport(class Renderer* rnd, Workspace* ws, con
 	);
 }
 
+promise::Defer Operations::projectReload(class Renderer* rnd, Workspace* ws, const class Project* project, Executable* exec) {
+	std::string path;
+
+	LockGuard<RecursiveMutex>::UniquePtr acquired;
+	Project* prj = project->acquire(acquired);
+	if (!prj) {
+		return promise::newPromise(
+			[&] (promise::Defer df) -> void {
+				df.reject();
+			}
+		);
+	}
+
+	path = prj->path();
+
+	auto next = [rnd, ws, project, exec, path] (promise::Defer df) -> void {
+		if (Path::existsDirectory(path.c_str())) {
+			fileOpenDirectory(rnd, ws, project, exec, path.c_str())
+				.then(
+					[ws, df, path] (bool arg) -> void {
+						std::string msg = "Reloaded project directory: \"";
+						msg += path;
+						msg += "\".";
+						ws->print(msg.c_str());
+
+						df.resolve(arg);
+					}
+				)
+				.fail(
+					[df] (void) -> void {
+						df.reject();
+					}
+				);
+		} else {
+			fileOpenFile(rnd, ws, project, exec, path.c_str())
+				.then(
+					[ws, df, path] (bool arg) -> void {
+						std::string msg = "Reloaded project file: \"";
+						msg += path;
+						msg += "\".";
+						ws->print(msg.c_str());
+
+						df.resolve(arg);
+					}
+				)
+				.fail(
+					[df] (void) -> void {
+						df.reject();
+					}
+				);
+		}
+	};
+
+	return promise::newPromise(
+		[&] (promise::Defer df) -> void {
+			fileClose(rnd, ws, project, exec)
+				.then(
+					[next, df] (void) -> promise::Defer {
+						return promise::newPromise(std::bind(next, df));
+					}
+				)
+				.fail(
+					[df] (void) -> void {
+						df.reject();
+					}
+				);
+		}
+	);
+}
+
 promise::Defer Operations::projectBrowse(class Renderer*, Workspace*, const class Project* project) {
 	return promise::newPromise(
 		[&] (promise::Defer df) -> void {

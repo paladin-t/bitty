@@ -63,6 +63,7 @@ public:
 	static promise::Defer projectAddFile(class Renderer* rnd, Workspace* ws, const class Project* project, Asset::List::Index index);
 	static promise::Defer projectImport(class Renderer* rnd, Workspace* ws, const class Project* project, const char* path = nullptr, bool excludeInfoAndMain = false);
 	static promise::Defer projectExport(class Renderer* rnd, Workspace* ws, const class Project* project);
+	static promise::Defer projectReload(class Renderer* rnd, Workspace* ws, const class Project* project, Executable* exec);
 	static promise::Defer projectBrowse(class Renderer* rnd, Workspace* ws, const class Project* project);
 
 	static unsigned projectGetCustomAssetType(class Renderer* rnd, Workspace* ws, const class Project* project, const std::string &ext, unsigned type);
