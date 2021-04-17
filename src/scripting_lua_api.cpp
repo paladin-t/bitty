@@ -9453,7 +9453,8 @@ static int Application_setEffectUniform(lua_State* L) {
 			impl->primitives()->function(
 				[=] (const Variant &) -> void {
 					Effects* effects = impl->primitives()->effects();
-					effects->inject(name_.c_str(), data);
+					if (effects)
+						effects->inject(name_.c_str(), data);
 				},
 				nullptr,
 				true
@@ -9463,7 +9464,8 @@ static int Application_setEffectUniform(lua_State* L) {
 			impl->primitives()->function(
 				[=] (const Variant &) -> void {
 					Effects* effects = impl->primitives()->effects();
-					effects->inject(name_.c_str(), data);
+					if (effects)
+						effects->inject(name_.c_str(), data);
 				},
 				nullptr,
 				true
@@ -9473,7 +9475,8 @@ static int Application_setEffectUniform(lua_State* L) {
 			impl->primitives()->function(
 				[=] (const Variant &) -> void {
 					Effects* effects = impl->primitives()->effects();
-					effects->inject(name_.c_str(), data);
+					if (effects)
+						effects->inject(name_.c_str(), data);
 				},
 				nullptr,
 				true
@@ -9483,7 +9486,8 @@ static int Application_setEffectUniform(lua_State* L) {
 			impl->primitives()->function(
 				[=] (const Variant &) -> void {
 					Effects* effects = impl->primitives()->effects();
-					effects->inject(name_.c_str(), data);
+					if (effects)
+						effects->inject(name_.c_str(), data);
 				},
 				nullptr,
 				true

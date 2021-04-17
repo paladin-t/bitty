@@ -545,16 +545,20 @@ public:
 		if (Jpath::get(doc, param, "texture_wrap_s")) {
 			if (param == "repeat")
 				mat.textureWrapS = GL_REPEAT;
+#if defined GL_CLAMP
 			else if (param == "clamp")
 				mat.textureWrapS = GL_CLAMP;
+#endif /* GL_CLAMP */
 			else if (param == "clamp_to_edge")
 				mat.textureWrapS = GL_CLAMP_TO_EDGE;
 		}
 		if (Jpath::get(doc, param, "texture_wrap_t")) {
 			if (param == "repeat")
 				mat.textureWrapT = GL_REPEAT;
+#if defined GL_CLAMP
 			else if (param == "clamp")
 				mat.textureWrapT = GL_CLAMP;
+#endif /* GL_CLAMP */
 			else if (param == "clamp_to_edge")
 				mat.textureWrapT = GL_CLAMP_TO_EDGE;
 		}
