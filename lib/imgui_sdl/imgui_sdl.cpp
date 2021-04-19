@@ -361,6 +361,7 @@ namespace
 		int edgeStart2 = c2 + deltaX23 * (renderInfo.MinY << 4) - deltaY23 * (renderInfo.MinX << 4);
 		int edgeStart3 = c3 + deltaX31 * (renderInfo.MinY << 4) - deltaY31 * (renderInfo.MinX << 4);
 
+		SDL_Texture* initialRenderTarget = SDL_GetRenderTarget(CurrentDevice->Renderer);
 		SDL_Texture* cache = CurrentDevice->MakeTexture(width, height);
 		CurrentDevice->DisableClip();
 		CurrentDevice->UseAsRenderTarget(cache);
@@ -388,7 +389,7 @@ namespace
 			edgeStart3 += fixedDeltaX31;
 		}
 
-		CurrentDevice->UseAsRenderTarget(nullptr);
+		SDL_SetRenderTarget(CurrentDevice->Renderer, initialRenderTarget);
 		CurrentDevice->EnableClip();
 
 		cacheItem->Texture = cache;
