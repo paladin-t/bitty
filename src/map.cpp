@@ -526,7 +526,7 @@ public:
 		}
 
 		Tiles tiles_(texture, Math::Vec2i(tileCountX, tileCountY));
-		if (tileSizeX > 0 && tileSizeY > 0)
+		if (tileSizeX > 0 && tileSizeY > 0 && texture)
 			tiles_.fit(Math::Vec2i(tileSizeX, tileSizeY));
 		tiles(&tiles_);
 		if (!load(&cels.front(), mapWidth, mapHeight))

@@ -274,8 +274,8 @@ public:
 
 				break;
 			case Texture::TYPE(): {
-					Texture::Ptr pal = Object::as<Texture::Ptr>(req.ref);
-					ref = pal->pointer;
+					Texture::Ptr tex = Object::as<Texture::Ptr>(req.ref);
+					ref = tex->pointer;
 				}
 
 				break;

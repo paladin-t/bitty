@@ -1494,7 +1494,8 @@ Object::Ptr Asset::fromBlank(Usages usage, const class Project* project, unsigne
 				texPtr,
 				Math::Vec2i(texPtr->width() / tileWidth, texPtr->height() / tileHeight)
 			);
-			tiles.fit(Math::Vec2i(tileWidth, tileHeight));
+			if (texPtr)
+				tiles.fit(Math::Vec2i(tileWidth, tileHeight));
 			static_assert(sizeof(int) == sizeof(Int32), "Wrong type size.");
 			Bytes::Ptr cels(Bytes::create());
 			for (Int i = 0; i < width * height; ++i)
