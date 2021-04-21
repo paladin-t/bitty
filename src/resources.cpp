@@ -33,6 +33,24 @@ static_assert(sizeof(Resources::Id) == sizeof(Font::Codepoint), "Wrong size.");
 */
 
 class ResourceKey {
+public:
+	struct Hash {
+		/**
+		 * @brief Gets the hash code of this key.
+		 */
+		size_t operator () (const ResourceKey &key) const {
+			const size_t result = Math::hash(
+				0,
+				key.id(),
+				(key._size.x << 16) | key._size.y,
+				key._color.toRGBA(),
+				key.detail()
+			);
+
+			return result;
+		}
+	};
+
 private:
 	Resources::Id _id = 0;
 	Math::Vec2i _size;
@@ -99,21 +117,6 @@ public:
 			color() == other.color() &&
 			detail() == other.detail();
 	}
-
-	/**
-	 * @brief Gets the hash code of this key.
-	 */
-	size_t operator () (const ResourceKey &key) const {
-		const size_t result = Math::hash(
-			0,
-			key.id(),
-			(_size.x << 16) | _size.y,
-			_color.toRGBA(),
-			key.detail()
-		);
-
-		return result;
-	}
 };
 
 /* ===========================================================================} */
@@ -125,7 +128,7 @@ public:
 
 class ResourcesImpl : public Resources {
 private:
-	typedef std::unordered_map<ResourceKey, Object::Ptr, ResourceKey> Dictionary;
+	typedef std::unordered_map<ResourceKey, Object::Ptr, ResourceKey::Hash> Dictionary;
 
 private:
 	bool _opened = false;

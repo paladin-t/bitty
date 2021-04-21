@@ -9397,13 +9397,13 @@ static int Application_resize(lua_State* L) {
 	return 0;
 }
 
+#if BITTY_EFFECTS_ENABLED
 static int Application_setEffect(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
 	const char* material = nullptr;
 	read<>(L, material);
 
-#if BITTY_EFFECTS_ENABLED
 	if (material) {
 		const std::string material_ = material;
 		impl->primitives()->function(
@@ -9422,11 +9422,6 @@ static int Application_setEffect(lua_State* L) {
 			true
 		);
 	}
-#else /* BITTY_EFFECTS_ENABLED */
-	(void)impl;
-
-	error(L, "Effects is not available.");
-#endif /* BITTY_EFFECTS_ENABLED */
 
 	return 0;
 }
@@ -9434,21 +9429,46 @@ static int Application_setEffect(lua_State* L) {
 static int Application_setEffectUniform(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
-	float number = 0;
-	Math::Vec2f* vec2 = nullptr;
-	Math::Vec3f* vec3 = nullptr;
+	Resources::Texture::Ptr* tex = nullptr;
+	Image::Ptr* img = nullptr;
 	Math::Vec4f* vec4 = nullptr;
+	Math::Vec3f* vec3 = nullptr;
+	Math::Vec2f* vec2 = nullptr;
+	float number = 0;
 	const char* name = nullptr;
 	read<>(L, name);
-	read<2>(L, number);
-	read<2>(L, vec2);
-	read<2>(L, vec3);
+	read<2>(L, tex);
+	read<2>(L, img);
 	read<2>(L, vec4);
+	read<2>(L, vec3);
+	read<2>(L, vec2);
+	read<2>(L, number);
 
-#if BITTY_EFFECTS_ENABLED
 	if (name) {
 		const std::string name_ = name;
-		if (vec4) {
+		if (tex) {
+			const Resources::Texture::Ptr data = *tex;
+			impl->primitives()->function(
+				[=] (const Variant &) -> void {
+					Effects* effects = impl->primitives()->effects();
+					if (effects)
+						effects->inject(name_.c_str(), data);
+				},
+				nullptr,
+				true
+			);
+		} else if (img) {
+			const Image::Ptr data = *img;
+			impl->primitives()->function(
+				[=] (const Variant &) -> void {
+					Effects* effects = impl->primitives()->effects();
+					if (effects)
+						effects->inject(name_.c_str(), data);
+				},
+				nullptr,
+				true
+			);
+		} else if (vec4) {
 			const Math::Vec4f data = *vec4;
 			impl->primitives()->function(
 				[=] (const Variant &) -> void {
@@ -9494,14 +9514,10 @@ static int Application_setEffectUniform(lua_State* L) {
 			);
 		}
 	}
-#else /* BITTY_EFFECTS_ENABLED */
-	(void)impl;
-
-	error(L, "Effects is not available.");
-#endif /* BITTY_EFFECTS_ENABLED */
 
 	return 0;
 }
+#endif /* BITTY_EFFECTS_ENABLED */
 
 static void open_Application(lua_State* L) {
 	req(
@@ -9509,15 +9525,22 @@ static void open_Application(lua_State* L) {
 		array(
 			luaL_Reg{
 				"Application",
-				LUA_LIB(
-					array(
-						luaL_Reg{ "setCursor", Application_setCursor }, // Frame synchronized.
-						luaL_Reg{ "resize", Application_resize }, // Frame synchronized.
-						luaL_Reg{ "setEffect", Application_setEffect }, // Undocumented. Frame synchronized.
-						luaL_Reg{ "setEffectUniform", Application_setEffectUniform }, // Undocumented. Frame synchronized.
-						luaL_Reg{ nullptr, nullptr }
-					)
-				)
+				[] (lua_State* L) -> int {
+					lib(
+						L,
+						array(
+							luaL_Reg{ "setCursor", Application_setCursor }, // Frame synchronized.
+							luaL_Reg{ "resize", Application_resize }, // Frame synchronized.
+#if BITTY_EFFECTS_ENABLED
+							luaL_Reg{ "setEffect", Application_setEffect }, // Undocumented. Frame synchronized.
+							luaL_Reg{ "setEffectUniform", Application_setEffectUniform }, // Undocumented. Frame synchronized.
+#endif /* BITTY_EFFECTS_ENABLED */
+							luaL_Reg{ nullptr, nullptr }
+						)
+					);
+
+					return 1;
+				}
 			},
 			luaL_Reg{ nullptr, nullptr }
 		)

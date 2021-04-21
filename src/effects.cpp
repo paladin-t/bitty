@@ -13,7 +13,6 @@
 #include "encoding.h"
 #include "file_handle.h"
 #include "filesystem.h"
-#include "image.h"
 #include "renderer.h"
 #include "window.h"
 #include "workspace.h"
@@ -69,13 +68,15 @@ private:
 			NUMBER,
 			VEC2,
 			VEC3,
-			VEC4
+			VEC4,
+			SAMPLER2D
 		};
 		union Data {
 			GLfloat number;
 			Math::Vec2<GLfloat> vec2;
 			Math::Vec3<GLfloat> vec3;
 			Math::Vec4<GLfloat> vec4;
+			GLuint sampler2d;
 
 			Data() {
 				vec4 = Math::Vec4<GLfloat>(0, 0, 0, 0);
@@ -96,8 +97,35 @@ private:
 				type = VEC3;
 			else if (y == "vec4")
 				type = VEC4;
+			else if (y == "sampler2d")
+				type = SAMPLER2D;
 			else
 				type = VEC4;
+		}
+		Uniform(const Uniform &other) {
+			type = other.type;
+			switch (type) {
+			case NUMBER:
+				data.number = other.data.number;
+
+				break;
+			case VEC2:
+				data.vec2 = other.data.vec2;
+
+				break;
+			case VEC3:
+				data.vec3 = other.data.vec3;
+
+				break;
+			case VEC4:
+				data.vec4 = other.data.vec4;
+
+				break;
+			case SAMPLER2D:
+				data.sampler2d = other.data.sampler2d;
+
+				break;
+			}
 		}
 
 		Uniform &operator = (const Uniform &other) {
@@ -117,6 +145,10 @@ private:
 				break;
 			case VEC4:
 				data.vec4 = other.data.vec4;
+
+				break;
+			case SAMPLER2D:
+				data.sampler2d = other.data.sampler2d;
 
 				break;
 			}
@@ -239,6 +271,17 @@ private:
 						continue;
 					uniformExtraDatas[name] = glGetUniformLocation(program, name.c_str());
 					extraDatas[name] = Uniform(type);
+					if (type == "sampler2d") {
+						Uniform &uniform = extraDatas[name];
+						GLuint tex = 0;
+						glGenTextures(1, &tex);
+						glBindTexture(GL_TEXTURE_2D, tex);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, textureMinFilter);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, textureMagFilter);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureWrapS);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureWrapT);
+						uniform.data.sampler2d = tex;
+					}
 				}
 			}
 
@@ -294,6 +337,13 @@ private:
 				glDeleteTextures(1, &texture);
 				texture = 0;
 			}
+			for (auto kv : extraDatas) {
+				Uniform &uniform = kv.second;
+				if (uniform.type == Uniform::SAMPLER2D) {
+					if (uniform.data.sampler2d)
+						glDeleteTextures(1, &uniform.data.sampler2d);
+				}
+			}
 			extraDatas.clear();
 
 			textureMinFilter = GL_NEAREST;
@@ -341,6 +391,8 @@ private:
 	};
 
 private:
+	Renderer* _renderer = nullptr; // Foreign.
+
 	GLint _glVersion = 0;
 	SDL_GLContext _glContext = nullptr;
 
@@ -355,8 +407,10 @@ public:
 	virtual ~EffectsImpl() {
 	}
 
-	virtual bool open(class Window* wnd, class Renderer*, class Workspace* ws) override {
+	virtual bool open(class Window* wnd, class Renderer* rnd, class Workspace* ws) override {
 		SDL_Window* window = (SDL_Window*)wnd->pointer();
+
+		_renderer = rnd;
 
 		_glContext = SDL_GL_CreateContext(window);
 		if (!_glContext) {
@@ -433,6 +487,8 @@ public:
 			SDL_GL_DeleteContext(_glContext);
 			_glContext = nullptr;
 		}
+
+		_renderer = nullptr;
 
 		return true;
 	}
@@ -577,45 +633,116 @@ public:
 		return true;
 	}
 
-	virtual void inject(const char* entry, float arg) override {
+	virtual bool inject(const char* entry, float arg) override {
 		if (!_material.valid)
-			return;
+			return false;
 		Material::ExtraDatas::iterator it = _material.extraDatas.find(entry);
 		if (it == _material.extraDatas.end())
-			return;
+			return false;
 
 		Uniform &uniform = it->second;
 		uniform.data.number = (GLfloat)arg;
+
+		return true;
 	}
-	virtual void inject(const char* entry, const Math::Vec2f &arg) override {
+	virtual bool inject(const char* entry, const Math::Vec2f &arg) override {
 		if (!_material.valid)
-			return;
+			return false;
 		Material::ExtraDatas::iterator it = _material.extraDatas.find(entry);
 		if (it == _material.extraDatas.end())
-			return;
+			return false;
 
 		Uniform &uniform = it->second;
 		uniform.data.vec2 = Math::Vec2<GLfloat>((GLfloat)arg.x, (GLfloat)arg.y);
+
+		return true;
 	}
-	virtual void inject(const char* entry, const Math::Vec3f &arg) override {
+	virtual bool inject(const char* entry, const Math::Vec3f &arg) override {
 		if (!_material.valid)
-			return;
+			return false;
 		Material::ExtraDatas::iterator it = _material.extraDatas.find(entry);
 		if (it == _material.extraDatas.end())
-			return;
+			return false;
 
 		Uniform &uniform = it->second;
 		uniform.data.vec3 = Math::Vec3<GLfloat>((GLfloat)arg.x, (GLfloat)arg.y, (GLfloat)arg.z);
+
+		return true;
 	}
-	virtual void inject(const char* entry, const Math::Vec4f &arg) override {
+	virtual bool inject(const char* entry, const Math::Vec4f &arg) override {
 		if (!_material.valid)
-			return;
+			return false;
 		Material::ExtraDatas::iterator it = _material.extraDatas.find(entry);
 		if (it == _material.extraDatas.end())
-			return;
+			return false;
 
 		Uniform &uniform = it->second;
 		uniform.data.vec4 = Math::Vec4<GLfloat>((GLfloat)arg.x, (GLfloat)arg.y, (GLfloat)arg.z, (GLfloat)arg.w);
+
+		return true;
+	}
+	virtual bool inject(const char* entry, const Resources::Texture::Ptr &arg) override {
+		if (!arg)
+			return false;
+
+		Image::Ptr src = arg->source.lock();
+		if (src)
+			return inject(entry, src);
+
+		if (!_material.valid)
+			return false;
+		Material::ExtraDatas::iterator it = _material.extraDatas.find(entry);
+		if (it == _material.extraDatas.end())
+			return false;
+
+		Texture::Ptr ptr = arg->pointer;
+		if (!ptr)
+			return false;
+		Uniform &uniform = it->second;
+		Bytes::Ptr pixels(Bytes::create());
+		pixels->resize(ptr->width() * ptr->height() * sizeof(Color));
+		if (ptr->toBytes(_renderer, pixels->pointer()) == 0)
+			return false;
+		glBindTexture(GL_TEXTURE_2D, uniform.data.sampler2d);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _material.textureMinFilter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _material.textureMagFilter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, _material.textureWrapS);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _material.textureWrapT);
+		glTexImage2D(
+			GL_TEXTURE_2D, 0, GL_RGBA,
+			ptr->width(), ptr->height(),
+			0,
+			GL_RGBA,
+			GL_UNSIGNED_BYTE, (const void*)pixels->pointer()
+		);
+
+		return true;
+	}
+	virtual bool inject(const char* entry, const Image::Ptr &arg) override {
+		if (!arg)
+			return false;
+
+		if (!_material.valid)
+			return false;
+		Material::ExtraDatas::iterator it = _material.extraDatas.find(entry);
+		if (it == _material.extraDatas.end())
+			return false;
+
+		Uniform &uniform = it->second;
+		glBindTexture(GL_TEXTURE_2D, uniform.data.sampler2d);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _material.textureMinFilter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _material.textureMagFilter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, _material.textureWrapS);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _material.textureWrapT);
+		glTexImage2D(
+			GL_TEXTURE_2D, 0, GL_RGBA,
+			arg->width(), arg->height(),
+			0,
+			GL_RGBA,
+			GL_UNSIGNED_BYTE, (const void*)arg->pixels()
+		);
+
+		return true;
 	}
 
 	virtual void prepare(class Window* wnd, class Renderer* rnd, class Workspace*, double delta) override {
@@ -745,29 +872,31 @@ public:
 				glClearColor(_material.clearColor.x, _material.clearColor.y, _material.clearColor.z, _material.clearColor.w);
 				glClear(GL_COLOR_BUFFER_BIT);
 			}
+			glUseProgram(_material.program);
 			const GLfloat resolution[4] = {
 				(GLfloat)width, (GLfloat)height, 1.0f / width, 1.0f / height
 			};
+			glUniform4fv(_material.uniformResolution, 1, (GLfloat*)&resolution);
 			const GLfloat canvas[4] = {
 				(GLfloat)ws->canvasValidation().x, (GLfloat)ws->canvasValidation().y, 1.0f / ws->canvasValidation().x, 1.0f / ws->canvasValidation().y
 			};
+			glUniform4fv(_material.uniformCanvas, 1, (GLfloat*)&canvas);
 			const GLfloat time[3] = {
 				(GLfloat)_ticks.x, (GLfloat)_ticks.y, (GLfloat)_ticks.z
 			};
+			glUniform3fv(_material.uniformTime, 1, (GLfloat*)&time);
 			const GLfloat orthoProjection[4][4] = {
 				{ 2.0f / width, 0.0f,            0.0f, 0.0f },
 				{ 0.0f,         2.0f / -height,  0.0f, 0.0f },
 				{ 0.0f,         0.0f,           -1.0f, 0.0f },
 				{ -1.0f,        1.0f,            0.0f, 1.0f }
 			};
-			glUseProgram(_material.program);
-			glUniform1i(_material.uniformTexture, 0);
-			for (int i = 0; i < (int)_material.uniformExtraTextures.size(); ++i)
-				glUniform1i(_material.uniformExtraTextures[i], i + 1);
-			glUniform4fv(_material.uniformResolution, 1, (GLfloat*)&resolution);
-			glUniform4fv(_material.uniformCanvas, 1, (GLfloat*)&canvas);
-			glUniform3fv(_material.uniformTime, 1, (GLfloat*)&time);
 			glUniformMatrix4fv(_material.uniformProjMatrix, 1, GL_FALSE, &orthoProjection[0][0]);
+			int textureIndex = 0;
+			glUniform1i(_material.uniformTexture, textureIndex); ++textureIndex;
+			for (int i = 0; i < (int)_material.uniformExtraTextures.size(); ++i) {
+				glUniform1i(_material.uniformExtraTextures[i], textureIndex); ++textureIndex;
+			}
 			for (Material::ExtraDatas::iterator it = _material.extraDatas.begin(); it != _material.extraDatas.end(); ++it) {
 				const std::string &name = it->first;
 				const Uniform &uniform = it->second;
@@ -791,6 +920,10 @@ public:
 					break;
 				case Uniform::VEC4:
 					glUniform4fv(handle, 1, (GLfloat*)&uniform.data.vec4);
+
+					break;
+				case Uniform::SAMPLER2D:
+					glUniform1i(handle, textureIndex); ++textureIndex;
 
 					break;
 				}
@@ -827,11 +960,29 @@ public:
 			glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)BITTY_COUNTOF(vertexes) * sizeof(Vert), (const GLvoid*)vertexes, GL_STREAM_DRAW);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _material.elements);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)BITTY_COUNTOF(indices) * sizeof(GLushort), (const GLvoid*)indices, GL_STREAM_DRAW);
-			glActiveTexture(GL_TEXTURE0);
+			textureIndex = 0;
+			glActiveTexture(GL_TEXTURE0 + textureIndex); ++textureIndex;
 			glBindTexture(GL_TEXTURE_2D, _material.texture);
 			for (int i = 0; i < (int)_material.extraTextures.size(); ++i) {
-				glActiveTexture(GL_TEXTURE0 + 1);
+				glActiveTexture(GL_TEXTURE0 + textureIndex); ++textureIndex;
 				glBindTexture(GL_TEXTURE_2D, _material.extraTextures[i]);
+			}
+			for (Material::ExtraDatas::iterator it = _material.extraDatas.begin(); it != _material.extraDatas.end(); ++it) {
+				const std::string &name = it->first;
+				const Uniform &uniform = it->second;
+				Material::ExtraUniforms::iterator uit = _material.uniformExtraDatas.find(name);
+				if (uit == _material.uniformExtraDatas.end())
+					continue;
+
+				switch (uniform.type) {
+				case Uniform::SAMPLER2D:
+					glActiveTexture(GL_TEXTURE0 + textureIndex); ++textureIndex;
+					glBindTexture(GL_TEXTURE_2D, uniform.data.sampler2d);
+
+					break;
+				default:
+					break;
+				}
 			}
 #if defined GL_VERSION_3_2
 			if (_glVersion >= 320)
@@ -952,13 +1103,23 @@ public:
 		return false;
 	}
 
-	virtual void inject(const char*, float) override {
+	virtual bool inject(const char*, float) override {
+		return false;
 	}
-	virtual void inject(const char*, const Math::Vec2f &) override {
+	virtual bool inject(const char*, const Math::Vec2f &) override {
+		return false;
 	}
-	virtual void inject(const char*, const Math::Vec3f &) override {
+	virtual bool inject(const char*, const Math::Vec3f &) override {
+		return false;
 	}
-	virtual void inject(const char*, const Math::Vec4f &) override {
+	virtual bool inject(const char*, const Math::Vec4f &) override {
+		return false;
+	}
+	virtual bool inject(const char*, const Resources::Texture::Ptr &) override {
+		return false;
+	}
+	virtual bool inject(const char*, const Image::Ptr &) override {
+		return false;
 	}
 
 	virtual void prepare(class Window*, class Renderer* rnd, class Workspace*, double) override {

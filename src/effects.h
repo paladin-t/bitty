@@ -12,6 +12,7 @@
 #define __EFFECTS_H__
 
 #include "bitty.h"
+#include "resources.h"
 
 /*
 ** {===========================================================================
@@ -38,21 +39,29 @@ public:
 	virtual bool use(class Workspace* ws, const char* material) = 0;
 
 	/**
-	 * @brief Injects uniform data to the effects.
+	 * @brief Injects float uniform data.
 	 */
-	virtual void inject(const char* entry, float arg) = 0;
+	virtual bool inject(const char* entry, float arg) = 0;
 	/**
-	 * @brief Injects uniform data to the effects.
+	 * @brief Injects vec2 uniform data.
 	 */
-	virtual void inject(const char* entry, const Math::Vec2f &arg) = 0;
+	virtual bool inject(const char* entry, const Math::Vec2f &arg) = 0;
 	/**
-	 * @brief Injects uniform data to the effects.
+	 * @brief Injects vec3 uniform data.
 	 */
-	virtual void inject(const char* entry, const Math::Vec3f &arg) = 0;
+	virtual bool inject(const char* entry, const Math::Vec3f &arg) = 0;
 	/**
-	 * @brief Injects uniform data to the effects.
+	 * @brief Injects vec4 uniform data.
 	 */
-	virtual void inject(const char* entry, const Math::Vec4f &arg) = 0;
+	virtual bool inject(const char* entry, const Math::Vec4f &arg) = 0;
+	/**
+	 * @brief Injects sampler2D uniform data.
+	 */
+	virtual bool inject(const char* entry, const Resources::Texture::Ptr &arg) = 0;
+	/**
+	 * @brief Injects sampler2D uniform data.
+	 */
+	virtual bool inject(const char* entry, const Image::Ptr &arg) = 0;
 
 	/**
 	 * @brief Prepares the effects before rendering new frame.
