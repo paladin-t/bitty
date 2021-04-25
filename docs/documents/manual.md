@@ -243,7 +243,7 @@ This module generates 2D or 3D noise values.
 
 **Methods**
 
-* `noiser:setOption(key, val)`: sets the options value of the specific key
+* `noiser:setOption(key, val)`: sets option value of the specific key
 	* `key`: the option key to set
 	* `val`: the value to set
 
@@ -1092,7 +1092,7 @@ The callback of disconnected is an invokable in form of `function (addr) end`, w
 * `network:getOption(key)`: gets the option value of the specific key
 	* `key`: the option key to get
 	* returns option value
-* `network:setOption(key, val)`: sets the options value of the specific key
+* `network:setOption(key, val)`: sets option value of the specific key
 	* `key`: the option key to set
 	* `val`: the value to set
 
@@ -1735,6 +1735,16 @@ See [keycodes](https://paladin-t.github.io/bitty/keycodes.html) for more.
 ## Application
 
 **Static Functions**
+
+* `Application.setOption(key, ...)`: sets option value of the specific key
+	* `key`: the option key to set
+
+Available options:
+
+| Key | Value | Note |
+|---|---|---|
+| "minimum_size" | `width`, `height` | Sets the minimum size of the application window |
+| "maximum_size" | `width`, `height` | Sets the maximum size of the application window |
 
 * `Application.setCursor(img[, x, y])`: sets the mouse cursor
 	* `img`: the specific `Image` to set, `nil` to reset

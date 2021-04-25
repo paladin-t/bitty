@@ -132,6 +132,25 @@ public:
 		SDL_SetWindowSize(_window, std::min((int)val.x, bound.w), std::min((int)val.y, bound.h));
 	}
 
+	virtual Math::Vec2i minimumSize(void) const override {
+		int w = 0, h = 0;
+		SDL_GetWindowMinimumSize(_window, &w, &h);
+
+		return Math::Vec2i(w, h);
+	}
+	virtual void minimumSize(const Math::Vec2i &val) override {
+		SDL_SetWindowMinimumSize(_window, (int)val.x, (int)val.y);
+	}
+	virtual Math::Vec2i maximumSize(void) const override {
+		int w = 0, h = 0;
+		SDL_GetWindowMaximumSize(_window, &w, &h);
+
+		return Math::Vec2i(w, h);
+	}
+	virtual void maximumSize(const Math::Vec2i &val) override {
+		SDL_SetWindowMaximumSize(_window, (int)val.x, (int)val.y);
+	}
+
 	virtual bool resizable(void) const override {
 		return _resizable;
 	}

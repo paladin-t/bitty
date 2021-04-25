@@ -840,7 +840,7 @@ public:
 		// Render.
 		{
 			// Fill frame buffer.
-			_pixels->resize(width * height * sizeof(Color));
+			_pixels->resize(_texture->width() * _texture->height() * sizeof(Color));
 			_texture->toBytes(rnd, _pixels->pointer());
 			glBindTexture(GL_TEXTURE_2D, _material.texture);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _material.textureMinFilter);
@@ -849,7 +849,7 @@ public:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _material.textureWrapT);
 			glTexImage2D(
 				GL_TEXTURE_2D, 0, GL_RGBA,
-				width, height,
+				_texture->width(), _texture->height(),
 				0,
 				GL_RGBA,
 				GL_UNSIGNED_BYTE, (const void*)_pixels->pointer()

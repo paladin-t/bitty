@@ -98,22 +98,39 @@ public:
 	virtual void centralize(void) = 0;
 
 	/**
-	 * @brief Gets the current position index of the window.
+	 * @brief Gets the current position of the window.
 	 */
 	virtual Math::Vec2i position(void) const = 0;
 	/**
-	 * @brief Sets the current position index of the window.
+	 * @brief Sets the current position of the window.
 	 */
 	virtual void position(const Math::Vec2i &val) = 0;
 
 	/**
-	 * @brief Gets the current size index of the window.
+	 * @brief Gets the current size of the window.
 	 */
 	virtual Math::Vec2i size(void) const = 0;
 	/**
-	 * @brief Sets the current size index of the window.
+	 * @brief Sets the current size of the window.
 	 */
 	virtual void size(const Math::Vec2i &val) = 0;
+
+	/**
+	 * @brief Gets the minimum size of the window.
+	 */
+	virtual Math::Vec2i minimumSize(void) const = 0;
+	/**
+	 * @brief Sets the minimum size of the window.
+	 */
+	virtual void minimumSize(const Math::Vec2i &val) = 0;
+	/**
+	 * @brief Gets the maximum size of the window.
+	 */
+	virtual Math::Vec2i maximumSize(void) const = 0;
+	/**
+	 * @brief Sets the maximum size of the window.
+	 */
+	virtual void maximumSize(const Math::Vec2i &val) = 0;
 
 	/**
 	 * @brief Gets whether the window is resizable.

@@ -9327,6 +9327,59 @@ namespace Application {
 
 /**< Application. */
 
+static int Application_setOption(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	std::string key;
+	read<>(L, key);
+
+	if (key == "minimum_size") {
+		int w = 0, h = 0;
+		read<2>(L, w, h);
+		if (w < 0 || h < 0) {
+			error(L, "Invalid size.");
+
+			return 0;
+		}
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				Window* wnd = impl->primitives()->window();
+				const bool fullscreen = wnd->fullscreen();
+				wnd->minimumSize(Math::Vec2i(w, h));
+				if (!fullscreen)
+					wnd->centralize();
+			},
+			nullptr,
+			true
+		);
+	} else if (key == "maximum_size") {
+		int w = 0, h = 0;
+		read<2>(L, w, h);
+		if (w < 0 || h < 0) {
+			error(L, "Invalid size.");
+
+			return 0;
+		}
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				Window* wnd = impl->primitives()->window();
+				const bool fullscreen = wnd->fullscreen();
+				wnd->maximumSize(Math::Vec2i(w, h));
+				if (!fullscreen)
+					wnd->centralize();
+			},
+			nullptr,
+			true
+		);
+	} else {
+		error(L, "Invalid option.");
+	}
+
+	return 0;
+}
+
 static int Application_setCursor(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
@@ -9529,6 +9582,7 @@ static void open_Application(lua_State* L) {
 					lib(
 						L,
 						array(
+							luaL_Reg{ "setOption", Application_setOption }, // Frame synchronized.
 							luaL_Reg{ "setCursor", Application_setCursor }, // Frame synchronized.
 							luaL_Reg{ "resize", Application_resize }, // Frame synchronized.
 #if BITTY_EFFECTS_ENABLED
