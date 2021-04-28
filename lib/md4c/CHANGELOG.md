@@ -11,9 +11,22 @@ Fixes:
    the block) could eat 1 line of actual contents.
 
  * [#150](https://github.com/mity/md4c/issues/150):
-   Fix md2html utility to output proper DOCTYPE and HTML tags when `full-html`
+   Fix md2html utility to output proper DOCTYPE and HTML tags when `--full-html`
    command line options is used, accordingly to the expected output format
    (HTML or XHTML).
+
+ * [#152](https://github.com/mity/md4c/issues/152):
+   Suppress recognition of a permissive autolink if it would otherwise form a
+   complete body of an outer inline link.
+
+ * [#153](https://github.com/mity/md4c/issues/153),
+   [#154](https://github.com/mity/md4c/issues/154):
+   Set `MD_BLOCK_UL_DETAIL::mark` and `MD_BLOCK_OL_DETAIL::mark_delimiter`
+   correctly, even when the blocks are nested at the same line in a complicated
+   ways.
+
+ * [#155](https://github.com/mity/md4c/issues/155):
+   Avoid reading 1 character beyond the input size in some complex cases.
 
 
 ## Version 0.4.7

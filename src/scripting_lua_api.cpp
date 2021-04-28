@@ -9373,6 +9373,18 @@ static int Application_setOption(lua_State* L) {
 			nullptr,
 			true
 		);
+	} else if (key == "resizable") {
+		bool r = true;
+		read<2>(L, r);
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				Window* wnd = impl->primitives()->window();
+				wnd->resizable(r);
+			},
+			nullptr,
+			true
+		);
 	} else {
 		error(L, "Invalid option.");
 	}
