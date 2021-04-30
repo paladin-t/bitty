@@ -518,6 +518,7 @@ protected:
 	void showAssetContextMenu(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 	void filterAssets(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec);
 	void resizeAsset(class Window* wnd, class Renderer* rnd, const class Project* project, Asset::List::Index index);
+	void resizeAssetGrid(class Window* wnd, class Renderer* rnd, const class Project* project, Asset::List::Index index);
 	void resizeAssetTile(class Window* wnd, class Renderer* rnd, const class Project* project, Asset::List::Index index);
 	void rebindAssetRef(class Window* wnd, class Renderer* rnd, const class Project* project, Asset::List::Index index);
 	void resolveAssetRef(class Window* wnd, class Renderer* rnd, const class Project* project, const char* asset);

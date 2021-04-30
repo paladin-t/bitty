@@ -3002,6 +3002,28 @@ void Workspace::resizeAsset(class Window* /* wnd */, class Renderer* rnd, const 
 	}
 }
 
+void Workspace::resizeAssetGrid(class Window* /* wnd */, class Renderer* rnd, const class Project* project, Asset::List::Index index) {
+	LockGuard<RecursiveMutex>::UniquePtr acquired;
+	Project* prj = project->acquire(acquired);
+	if (!prj)
+		return;
+
+	Asset* asset = prj->get(index);
+	if (!asset)
+		return;
+
+	const std::string entry = asset->entry().name();
+
+	switch (asset->type()) {
+	case Image::TYPE():
+		Operations::editResizeImageGrid(rnd, this, project, entry.c_str());
+
+		break;
+	default: // Do nothing.
+		break;
+	}
+}
+
 void Workspace::resizeAssetTile(class Window* /* wnd */, class Renderer* rnd, const class Project* project, Asset::List::Index index) {
 	auto next = [rnd, this, project, index] (void) -> void {
 		LockGuard<RecursiveMutex>::UniquePtr acquired;

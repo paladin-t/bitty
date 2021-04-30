@@ -1469,6 +1469,106 @@ promise::Defer Operations::editResizeImage(class Renderer*, Workspace* ws, const
 	);
 }
 
+promise::Defer Operations::editResizeImageGrid(class Renderer*, Workspace* ws, const class Project* project, const char* asset_) {
+	return promise::newPromise(
+		[&] (promise::Defer df) -> void {
+			OPERATIONS_AUTO_CLOSE_POPUP(ws)
+
+			LockGuard<RecursiveMutex>::UniquePtr acquired;
+			Project* prj = project->acquire(acquired);
+			if (!prj) {
+				df.reject();
+
+				return;
+			}
+
+			Asset* asset = prj->get(asset_);
+			if (!asset) {
+				df.reject();
+
+				return;
+			}
+
+			if (asset->type() != Image::TYPE()) {
+				df.reject();
+
+				return;
+			}
+
+			Object::Ptr obj = asset->object(Asset::EDITING);
+			Image::Ptr ptr = Object::as<Image::Ptr>(obj);
+			if (!ptr) {
+				df.reject();
+
+				return;
+			}
+			const Math::Vec2i defaultSize(BITTY_GRID_DEFAULT_SIZE, BITTY_GRID_DEFAULT_SIZE);
+			const Math::Vec2i maxSize(ptr->width(), ptr->height());
+
+			const std::string assetStr = asset_;
+			ImGui::ResizePopupBox::ConfirmHandler confirm(
+				[ws, project, assetStr, df] (const Math::Vec2i* size) -> void {
+					OPERATIONS_AUTO_CLOSE_POPUP(ws)
+
+					if (!size || size->x <= 0 || size->y <= 0) {
+						df.reject();
+
+						return;
+					}
+
+					LockGuard<RecursiveMutex>::UniquePtr acquired;
+					Project* prj = project->acquire(acquired);
+					if (!prj) {
+						df.reject();
+
+						return;
+					}
+
+					Asset* asset = prj->get(assetStr.c_str());
+					if (!asset) {
+						df.reject();
+
+						return;
+					}
+
+					Editable* editor = asset->editor();
+					if (!editor) {
+						df.reject();
+
+						return;
+					}
+
+					editor->post(Editable::RESIZE_GRID, size->x, size->y);
+
+					df.resolve(true, size);
+				},
+				nullptr
+			);
+			ImGui::ResizePopupBox::CancelHandler cancel(
+				[ws, df] (void) -> void {
+					OPERATIONS_AUTO_CLOSE_POPUP(ws)
+
+					df.reject();
+				},
+				nullptr
+			);
+			ws->popupBox(
+				ImGui::PopupBox::Ptr(
+					new ImGui::ResizePopupBox(
+						BITTY_NAME,
+						ws->theme()->dialogItem_GridSize(),
+						defaultSize,
+						maxSize,
+						confirm,
+						cancel,
+						ws->theme()->generic_Ok().c_str(), ws->theme()->generic_Cancel().c_str()
+					)
+				)
+			);
+		}
+	);
+}
+
 promise::Defer Operations::editResizeMap(class Renderer*, Workspace* ws, const class Project* project, const char* asset_) {
 	return promise::newPromise(
 		[&] (promise::Defer df) -> void {

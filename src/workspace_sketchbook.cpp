@@ -887,6 +887,17 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 						if (idx != -1)
 							resizeAsset(wnd, rnd, project, idx);
 					}
+					if (ImGui::MenuItem(_theme->menuEdit_ResizeGrid())) {
+						Asset::List::Index idx = assetsEditingIndex();
+						if (idx != -1)
+							resizeAssetGrid(wnd, rnd, project, idx);
+					}
+				} else {
+					if (ImGui::MenuItem(_theme->menuEdit_ResizeGrid())) {
+						Asset::List::Index idx = assetsEditingIndex();
+						if (idx != -1)
+							resizeAssetGrid(wnd, rnd, project, idx);
+					}
 				}
 			}
 			if (referencing != 0) {

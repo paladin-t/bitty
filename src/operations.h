@@ -51,6 +51,7 @@ public:
 	static promise::Defer fileSaveDirectory(class Renderer* rnd, Workspace* ws, const class Project* project, bool saveAs);
 
 	static promise::Defer editResizeImage(class Renderer* rnd, Workspace* ws, const class Project* project, const char* asset);
+	static promise::Defer editResizeImageGrid(class Renderer* rnd, Workspace* ws, const class Project* project, const char* asset);
 	static promise::Defer editResizeMap(class Renderer* rnd, Workspace* ws, const class Project* project, const char* asset);
 	static promise::Defer editResizeTile(class Renderer* rnd, Workspace* ws, const class Project* project, const char* asset);
 	static promise::Defer editResolveRef(class Renderer* rnd, Workspace* ws, const class Project* project, const char* asset);

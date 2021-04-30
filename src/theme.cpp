@@ -189,6 +189,7 @@ bool Theme::open(class Renderer* rnd) {
 	menuEdit_FindNext("Find Next");
 	menuEdit_FindPrevious("Find Previous");
 	menuEdit_GotoLine("Goto Line...");
+	menuEdit_ResizeGrid("Resize Grid...");
 	menuEdit_ResizeImage("Resize Image...");
 	menuEdit_ResizeTile("Resize Tile...");
 	menuEdit_ResizeMap("Resize Map...");
@@ -276,6 +277,7 @@ bool Theme::open(class Renderer* rnd) {
 	dialogItem_ConflictAssets("Conflict assets:");
 	dialogItem_Find("Find:");
 	dialogItem_Goto("Goto:");
+	dialogItem_GridSize("Grid size:");
 	dialogItem_ImageSize("Image size:");
 	dialogItem_Input("Input:");
 	dialogItem_InputAnimationName("Input animation name:");

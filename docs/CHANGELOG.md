@@ -45,7 +45,7 @@ Enhanced modules, fixed some bugs.
 
 Enhanced modules, improved usability, fixed some bugs.
 
-* Added context menu to the text-based editors
+* Added context menu to text-based editors
 * Added support to resize image asset
 * Added support to resize map asset
 * Added a `stretch` parameter to the `image:resize(...)` method

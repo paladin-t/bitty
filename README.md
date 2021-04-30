@@ -5,9 +5,11 @@
 ![](docs/imgs/floppy.gif) **An itty bitty game engine.**
 
 * [About Bitty Engine](#about-bitty-engine)
-* [Features](#features)
-	* [Glance](#glance)
-	* [Version comparison](#version-comparison)
+	* [Features](#features)
+	* [Technical specifications](#technical-specifications)
+* [Glance](#glance)
+	* [Code](#code)
+	* [Games](#games)
 * [Redistributing](#redistributing)
 * [Getting Bitty Engine](#getting-bitty-engine)
 * [Compiling from source](#compiling-from-source)
@@ -25,7 +27,34 @@
 
 Bitty Engine is a cross-platform itty bitty **Game Engine** and open-source **Framework**. The full featured engine is programmable in Lua and integrated with built-in editors. It keeps the nature of both engine's productivity, and fantasy computer/console's ease to iterate. It boosts your commercial/non-commercial projects, prototypes, game jams, or just thought experiments.
 
-Technical specifications
+### Features
+
+* `Resources` API
+	* `Resources.load(...)`
+	* `Resources.wait(...)`
+	* `Resources.unload(...)`
+	* `Resources.collect(...)`
+	* Etc.
+* Graphics API
+	* Shapes: `plot(...)`, `line(...)`, `circ(...)`, `ellipse(...)`, `rect(...)`, `tri(...)`
+	* Text: `text(...)`, `font(...)`, `measure(...)`
+	* Texture: `tex(...)`
+	* Sprite: `spr(...)`
+	* Map: `map(...)`
+	* `clip(...)`, `camera(...)`
+	* Etc.
+* Input API
+	* Gamepad
+	* Keyboard
+	* Mouse and touch
+* Audio API
+	* Supports MP3, OGG, WAV, etc.
+* Libraries
+	* Algorithms, `Archive`, `Bytes`, `Color`, `DateTime`, Encoding, `File`, Filesystem, `Image`, `Json`, Math, `Network`, `Platform`, `Web`
+* Application interfaces
+	* `Application`, `Canvas`, `Project`, `Debug`
+
+### Technical specifications
 
 * Display: defaults to 480x320 pixels, configurable to bigger, smaller or self-adaption
 * Audio: 1 BGM channel, 4 SFX channels; supports MP3, OGG, WAV, FLAC, etc.
@@ -38,40 +67,34 @@ Technical specifications
 * Gamepad: 6 buttons for each pad (D-Pad + A/B), up to 2 players
 * Keyboard and mouse: supported
 
-## Features
+## Glance
 
-### Glance
+### Code
 
-![](https://paladin-t.github.io/imgs/screenshots/bitty.gif)
+```lua
+local obj = nil
 
-### Version comparison
+function setup()
+	obj = Resources.load('gum bot.spr')
+	obj:play('move', true, true)
+end
 
-| | Core | Trial | Pro |
-|---|---|---|---|
-| Programmable in Lua | YES | YES | YES |
-| Debugger | YES | YES | YES |
-| `Resources` API | YES | YES | YES |
-| Graphics API | YES | YES | YES |
-| Input API | YES | YES | YES |
-| Audio API | YES | YES | YES |
-| Libraries: Algorithms, `Archive`, `Bytes`, `Color`, `DateTime`, Encoding, `File`, Filesystem, `Image`, `Json`, Math, `Network`, `Platform`, `Web` | YES | YES | YES |
-| Application interfaces: `Application`, `Canvas`, `Project`, `Debug` | YES | YES | YES |
-| Saving project | YES | | YES |
-| Code editor | YES | YES | YES |
-| Sprite editor | | YES | YES |
-| Map editor | | YES | YES |
-| Image editor | | YES | YES |
-| Palette editor | | YES | YES |
-| JSON editor | YES | YES | YES |
-| Text editor | YES | YES | YES |
-| Bytes preview | | YES | YES |
-| Font preview | | YES | YES |
-| Sound preview | | YES | YES |
-| Basic examples: basics, games | YES | YES | YES |
-| Advanced examples: basics, games, libraries, primitives, recipes | | | YES |
-| Desktop binary builder: Windows, MacOS, Linux | | | YES |
-| HTML binary builder: WebAssembly | | | YES |
-| Available on | [GitHub](#compiling-from-source) | [Steam](https://store.steampowered.com/app/1386180/) | [Steam](https://store.steampowered.com/app/1386180/) |
+function update(delta)
+	spr(obj, 208, 128, 64, 64)
+end
+```
+
+See more [examples](examples).
+
+### Games
+
+![](docs/imgs/game1_2048.png)
+![](docs/imgs/game2_reversi.png)
+![](docs/imgs/game3_boing.png)
+![](docs/imgs/game4_sweeper.png)
+![](docs/imgs/game5_platformer.png)
+![](docs/imgs/game6_rpg.png)
+![](docs/imgs/game7_racing.png)
 
 ## Redistributing
 
@@ -89,7 +112,7 @@ The pro version is available on [Steam](https://store.steampowered.com/app/13861
 
 [![](docs/imgs/steam.png)](https://store.steampowered.com/app/1386180/)
 
-Get the trial version from [Steam](https://store.steampowered.com/app/1386180/) also to try out language, libraries, editors, pipelines, etc.
+See [version comparison](versions.md).
 
 ## Compiling from source
 
@@ -216,8 +239,8 @@ Note the file dialog library is only usable on desktop builds. Make your own ada
 
 ## Community and contributing
 
+* [Steam](https://store.steampowered.com/app/1386180/)
 * [Discord](https://discord.gg/372vb8ct2H)
-* [Steam Discussions](https://steamcommunity.com/app/1386180/discussions/)
 * [GitHub Discussions](https://github.com/paladin-t/bitty/discussions)
 * [Issues](https://github.com/paladin-t/bitty/issues)
 * [Pull Requests](https://github.com/paladin-t/bitty/pulls)
