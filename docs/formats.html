@@ -5,12 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Bitty Engine is an itty bitty game engine, with built-in editors, programmable in Lua.">
   <meta name="twitter:card" content="Bitty Engine is an itty bitty game engine, with built-in editors, programmable in Lua.">
-  <meta name="og:title" property="og:title" content="Documents | Bitty Engine">
+  <meta name="og:title" property="og:title" content="Formats | Bitty Engine">
   <meta name="og:description" property="og:description" content="Bitty Engine is an itty bitty game engine, with built-in editors, programmable in Lua.">
-  <title>Documents | Bitty Engine</title>
+  <title>Formats | Bitty Engine</title>
   <link rel="shortcut icon" href="favicon.ico" />
   <link rel="apple-touch-icon" href="icon.png" />
   <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" type="text/css" href="article.css">
+  <link rel="stylesheet" type="text/css" href="prism.css">
 </head>
 <body onclick>
   <div class="page">
@@ -38,9 +40,15 @@
           <a href="manual.html">Manual</a> |
           <a href="operations.html">Operations</a> |
           <a href="keycodes.html">Keycodes</a> |
-          <a href="formats.html">Formats</a>
+          <a href="formats.html"><b>Formats</b></a>
         ]
       </p>
+
+      <div id="article">
+        <div id="article-content" class="article-content">
+          Loading...
+        </div>
+      </div>
 
       <hr>
 
@@ -50,7 +58,37 @@
       </p>
     </div>
   </div>
+  <script src="polyfill.js"></script>
+  <script src="article.js"></script>
+  <script src="marked.js"></script>
+  <script src="prism.js"></script>
+  <script src="prism-lua.js"></script>
   <script type="text/javascript">
+    (function () {
+      var url = 'formats.md';
+      var ref = 'formats';
+
+      try {
+        Article.read(url, ref, {
+          content: 'article-content',
+          parse: function (markdown) {
+            return markdown;
+          },
+          preprocess: function (html) {
+            return html
+              .replaceAll('<code>', '<code class="language-auto">');
+          },
+          highlight: function () {
+            Prism.highlightAll();
+          }
+        });
+      } catch (_) {
+        var html = 'Oops, cannot load content for the moment...<br>Try refersh or ';
+        html += '<a href="' + ref + '" target="_blank">click</a>';
+
+        Article.attach('article-content', html);
+      }
+    })();
   </script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112501113-5"></script>
   <script type="text/javascript">

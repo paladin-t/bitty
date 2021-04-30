@@ -75,16 +75,16 @@ Bitty Engine is a cross-platform itty bitty **Game Engine** and open-source **Fr
 local obj = nil
 
 function setup()
-	obj = Resources.load('gum bot.spr')
-	obj:play('move', true, true)
+  obj = Resources.load('gum bot.spr')
+  obj:play('move', true, true)
 end
 
 function update(delta)
-	spr(obj, 208, 128, 64, 64)
+  spr(obj, 208, 128, 64, 64)
 end
 ```
 
-See more [examples](examples).
+See more in [examples](examples).
 
 ### Games
 
