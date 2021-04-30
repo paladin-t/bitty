@@ -216,8 +216,6 @@
 		031B4EA725833CB2002EF476 /* unzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = unzip.c; path = lib/zlib/contrib/minizip/unzip.c; sourceTree = "<group>"; };
 		031B4EA825833CB2002EF476 /* minizip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = minizip.c; path = lib/zlib/contrib/minizip/minizip.c; sourceTree = "<group>"; };
 		031B4EA925833CB2002EF476 /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unzip.h; path = lib/zlib/contrib/minizip/unzip.h; sourceTree = "<group>"; };
-		031B508425838589002EF476 /* Info_sketchbook.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info_sketchbook.plist; path = src/mac/Info_sketchbook.plist; sourceTree = "<group>"; };
-		031B508525838589002EF476 /* Info_stage.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info_stage.plist; path = src/mac/Info_stage.plist; sourceTree = "<group>"; };
 		0359C578258220CB0024E290 /* mathematics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mathematics.cpp; path = src/mathematics.cpp; sourceTree = "<group>"; };
 		0359C579258220CB0024E290 /* mathematics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mathematics.h; path = src/mathematics.h; sourceTree = "<group>"; };
 		0359C57B258229DA0024E290 /* SDL2_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_mixer.framework; path = lib/sdl_mixer/lib/SDL2_mixer.framework; sourceTree = "<group>"; };
@@ -1067,8 +1065,6 @@
 		038E72B725820BD100A94374 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				031B508425838589002EF476 /* Info_sketchbook.plist */,
-				031B508525838589002EF476 /* Info_stage.plist */,
 				038E72B825820C3800A94374 /* AppDelegate.h */,
 				038E72BB25820C3900A94374 /* AppDelegate.m */,
 				038E72BA25820C3900A94374 /* Assets.xcassets */,
