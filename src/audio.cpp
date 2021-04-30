@@ -794,6 +794,10 @@ public:
 		return Mix_SetSoundFonts(paths);
 	}
 
+	virtual void update(double) override {
+		// Do nothing.
+	}
+
 	virtual void reset(void) override {
 		Mix_Volume(-1, SDL_MIX_MAXVOLUME);
 		Mix_VolumeMusic(SDL_MIX_MAXVOLUME);

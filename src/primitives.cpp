@@ -2949,7 +2949,6 @@ public:
 		_buffer.forbid();
 
 		processResourceLoadingAndUnloading();
-
 		processResourceDisposingAndCollecting();
 #else /* BITTY_MULTITHREAD_ENABLED */
 		processResourceDisposingAndCollecting();
@@ -3031,9 +3030,9 @@ public:
 		saveStates();
 
 		processResourceLoadingAndUnloading();
-
 		processResourceDisposingAndCollecting();
 
+		_audio->update(delta);
 		_input->update(_window, _renderer, clientArea, canvasSize, scale);
 
 		CmdQueue q;
@@ -3047,6 +3046,7 @@ public:
 
 		processResourceDisposingAndCollecting();
 
+		_audio->update(delta);
 		_input->update(_window, _renderer, clientArea, canvasSize, scale);
 #endif /* BITTY_MULTITHREAD_ENABLED */
 

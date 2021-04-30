@@ -186,6 +186,8 @@ public:
 	virtual const char* soundFonts(void) const = 0;
 	virtual int soundFonts(const char* paths) = 0;
 
+	virtual void update(double delta) = 0;
+
 	virtual void reset(void) = 0;
 
 	static Audio* create(void);
