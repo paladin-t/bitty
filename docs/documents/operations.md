@@ -2,7 +2,7 @@
 
 ## Operations
 
-[Manual](manual) | **Operations**
+[Manual](manual) | **Operations** | [Others](others)
 
 ## Table of Content
 

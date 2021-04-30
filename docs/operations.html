@@ -73,7 +73,7 @@
           parse: function (markdown) {
             return markdown
               .replaceAll('![](imgs/logo.png)', '')
-              .replace('[Manual](manual) | **Operations**', '')
+              .replace('[Manual](manual) | **Operations** | [Others](others)', '')
               .replaceAll('![](imgs/', '![](documents/imgs/');
           },
           preprocess: function (html) {

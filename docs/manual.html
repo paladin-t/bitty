@@ -73,7 +73,7 @@
           parse: function (markdown) {
             return markdown
               .replaceAll('![](imgs/logo.png)', '')
-              .replace('[**Manual**](https://paladin-t.github.io/bitty/manual.html) | [Operations](operations)', '')
+              .replace('[**Manual**](https://paladin-t.github.io/bitty/manual.html) | [Operations](operations) | [Others](others)', '')
               .replaceAll('![](imgs/', '![](documents/imgs/');
           },
           preprocess: function (html) {

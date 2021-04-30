@@ -2,7 +2,7 @@
 
 ## Reference Manual
 
-[**Manual**](https://paladin-t.github.io/bitty/manual.html) | [Operations](operations)
+[**Manual**](https://paladin-t.github.io/bitty/manual.html) | [Operations](operations) | [Others](others)
 
 ## Table of Content
 
