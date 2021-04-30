@@ -9373,6 +9373,18 @@ static int Application_setOption(lua_State* L) {
 			nullptr,
 			true
 		);
+	} else if (key == "bordered") {
+		bool b = true;
+		read<2>(L, b);
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				Window* wnd = impl->primitives()->window();
+				wnd->bordered(b);
+			},
+			nullptr,
+			true
+		);
 	} else if (key == "resizable") {
 		bool r = true;
 		read<2>(L, r);

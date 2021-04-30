@@ -1743,8 +1743,10 @@ Available options:
 
 | Key | Value | Note |
 |---|---|---|
-| "minimum_size" | `width`, `height` | Sets the minimum size of the application window |
-| "maximum_size" | `width`, `height` | Sets the maximum size of the application window |
+| "minimum_size" | Integers, `width`, `height` | Sets the minimum size of the application window |
+| "maximum_size" | Integers, `width`, `height` | Sets the maximum size of the application window |
+| "bordered" | Boolean, `bordered` | Sets whether the application window is bordered |
+| "resizable" | Boolean, `resizable` | Sets whether the application window is resizable |
 
 * `Application.setCursor(img[, x, y])`: sets the mouse cursor
 	* `img`: the specific `Image` to set, `nil` to reset

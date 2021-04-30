@@ -21,6 +21,7 @@ private:
 	SDL_Window* _window = nullptr;
 	int _scale = 1;
 
+	bool _bordered = true;
 	bool _resizable = true;
 #if WINDOW_LAZY_TOGGLE_FULLSCREEN
 	bool _lazySetFullscreen = false;
@@ -66,6 +67,8 @@ public:
 			flags
 		);
 		SDL_SetWindowMinimumSize(_window, minWidth, minHeight);
+
+		_bordered = !borderless;
 
 		fprintf(stdout, "Window opened.\n");
 
@@ -149,6 +152,15 @@ public:
 	}
 	virtual void maximumSize(const Math::Vec2i &val) override {
 		SDL_SetWindowMaximumSize(_window, (int)val.x, (int)val.y);
+	}
+
+	virtual bool bordered(void) const override {
+		return _bordered;
+	}
+	virtual void bordered(bool val) override {
+		_bordered = val;
+
+		SDL_SetWindowBordered(_window, val ? SDL_TRUE : SDL_FALSE);
 	}
 
 	virtual bool resizable(void) const override {

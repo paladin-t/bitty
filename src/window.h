@@ -133,6 +133,15 @@ public:
 	virtual void maximumSize(const Math::Vec2i &val) = 0;
 
 	/**
+	 * @brief Gets whether the window is bordered.
+	 */
+	virtual bool bordered(void) const = 0;
+	/**
+	 * @brief Sets whether the window is bordered.
+	 */
+	virtual void bordered(bool val) = 0;
+
+	/**
 	 * @brief Gets whether the window is resizable.
 	 */
 	virtual bool resizable(void) const = 0;
