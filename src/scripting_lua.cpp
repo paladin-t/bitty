@@ -371,6 +371,8 @@ bool ScriptingLua::cycle(double delta) {
 	}
 #else /* BITTY_DEBUG_ENABLED */
 	const int ret = Lua::invoke(_L, func, this);
+	if (_state == HALTING)
+		return false;
 #endif /* BITTY_DEBUG_ENABLED */
 	if (check(_L, ret) != LUA_OK || _code != LUA_OK)
 		return false;
