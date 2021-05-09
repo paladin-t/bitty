@@ -268,8 +268,18 @@ bool ScriptingLua::setup(void) {
 		_dependency.push_back(entry);
 
 		entry = "=" + ent;
-		check(_L, luaL_loadbuffer(_L, src.c_str(), src.size(), entry.c_str()));
-		check(_L, lua_pcall(_L, 0, LUA_MULTRET, 0));
+		if (check(_L, luaL_loadbuffer(_L, src.c_str(), src.size(), entry.c_str())) != LUA_OK) {
+			_dependency.pop_back();
+			assert(_dependency.empty());
+
+			return false;
+		}
+		if (check(_L, lua_pcall(_L, 0, LUA_MULTRET, 0)) != LUA_OK) {
+			_dependency.pop_back();
+			assert(_dependency.empty());
+
+			return false;
+		}
 		const int discarded = Lua::getTop(_L);
 		if (discarded > 0) {
 			Lua::pop(_L, discarded);

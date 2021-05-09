@@ -34,6 +34,10 @@ public:
 	virtual bool close(void) = 0;
 
 	/**
+	 * @brief Gets whether the effects are valid.
+	 */
+	virtual bool valid(void) const = 0;
+	/**
 	 * @brief Configures the effects.
 	 */
 	virtual bool use(class Workspace* ws, const char* material) = 0;

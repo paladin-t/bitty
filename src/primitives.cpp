@@ -3032,7 +3032,8 @@ public:
 		processResourceLoadingAndUnloading();
 		processResourceDisposingAndCollecting();
 
-		_audio->update(delta);
+		if (_audio)
+			_audio->update(delta);
 		_input->update(_window, _renderer, clientArea, canvasSize, scale);
 
 		CmdQueue q;
@@ -3046,7 +3047,8 @@ public:
 
 		processResourceDisposingAndCollecting();
 
-		_audio->update(delta);
+		if (_audio)
+			_audio->update(delta);
 		_input->update(_window, _renderer, clientArea, canvasSize, scale);
 #endif /* BITTY_MULTITHREAD_ENABLED */
 

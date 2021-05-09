@@ -76,6 +76,7 @@ public:
 	};
 
 private:
+	class Primitives* _primitives = nullptr;
 	std::string _title;
 	std::string _desc;
 	std::string _specs;
@@ -87,7 +88,7 @@ private:
 
 public:
 	AboutPopupBox(
-		class Window* wnd, class Renderer* rnd,
+		class Window* wnd, class Renderer* rnd, class Primitives* primitives,
 		const std::string &title,
 		const ConfirmHandler &confirm,
 		const char* confirmTxt /* nullable */

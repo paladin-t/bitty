@@ -8,6 +8,7 @@
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
 
+#include "effects.h"
 #include "platform.h"
 #include "primitives.h"
 #include "renderer.h"
@@ -237,11 +238,12 @@ void PreferencesPopupBox::update(void) {
 }
 
 AboutPopupBox::AboutPopupBox(
-	class Window* wnd, class Renderer* rnd,
+	class Window* wnd, class Renderer* rnd, class Primitives* primitives,
 	const std::string &title,
 	const ConfirmHandler &confirm,
 	const char* confirmTxt
-) : _title(title),
+) : _primitives(primitives),
+	_title(title),
 	_confirmHandler(confirm)
 {
 #if BITTY_TRIAL_ENABLED
@@ -273,9 +275,24 @@ AboutPopupBox::AboutPopupBox(
 	_specs += rnd->driver();
 	_specs += "\n";
 
+#if BITTY_EFFECTS_ENABLED
+	Effects* effects = _primitives->effects();
+	_specs += "Effects supported:\n";
+	_specs += "  ";
+	_specs += (effects && effects->valid()) ? "true" : "false";
+	_specs += "\n";
+#endif /* BITTY_EFFECTS_ENABLED */
+
 	_specs += "Render target supported:\n";
 	_specs += "  ";
 	_specs += Text::toString(rnd->renderTargetSupported());
+	_specs += "\n";
+
+	_specs += "Max texture size:\n";
+	_specs += "  ";
+	_specs += Text::toString(rnd->maxTextureWidth());
+	_specs += "x";
+	_specs += Text::toString(rnd->maxTextureHeight());
 	_specs += "\n";
 
 	const int dspIdx = wnd->displayIndex();
@@ -288,13 +305,6 @@ AboutPopupBox::AboutPopupBox(
 	_specs += Text::toString(hdpi);
 	_specs += ", (VDPI) ";
 	_specs += Text::toString(vdpi);
-	_specs += "\n";
-
-	_specs += "Max texture size:\n";
-	_specs += "  ";
-	_specs += Text::toString(rnd->maxTextureWidth());
-	_specs += "x";
-	_specs += Text::toString(rnd->maxTextureHeight());
 	_specs += "\n";
 
 	_specs += "Chunk decoders:\n";

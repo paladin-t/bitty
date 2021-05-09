@@ -1097,7 +1097,7 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem(_theme->menuHelp_About())) {
-				showAbout(wnd, rnd);
+				showAbout(wnd, rnd, primitives);
 			}
 			if (pluginsMenuHelpItemCount() > 0) {
 				ImGui::Separator();
@@ -1296,11 +1296,11 @@ void WorkspaceSketchbook::showPreferences(class Window* wnd, class Renderer*, co
 	);
 }
 
-void WorkspaceSketchbook::showAbout(class Window* wnd, class Renderer* rnd) {
+void WorkspaceSketchbook::showAbout(class Window* wnd, class Renderer* rnd, class Primitives* primitives) {
 	popupBox(
 		ImGui::PopupBox::Ptr(
 			new ImGui::Sketchbook::AboutPopupBox(
-				wnd, rnd,
+				wnd, rnd, primitives,
 				_theme->windowAbout(),
 				ImGui::Sketchbook::AboutPopupBox::ConfirmHandler([&] (void) -> void { popupBox(nullptr); }, nullptr),
 				_theme->generic_Ok().c_str()
@@ -1311,20 +1311,20 @@ void WorkspaceSketchbook::showAbout(class Window* wnd, class Renderer* rnd) {
 
 void WorkspaceSketchbook::showPaused(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives) {
 	ImGui::Sketchbook::PausedPopupBox::ResumeHandler resume(
-		[this](void) -> void {
+		[this] (void) -> void {
 			popupBox(nullptr);
 		},
 		nullptr
 	);
 	ImGui::Sketchbook::PausedPopupBox::OptionsHandler options(
-		[wnd, rnd, this, project, primitives](void) -> void {
+		[wnd, rnd, this, project, primitives] (void) -> void {
 			showPreferences(wnd, rnd, project, primitives);
 		},
 		nullptr
 	);
 	ImGui::Sketchbook::PausedPopupBox::AboutHandler about(
-		[wnd, rnd, this](void) -> void {
-			showAbout(wnd, rnd);
+		[wnd, rnd, this, primitives] (void) -> void {
+			showAbout(wnd, rnd, primitives);
 		},
 		nullptr
 	);

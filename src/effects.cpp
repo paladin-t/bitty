@@ -493,6 +493,9 @@ public:
 		return true;
 	}
 
+	virtual bool valid(void) const override {
+		return !!_glContext && _material.valid && _glVersion >= 300;
+	}
 	virtual bool use(class Workspace* ws, const char* material) override {
 		// Use default material.
 		if (!material) {
@@ -636,6 +639,8 @@ public:
 	virtual bool inject(const char* entry, float arg) override {
 		if (!_material.valid)
 			return false;
+		if (_glVersion < 300)
+			return false;
 		Material::ExtraDatas::iterator it = _material.extraDatas.find(entry);
 		if (it == _material.extraDatas.end())
 			return false;
@@ -647,6 +652,8 @@ public:
 	}
 	virtual bool inject(const char* entry, const Math::Vec2f &arg) override {
 		if (!_material.valid)
+			return false;
+		if (_glVersion < 300)
 			return false;
 		Material::ExtraDatas::iterator it = _material.extraDatas.find(entry);
 		if (it == _material.extraDatas.end())
@@ -660,6 +667,8 @@ public:
 	virtual bool inject(const char* entry, const Math::Vec3f &arg) override {
 		if (!_material.valid)
 			return false;
+		if (_glVersion < 300)
+			return false;
 		Material::ExtraDatas::iterator it = _material.extraDatas.find(entry);
 		if (it == _material.extraDatas.end())
 			return false;
@@ -671,6 +680,8 @@ public:
 	}
 	virtual bool inject(const char* entry, const Math::Vec4f &arg) override {
 		if (!_material.valid)
+			return false;
+		if (_glVersion < 300)
 			return false;
 		Material::ExtraDatas::iterator it = _material.extraDatas.find(entry);
 		if (it == _material.extraDatas.end())
@@ -690,6 +701,8 @@ public:
 			return inject(entry, src);
 
 		if (!_material.valid)
+			return false;
+		if (_glVersion < 300)
 			return false;
 		Material::ExtraDatas::iterator it = _material.extraDatas.find(entry);
 		if (it == _material.extraDatas.end())
@@ -724,6 +737,8 @@ public:
 
 		if (!_material.valid)
 			return false;
+		if (_glVersion < 300)
+			return false;
 		Material::ExtraDatas::iterator it = _material.extraDatas.find(entry);
 		if (it == _material.extraDatas.end())
 			return false;
@@ -755,6 +770,11 @@ public:
 			return;
 		}
 		if (!_material.valid) {
+			rnd->target(nullptr);
+
+			return;
+		}
+		if (_glVersion < 300) {
 			rnd->target(nullptr);
 
 			return;
@@ -798,6 +818,13 @@ public:
 			return;
 		}
 		if (!_material.valid) {
+			rnd->flush();
+
+			SDL_GL_SwapWindow(window);
+
+			return;
+		}
+		if (_glVersion < 300) {
 			rnd->flush();
 
 			SDL_GL_SwapWindow(window);
@@ -1099,6 +1126,9 @@ public:
 		return false;
 	}
 
+	virtual bool valid(void) const override {
+		return false;
+	}
 	virtual bool use(class Workspace*, const char*) override {
 		return false;
 	}

@@ -75,7 +75,7 @@ private:
 	void unloadProject(const class Project* project, Executable* exec);
 
 	void showPreferences(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives);
-	void showAbout(class Window* wnd, class Renderer* rnd);
+	void showAbout(class Window* wnd, class Renderer* rnd, class Primitives* primitives);
 	void showPaused(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives);
 };
 
