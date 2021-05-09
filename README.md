@@ -75,7 +75,7 @@ Bitty Engine is a cross-platform itty bitty **Game Engine** and open-source **Fr
 local obj = nil
 
 function setup()
-  obj = Resources.load('gum bot.spr')
+  obj = Resources.load('hero.spr')
   obj:play('move', true, true)
 end
 
@@ -250,4 +250,5 @@ Note the file dialog library is only usable on desktop builds. Make your own ada
 * [Reference Manual](https://paladin-t.github.io/bitty/manual.html)
 * [Operations](https://paladin-t.github.io/bitty/operations.html)
 * [Keycodes](https://paladin-t.github.io/bitty/keycodes.html)
+* [Formats](https://paladin-t.github.io/bitty/formats.html)
 * [Changelog](https://paladin-t.github.io/bitty/changelog.html)
