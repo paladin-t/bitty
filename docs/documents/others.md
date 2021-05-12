@@ -9,3 +9,5 @@
 [Formats](https://paladin-t.github.io/bitty/formats.html)
 
 [Customizations](https://github.com/paladin-t/bitty/discussions/8)
+
+[Libs And Tips](https://github.com/paladin-t/bitty/discussions/categories/libs-and-tips)

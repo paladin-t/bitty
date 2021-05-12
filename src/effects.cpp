@@ -813,21 +813,15 @@ public:
 		if (!_glContext) {
 			rnd->flush();
 
-			SDL_GL_SwapWindow(window);
-
 			return;
 		}
 		if (!_material.valid) {
 			rnd->flush();
 
-			SDL_GL_SwapWindow(window);
-
 			return;
 		}
 		if (_glVersion < 300) {
 			rnd->flush();
-
-			SDL_GL_SwapWindow(window);
 
 			return;
 		}

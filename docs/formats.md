@@ -1,5 +1,7 @@
 ## Asset Formats
 
+Bitty Engine supports variant audio, image and font types that are widely used. Furthermore it supports sprite, map, palette and paletted image defined as JSON. This document examples these JSON-based asset formats.
+
 ### Sprite
 
 ```js
