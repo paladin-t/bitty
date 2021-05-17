@@ -512,6 +512,7 @@ bool MenuItem(const std::string &label, const char* shortcut, bool* selected, bo
 float ColorPickerMinWidthForInput(void);
 
 float TabBarHeight(void);
+bool BeginTabItem(const std::string &str_id, const std::string &label, bool* p_open = nullptr, ImGuiTabItemFlags flags = ImGuiTabItemFlags_None);
 bool BeginTabItem(const std::string &label, bool* p_open = nullptr, ImGuiTabItemFlags flags = ImGuiTabItemFlags_None);
 bool BeginTabItem(const std::string &label, bool* p_open, ImGuiTabItemFlags flags, ImU32 col);
 void TabBarTabListPopupButton(TabBarDropper dropper);

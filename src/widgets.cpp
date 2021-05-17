@@ -1975,6 +1975,14 @@ float TabBarHeight(void) {
 	return GetFontSize() + style.FramePadding.y * 2.0f;
 }
 
+bool BeginTabItem(const std::string &str_id, const std::string &label, bool* p_open, ImGuiTabItemFlags flags) {
+	PushID(str_id);
+	const bool result = BeginTabItem(label.c_str(), p_open, flags);
+	PopID();
+
+	return result;
+}
+
 bool BeginTabItem(const std::string &label, bool* p_open, ImGuiTabItemFlags flags) {
 	return BeginTabItem(label.c_str(), p_open, flags);
 }

@@ -1443,7 +1443,7 @@ void Workspace::editing(class Window* wnd, class Renderer* rnd, const class Proj
 
 						bool opened = true;
 						ImGui::PushStyleColor(ImGuiCol_Text, pending ? theme()->style()->tabTextPendingColor : theme()->style()->tabTextColor);
-						if (ImGui::BeginTabItem(asset->entry().c_str(), &opened, tabItemFlags)) {
+						if (ImGui::BeginTabItem(asset->entry().name(), &opened, tabItemFlags)) {
 							ImGui::PopStyleColor();
 
 							assetsEditingIndex(index);
@@ -2966,7 +2966,7 @@ void Workspace::filterAssets(class Window*, class Renderer* rnd, const class Pro
 		if (ImGui::MenuItem(theme()->menuAsset_Fonts()))
 			filter("*." BITTY_FONT_EXT);
 		if (ImGui::MenuItem(theme()->menuAsset_Audio()))
-			filter("*.mp3,*.ogg,*.wav,*.mid");
+			filter("*.mp3,*.ogg,*.wav,*.mid,*.aiff,*.voc,*.mod,*.opus,*.flac");
 		if (ImGui::MenuItem(theme()->menuAsset_Json()))
 			filter("*." BITTY_JSON_EXT);
 		if (ImGui::MenuItem(theme()->menuAsset_Text()))

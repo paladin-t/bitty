@@ -13,8 +13,13 @@
 #include "workspace.h"
 #include "../lib/imgui/imgui.h"
 
-#ifndef EDITOR_POLYFILL_BODY
-#	define EDITOR_POLYFILL_BODY(CLASS) \
+/*
+** {===========================================================================
+** Macros and constants
+*/
+
+#ifndef EDITOR_POLYFILL_NONE
+#	define EDITOR_POLYFILL_NONE(CLASS) \
 	public: \
 		CLASS() { \
 		} \
@@ -122,7 +127,9 @@
 			if (actived) \
 				ImGui::PopStyleColor(); \
 		}
-#endif /* EDITOR_POLYFILL_BODY */
+#endif /* EDITOR_POLYFILL_NONE */
+
+/* ===========================================================================} */
 
 /*
 ** {===========================================================================
@@ -130,7 +137,7 @@
 */
 
 class EditorBytesImpl : public EditorBytes {
-	EDITOR_POLYFILL_BODY(EditorBytesImpl)
+	EDITOR_POLYFILL_NONE(EditorBytesImpl)
 };
 
 EditorBytes* EditorBytes::create(void) {
@@ -145,7 +152,7 @@ void EditorBytes::destroy(EditorBytes* ptr) {
 }
 
 class EditorFontImpl : public EditorFont {
-	EDITOR_POLYFILL_BODY(EditorFontImpl)
+	EDITOR_POLYFILL_NONE(EditorFontImpl)
 };
 
 EditorFont* EditorFont::create(void) {
@@ -160,7 +167,7 @@ void EditorFont::destroy(EditorFont* ptr) {
 }
 
 class EditorImageImpl : public EditorImage {
-	EDITOR_POLYFILL_BODY(EditorImageImpl)
+	EDITOR_POLYFILL_NONE(EditorImageImpl)
 };
 
 EditorImage* EditorImage::create(void) {
@@ -175,7 +182,7 @@ void EditorImage::destroy(EditorImage* ptr) {
 }
 
 class EditorMapImpl : public EditorMap {
-	EDITOR_POLYFILL_BODY(EditorMapImpl)
+	EDITOR_POLYFILL_NONE(EditorMapImpl)
 };
 
 EditorMap* EditorMap::create(void) {
@@ -190,7 +197,7 @@ void EditorMap::destroy(EditorMap* ptr) {
 }
 
 class EditorPaletteImpl : public EditorPalette {
-	EDITOR_POLYFILL_BODY(EditorPaletteImpl)
+	EDITOR_POLYFILL_NONE(EditorPaletteImpl)
 };
 
 EditorPalette* EditorPalette::create(void) {
@@ -205,7 +212,7 @@ void EditorPalette::destroy(EditorPalette* ptr) {
 }
 
 class EditorPluginImpl : public EditorPlugin {
-	EDITOR_POLYFILL_BODY(EditorPluginImpl)
+	EDITOR_POLYFILL_NONE(EditorPluginImpl)
 };
 
 EditorPlugin* EditorPlugin::create(void) {
@@ -220,7 +227,7 @@ void EditorPlugin::destroy(EditorPlugin* ptr) {
 }
 
 class EditorSoundImpl : public EditorSound {
-	EDITOR_POLYFILL_BODY(EditorSoundImpl)
+	EDITOR_POLYFILL_NONE(EditorSoundImpl)
 };
 
 EditorSound* EditorSound::create(void) {
@@ -235,7 +242,7 @@ void EditorSound::destroy(EditorSound* ptr) {
 }
 
 class EditorSpriteImpl : public EditorSprite {
-	EDITOR_POLYFILL_BODY(EditorSpriteImpl)
+	EDITOR_POLYFILL_NONE(EditorSpriteImpl)
 };
 
 EditorSprite* EditorSprite::create(void) {

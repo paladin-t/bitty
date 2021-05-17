@@ -199,9 +199,9 @@ bool Theme::open(class Renderer* rnd) {
 	menuProject_Run("Run");
 	menuProject_Stop("Stop");
 	menuProject_NewAsset("New Asset...");
-	menuProject_RemoveAsset("Remove Asset");
-	menuProject_RenameAsset("Rename Asset");
-	menuProject_FilterAssets("Filter Assets");
+	menuProject_RemoveAsset("Remove Asset...");
+	menuProject_RenameAsset("Rename Asset...");
+	menuProject_FilterAssets("Filter Assets...");
 	menuProject_AddFile("Add File...");
 	menuProject_Import("Import...");
 	menuProject_Export("Export...");

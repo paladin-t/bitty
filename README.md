@@ -30,10 +30,8 @@ Bitty Engine is a cross-platform itty bitty **Game Engine** and open-source **Fr
 ### Features
 
 * `Resources` API
-	* `Resources.load(...)`
-	* `Resources.wait(...)`
-	* `Resources.unload(...)`
-	* `Resources.collect(...)`
+	* `Resources.load(...)`, `Resources.unload(...)`
+	* `Resources.wait(...)`, `Resources.collect(...)`
 	* Etc.
 * Graphics API
 	* Shapes: `plot(...)`, `line(...)`, `circ(...)`, `ellipse(...)`, `rect(...)`, `tri(...)`
@@ -48,7 +46,7 @@ Bitty Engine is a cross-platform itty bitty **Game Engine** and open-source **Fr
 	* Keyboard
 	* Mouse and touch
 * Audio API
-	* Supports MP3, OGG, WAV, etc.
+	* Supports MP3, OGG, WAV, FLAC, etc.
 * Libraries
 	* Algorithms, `Archive`, `Bytes`, `Color`, `DateTime`, Encoding, `File`, Filesystem, `Image`, `Json`, Math, `Network`, `Platform`, `Web`
 * Application interfaces
@@ -104,7 +102,7 @@ Bitty Engine helps you to make standalone binaries for Windows, MacOS, Linux, an
 
 Everything is done with Bitty Engine (pro) by nothing more than a few mouse clicks.
 
-Put an image at "../icon.png" relative to executables to customize the icon dynamically. Put an image at "../splash.png" as well to customize the splash; the image could be transparent.
+Put an image at "../icon.png" relative to executables to customize the icon dynamically. Put an image at "../splash.png" as well to customize the splash, the image could be transparent.
 
 ## Getting Bitty Engine
 
@@ -125,7 +123,7 @@ You can compile a core version from this repository, and customize redistributab
 * Introduce your own API
 * Bring to other platforms
 
-See the [README](src/README.md) under the "src" directory for details.
+See the [README](src/README.md) under the "src" directory for source code architecture.
 
 A C++14 capable compiler is required, any compiler came after 2014 should be ok. You need to get this repository and its submodules before build:
 
@@ -231,11 +229,11 @@ Dependencies: CMake, GCC.
 
 ### Other platforms
 
-You can also setup your own build pipeline for other platforms. The "lib" and "src" directories are almost all you need. See the [README](src/README.md) under the "src" directory for project structure.
+You can also setup your own build pipeline for other platforms. The "lib" and "src" directories are almost what you need. See the [README](src/README.md) under the "src" directory for code architecture.
 
-The "platform_*" files contain most platform dependent code.
+The "platform_*" files contain most platform dependent code, you'll probably make a specific port.
 
-Note the file dialog library is only usable on desktop builds. Make your own adaption if you need for other platforms.
+Note the file dialog library is only usable on desktop builds, make your own adaption if you need it on other platforms.
 
 ## Community and contributing
 

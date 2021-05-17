@@ -1589,7 +1589,7 @@ unsigned Asset::typeOf(const std::string &ext, bool alowBytes) {
 		return Sprite::TYPE();
 	else if (match(ext, BITTY_MAP_EXT))
 		return Map::TYPE();
-	else if (match(ext, "mp3") || match(ext, "ogg") || match(ext, "wav") || match(ext, "mid"))
+	else if (match(ext, "mp3") || match(ext, "ogg") || match(ext, "wav") || match(ext, "mid") || match(ext, "aiff") || match(ext, "voc") || match(ext, "mod") || match(ext, "opus") || match(ext, "flac"))
 		return Sound::TYPE();
 	else if (match(ext, BITTY_FONT_EXT))
 		return Font::TYPE();
