@@ -39,6 +39,10 @@ static long long datetimeTicks(void) {
 
 	return ret;
 }
+
+static void datetimeSleep(int ms) {
+	::Sleep((DWORD)ms);
+}
 #else /* BITTY_CP_VC */
 static long long datetimeTicks(void) {
 	static long long start = 0; // Shared.
@@ -50,6 +54,10 @@ static long long datetimeTicks(void) {
 		ret = now - start;
 
 	return ret;
+}
+
+static void datetimeSleep(int ms) {
+	std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 #endif /* BITTY_CP_VC */
 
@@ -132,7 +140,7 @@ long long DateTime::fromSeconds(double t) {
 }
 
 void DateTime::sleep(int ms) {
-	std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+	datetimeSleep(ms);
 }
 
 /* ===========================================================================} */
