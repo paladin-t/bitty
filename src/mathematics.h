@@ -577,8 +577,8 @@ template<typename T> struct Rot {
 	Rot() {
 	}
 	Rot(T angle) {
-		s(std::sin(angle));
-		c(std::cos(angle));
+		s = std::sin(angle);
+		c = std::cos(angle);
 	}
 	Rot(T s_, T c_) : s(s_), c(c_) {
 	}

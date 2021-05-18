@@ -5917,6 +5917,34 @@ static int Rot___tostring(lua_State* L) {
 	return write(L, str);
 }
 
+static int Rot___add(lua_State* L) {
+	Math::Rotf* obj = nullptr;
+	Math::Rotf* other = nullptr;
+	check<>(L, obj, other);
+
+	if (obj && other) {
+		const Math::Rotf ret(obj->angle() + other->angle());
+
+		return write(L, &ret);
+	}
+
+	return 0;
+}
+
+static int Rot___sub(lua_State* L) {
+	Math::Rotf* obj = nullptr;
+	Math::Rotf* other = nullptr;
+	check<>(L, obj, other);
+
+	if (obj && other) {
+		const Math::Rotf ret(obj->angle() - other->angle());
+
+		return write(L, &ret);
+	}
+
+	return 0;
+}
+
 static int Rot___mul(lua_State* L) {
 	Math::Rotf* obj = nullptr;
 	Math::Rotf* other = nullptr;
@@ -5935,6 +5963,19 @@ static int Rot___mul(lua_State* L) {
 
 			return write(L, &ret);
 		}
+	}
+
+	return 0;
+}
+
+static int Rot___unm(lua_State* L) {
+	Math::Rotf* obj = nullptr;
+	check<>(L, obj);
+
+	if (obj) {
+		const Math::Rotf ret(-obj->angle());
+
+		return write(L, &ret);
 	}
 
 	return 0;
@@ -6012,7 +6053,10 @@ static void open_Rot(lua_State* L) {
 		array(
 			luaL_Reg{ "__gc", __gc<Math::Rotf> },
 			luaL_Reg{ "__tostring", Rot___tostring },
+			luaL_Reg{ "__add", Rot___add },
+			luaL_Reg{ "__sub", Rot___sub },
 			luaL_Reg{ "__mul", Rot___mul },
+			luaL_Reg{ "__unm", Rot___unm },
 			luaL_Reg{ "__eq", Rot___eq },
 			luaL_Reg{ nullptr, nullptr }
 		),
@@ -9463,6 +9507,15 @@ static int Application_resize(lua_State* L) {
 			[=] (const Variant &) -> void {
 				Window* wnd = impl->primitives()->window();
 				wnd->fullscreen(true);
+			},
+			nullptr,
+			true
+		);
+	} else if (s == "windowed") {
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				Window* wnd = impl->primitives()->window();
+				wnd->fullscreen(false);
 			},
 			nullptr,
 			true
