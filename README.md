@@ -29,6 +29,8 @@ Bitty Engine is a cross-platform itty bitty **Game Engine** and open-source **Fr
 
 ### Features
 
+Bitty Engine offers a set of orthogonal features that makes game development comfortable and enjoyable.
+
 * `Resources` API
 	* `Resources.load(...)`, `Resources.unload(...)`
 	* `Resources.wait(...)`, `Resources.collect(...)`
@@ -51,6 +53,8 @@ Bitty Engine is a cross-platform itty bitty **Game Engine** and open-source **Fr
 	* Algorithms, `Archive`, `Bytes`, `Color`, `DateTime`, Encoding, `File`, Filesystem, `Image`, `Json`, Math, `Network`, `Platform`, `Web`
 * Application interfaces
 	* `Application`, `Canvas`, `Project`, `Debug`
+
+These features are quite stable. Things just change, but it is very important that there won't be unthoughtful breaking changes in future development.
 
 ### Technical specifications
 
