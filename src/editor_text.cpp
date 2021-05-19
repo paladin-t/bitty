@@ -215,6 +215,9 @@ public:
 
 		Delete();
 	}
+	virtual bool selectable(void) const override {
+		return true;
+	}
 
 	virtual const char* redoable(void) const override {
 		return CanRedo() ? "" : nullptr;

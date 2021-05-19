@@ -55,6 +55,9 @@
 		} \
 		virtual void del(void) override { \
 		} \
+		virtual bool selectable(void) const override { \
+			return false; \
+		} \
 		virtual const char* redoable(void) const override { \
 			return nullptr; \
 		} \

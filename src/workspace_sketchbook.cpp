@@ -681,7 +681,7 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 			projectStates(project, &prjDirty, &prjPersisted, &prjArchived, nullptr);
 
 			bool dirty = false;
-			editingAssetStates(project, nullptr, nullptr, nullptr, &dirty, nullptr, nullptr, nullptr);
+			editingAssetStates(project, nullptr, nullptr, nullptr, &dirty, nullptr, nullptr, nullptr, nullptr);
 
 			if (ImGui::MenuItem(_theme->menuFile_New(), WORKSPACE_MODIFIER_KEY_NAME "+N")) {
 				Operations::projectStop(rnd, this, project, exec, primitives);
@@ -765,9 +765,10 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 			unsigned type = 0;
 			unsigned referencing = 0;
 			bool pastable = false;
+			bool selectable = false;
 			const char* undoable = nullptr;
 			const char* redoable = nullptr;
-			editingAssetStates(project, &any, &type, &referencing, nullptr, &pastable, &undoable, &redoable);
+			editingAssetStates(project, &any, &type, &referencing, nullptr, &pastable, &selectable, &undoable, &redoable);
 
 			if (ImGui::MenuItem(_theme->menuEdit_Undo(), WORKSPACE_MODIFIER_KEY_NAME "+Z", nullptr, !!undoable)) {
 				withEditingAsset(
@@ -819,7 +820,7 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 				);
 			}
 			ImGui::Separator();
-			if (ImGui::MenuItem(_theme->menuEdit_SelectAll(), WORKSPACE_MODIFIER_KEY_NAME "+A", nullptr, any)) {
+			if (ImGui::MenuItem(_theme->menuEdit_SelectAll(), WORKSPACE_MODIFIER_KEY_NAME "+A", nullptr, any && selectable)) {
 				withEditingAsset(
 					project,
 					[] (Asset*, Editable* editor) -> void {

@@ -501,6 +501,7 @@ protected:
 	 * @param[out] referencing
 	 * @param[out] dirty
 	 * @param[out] pastable
+	 * @param[out] selectable
 	 * @param[out] undoable
 	 * @param[out] redoable
 	 */
@@ -510,7 +511,7 @@ protected:
 		unsigned* type /* nullable */,
 		unsigned* referencing /* nullable */,
 		bool* dirty /* nullable */,
-		bool* pastable /* nullable */,
+		bool* pastable /* nullable */, bool* selectable /* nullable */,
 		const char** undoable /* nullable */, const char** redoable /* nullable */
 	) const;
 	int withEditingAsset(const class Project* project, EditorHandler handler) const;

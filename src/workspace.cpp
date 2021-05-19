@@ -1048,7 +1048,7 @@ void Workspace::banner(class Window* /* wnd */, class Renderer* rnd, const class
 		bool pastable = false;
 		const char* undoable = nullptr;
 		const char* redoable = nullptr;
-		editingAssetStates(project, &any, &type, nullptr, nullptr, &pastable, &undoable, &redoable);
+		editingAssetStates(project, &any, &type, nullptr, nullptr, &pastable, nullptr, &undoable, &redoable);
 
 		switch (currentState()) {
 		case Executable::READY:
@@ -2760,7 +2760,7 @@ int Workspace::editingAssetStates(
 	unsigned* type,
 	unsigned* referencing,
 	bool* dirty,
-	bool* pastable,
+	bool* pastable, bool* selectable,
 	const char** undoable, const char** redoable
 ) const {
 	if (any)
@@ -2773,6 +2773,8 @@ int Workspace::editingAssetStates(
 		*dirty = false;
 	if (pastable)
 		*pastable = false;
+	if (selectable)
+		*selectable = false;
 	if (undoable)
 		*undoable = nullptr;
 	if (redoable)
@@ -2795,6 +2797,8 @@ int Workspace::editingAssetStates(
 
 			if (pastable)
 				*pastable = editor->pastable();
+			if (selectable)
+				*selectable = editor->selectable();
 
 			if (undoable)
 				*undoable = editor->undoable();

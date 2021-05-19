@@ -80,6 +80,7 @@ public:
 	virtual bool pastable(void) const = 0;
 	virtual void paste(void) = 0;
 	virtual void del(void) = 0;
+	virtual bool selectable(void) const = 0;
 
 	virtual const char* redoable(void) const = 0;
 	virtual const char* undoable(void) const = 0;
