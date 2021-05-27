@@ -963,8 +963,11 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 * `vec4:__unm()`: takes the opposite `Vec4` componentwise
 * `vec4:__eq(vec4_)`: compares with another `Vec4` for equality
 
+* `rot:__add(rot_)`: adds with another `Rot` in angle
+* `rot:__sub(rot_)`: subtracts by another `Rot` in angle
 * `rot:__mul(vec2)`: rotates another `Vec2`
 * `rot:__mul(rot_)`: rotates another `Rot`
+* `rot:__unm()`: takes the opposite `Rot` in angle
 * `rot:__eq(rot_)`: compares with another `Rot` for equality
 
 * `rect:__eq(rect_)`: compares with another `Rect` for equality
@@ -1756,7 +1759,7 @@ Available options:
 	* `w`: the expected width
 	* `h`: the expected height
 * `Application.resize(size)`: resizes the application window
-	* `size`: can be "fullscreen"
+	* `size`: can be one in "fullscreen", "windowed"
 
 ### Canvas
 
