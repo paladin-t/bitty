@@ -1,3 +1,21 @@
+### v1.1.1 May. 27, 2021
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added an `Application.setOption(...)` function to change application behaviour
+* Added `rot:__add(...)`, `rot:__sub(...)`, `rot:__unm()` operators to the `Rot` object
+* Added context menu to graphics-based editors
+* Added a menu item to reload project
+* Added a dialog box to resize helper grid of the image editor
+* Fixed a render target resetting issue
+* Fixed a crash bug when asset ref is unloaded
+* Fixed a crash bug when error occurred
+* Fixed a manual exiting issue when debug is disabled
+* Fixed an infinite sleep issue (Windows)
+* Fixed an ellipse drawing bug of the graphics-based editors
+* Improved error handling during parsing
+* Improved asset lookup performance
+
 ### v1.1 Apr. 10, 2021
 
 Enhanced modules, improved usability, fixed some bugs.
