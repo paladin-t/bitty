@@ -284,6 +284,7 @@ protected:
 	BITTY_PROPERTY_READONLY(bool, consoleResizing)
 	BITTY_PROPERTY_READONLY(bool, consoleFocused)
 	BITTY_PROPERTY_READONLY_PTR(ImGui::CodeEditor, consoleTextBox)
+	BITTY_PROPERTY_READONLY(bool, consoleEnabled)
 	BITTY_FIELD(Mutex, consoleLock)
 
 public:

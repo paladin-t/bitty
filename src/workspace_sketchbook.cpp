@@ -1154,6 +1154,12 @@ void WorkspaceSketchbook::loadProject(class Window* wnd, class Renderer* rnd, co
 
 			self->canvasFull(true);
 
+			do {
+				LockGuard<decltype(self->consoleLock())> guard(self->consoleLock());
+
+				self->consoleEnabled(false);
+			} while (false);
+
 			Operations::projectRun(rnd, self, project, exec, primitives);
 		};
 
@@ -1210,6 +1216,12 @@ void WorkspaceSketchbook::loadProject(class Window* wnd, class Renderer* rnd, co
 }
 
 void WorkspaceSketchbook::unloadProject(const class Project* project, Executable* exec) {
+	do {
+		LockGuard<decltype(consoleLock())> guard(consoleLock());
+
+		consoleEnabled(true);
+	} while (false);
+
 	canvasFull(false);
 
 	exec->clearBreakpoints(nullptr);

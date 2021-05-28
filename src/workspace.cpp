@@ -401,6 +401,7 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 	consoleTextBox()->SetShowLineNumbers(false);
 	consoleTextBox()->SetShowWhiteSpaces(false);
 	consoleTextBox()->SetTooltipEnabled(false);
+	consoleEnabled(true);
 
 	// Config the primitives module.
 	primitives->input()->config(settings()->inputGamepads, INPUT_GAMEPAD_COUNT);
@@ -498,15 +499,29 @@ bool Workspace::canSaveTo(const char* path) const {
 void Workspace::clear(void) {
 	LockGuard<decltype(consoleLock())> guard(consoleLock());
 
-	consoleTextBox()->SetText("");
+#if defined BITTY_OS_HTML
+	const bool withConsole = false;
+#else /* BITTY_OS_HTML */
+	const bool withConsole = consoleEnabled();
+#endif /* BITTY_OS_HTML */
+	if (withConsole) {
+		consoleTextBox()->SetText("");
+	}
 }
 
 bool Workspace::print(const char* msg) {
 	LockGuard<decltype(consoleLock())> guard(consoleLock());
 
-	consoleTextBox()->AppendText(msg, theme()->style()->messageColor);
-	consoleTextBox()->AppendText("\n", theme()->style()->messageColor);
-	consoleTextBox()->MoveBottom();
+#if defined BITTY_OS_HTML
+	const bool withConsole = false;
+#else /* BITTY_OS_HTML */
+	const bool withConsole = consoleEnabled();
+#endif /* BITTY_OS_HTML */
+	if (withConsole) {
+		consoleTextBox()->AppendText(msg, theme()->style()->messageColor);
+		consoleTextBox()->AppendText("\n", theme()->style()->messageColor);
+		consoleTextBox()->MoveBottom();
+	}
 
 	const std::string osstr = Unicode::toOs(msg);
 	fprintf(stdout, "%s\n", osstr.c_str());
@@ -517,9 +532,16 @@ bool Workspace::print(const char* msg) {
 bool Workspace::warn(const char* msg) {
 	LockGuard<decltype(consoleLock())> guard(consoleLock());
 
-	consoleTextBox()->AppendText(msg, theme()->style()->warningColor);
-	consoleTextBox()->AppendText("\n", theme()->style()->warningColor);
-	consoleTextBox()->MoveBottom();
+#if defined BITTY_OS_HTML
+	const bool withConsole = false;
+#else /* BITTY_OS_HTML */
+	const bool withConsole = consoleEnabled();
+#endif /* BITTY_OS_HTML */
+	if (withConsole) {
+		consoleTextBox()->AppendText(msg, theme()->style()->warningColor);
+		consoleTextBox()->AppendText("\n", theme()->style()->warningColor);
+		consoleTextBox()->MoveBottom();
+	}
 
 	const std::string osstr = Unicode::toOs(msg);
 	fprintf(stderr, "%s\n", osstr.c_str());
@@ -530,9 +552,16 @@ bool Workspace::warn(const char* msg) {
 bool Workspace::error(const char* msg) {
 	LockGuard<decltype(consoleLock())> guard(consoleLock());
 
-	consoleTextBox()->AppendText(msg, theme()->style()->errorColor);
-	consoleTextBox()->AppendText("\n", theme()->style()->errorColor);
-	consoleTextBox()->MoveBottom();
+#if defined BITTY_OS_HTML
+	const bool withConsole = false;
+#else /* BITTY_OS_HTML */
+	const bool withConsole = consoleEnabled();
+#endif /* BITTY_OS_HTML */
+	if (withConsole) {
+		consoleTextBox()->AppendText(msg, theme()->style()->errorColor);
+		consoleTextBox()->AppendText("\n", theme()->style()->errorColor);
+		consoleTextBox()->MoveBottom();
+	}
 
 	const std::string osstr = Unicode::toOs(msg);
 	fprintf(stderr, "%s\n", osstr.c_str());
