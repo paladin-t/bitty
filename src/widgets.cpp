@@ -1682,7 +1682,7 @@ static bool ProgressBar(const char* label, void* p_data, const void* p_min, cons
 	bool temp_input_is_active = !readonly && TempInputIsActive(id);
 	bool temp_input_start = false;
 	if (!readonly && !temp_input_is_active) {
-		const bool focus_requested = FocusableItemRegister(window, id);
+		const bool focus_requested = (window->DC.LastItemStatusFlags & ImGuiItemStatusFlags_Focused) != 0;
 		const bool clicked = (hovered && g.IO.MouseClicked[0]);
 		if (focus_requested || clicked || g.NavActivateId == id || g.NavInputId == id) {
 			SetActiveID(id, window);
@@ -1691,7 +1691,6 @@ static bool ProgressBar(const char* label, void* p_data, const void* p_min, cons
 			g.ActiveIdUsingNavDirMask |= (1 << ImGuiDir_Left) | (1 << ImGuiDir_Right);
 			if (focus_requested || (clicked && g.IO.KeyCtrl) || g.NavInputId == id) {
 				temp_input_start = true;
-				FocusableItemUnregister(window);
 			}
 		}
 	}
@@ -2091,7 +2090,7 @@ static bool TreeNodeBehavior(ImGuiID id, ImTextureID texture_id, ImTextureID ope
 	{
 		if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
 			TreePushOverrideID(id);
-		IMGUI_TEST_ENGINE_ITEM_INFO(window->DC.LastItemId, label, window->DC.ItemFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
+		IMGUI_TEST_ENGINE_ITEM_INFO(window->DC.LastItemId, label, window->DC.LastItemStatusFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
 		return is_open;
 	}
 
@@ -2211,18 +2210,8 @@ static bool TreeNodeBehavior(ImGuiID id, ImTextureID texture_id, ImTextureID ope
 		if (flags & ImGuiTreeNodeFlags_ClipLabelForTrailingButton)
 			frame_bb.Max.x -= g.FontSize + style.FramePadding.x;
 		if (g.LogEnabled)
-		{
-			// NB: '##' is normally used to hide text (as a library-wide feature), so we need to specify the text range to make sure the ## aren't stripped out here.
-			const char log_prefix[] = "\n##";
-			const char log_suffix[] = "##";
-			LogRenderedText(&text_pos, log_prefix, log_prefix + 3);
-			RenderTextClipped(text_pos, frame_bb.Max, label, label_end, &label_size);
-			LogRenderedText(&text_pos, log_suffix, log_suffix + 2);
-		}
-		else
-		{
-			RenderTextClipped(text_pos, frame_bb.Max, label, label_end, &label_size);
-		}
+			LogSetNextTextDecoration("###", "###");
+		RenderTextClipped(text_pos, frame_bb.Max, label, label_end, &label_size);
 	}
 	else
 	{
@@ -2257,14 +2246,14 @@ static bool TreeNodeBehavior(ImGuiID id, ImTextureID texture_id, ImTextureID ope
 			}
 		}
 		if (g.LogEnabled)
-			LogRenderedText(&text_pos, ">");
+			LogSetNextTextDecoration(">", NULL);
 		if (!checked)
 			RenderText(text_pos, label, label_end, false);
 	}
 
 	if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
 		TreePushOverrideID(id);
-	IMGUI_TEST_ENGINE_ITEM_INFO(id, label, window->DC.ItemFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
+	IMGUI_TEST_ENGINE_ITEM_INFO(id, label, window->DC.LastItemStatusFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
 	return is_open;
 }
 
