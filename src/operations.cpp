@@ -2661,13 +2661,29 @@ promise::Defer Operations::projectAddFile(class Renderer* rnd, Workspace* ws, co
 
 					Asset* asset = prj->factory().create(prj);
 
+					bool ok = false;
 					File::Ptr file(File::create());
 					if (file->open(newPath, Stream::READ)) {
 						Bytes::Ptr buf(Bytes::create());
 						file->readBytes(buf.get());
 						buf->poke(0);
-						asset->link(type, buf.get(), nameExt.c_str(), nullptr);
+						ok = asset->link(type, buf.get(), nameExt.c_str(), nullptr);
 						file->close();
+					}
+
+					if (!ok) {
+						prj->factory().destroy(asset);
+
+						df.reject();
+
+						ws->messagePopupBox(
+							ws->theme()->dialogPrompt_InvalidAsset(),
+							nullptr,
+							nullptr,
+							nullptr
+						);
+
+						return;
 					}
 
 					Asset::States* states = asset->states();

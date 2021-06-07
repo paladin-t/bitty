@@ -809,6 +809,10 @@ bool Asset::reload(Usages usage, class Bytes* buf, Object::Ptr ref, bool implici
 				object(usage, ptr);
 			}
 			ptr->writeBytes(buf->pointer(), buf->count());
+
+			Font::Ptr font(Font::create());
+			if (!font->fromBytes(ptr->pointer(), ptr->count(), 8, 0))
+				return false;
 		}
 
 		return true;

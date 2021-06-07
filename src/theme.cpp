@@ -259,6 +259,7 @@ bool Theme::open(class Renderer* rnd) {
 	dialogPrompt_CannotWriteToCurrentProject("Cannot write to current project.");
 	dialogPrompt_GetFullVersionToSave("Get full version to save.");
 	dialogPrompt_InvalidArea("Invalid area.");
+	dialogPrompt_InvalidAsset("Invalid asset.");
 	dialogPrompt_InvalidName("Invalid name.");
 	dialogPrompt_InvalidProject("Invalid project.");
 	dialogPrompt_InvalidRef("Invalid ref.");

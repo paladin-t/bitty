@@ -1387,6 +1387,8 @@ void CodeEditor::SetText(const std::string &aText) {
 	char* str = (char*)aText.c_str();
 	while (str < (char*)aText.c_str() + aText.length()) {
 		int n = ImTextExpectUtf8Char(str);
+		if (n == 0)
+			n = 1; // 1 byte forward when meets invalid character.
 		Char c = ImTextTakeUtf8Bytes(str, n);
 		if (CodeLines.empty())
 			CodeLines.push_back(Line());

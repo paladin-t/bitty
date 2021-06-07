@@ -192,6 +192,7 @@ public:
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_CannotWriteToCurrentProject)
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_GetFullVersionToSave)
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_InvalidArea)
+	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_InvalidAsset)
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_InvalidName)
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_InvalidProject)
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_InvalidRef)

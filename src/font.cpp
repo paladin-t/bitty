@@ -109,9 +109,9 @@ public:
 		_fontHeight = impl->_fontHeight;
 		_fontScale = impl->_fontScale;
 		if (_fontHeight > 0)
-			initializeWithFontInfo(_fontHeight);
+			return initializeWithFontInfo(_fontHeight);
 
-		return true;
+		return false;
 	}
 
 	virtual bool fromImage(const class Image* src, int width, int height, int permeation) override {
@@ -149,9 +149,7 @@ public:
 		_data->writeBytes(data, len);
 		_permeation = permeation;
 
-		initializeWithFontInfo(size);
-
-		return true;
+		return initializeWithFontInfo(size);
 	}
 
 private:
@@ -253,13 +251,16 @@ private:
 		return true;
 	}
 
-	void initializeWithFontInfo(int size) {
+	bool initializeWithFontInfo(int size) {
+		bool result = false;
 		if (_data && !_data->empty() && (size > 0 && _fontHeight != size)) {
 			_fontHeight = size;
 
-			stbtt_InitFont(&_fontInfo, _data->pointer(), stbtt_GetFontOffsetForIndex(_data->pointer(), 0));
+			result = !!stbtt_InitFont(&_fontInfo, _data->pointer(), stbtt_GetFontOffsetForIndex(_data->pointer(), 0));
 			_fontScale = stbtt_ScaleForPixelHeight(&_fontInfo, (float)_fontHeight);
 		}
+
+		return result;
 	}
 	bool renderWithFontInfo(
 		Codepoint cp,
