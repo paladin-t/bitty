@@ -170,6 +170,8 @@ const char* typeNameOf(lua_State* L, int idx, bool detail = true);
 const char* toString(lua_State* L, int idx, size_t* len);
 
 bool isNil(lua_State* L, int idx = 1);
+bool isNoneOrNil(lua_State* L, int idx = 1);
+bool isThread(lua_State* L, int idx = 1);
 bool isBoolean(lua_State* L, int idx = 1);
 bool isInteger(lua_State* L, int idx = 1);
 bool isNumber(lua_State* L, int idx = 1);
@@ -180,6 +182,21 @@ bool isUserdata(lua_State* L, int idx = 1);
 bool isCFunction(lua_State* L, int idx = 1);
 bool isFunction(lua_State* L, int idx = 1);
 bool isLightuserdata(lua_State* L, int idx = 1);
+
+void optional(lua_State* L, signed char &ret, Index idx = Index(1), signed char d = 0);
+void optional(lua_State* L, unsigned char &ret, Index idx = Index(1), unsigned char d = 0);
+void optional(lua_State* L, short &ret, Index idx = Index(1), short d = 0);
+void optional(lua_State* L, unsigned short &ret, Index idx = Index(1), unsigned short d = 0);
+void optional(lua_State* L, int &ret, Index idx = Index(1), int d = 0);
+void optional(lua_State* L, unsigned int &ret, Index idx = Index(1), unsigned int d = 0);
+void optional(lua_State* L, long &ret, Index idx = Index(1), long d = 0);
+void optional(lua_State* L, unsigned long &ret, Index idx = Index(1), unsigned long d = 0);
+void optional(lua_State* L, long long &ret, Index idx = Index(1), long long d = 0);
+void optional(lua_State* L, unsigned long long &ret, Index idx = Index(1), unsigned long long d = 0);
+void optional(lua_State* L, float &ret, Index idx = Index(1), float d = 0);
+void optional(lua_State* L, double &ret, Index idx = Index(1), double d = 0);
+void optional(lua_State* L, const char* &ret, Index idx = Index(1), const char* d = "");
+void optional(lua_State* L, std::string &ret, Index idx = Index(1), const std::string &d = "");
 
 void check(lua_State* L, Placeholder &ret, Index idx = Index(1));
 void check(lua_State* L, Ref &ret, Index idx = Index(1));
@@ -253,6 +270,7 @@ void read(lua_State* L, Function &ret, Index idx = Index(1));
 void read(lua_State* L, Function::Ptr &ret, Index idx = Index(1));
 void read(lua_State* L, void* &ret, Index idx = Index(1), const char* type = nullptr);
 void read(lua_State* L, LightUserdata &ret, Index idx = Index(1));
+void read(lua_State* L, lua_State* &ret, Index idx = Index(1));
 template<typename Class> void read(lua_State* L, Class* &ret, Index idx, const char* type /* nullable */) {
 	ret = nullptr;
 
@@ -612,6 +630,8 @@ void setHook(lua_State* L, lua_Hook func, int mask, int count);
 lua_Hook getHook(lua_State* L);
 int getHookMask(lua_State* L);
 int getHookCount(lua_State* L);
+
+void traceback(lua_State* L, lua_State* L1, const char* msg, int level);
 
 int gc(lua_State* L);
 int gc(lua_State* L, int opt);

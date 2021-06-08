@@ -10635,6 +10635,37 @@ static int Debug_setTimeout(lua_State* L) {
 #endif /* BITTY_DEBUG_ENABLED */
 }
 
+static int Debug_trace(lua_State* L) {
+	auto getThread = [] (lua_State* L, int* arg) -> lua_State* {
+		if (isThread(L, 1)) {
+			*arg = 1;
+
+			lua_State* ret = nullptr;
+			read(L, ret, Index(1));
+
+			return ret;
+		} else {
+			*arg = 0;
+
+			return L; // Function will operate over current thread.
+		}
+	};
+
+	int arg = 0;
+	lua_State* L1 = getThread(L, &arg);
+	const char* msg = nullptr;
+	read(L, msg, Index(arg + 1));
+	if (msg == nullptr && !isNoneOrNil(L, arg + 1)) { // Non-string "msg"?
+		write(L, Index(arg + 1)); // Return it untouched.
+	} else {
+		int level = 0;
+		optional(L, level, Index(arg + 2), (L == L1) ? 1 : 0);
+		traceback(L, L1, msg, level);
+	}
+
+	return 1;
+}
+
 static void open_Debug(lua_State* L) {
 	req(
 		L,
@@ -10647,6 +10678,7 @@ static void open_Debug(lua_State* L) {
 						luaL_Reg{ "clearBreakpoints", Debug_clearBreakpoints },
 						luaL_Reg{ "getTimeout", Debug_getTimeout },
 						luaL_Reg{ "setTimeout", Debug_setTimeout },
+						luaL_Reg{ "trace", Debug_trace },
 						luaL_Reg{ nullptr, nullptr }
 					)
 				)

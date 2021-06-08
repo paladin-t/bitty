@@ -293,6 +293,14 @@ bool isNil(lua_State* L, int idx) {
 	return !!lua_isnil(L, idx);
 }
 
+bool isNoneOrNil(lua_State* L, int idx) {
+	return !!lua_isnoneornil(L, idx);
+}
+
+bool isThread(lua_State* L, int idx) {
+	return !!lua_isthread(L, idx);
+}
+
 bool isBoolean(lua_State* L, int idx) {
 	return !!lua_isboolean(L, idx);
 }
@@ -360,6 +368,62 @@ bool isLightuserdata(lua_State* L, int idx) {
 	return !!lua_islightuserdata(L, idx);
 }
 
+void optional(lua_State* L, signed char &ret, Index idx, signed char d) {
+	ret = (signed char)luaL_optinteger(L, idx, d);
+}
+
+void optional(lua_State* L, unsigned char &ret, Index idx, unsigned char d) {
+	ret = (unsigned char)luaL_optinteger(L, idx, d);
+}
+
+void optional(lua_State* L, short &ret, Index idx, short d) {
+	ret = (short)luaL_optinteger(L, idx, d);
+}
+
+void optional(lua_State* L, unsigned short &ret, Index idx, unsigned short d) {
+	ret = (unsigned short)luaL_optinteger(L, idx, d);
+}
+
+void optional(lua_State* L, int &ret, Index idx, int d) {
+	ret = (int)luaL_optinteger(L, idx, d);
+}
+
+void optional(lua_State* L, unsigned int &ret, Index idx, unsigned int d) {
+	ret = (unsigned int)luaL_optinteger(L, idx, d);
+}
+
+void optional(lua_State* L, long &ret, Index idx, long d) {
+	ret = (long)luaL_optinteger(L, idx, d);
+}
+
+void optional(lua_State* L, unsigned long &ret, Index idx, unsigned long d) {
+	ret = (unsigned long)luaL_optinteger(L, idx, d);
+}
+
+void optional(lua_State* L, long long &ret, Index idx, long long d) {
+	ret = (long long)luaL_optinteger(L, idx, d);
+}
+
+void optional(lua_State* L, unsigned long long &ret, Index idx, unsigned long long d) {
+	ret = (unsigned long long)luaL_optinteger(L, idx, d);
+}
+
+void optional(lua_State* L, float &ret, Index idx, float d) {
+	ret = (float)luaL_optnumber(L, idx, d);
+}
+
+void optional(lua_State* L, double &ret, Index idx, double d) {
+	ret = (double)luaL_optnumber(L, idx, d);
+}
+
+void optional(lua_State* L, const char* &ret, Index idx, const char* d) {
+	ret = luaL_optstring(L, idx, d);
+}
+
+void optional(lua_State* L, std::string &ret, Index idx, const std::string &d) {
+	ret = luaL_optstring(L, idx, d.c_str());
+}
+
 void check(lua_State* L, Placeholder &ret, Index idx) {
 	luaL_checkany(L, idx);
 
@@ -367,29 +431,19 @@ void check(lua_State* L, Placeholder &ret, Index idx) {
 }
 
 void check(lua_State* L, Ref &ret, Index idx) {
-	if (lua_isfunction(L, idx)) {
-		lua_pushvalue(L, idx);
-		ret = Ref(L);
-		lua_pop(L, 1);
+	lua_pushvalue(L, idx);
+	ret = Ref(L);
+	lua_pop(L, 1);
 
-		ret._L = L;
-	} else {
-		luaL_error(L, "Function expected.");
-	}
+	ret._L = L;
 }
 
 void check(lua_State* L, Ref::Ptr &ret, Index idx) {
-	ret = nullptr;
+	lua_pushvalue(L, idx);
+	ret = Ref::Ptr(new Ref(L));
+	lua_pop(L, 1);
 
-	if (lua_isfunction(L, idx)) {
-		lua_pushvalue(L, idx);
-		ret = Ref::Ptr(new Ref(L));
-		lua_pop(L, 1);
-
-		ret->_L = L;
-	} else {
-		luaL_error(L, "Function expected.");
-	}
+	ret->_L = L;
 }
 
 void check(lua_State* L, bool &ret, Index idx) {
@@ -647,6 +701,10 @@ void read(lua_State* L, void* &ret, Index idx, const char* type) {
 
 void read(lua_State* L, LightUserdata &ret, Index idx) {
 	ret.data = lua_touserdata(L, idx);
+}
+
+void read(lua_State* L, lua_State* &ret, Index idx) {
+	ret = lua_tothread(L, idx);
 }
 
 int write(lua_State* L, const Index &val) {
@@ -1041,6 +1099,10 @@ int getHookMask(lua_State* L) {
 
 int getHookCount(lua_State* L) {
 	return lua_gethookcount(L);
+}
+
+void traceback(lua_State* L, lua_State* L1, const char* msg, int level) {
+	luaL_traceback(L, L1, msg, level);
 }
 
 int gc(lua_State* L) {
