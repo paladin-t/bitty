@@ -1760,6 +1760,8 @@ bool Workspace::canvas(class Window* wnd, class Renderer* rnd, const class Proje
 	} else if (*canvasState() == MAXIMIZED || canvasFull()) {
 		flags = WORKSPACE_WND_FLAGS_DOCK_NO_TITLE;
 
+		canvasValidation(Math::Vec2i(rnd->width(), rnd->height()));
+
 		const ImVec2 wndSize((float)rnd->width(), (float)rnd->height());
 		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
 		ImGui::SetNextWindowSize(wndSize, ImGuiCond_Always);
@@ -2484,9 +2486,9 @@ void Workspace::scene(class Window* wnd, class Renderer* rnd, const class Projec
 	// Prepare.
 	ImGuiStyle &style = ImGui::GetStyle();
 
-	const float borderSize = style.WindowBorderSize;
 	if (canvasFull())
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+	const float borderSize = style.WindowBorderSize;
 
 	const ImVec2 regMin = ImGui::GetWindowContentRegionMin();
 	const ImVec2 regMax = ImGui::GetWindowContentRegionMax();
