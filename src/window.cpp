@@ -23,10 +23,10 @@ private:
 
 	bool _bordered = true;
 	bool _resizable = true;
-#if WINDOW_LAZY_TOGGLE_FULLSCREEN
-	bool _lazySetFullscreen = false;
-	bool _lazyFullscreenValue = false;
-#endif /* WINDOW_LAZY_TOGGLE_FULLSCREEN */
+#if WINDOW_SET_STATE_LAZILY
+	bool _lazySetState = false;
+	Uint32 _lazyStateValue = 0;
+#endif /* WINDOW_SET_STATE_LAZILY */
 
 public:
 	virtual ~WindowImpl() {
@@ -178,7 +178,13 @@ public:
 		return !!(flags & SDL_WINDOW_MAXIMIZED);
 	}
 	virtual void maximize(void) override {
+#if WINDOW_SET_STATE_LAZILY
+		_lazySetState = true;
+		_lazyStateValue |= SDL_WINDOW_MAXIMIZED;
+		_lazyStateValue &= ~SDL_WINDOW_MINIMIZED;
+#else /* WINDOW_SET_STATE_LAZILY */
 		SDL_MaximizeWindow(_window);
+#endif /* WINDOW_SET_STATE_LAZILY */
 	}
 	virtual bool minimized(void) const override {
 		const Uint32 flags = SDL_GetWindowFlags(_window);
@@ -186,10 +192,22 @@ public:
 		return !!(flags & SDL_WINDOW_MINIMIZED);
 	}
 	virtual void minimize(void) override {
+#if WINDOW_SET_STATE_LAZILY
+		_lazySetState = true;
+		_lazyStateValue |= SDL_WINDOW_MINIMIZED;
+		_lazyStateValue &= ~SDL_WINDOW_MAXIMIZED;
+#else /* WINDOW_SET_STATE_LAZILY */
 		SDL_MinimizeWindow(_window);
+#endif /* WINDOW_SET_STATE_LAZILY */
 	}
-	virtual void restore(void) const override {
+	virtual void restore(void) override {
+#if WINDOW_SET_STATE_LAZILY
+		_lazySetState = true;
+		_lazyStateValue &= ~SDL_WINDOW_MAXIMIZED;
+		_lazyStateValue &= ~SDL_WINDOW_MINIMIZED;
+#else /* WINDOW_SET_STATE_LAZILY */
 		SDL_RestoreWindow(_window);
+#endif /* WINDOW_SET_STATE_LAZILY */
 	}
 	virtual bool fullscreen(void) const override {
 		const Uint32 flags = SDL_GetWindowFlags(_window);
@@ -197,10 +215,13 @@ public:
 		return !!(flags & SDL_WINDOW_FULLSCREEN_DESKTOP);
 	}
 	virtual void fullscreen(bool val) override {
-#if WINDOW_LAZY_TOGGLE_FULLSCREEN
-		_lazySetFullscreen = true;
-		_lazyFullscreenValue = val;
-#else /* WINDOW_LAZY_TOGGLE_FULLSCREEN */
+#if WINDOW_SET_STATE_LAZILY
+		_lazySetState = true;
+		if (val)
+			_lazyStateValue |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+		else
+			_lazyStateValue &= ~SDL_WINDOW_FULLSCREEN_DESKTOP;
+#else /* WINDOW_SET_STATE_LAZILY */
 		if (val) {
 			Uint32 flags = SDL_GetWindowFlags(_window);
 			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
@@ -209,8 +230,11 @@ public:
 			Uint32 flags = SDL_GetWindowFlags(_window);
 			flags &= ~SDL_WINDOW_FULLSCREEN_DESKTOP;
 			SDL_SetWindowFullscreen(_window, flags);
+
+			if (!(flags & SDL_WINDOW_MAXIMIZED))
+				centralize();
 		}
-#endif /* WINDOW_LAZY_TOGGLE_FULLSCREEN */
+#endif /* WINDOW_SET_STATE_LAZILY */
 	}
 
 	virtual int width(void) const override {
@@ -238,20 +262,34 @@ public:
 	}
 
 	virtual void update(void) override {
-#if WINDOW_LAZY_TOGGLE_FULLSCREEN
-		if (_lazySetFullscreen) {
-			_lazySetFullscreen = false;
-			if (_lazyFullscreenValue) {
-				Uint32 flags = SDL_GetWindowFlags(_window);
-				flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-				SDL_SetWindowFullscreen(_window, flags);
-			} else {
-				Uint32 flags = SDL_GetWindowFlags(_window);
-				flags &= ~SDL_WINDOW_FULLSCREEN_DESKTOP;
-				SDL_SetWindowFullscreen(_window, flags);
+#if WINDOW_SET_STATE_LAZILY
+		if (_lazySetState) {
+			_lazySetState = false;
+			Uint32 flags = SDL_GetWindowFlags(_window);
+			if (!(_lazyStateValue & SDL_WINDOW_FULLSCREEN_DESKTOP)) {
+				if (flags & SDL_WINDOW_FULLSCREEN_DESKTOP) {
+					flags &= ~SDL_WINDOW_FULLSCREEN_DESKTOP;
+					SDL_SetWindowFullscreen(_window, flags);
+				}
+			} else if ((_lazyStateValue & SDL_WINDOW_FULLSCREEN_DESKTOP)) {
+				if (!(flags & SDL_WINDOW_FULLSCREEN_DESKTOP)) {
+					flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+					SDL_SetWindowFullscreen(_window, flags);
+				}
 			}
+			if (!(flags & SDL_WINDOW_FULLSCREEN_DESKTOP)) {
+				if ((_lazyStateValue & SDL_WINDOW_MAXIMIZED) && !(flags & SDL_WINDOW_MAXIMIZED)) {
+					SDL_MaximizeWindow(_window);
+				} else if ((_lazyStateValue & SDL_WINDOW_MINIMIZED) && !(flags & SDL_WINDOW_MINIMIZED)) {
+					SDL_MinimizeWindow(_window);
+				} else {
+					SDL_RestoreWindow(_window);
+					centralize();
+				}
+			}
+			_lazyStateValue = SDL_GetWindowFlags(_window);
 		}
-#endif /* WINDOW_LAZY_TOGGLE_FULLSCREEN */
+#endif /* WINDOW_SET_STATE_LAZILY */
 	}
 };
 

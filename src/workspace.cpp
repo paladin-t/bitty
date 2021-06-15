@@ -767,8 +767,8 @@ void Workspace::maximized(class Window*, class Renderer*) {
 	settings()->applicationWindowMaximized = true;
 }
 
-void Workspace::restored(class Window*, class Renderer*) {
-	settings()->applicationWindowFullscreen = false;
+void Workspace::restored(class Window* wnd, class Renderer*) {
+	settings()->applicationWindowFullscreen = wnd->fullscreen();
 	settings()->applicationWindowMaximized = false;
 }
 

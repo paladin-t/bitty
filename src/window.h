@@ -33,13 +33,13 @@
 #	define WINDOW_DEFAULT_HEIGHT 600
 #endif /* WINDOW_DEFAULT_HEIGHT */
 
-#ifndef WINDOW_LAZY_TOGGLE_FULLSCREEN
+#ifndef WINDOW_SET_STATE_LAZILY
 #	if BITTY_EFFECTS_ENABLED
-#		define WINDOW_LAZY_TOGGLE_FULLSCREEN 1
+#		define WINDOW_SET_STATE_LAZILY 1
 #	else /* BITTY_EFFECTS_ENABLED */
-#		define WINDOW_LAZY_TOGGLE_FULLSCREEN 0
+#		define WINDOW_SET_STATE_LAZILY 0
 #	endif /* BITTY_EFFECTS_ENABLED */
-#endif /* WINDOW_LAZY_TOGGLE_FULLSCREEN */
+#endif /* WINDOW_SET_STATE_LAZILY */
 
 /* ===========================================================================} */
 
@@ -169,7 +169,7 @@ public:
 	/**
 	 * @brief Restores the window.
 	 */
-	virtual void restore(void) const = 0;
+	virtual void restore(void) = 0;
 	/**
 	 * @brief Gets whether the window is in fullscreen mode.
 	 */
