@@ -129,7 +129,7 @@ public:
 
 	static bool startsWith(const std::string &str, const std::string &what, bool caseInsensitive);
 	static bool endsWith(const std::string &str, const std::string &what, bool caseInsensitive);
-	static bool matchWildcard(const std::string &str, const char* wildcard);
+	static bool matchWildcard(const std::string &str, const char* wildcard, bool caseInsensitive);
 	static size_t count(const std::string &str, const char what);
 
 	static const char* styleOf(const std::string &str);

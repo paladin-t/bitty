@@ -1299,7 +1299,7 @@ void Workspace::assets(class Window* wnd, class Renderer* rnd, const class Proje
 					if (assetsFiltering() && !assetsFilterPatterns().empty()) {
 						bool show = false;
 						for (const std::string &pattern : assetsFilterPatterns()) {
-							if (Text::matchWildcard(entry.name(), pattern.c_str())) {
+							if (Text::matchWildcard(entry.name(), pattern.c_str(), true)) {
 								show = true;
 
 								break;

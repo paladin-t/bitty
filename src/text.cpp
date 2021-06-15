@@ -579,45 +579,73 @@ bool Text::endsWith(const std::string &str, const std::string &what, bool caseIn
 	}
 }
 
-bool Text::matchWildcard(const std::string &str, const char* wildcard) {
+bool Text::matchWildcard(const std::string &str, const char* wildcard, bool caseInsensitive) {
+	struct Char {
+		unsigned code = 0;
+		size_t length = 0;
+
+		Char() {
+		}
+		Char(unsigned c, size_t l) : code(c), length(l) {
+		}
+	};
+	auto take1 = [caseInsensitive] (const char* str) -> Char {
+		if (*str == '\0')
+			return Char(0, 0);
+		if (!caseInsensitive)
+			return Char((unsigned)str[0], 1);
+
+		int n = Unicode::expectUtf8(str);
+		if (n == 0)
+			return Char(0, 0);
+		else if (n == 1)
+			return Char((unsigned)::toupper(str[0]), 1);
+
+		return Char(Unicode::takeUtf8(str, n), n);
+	};
+
 	const char* string = str.c_str();
 
-	while (*wildcard && *wildcard != '*' && *wildcard != '?') {
-		if (*string != *wildcard) {
-			return false;
+	Char s = take1(string), w = take1(wildcard);
+	while (w.code && w.code != '*' && w.code != '?') {
+		if (s.code == w.code) {
+			string += s.length; s = take1(string);
+			wildcard += w.length; w = take1(wildcard);
 		} else {
-			++string;
-			++wildcard;
+			return false;
 		}
 	}
 
-	if (!(*string)) {
-		for ( ; *wildcard; ++wildcard) {
-			if (*wildcard != '*' && *wildcard != '?')
+	if (!s.code) {
+		while (w.code) {
+			if (w.code != '*' && w.code != '?')
 				return false;
+			wildcard += w.length; w = take1(wildcard);
 		}
 
 		return true;
 	}
 
-	switch (*wildcard) {
+	switch (w.code) {
 	case '\0':
 		return false;
 	case '*':
-		while (*wildcard == '*' || *wildcard == '?')
-			++wildcard;
+		while (w.code == '*' || w.code == '?') {
+			wildcard += w.length; w = take1(wildcard);
+		}
 
-		if (!(*wildcard))
+		if (!(w.code))
 			return true;
 
-		for ( ; *string; ++string) {
-			if (matchWildcard(string, wildcard))
+		while (s.code) {
+			if (matchWildcard(string, wildcard, caseInsensitive))
 				return true;
+			string += s.length; s = take1(string);
 		}
 
 		return false;
 	case '?':
-		return matchWildcard(string + 1, wildcard + 1) || matchWildcard(string, wildcard + 1);
+		return matchWildcard(string + s.length, wildcard + w.length, caseInsensitive) || matchWildcard(string, wildcard + w.length, caseInsensitive);
 	default:
 		assert(false);
 
