@@ -1759,6 +1759,7 @@ bool Workspace::canvas(class Window* wnd, class Renderer* rnd, const class Proje
 		ImGui::SetNextWindowSizeConstraints(wndMinSize, ImVec2((float)rnd->width(), (float)rnd->height()));
 	} else if (*canvasState() == MAXIMIZED || canvasFull()) {
 		flags = WORKSPACE_WND_FLAGS_DOCK_NO_TITLE;
+		flags |= ImGuiWindowFlags_NoScrollWithMouse;
 
 		canvasValidation(Math::Vec2i(rnd->width(), rnd->height()));
 
