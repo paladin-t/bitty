@@ -9,6 +9,7 @@
 */
 
 #include "json.h"
+#include "text.h"
 
 /*
 ** {===========================================================================
@@ -65,8 +66,8 @@ public:
 	virtual bool toString(std::string &val, bool pretty) const override {
 		return Json::toString(_document, val, pretty);
 	}
-	virtual bool fromString(const std::string &val) override {
-		return Json::fromString(_document, val.c_str());
+	virtual bool fromString(const std::string &val, Error* error) override {
+		return Json::fromString(_document, val.c_str(), nullptr, error);
 	}
 
 private:
@@ -207,6 +208,9 @@ private:
 	}
 };
 
+Json::Error::Error() {
+}
+
 bool Json::toString(const rapidjson::Document &doc, std::string &val, bool pretty) {
 	rapidjson::StringBuffer buffer;
 	if (pretty) {
@@ -222,18 +226,23 @@ bool Json::toString(const rapidjson::Document &doc, std::string &val, bool prett
 	return true;
 }
 
-bool Json::fromString(rapidjson::Document &doc, const char* json, const char* file) {
+bool Json::fromString(rapidjson::Document &doc, const char* json, const char* file, Error* error) {
 	rapidjson::ParseResult ret = doc.Parse(json);
 
-	return Json::processParsingResult(ret, doc, json, file);
+	return Json::processParsingResult(ret, doc, json, file, error);
 }
 
-bool Json::processParsingResult(const rapidjson::ParseResult &ret, const rapidjson::Document &/* doc */, const char* json, const char* file) {
+bool Json::processParsingResult(const rapidjson::ParseResult &ret, const rapidjson::Document &/* doc */, const char* json, const char* file, Error* error) {
 	if (!ret) {
+		const char* what = rapidjson::GetParseError_En(ret.Code());
+		if (error) {
+			error->message = what;
+			error->position = (unsigned)ret.Offset();
+		}
 		if (file)
-			fprintf(stderr, "JSON parse error: \"%s\", %s (%u).\n", file, rapidjson::GetParseError_En(ret.Code()), (unsigned)ret.Offset());
+			fprintf(stderr, "JSON parse error: \"%s\", %s (%u).\n", file, what, (unsigned)ret.Offset());
 		else
-			fprintf(stderr, "JSON parse error: %s (%u).\n", rapidjson::GetParseError_En(ret.Code()), (unsigned)ret.Offset());
+			fprintf(stderr, "JSON parse error: %s (%u).\n", what, (unsigned)ret.Offset());
 		const char* off = json + ret.Offset();
 		(void)off;
 

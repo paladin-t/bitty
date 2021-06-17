@@ -30,6 +30,13 @@ class Json : public virtual Object {
 public:
 	typedef std::shared_ptr<Json> Ptr;
 
+	struct Error {
+		std::string message;
+		unsigned position = 0;
+
+		Error();
+	};
+
 public:
 	BITTY_CLASS_TYPE('J', 'S', 'O', 'N')
 
@@ -55,15 +62,15 @@ public:
 	 * @param[out] val
 	 */
 	virtual bool toString(std::string &val, bool pretty = true) const = 0;
-	virtual bool fromString(const std::string &val) = 0;
+	virtual bool fromString(const std::string &val, Error* error = nullptr) = 0;
 
 	/**
 	 * @param[out] val
 	 */
 	static bool toString(const rapidjson::Document &doc, std::string &val, bool pretty = true);
-	static bool fromString(rapidjson::Document &doc, const char* json, const char* file = nullptr);
+	static bool fromString(rapidjson::Document &doc, const char* json, const char* file = nullptr, Error* error = nullptr);
 
-	static bool processParsingResult(const rapidjson::ParseResult &ret, const rapidjson::Document &doc, const char* json, const char* file = nullptr);
+	static bool processParsingResult(const rapidjson::ParseResult &ret, const rapidjson::Document &doc, const char* json, const char* file = nullptr, Error* error = nullptr);
 
 	static Json* create(void);
 	static void destroy(Json* ptr);

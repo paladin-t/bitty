@@ -43,9 +43,15 @@ private:
 		std::string text;
 		bool overdue = true;
 
+		Json::Error error;
+		bool hasError = false;
+
 		void clear(void) {
 			text.clear();
 			overdue = true;
+
+			error = Json::Error();
+			hasError = false;
 		}
 	} _cache;
 
@@ -135,10 +141,22 @@ public:
 
 		size_t len = 0;
 		const char* txt = text(&len);
-		if (txt && len)
-			_object->fromString(txt);
-		else
+		if (txt && len) {
+			Json::Error error;
+			if (!_object->fromString(txt, &error)) {
+				int ln = 1;
+				const char* tmp = txt;
+				for (unsigned i = 0; i < error.position && *tmp; ++i, ++tmp) {
+					if (*tmp == '\n')
+						++ln;
+				}
+				_cache.error = error;
+				_cache.error.message = "JSON error:\n  " + Text::toString(ln) + ": " + _cache.error.message;
+				_cache.hasError = true;
+			}
+		} else {
 			_object->fromString("null");
+		}
 	}
 
 	virtual const char* text(size_t* len) const override {
@@ -436,6 +454,11 @@ public:
 		context(wnd, rnd, ws);
 
 		renderStatus(wnd, rnd, ws, width, statusBarHeight, pending);
+
+		if (_cache.hasError) {
+			_cache.hasError = false;
+			ws->error(_cache.error.message.c_str());
+		}
 	}
 
 	virtual void played(class Renderer* /* rnd */, const class Project* /* project */) override {
