@@ -6739,9 +6739,11 @@ static int Platform_surf(lua_State* L) {
 	const char* url = nullptr;
 	read<>(L, url);
 
-	const std::string osstr = Unicode::toOs(url);
+	if (url && *url) {
+		const std::string osstr = Unicode::toOs(url);
 
-	Platform::surf(osstr.c_str());
+		Platform::surf(osstr.c_str());
+	}
 
 	return 0;
 }
@@ -6750,9 +6752,11 @@ static int Platform_browse(lua_State* L) {
 	const char* dir = nullptr;
 	read<>(L, dir);
 
-	const std::string osstr = Unicode::toOs(dir);
+	if (dir && *dir) {
+		const std::string osstr = Unicode::toOs(dir);
 
-	Platform::browse(osstr.c_str());
+		Platform::browse(osstr.c_str());
+	}
 
 	return 0;
 }
@@ -6774,6 +6778,8 @@ static int Platform_setClipboardText(lua_State* L) {
 	const char* txt = nullptr;
 	read<>(L, txt);
 
+	if (!txt || !*txt)
+		txt = "";
 	const std::string osstr = Unicode::toOs(txt);
 
 	Platform::clipboardText(osstr.c_str());
@@ -6785,9 +6791,11 @@ static int Platform_execute(lua_State* L) {
 	const char* cmd = nullptr;
 	read<>(L, cmd);
 
-	const std::string osstr = Unicode::toOs(cmd);
+	if (cmd &&*cmd) {
+		const std::string osstr = Unicode::toOs(cmd);
 
-	Platform::execute(osstr.c_str());
+		Platform::execute(osstr.c_str());
+	}
 
 	return 0;
 }
