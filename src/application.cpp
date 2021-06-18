@@ -791,6 +791,9 @@ private:
 			stdout,
 			"Usage: " _BITTY_EXE
 			" [-" WORKSPACE_OPTION_APPLICATION_CWD_KEY " \"PATH\"]"
+#if defined BITTY_OS_WIN
+			" [-" WORKSPACE_OPTION_APPLICATION_CONSOLE_ENABLED_KEY "]"
+#endif /* BITTY_OS_WIN */
 			" [-" WORKSPACE_OPTION_WINDOW_BORDERLESS_KEY "]"
 			" [-" WORKSPACE_OPTION_WINDOW_SIZE_KEY " MxN]"
 			" [-" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY " ]"
@@ -801,6 +804,9 @@ private:
 			" [> log.txt]\n"
 		);
 		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_CWD_KEY             " \"PATH\" Specify the working directory.\n");
+#if defined BITTY_OS_WIN
+		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_CONSOLE_ENABLED_KEY "        Enable console window.\n");
+#endif /* BITTY_OS_WIN */
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_BORDERLESS_KEY           "        Run with borderless window.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_SIZE_KEY                 " MxN    Specify window size.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY                 "        Disable high-DPI.\n");

@@ -36,7 +36,7 @@ EM_JS(
 
 static int entry(int argc, const char* argv[]) {
 #if defined BITTY_OS_HTML
-	emscripten_set_main_loop([] (void) -> void { }, 0, 0);
+	emscripten_set_main_loop([] (void) -> void { /* Do nothing. */ }, 0, 0);
 	while (!fssynced()) {
 		constexpr const int STEP = 10;
 		emscripten_sleep(STEP);
@@ -54,7 +54,7 @@ static int entry(int argc, const char* argv[]) {
 	destroyApplication(app);
 #else /* BITTY_OS_HTML */
 	Application* app = createApplication(new WorkspaceSketchbook(), argc, argv);
-	while (updateApplication(app)) { }
+	while (updateApplication(app)) { /* Do nothing. */ }
 	destroyApplication(app);
 #endif /* BITTY_OS_HTML */
 
@@ -116,7 +116,6 @@ int main(int argc, const char* argv[]) {
 		return entry((int)args.size(), &args.front());
 }
 #elif defined BITTY_OS_WIN /* Platform macro. */
-#if defined BITTY_DEBUG
 static void openTerminal(void) {
 	long hConHandle;
 	HANDLE lStdHandle;
@@ -153,7 +152,6 @@ static void openTerminal(void) {
 	freopen("CON", "r", stdin);
 	freopen("CON", "w", stderr);
 }
-#endif /* BITTY_DEBUG */
 
 static std::vector<const char*> splitArgs(const char* ln, Text::Array &args) {
 	std::vector<const char*> ret;
@@ -184,6 +182,16 @@ int CALLBACK WinMain(_In_ HINSTANCE /* hInstance */, _In_ HINSTANCE /* hPrevInst
 
 	Text::Array argbuf;
 	std::vector<const char*> args = splitArgs(lpCmdLine, argbuf);
+
+#if !defined BITTY_DEBUG
+	for (const char* arg : args) {
+		if (arg && strcmp(arg, "-" WORKSPACE_OPTION_APPLICATION_CONSOLE_ENABLED_KEY) == 0) {
+			openTerminal();
+
+			break;
+		}
+	}
+#endif /* BITTY_DEBUG */
 
 	if (args.empty())
 		return entry(0, nullptr);

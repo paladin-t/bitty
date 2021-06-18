@@ -10139,7 +10139,7 @@ static int Project_save(lua_State* L) {
 		prj->preference(Archive::ZIP);
 	else
 		prj->preference(Archive::TXT);
-	if (!prj->save(path.c_str(), true, [] (const char*) -> void { }))
+	if (!prj->save(path.c_str(), true, [] (const char*) -> void { /* Do nothing. */ }))
 		return write(L, false);
 	prj->readonly(false);
 	prj->dirty(false);
