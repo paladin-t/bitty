@@ -1724,9 +1724,10 @@ bool Workspace::canvas(class Window* wnd, class Renderer* rnd, const class Proje
 			times = std::max((float)std::floor(rnd->height() / BITTY_CANVAS_DEFAULT_HEIGHT) - 1, 1.0f);
 		}
 		const bool fixedSize = cvsSize.x > 0 && cvsSize.y > 0;
-		const bool diffSize = canvasValidation() != Math::Vec2i(-1, -1) && canvasValidation() != cvsSize;
+		const bool justStopped = canvasValidation() == Math::Vec2i(-1, -1);
+		const bool diffSize = canvasValidation() != cvsSize;
 		const bool scaledSize = (num1 || num2 || num3 || num4) && modifier;
-		const bool tobeValidated = fixedSize && (diffSize || scaledSize);
+		const bool tobeValidated = fixedSize && ((!justStopped && diffSize) || scaledSize);
 		if (tobeValidated) {
 			cond = ImGuiCond_Always;
 
