@@ -27,7 +27,7 @@ public:
 	/**
 	 * @brief Opens the effects for further operation.
 	 */
-	virtual bool open(class Window* wnd, class Renderer* rnd, class Workspace* ws) = 0;
+	virtual bool open(class Window* wnd, class Renderer* rnd, class Workspace* ws, bool enabled) = 0;
 	/**
 	 * @brief Closes the effects after all operations.
 	 */

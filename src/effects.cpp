@@ -407,10 +407,13 @@ public:
 	virtual ~EffectsImpl() {
 	}
 
-	virtual bool open(class Window* wnd, class Renderer* rnd, class Workspace* ws) override {
+	virtual bool open(class Window* wnd, class Renderer* rnd, class Workspace* ws, bool enabled) override {
 		SDL_Window* window = (SDL_Window*)wnd->pointer();
 
 		_renderer = rnd;
+
+		if (!enabled)
+			return false;
 
 		_glContext = SDL_GL_CreateContext(window);
 		if (!_glContext) {
@@ -1113,7 +1116,7 @@ public:
 	virtual ~EffectsImpl() {
 	}
 
-	virtual bool open(class Window*, class Renderer*, class Workspace*) override {
+	virtual bool open(class Window*, class Renderer*, class Workspace*, bool) override {
 		return false;
 	}
 	virtual bool close(void) override {

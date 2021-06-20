@@ -286,7 +286,7 @@ public:
 		_workspace->open(_window, _renderer, _project, _executable, _primitives, options);
 
 		// Initialize the effects.
-		_effects->open(_window, _renderer, _workspace);
+		_effects->open(_window, _renderer, _workspace, options.find(WORKSPACE_OPTION_RENDERER_EFFECTS_DISABLED_KEY) == options.end());
 
 		// Finish.
 		return true;
@@ -799,8 +799,11 @@ private:
 			" [-" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY " ]"
 			" [-" WORKSPACE_OPTION_RENDERER_X2_KEY "]"
 			" [-" WORKSPACE_OPTION_RENDERER_X3_KEY "]"
-			" [-" WORKSPACE_OPTION_EXECUTABLE_TIMEOUT_DISABLED_KEY "]"
+#if BITTY_EFFECTS_ENABLED
+			" [-" WORKSPACE_OPTION_RENDERER_EFFECTS_DISABLED_KEY "]"
+#endif /* BITTY_EFFECTS_ENABLED */
 			" [-" WORKSPACE_OPTION_PLUGIN_DISABLED_KEY "]"
+			" [-" WORKSPACE_OPTION_EXECUTABLE_TIMEOUT_DISABLED_KEY "]"
 			" [> log.txt]\n"
 		);
 		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_CWD_KEY             " \"PATH\" Specify the working directory.\n");
@@ -812,6 +815,9 @@ private:
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY                 "        Disable high-DPI.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X2_KEY                 "       Set renderer scale to x2.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X3_KEY                 "       Set renderer scale to x3.\n");
+#if BITTY_EFFECTS_ENABLED
+		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_EFFECTS_DISABLED_KEY             "        Disable effects.\n");
+#endif /* BITTY_EFFECTS_ENABLED */
 		fprintf(stdout, "  -" WORKSPACE_OPTION_PLUGIN_DISABLED_KEY             "        Disable plugins.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_EXECUTABLE_TIMEOUT_DISABLED_KEY "        Disable invoking timeout.\n");
 		fprintf(stdout, "\n");
