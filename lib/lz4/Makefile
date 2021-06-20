@@ -155,7 +155,7 @@ usan: CC      = clang
 usan: CFLAGS  = -O3 -g -fsanitize=undefined -fno-sanitize-recover=undefined -fsanitize-recover=pointer-overflow
 usan: LDFLAGS = $(CFLAGS)
 usan: clean
-	$(MAKE) test FUZZER_TIME="-T30s" NB_LOOPS=-i1
+	CC=$(CC) CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' $(MAKE) test FUZZER_TIME="-T30s" NB_LOOPS=-i1
 
 .PHONY: usan32
 usan32: CFLAGS = -m32 -O3 -g -fsanitize=undefined
@@ -215,11 +215,20 @@ ctocpptest: clean
 	CC=$(TESTCC) $(MAKE) -C $(TESTDIR) CFLAGS="$(CFLAGS)" all
 
 .PHONY: c_standards
-c_standards: clean
+c_standards: clean c_standards_c11 c_standards_c99 c_standards_c90
+
+.PHONY: c_standards_c90
+c_standards_c90: clean
 	$(MAKE) clean; CFLAGS="-std=c90   -Werror -pedantic -Wno-long-long -Wno-variadic-macros" $(MAKE) allmost
 	$(MAKE) clean; CFLAGS="-std=gnu90 -Werror -pedantic -Wno-long-long -Wno-variadic-macros" $(MAKE) allmost
+
+.PHONY: c_standards_c99
+c_standards_c99: clean
 	$(MAKE) clean; CFLAGS="-std=c99   -Werror -pedantic" $(MAKE) all
 	$(MAKE) clean; CFLAGS="-std=gnu99 -Werror -pedantic" $(MAKE) all
+
+.PHONY: c_standards_c11
+c_standards_c11: clean
 	$(MAKE) clean; CFLAGS="-std=c11   -Werror" $(MAKE) all
 
 endif   # MSYS POSIX

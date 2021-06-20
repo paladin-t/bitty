@@ -41,7 +41,7 @@
 // so we enable multithread mode of "promise library".
 #define PM_MULTITHREAD
 #include "promise.hpp"
-#include "asio/io.hpp"
+#include "add_ons/asio/io.hpp"
 
 using namespace promise;
 
@@ -78,7 +78,7 @@ struct Session {
 Defer async_accept(tcp::acceptor &acceptor) {
     return newPromise([&](Defer d) {
         // Look up the domain name
-        auto socket = std::make_shared<tcp::socket>(acceptor.get_executor().context());
+        auto socket = std::make_shared<tcp::socket>(static_cast<asio::io_context &>(acceptor.get_executor().context()));
         acceptor.async_accept(*socket,
             [=](boost::system::error_code err) {
             setPromise(d, err, "resolve", socket);

@@ -188,7 +188,7 @@ private:
 #endif
             ++header->ref_count_;
 
-            //Check if ref_count_ must overflow£¡
+            //Check if ref_count_ overflow!
             if (header->ref_count_ <= 0) {
                 pm_throw("ref_count_ overflow");
             }
@@ -204,7 +204,10 @@ private:
 #ifdef PM_MULTITHREAD
             std::lock_guard<std::recursive_mutex> lock(pm_mutex::get_mutex());
 #endif
-            pm_assert(header->ref_count_ > 0);
+            if (header->ref_count_ <= 0) {
+                // pm_assert(header->ref_count_ > 0);
+                pm_throw("ref_count_ lowflow, may double freed");
+            }
             --header->ref_count_;
             if (header->ref_count_ == 0) {
                 return true;

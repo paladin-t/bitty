@@ -1892,6 +1892,8 @@ This module is used for debugging purposes.
 * `Debug.setTimeout(val)`: sets the invoking timeout value to the specific seconds
 	* `val`: the timeout value in seconds, 0 to disable timeout
 * `Debug.setTimeout()`: resets the invoking timeout value to default (10 seconds)
+* `Debug.trace([message[, level]])`: gets the stack trace
+	* returns the traceback string
 
 [TOP](#reference-manual)
 

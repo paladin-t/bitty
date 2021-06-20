@@ -223,6 +223,7 @@ inline auto call_tuple_as_argument(const FUNC &func, pm_any &arg, const std::ind
 
 template<typename FUNC>
 inline bool verify_func_arg(const FUNC &func, pm_any &arg) {
+    (void)func;
     typedef typename func_traits<FUNC>::arg_type func_arg_type;
     type_tuple<func_arg_type> tuple_func;
 
@@ -253,7 +254,8 @@ inline auto call_func(const FUNC &func, pm_any &arg)
     return call_tuple_as_argument(func, arg, std::make_index_sequence<type_tuple<func_arg_type>::size_>());
 }
 
-struct BypassAnyArg {};
+struct BypassAndResolve {};
+struct BypassAndReject {};
 struct Promise;
 
 template< class T >
@@ -299,6 +301,10 @@ public:
 
     inline T *operator->() const {
         return object_;
+    }
+
+    inline T &operator*() const {
+        return *object_;
     }
 
     inline T *obtain_rawptr() {
@@ -360,6 +366,17 @@ public:
         pm_allocator::add_ref(object_);
     }
 
+    Defer clone() const {
+        if (object_ == nullptr)
+            return pm_shared_ptr_promise();
+        else {
+            return pm_shared_ptr_promise(object_->clone());
+        }
+    }
+
+    operator bool() const {
+        return operator->() != nullptr;
+    }
     Defer &operator=(Defer const &ptr) {
         Defer(ptr).swap(*this);
         return *this;
@@ -403,6 +420,16 @@ public:
             object_->reject_pending();
     }
 
+    Defer tail() const {
+        if (object_ != nullptr) {
+            Promise *object = T::get_tail(object_);
+            pm_allocator::add_ref(object);
+            return pm_shared_ptr_promise(object);
+        }
+        else
+            return *this;
+    }
+
     void clear() {
         Defer().swap(*this);
     }
@@ -426,41 +453,58 @@ public:
         object_->reject(ptr);
     }
 
-    Defer then(Defer &promise) {
-        return object_->then(promise);
+    Defer &then(const Defer &promise) const {
+        tail().object_->then(const_cast<Defer &>(promise));
+        return const_cast<Defer &>(*this);
     }
 
-    Defer then(Defer&& promise) {
+    Defer &then(Defer&& promise) const {
         return then(promise);
     }
 
     template <typename FUNC_ON_RESOLVED, typename FUNC_ON_REJECTED>
-    Defer then(FUNC_ON_RESOLVED on_resolved, FUNC_ON_REJECTED on_rejected) const {
-        return object_->template then<FUNC_ON_RESOLVED, FUNC_ON_REJECTED>(on_resolved, on_rejected);
+    Defer &then(FUNC_ON_RESOLVED on_resolved, FUNC_ON_REJECTED on_rejected) const {
+        tail().object_->template then<FUNC_ON_RESOLVED, FUNC_ON_REJECTED>(on_resolved, on_rejected);
+        return const_cast<Defer &>(*this);
     }
 
-    template <typename FUNC_ON_RESOLVED>
-    Defer then(FUNC_ON_RESOLVED on_resolved) const {
-        return object_->template then<FUNC_ON_RESOLVED>(on_resolved);
+    template <typename FUNC_ON_RESOLVED,
+        typename std::enable_if<!std::is_same<
+            Defer,
+            typename std::remove_cv<typename std::remove_reference<FUNC_ON_RESOLVED>::type>::type>::value
+        >::type *dummy = nullptr
+    >
+    Defer &then(FUNC_ON_RESOLVED on_resolved) const {
+        tail().object_->template then<FUNC_ON_RESOLVED>(on_resolved);
+        return const_cast<Defer &>(*this);
     }
 
     template <typename FUNC_ON_REJECTED>
-    Defer fail(FUNC_ON_REJECTED on_rejected) const {
-        return object_->template fail<FUNC_ON_REJECTED>(on_rejected);
+    Defer &fail(FUNC_ON_REJECTED on_rejected) const {
+        tail().object_->template fail<FUNC_ON_REJECTED>(on_rejected);
+        return const_cast<Defer &>(*this);
     }
 
     template <typename FUNC_ON_ALWAYS>
-    Defer always(FUNC_ON_ALWAYS on_always) const {
-        return object_->template always<FUNC_ON_ALWAYS>(on_always);
+    Defer &always(FUNC_ON_ALWAYS on_always) const {
+        tail().object_->template always<FUNC_ON_ALWAYS>(on_always);
+        return const_cast<Defer &>(*this);
     }
 
     template <typename FUNC_ON_FINALLY>
-    Defer finally(FUNC_ON_FINALLY on_finally) const {
-        return object_->template finally<FUNC_ON_FINALLY>(on_finally);
+    Defer &finally(FUNC_ON_FINALLY on_finally) const {
+        tail().object_->template finally<FUNC_ON_FINALLY>(on_finally);
+        return const_cast<Defer &>(*this);
     }
 
-    void call(Defer &promise) {
-        object_->call(promise);
+    // For doWhile promise
+    template <typename ...RET_ARG>
+    void doContinue(const RET_ARG &... ret_arg) const {
+        resolve(ret_arg...);
+    }
+    template <typename ...RET_ARG>
+    void doBreak(const RET_ARG &... ret_arg) const {
+        reject(ret_arg...);
     }
 
     void dump() {
@@ -496,6 +540,7 @@ inline Defer newPromise(void);
 struct PromiseCaller{
     virtual ~PromiseCaller(){};
     virtual Defer call(Defer &self, Promise *caller) = 0;
+    virtual PromiseCaller *clone() const = 0;
 };
 
 template <typename FUNC_ON_RESOLVED>
@@ -510,6 +555,10 @@ struct ResolvedCaller
     virtual Defer call(Defer &self, Promise *caller) {
         return ResolveChecker<resolve_ret_type, FUNC_ON_RESOLVED>::call(on_resolved_, self, caller);
     }
+
+    virtual PromiseCaller *clone() const {
+        return static_cast<PromiseCaller *>(pm_new<ResolvedCaller>(on_resolved_));
+    }
 };
 
 template <typename FUNC_ON_REJECTED>
@@ -523,6 +572,10 @@ struct RejectedCaller
 
     virtual Defer call(Defer &self, Promise *caller) {
         return RejectChecker<reject_ret_type, FUNC_ON_REJECTED>::call(on_rejected_, self, caller);
+    }
+
+    virtual PromiseCaller *clone() const {
+        return static_cast<PromiseCaller *>(pm_new<RejectedCaller>(on_rejected_));
     }
 };
 
@@ -547,6 +600,27 @@ struct Promise {
 #endif
 
     Promise(const Promise &) = delete;
+    Defer clone() const {
+        Defer defer = newPromise();
+        defer->any_ = any_;
+        if (resolved_ == nullptr)
+            defer->resolved_ = nullptr;
+        else
+            defer->resolved_ = resolved_->clone();
+        if (rejected_ == nullptr)
+            defer->rejected_ = nullptr;
+        else
+            defer->rejected_ = rejected_->clone();
+        defer->status_ = status_;
+
+        if (next_) {
+            Defer next = next_.clone();
+            next->prev_ = pm_stack::ptr_to_itr(reinterpret_cast<void *>(defer.operator->()));
+            defer->next_ = next;
+        }
+        return defer;
+    }
+
     explicit Promise()
         : next_(nullptr)
         , prev_(pm_stack::ptr_to_itr(nullptr))
@@ -563,7 +637,7 @@ struct Promise {
 
     virtual ~Promise() {
         clear_func();
-        if (next_.operator->()) {
+        if (next_) {
 #ifdef PM_MULTITHREAD
             std::lock_guard<std::recursive_mutex> lock(pm_mutex::get_mutex());
 #endif
@@ -711,7 +785,7 @@ struct Promise {
     Defer call_next() {
         uint8_t status = kInit;
         if (status_ == kResolved) {
-            if (next_.operator->()) {
+            if (next_) {
 #ifdef PM_MULTITHREAD
                 std::lock_guard<std::recursive_mutex> lock(pm_mutex::get_mutex());
 #endif
@@ -722,7 +796,7 @@ struct Promise {
             }
         }
         else if (status_ == kRejected) {
-            if (next_.operator->()) {
+            if (next_) {
 #ifdef PM_MULTITHREAD
                 std::lock_guard<std::recursive_mutex> lock(pm_mutex::get_mutex());
 #endif
@@ -738,7 +812,7 @@ struct Promise {
             Defer d = next_->call_resolve(next_, this);
             this->any_.clear();
             next_->clear_func();
-            if(d.operator->())
+            if(d)
                 d->call_next();
             //next_.clear();
             pm_allocator::dec_ref(this);
@@ -749,7 +823,7 @@ struct Promise {
             Defer d =  next_->call_reject(next_, this);
             this->any_.clear();
             next_->clear_func();
-            if (d.operator->())
+            if (d)
                 d->call_next();
             //next_.clear();
             pm_allocator::dec_ref(this);
@@ -779,7 +853,12 @@ struct Promise {
                          static_cast<PromiseCaller *>(pm_new<RejectedCaller<FUNC_ON_REJECTED>>(on_rejected)));
     }
 
-    template <typename FUNC_ON_RESOLVED>
+    template <typename FUNC_ON_RESOLVED,
+        typename std::enable_if<!std::is_same<
+            Defer,
+            typename std::remove_cv<typename std::remove_reference<FUNC_ON_RESOLVED>::type>::type>::value
+        >::type *dummy = nullptr
+    >
     Defer then(const FUNC_ON_RESOLVED &on_resolved) {
         return then_impl(static_cast<PromiseCaller *>(pm_new<ResolvedCaller<FUNC_ON_RESOLVED>>(on_resolved)),
                          static_cast<PromiseCaller *>(nullptr));
@@ -798,11 +877,12 @@ struct Promise {
 
     template <typename FUNC_ON_FINALLY>
     Defer finally(const FUNC_ON_FINALLY &on_finally) {
-        return then([on_finally](Promise *caller) -> BypassAnyArg {
+        return then([on_finally](Defer &self, Promise *caller) -> BypassAndResolve {
+            (void)self;
             if(verify_func_arg(on_finally, caller->any_))
                 call_func(on_finally, caller->any_);
-            return BypassAnyArg();
-        }, [on_finally](Defer &self, Promise *caller) -> BypassAnyArg {
+            return BypassAndResolve();
+        }, [on_finally](Defer &self, Promise *caller) -> BypassAndReject {
 #ifndef PM_EMBED
             typedef typename func_traits<FUNC_ON_FINALLY>::arg_type arg_type;
             if (caller->any_.type() == typeid(std::exception_ptr)) {
@@ -816,17 +896,7 @@ struct Promise {
             if (verify_func_arg(on_finally, caller->any_))
                 call_func(on_finally, caller->any_);
 #endif
-            return BypassAnyArg();
-        });
-    }
-
-    void call(Defer &promise) {
-        then([promise](Promise *caller) -> BypassAnyArg {
-            promise.resolve(caller->any_);
-            return BypassAnyArg();
-        }, [promise](Defer &self, Promise *caller) -> BypassAnyArg {
-            promise.reject(caller->any_);
-            return BypassAnyArg();
+            return BypassAndReject();
         });
     }
 
@@ -862,7 +932,7 @@ struct Promise {
 
     void reject_pending(){
         Defer pending = find_pending();
-        if(pending.operator->() != nullptr)
+        if(pending)
             pending.reject();
     }
 
@@ -885,7 +955,6 @@ struct Promise {
         printf("\n");
     }
 
-private:
     static Promise *get_head(Promise *p){
         while(p){
             Promise *prev = static_cast<Promise *>(pm_stack::itr_to_ptr(p->prev_));
@@ -897,12 +966,12 @@ private:
     static Promise *get_tail(Promise *p){
         while(p){
             Defer &next = p->next_;
-            if(next.operator->() == nullptr) break;
+            if(!next) break;
             p = next.operator->();
         }
         return p;
     }
-    
+private:
     
     static inline void joinDeferObject(Promise *self, Defer &next){
 #ifdef PM_MULTITHREAD
@@ -910,12 +979,12 @@ private:
 #endif
 
         /* Check if there's any functions return null Defer object */
-        pm_assert(next.operator->() != nullptr);
+        pm_assert(next);
 
         Promise *head = get_head(next.operator->());
         Promise *tail = get_tail(next.operator->());
 
-        if(self->next_.operator->()){
+        if(self->next_){
             self->next_->prev_ = pm_stack::ptr_to_itr(reinterpret_cast<void *>(tail));
             //printf("5prev_ = %d %x\n", (int)self->next_->prev_, pm_stack::itr_to_ptr(self->next_->prev_));
         }
@@ -939,6 +1008,52 @@ private:
     }
 };
 
+template <typename RET, typename FUNC>
+struct BypassChecker;
+
+template <typename FUNC>
+struct BypassChecker<BypassAndResolve, FUNC> {
+    static Defer call(const FUNC &func, Defer &self, Promise *caller) {
+#ifndef PM_EMBED
+        try {
+            pm_any any = caller->any_;
+            func(self, caller);
+            self->prepare_resolve(any);
+        }
+        catch (...) {
+            self->prepare_reject(std::current_exception());
+        }
+        return self;
+#else
+        pm_any any = caller->any_;
+        func(self, caller);
+        self->prepare_resolve(any);
+        return self;
+#endif
+    }
+};
+
+template <typename FUNC>
+struct BypassChecker<BypassAndReject, FUNC> {
+    static Defer call(const FUNC &func, Defer &self, Promise *caller) {
+#ifndef PM_EMBED
+        try {
+            pm_any any = caller->any_;
+            func(self, caller);
+            self->prepare_reject(any);
+        }
+        catch (...) {
+            self->prepare_reject(std::current_exception());
+        }
+        return self;
+#else
+        pm_any any = caller->any_;
+        func(self, caller);
+        self->prepare_reject(any);
+        return self;
+#endif
+    }
+};
 
 template <typename RET, typename FUNC>
 struct ResolveChecker {
@@ -993,24 +1108,16 @@ struct ResolveChecker<Defer, FUNC> {
 };
 
 template <typename FUNC>
-struct ResolveChecker<BypassAnyArg, FUNC> {
+struct ResolveChecker<BypassAndResolve, FUNC> {
     static Defer call(const FUNC &func, Defer &self, Promise *caller) {
-#ifndef PM_EMBED
-        try {
-            pm_any any = caller->any_;
-            func(caller);
-            self->prepare_resolve(any);
-        }
-        catch (...) {
-            self->prepare_reject(std::current_exception());
-        }
-        return self;
-#else
-        pm_any any = caller->any_;
-        func(caller);
-        self->prepare_resolve(any);
-        return self;
-#endif
+        return BypassChecker<BypassAndResolve, FUNC>::call(func, self, caller);
+    }
+};
+
+template <typename FUNC>
+struct ResolveChecker<BypassAndReject, FUNC> {
+    static Defer call(const FUNC &func, Defer &self, Promise *caller) {
+        return BypassChecker<BypassAndReject, FUNC>::call(func, self, caller);
     }
 };
 
@@ -1053,6 +1160,7 @@ template <typename FUNC>
 struct ExCheckTuple<0, FUNC> {
     static auto call(const FUNC &func, Defer &self, Promise *caller) 
         -> typename call_tuple_ret_t<typename func_traits<FUNC>::ret_type>::ret_type {
+        (void)self;
         pm_any arg = std::tuple<>();
         caller->any_.clear();
         return call_func(func, arg);
@@ -1089,6 +1197,7 @@ template<typename FUNC>
 struct ExCheck<pm_any, FUNC> {
     static auto call(const FUNC &func, Defer &self, Promise *caller) 
         -> typename call_tuple_ret_t<typename func_traits<FUNC>::ret_type>::ret_type {
+        (void)self;
         std::exception_ptr eptr = any_cast<std::exception_ptr>(caller->any_);
         try {
             std::rethrow_exception(eptr);
@@ -1169,25 +1278,16 @@ struct RejectChecker<Defer, FUNC> {
 };
 
 template <typename FUNC>
-struct RejectChecker<BypassAnyArg, FUNC> {
-    typedef typename func_traits<FUNC>::arg_type arg_type;
+struct RejectChecker<BypassAndResolve, FUNC> {
     static Defer call(const FUNC &func, Defer &self, Promise *caller) {
-#ifndef PM_EMBED
-        try {
-            pm_any any = caller->any_;
-            func(self, caller);
-            self->prepare_reject(any);
-        }
-        catch (...) {
-            self->prepare_reject(std::current_exception());
-        }
-        return self;
-#else
-        pm_any any = caller->any_;
-        func(self, caller);
-        self->prepare_reject(any);
-        return self;
-#endif
+        return BypassChecker<BypassAndResolve, FUNC>::call(func, self, caller);
+    }
+};
+
+template <typename FUNC>
+struct RejectChecker<BypassAndReject, FUNC> {
+    static Defer call(const FUNC &func, Defer &self, Promise *caller) {
+        return BypassChecker<BypassAndReject, FUNC>::call(func, self, caller);
     }
 };
 
@@ -1235,17 +1335,25 @@ inline Defer newPromise(FUNC func) {
  * if the returned Defer object was obtained by other and not released.
  */
 template <typename FUNC>
-inline Defer doWhile_unsafe(FUNC func) {
-    return newPromise(func).then([func]() {
-        return doWhile_unsafe(func);
+inline Defer doWhile_unsafe(FUNC func, pm_shared_ptr<Defer> current) {
+    *current = newPromise(func).then([current, func]() {
+        return doWhile_unsafe(func, current);
     });
+    return *current;
 }
 
 /* While loop func call resolved */
 template <typename FUNC>
 inline Defer doWhile(FUNC func) {
-    return newPromise([func](Defer d) {
-        doWhile_unsafe(func).call(d);
+    pm_shared_ptr<Defer> currnet = pm_shared_ptr<Defer>(pm_new<Defer>());
+
+    return newPromise([func, currnet](Defer d) {
+        doWhile_unsafe(func, currnet).then(d);
+    }).fail([currnet](Defer &self, Promise *caller) -> BypassAndResolve {
+        (void)self;
+        (void)caller;
+        currnet->doBreak();
+        return BypassAndResolve();
     });
 }
 
@@ -1264,8 +1372,7 @@ inline Defer resolve(const RET_ARG &... ret_arg){
 /* Returns a promise that resolves when all of the promises in the iterable
    argument have resolved, or rejects with the reason of the first passed
    promise that rejects. */
-template <typename PROMISE_LIST>
-inline Defer all(PROMISE_LIST &promise_list) {
+inline Defer all(const std::initializer_list<Defer> &promise_list) {
     if(pm_size(promise_list) == 0){
         //return Promise::resolve<>()
     }
@@ -1275,32 +1382,38 @@ inline Defer all(PROMISE_LIST &promise_list) {
     std::vector<pm_any> *ret_arr = pm_new<std::vector<pm_any>>();
     ret_arr->resize(*size);
 
+    auto deleter = [=]() {
+        pm_delete(finished);
+        pm_delete(size);
+        pm_delete(ret_arr);
+    };
+
     return newPromise([=](Defer &d) {
         size_t index = 0;
         for (auto defer : promise_list) {
             defer.then([=](pm_any &arg) {
+                if (d->status_ != Promise::kInit)
+                    return;
                 (*ret_arr)[index] = arg;
                 if (++(*finished) >= *size) {
                     std::vector<pm_any> ret = *ret_arr;
-                    pm_delete(finished);
-                    pm_delete(size);
-                    pm_delete(ret_arr);
                     d.resolve(ret);
                 }
             }, [=](pm_any &arg) {
-                pm_delete(finished);
-                pm_delete(size);
-                pm_delete(ret_arr);
+                if (d->status_ != Promise::kInit)
+                    return;
                 d.reject(arg);
             });
 
             ++index;
         }
+    }).then([=](pm_any &arg){
+        deleter();
+        return resolve(arg);
+    }, [=](pm_any &arg){
+        deleter();
+        return reject(arg);
     });
-}
-
-inline Defer all(std::initializer_list<Defer> promise_list) {
-    return all<std::initializer_list<Defer>>(promise_list);
 }
 
 template <typename ... PROMISE_LIST>
@@ -1312,8 +1425,7 @@ inline Defer all(PROMISE_LIST ...promise_list) {
 /* returns a promise that resolves or rejects as soon as one of
 the promises in the iterable resolves or rejects, with the value
 or reason from that promise. */
-template <typename PROMISE_LIST>
-inline Defer race(PROMISE_LIST promise_list) {
+inline Defer race(const std::initializer_list<Defer> &promise_list) {
     return newPromise([=](Defer d) {
         for (auto defer : promise_list) {
             defer.then([=](pm_any &arg) {
@@ -1325,14 +1437,41 @@ inline Defer race(PROMISE_LIST promise_list) {
     });
 }
 
-inline Defer race(std::initializer_list<Defer> promise_list) {
-    return race<std::initializer_list<Defer>>(promise_list);
-}
 
 template <typename ... PROMISE_LIST>
 inline Defer race(PROMISE_LIST ...promise_list) {
     return race({ promise_list ... });
 }
+
+
+inline Defer raceAndReject(const std::initializer_list<Defer> &promise_list) {
+    std::vector<Defer> copy_list = promise_list;
+    return race(promise_list).finally([copy_list] {
+        for (auto defer : copy_list) {
+            defer.reject();
+        }
+    });
+}
+
+template <typename ... PROMISE_LIST>
+inline Defer raceAndReject(PROMISE_LIST ...promise_list) {
+    return raceAndReject({ promise_list ... });
+}
+
+inline Defer raceAndResolve(const std::initializer_list<Defer> &promise_list) {
+    std::vector<Defer> copy_list = promise_list;
+    return race(promise_list).finally([copy_list] {
+        for (auto defer : copy_list) {
+            defer.resolve();
+        }
+    });
+}
+
+template <typename ... PROMISE_LIST>
+inline Defer raceAndResolve(PROMISE_LIST ...promise_list) {
+    return raceAndReject({ promise_list ... });
+}
+
 
 #ifndef PM_EMBED
 inline void handleUncaughtException(const FnOnUncaughtException &onUncaughtException) {

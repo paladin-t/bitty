@@ -12,7 +12,7 @@ Enhanced modules, improved usability, fixed some bugs.
 * Fixed a crash bug when error occurred
 * Fixed a manual exiting issue when debug is disabled
 * Fixed an infinite sleep issue (Windows)
-* Fixed an ellipse drawing bug of the graphics-based editors
+* Fixed an ellipse drawing bug of graphics-based editors
 * Improved error handling during parsing
 * Improved asset lookup performance
 
@@ -28,7 +28,7 @@ Enhanced modules, improved usability, fixed some bugs.
 * Fixed an unexpected deleting issue of the image editor
 * Fixed an unexpected deleting issue of the sprite editor
 * Improved asset creating
-* Improved assets filtering when no wildcard provided
+* Improved assets filter when no wildcard provided
 * Upgraded Lua from v5.4.2 to v5.4.3
 
 ### v1.0.3 Mar. 20, 2021
@@ -96,7 +96,7 @@ Enhanced modules, improved usability, fixed some bugs.
 * Added tooltips for asset ref
 * Improved performance of text-based project saving
 * Improved completeness checking when call object methods
-* Improved asset filter
+* Improved assets filter
 * Improved the `btn(...)` and `btnp(...)` functions to support getting any button
 * Improved performance when edit big map
 * Fixed an audio volume resetting bug
@@ -136,7 +136,7 @@ Added HTML builder. Enhanced modules, fixed some bugs.
 * Fixed a UTF-8 rendering issue of the `text(...)` function
 * Fixed a resolving issue of the `fetch(...)` function
 * Fixed a popup representation issue with built binary
-* Fixed a crash bug with JSON editor (Linux)
+* Fixed a crash bug with the JSON editor (Linux)
 * Fixed a crash bug of the `input(...)` function
 
 ### v0.9.1 beta Dec. 25, 2020
