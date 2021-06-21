@@ -53,8 +53,8 @@ Index of this file:
 
 // Enable SSE intrinsics if available
 #if defined __SSE__ || defined __x86_64__ || defined _M_X64
-#define IMGUI_ENABLE_SSE
-#include <immintrin.h>
+//#define IMGUI_ENABLE_SSE
+//#include <immintrin.h>
 #endif
 
 // Visual Studio warnings
