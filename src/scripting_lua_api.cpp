@@ -3183,7 +3183,8 @@ static int File_close(lua_State* L) {
 		EM_ASM(
 			FS.syncfs(
 				function (err) {
-					assert(!err);
+					if (err)
+						Module.printErr(err);
 
 					Module.print("Filesystem synced.");
 				}

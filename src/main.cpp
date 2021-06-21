@@ -90,7 +90,8 @@ EM_JS(
 		FS.syncfs(
 			true,
 			function (err) {
-				assert(!err);
+				if (err)
+					Module.printErr(err);
 
 				Module.print("Filesystem loaded.");
 				Module.syncdone = 1;
