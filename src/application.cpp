@@ -508,8 +508,8 @@ private:
 
 		SDL_Event evt;
 		bool alive = true;
+		bool reset = false;
 		while (SDL_PollEvent(&evt)) {
-			bool reset = false;
 			switch (evt.type) {
 			case SDL_QUIT:
 				fprintf(stdout, "SDL: SDL_QUIT.\n");
@@ -524,20 +524,20 @@ private:
 				break;
 			case SDL_WINDOWEVENT:
 				switch (evt.window.event) {
-				case SDL_WINDOWEVENT_RESIZED: {
-						fprintf(stdout, "SDL: SDL_WINDOWEVENT_RESIZED.\n");
+				case SDL_WINDOWEVENT_RESIZED:
+					fprintf(stdout, "SDL: SDL_WINDOWEVENT_RESIZED.\n");
 
+					{
 						int w = 0, h = 0;
 						SDL_GetWindowSize(wnd, &w, &h);
 						_workspace->resized(_window, _renderer, _project, Math::Vec2i(w, h));
 					}
 
 					break;
-				case SDL_WINDOWEVENT_SIZE_CHANGED: {
-						fprintf(stdout, "SDL: SDL_WINDOWEVENT_SIZE_CHANGED.\n");
+				case SDL_WINDOWEVENT_SIZE_CHANGED:
+					fprintf(stdout, "SDL: SDL_WINDOWEVENT_SIZE_CHANGED.\n");
 
-						reset = true;
-					}
+					reset = true;
 
 					break;
 				case SDL_WINDOWEVENT_MOVED:
@@ -552,6 +552,8 @@ private:
 					fprintf(stdout, "SDL: SDL_WINDOWEVENT_RESTORED.\n");
 
 					_workspace->restored(_window, _renderer);
+
+					reset = true;
 
 					break;
 				case SDL_WINDOWEVENT_FOCUS_GAINED:
@@ -640,15 +642,13 @@ private:
 			default: // Do nothing.
 				break;
 			}
+		}
+		if (reset) {
+			ImGuiSDL::Reset();
 
-			if (reset) {
-				ImGuiSDL::Reset(); // Added this patch to fix an issue produced on some Intel's GPU that
-				                   // render target went invalid after resizing the app window.
+			_resources->resetRenderTargets();
 
-				_resources->resetRenderTargets();
-
-				_effects->renderTargetsReset();
-			}
+			_effects->renderTargetsReset();
 		}
 
 		io.DeltaTime = (float)delta;
