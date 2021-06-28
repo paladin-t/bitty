@@ -29,7 +29,7 @@
 #elif defined BITTY_OS_ANDROID
 	/* Do nothing. */
 #else /* Platform macro. */
-#	error "Implement me."
+#	error "Not implemented."
 #endif /* Platform macro. */
 
 /*

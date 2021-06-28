@@ -1011,8 +1011,11 @@ public:
 #if defined GL_VERSION_3_2
 			if (_glVersion >= 320)
 				glDrawElementsBaseVertex(GL_TRIANGLES, (GLsizei)6, GL_UNSIGNED_SHORT, 0, 0);
-#endif /* GL_VERSION_3_2 */
+			else
+				glDrawElements(GL_TRIANGLES, (GLsizei)6, GL_UNSIGNED_SHORT, 0);
+#else /* GL_VERSION_3_2 */
 			glDrawElements(GL_TRIANGLES, (GLsizei)6, GL_UNSIGNED_SHORT, 0);
+#endif /* GL_VERSION_3_2 */
 
 			// Unbind rendering data.
 			glDeleteVertexArrays(1, &vao);
