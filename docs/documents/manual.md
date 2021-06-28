@@ -1887,6 +1887,7 @@ This module is used for debugging purposes.
 * `Debug.clearBreakpoints([src])`: clears breakpoints programmingly
 	* `src`: the source file to clear; omit to clear all in project
 	* returns `true` for success, otherwise `false`
+* `Debug.clearConsole()`: clears the console output programmingly
 * `Debug.getTimeout()`: gets the invoking timeout value
 	* returns invoking timeout value
 * `Debug.setTimeout(val)`: sets the invoking timeout value to the specific seconds

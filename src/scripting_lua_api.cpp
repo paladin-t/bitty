@@ -1084,9 +1084,9 @@ static int LightUserdata_toString(lua_State* L) {
 			(void)IS32BIT;
 #if IS32BIT
 			ret = "0x" + Text::toHex((UInt32)(uintptr_t)data.data, false);
-#else
+#else /* IS32BIT */
 			ret = "0x" + Text::toHex((UInt64)(uintptr_t)data.data, false);
-#endif
+#endif /* IS32BIT */
 		}
 
 		return write(L, ret);
@@ -9219,7 +9219,7 @@ static int Primitives_rumble(lua_State* L) {
 		impl->primitives()->rumble(idx, lowHz, hiHz, ms);
 	} else {
 		// `idx` is -1-based.
-		impl->primitives()->rumble(idx, lowHz, hiHz, ms); // Undocumented: controller button/axis.
+		impl->primitives()->rumble(idx, lowHz, hiHz, ms); // Undocumented.
 	}
 
 	return 0;
@@ -9469,9 +9469,10 @@ static int Application_setCursor(lua_State* L) {
 		read<>(L, img);
 
 	if (img && *img) {
+		constexpr const int MAX_SIZE = 256;
 		if (img->get()->paletted()) {
 			error(L, "True-color image expected.");
-		} else if (img->get()->width() > 256 || img->get()->height() > 256) {
+		} else if (img->get()->width() > MAX_SIZE || img->get()->height() > MAX_SIZE) {
 			error(L, "Image too big.");
 		} else {
 			Image::Ptr cur(Image::create(nullptr));
@@ -10602,6 +10603,14 @@ static int Debug_clearBreakpoints(lua_State* L) {
 #endif /* BITTY_DEBUG_ENABLED */
 }
 
+static int Debug_clearConsole(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	impl->observer()->clear();
+
+	return 0;
+}
+
 static int Debug_getTimeout(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
@@ -10685,6 +10694,7 @@ static void open_Debug(lua_State* L) {
 					array(
 						luaL_Reg{ "setBreakpoint", Debug_setBreakpoint },
 						luaL_Reg{ "clearBreakpoints", Debug_clearBreakpoints },
+						luaL_Reg{ "clearConsole", Debug_clearConsole },
 						luaL_Reg{ "getTimeout", Debug_getTimeout },
 						luaL_Reg{ "setTimeout", Debug_setTimeout },
 						luaL_Reg{ "trace", Debug_trace },
