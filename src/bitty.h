@@ -142,7 +142,7 @@
 #ifndef BITTY_VERSION
 #	define BITTY_VER_MAJOR 1
 #	define BITTY_VER_MINOR 1
-#	define BITTY_VER_REVISION 1
+#	define BITTY_VER_REVISION 2
 #	define BITTY_VER_SUFFIX
 #	define BITTY_VERSION ((BITTY_VER_MAJOR * 0x01000000) + (BITTY_VER_MINOR * 0x00010000) + (BITTY_VER_REVISION))
 #	define BITTY_MAKE_STRINGIZE(A) #A
@@ -202,7 +202,7 @@
 
 // Indicates whether full screen effects is enabled.
 #ifndef BITTY_EFFECTS_ENABLED
-#	define BITTY_EFFECTS_ENABLED 1
+#	define BITTY_EFFECTS_ENABLED 0
 #endif /* BITTY_EFFECTS_ENABLED */
 
 // Indicates whether map batch is preferred.

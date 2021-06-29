@@ -1,3 +1,17 @@
+### v1.1.2 Jun. 29, 2021
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added a `Debug.trace(...)` function
+* Added a `Debug.clearConsole()` function
+* Added case-insensitive support for assets filter
+* Added error report for the JSON editor
+* Fixed crash bugs when add invalid assets
+* Fixed some string argument retrieving issues
+* Fixed a renderer resetting issue after restoring the window
+* Fixed a sprite sizing issue of the sprite editor with non-square assets
+* Upgraded ImGui from v1.82 to v1.83
+
 ### v1.1.1 May. 27, 2021
 
 Enhanced modules, improved usability, fixed some bugs.
