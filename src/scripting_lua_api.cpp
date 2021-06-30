@@ -37,9 +37,16 @@
 #	include <emscripten.h>
 #endif /* BITTY_OS_HTML */
 
+/*
+** {===========================================================================
+** Macros and constants
+*/
+
 static_assert(sizeof(Int64) == sizeof(lua_Integer), "Wrong size.");
 static_assert(sizeof(UInt64) == sizeof(lua_Unsigned), "Wrong size.");
 static_assert(sizeof(Double) == sizeof(lua_Number), "Wrong size.");
+
+/* ===========================================================================} */
 
 /*
 ** {===========================================================================
@@ -2596,6 +2603,13 @@ static int Bytes_resize(lua_State* L) {
 	Bytes::Ptr* obj = nullptr;
 	size_t expSize = 0;
 	read<>(L, obj, expSize);
+
+	constexpr const size_t MAX_SIZE = (size_t)std::numeric_limits<UInt32>::max(); // Limited in 4GB.
+	if (expSize > MAX_SIZE) {
+		error(L, "Cannot resize to the specific size.");
+
+		return 0;
+	}
 
 	if (obj)
 		obj->get()->resize(expSize);
