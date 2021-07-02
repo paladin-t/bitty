@@ -5334,7 +5334,7 @@ md_is_html_block_start_condition(MD_CTX* ctx, OFF beg)
 #endif
 #define X(name)     { _T(name), (sizeof(name)-1) / sizeof(CHAR) }
 #define Xend        { NULL, 0 }
-    static const TAG t1[] = { X("script"), X("pre"), X("style"), Xend };
+    static const TAG t1[] = { X("pre"), X("script"), X("style"), X("textarea"), Xend };
 
     static const TAG a6[] = { X("address"), X("article"), X("aside"), Xend };
     static const TAG b6[] = { X("base"), X("basefont"), X("blockquote"), X("body"), Xend };
@@ -5383,7 +5383,7 @@ md_is_html_block_start_condition(MD_CTX* ctx, OFF beg)
     /* Check for type 4 or 5: <! */
     if(off < ctx->size  &&  CH(off) == _T('!')) {
         /* Check for type 4: <! followed by uppercase letter. */
-        if(off + 1 < ctx->size  &&  ISUPPER(off+1))
+        if(off + 1 < ctx->size  &&  ISASCII(off+1))
             return 4;
 
         /* Check for type 5: <![CDATA[ */
