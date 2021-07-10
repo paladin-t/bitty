@@ -55,6 +55,7 @@ private:
 	Dependency _dependency;                           // By the Lua thread.
 
 	long long _timeout = SCRIPTING_LUA_TIMEOUT;       // By the Lua thread.
+	unsigned _frameRate = BITTY_ACTIVE_FRAME_RATE;    // By the Lua thread.
 
 	Atomic<unsigned> _fps;                            // By the Lua, graphics threads.
 

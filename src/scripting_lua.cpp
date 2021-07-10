@@ -592,7 +592,7 @@ bool ScriptingLua::run(void) {
 				const long long end = DateTime::ticks();
 				const long long diff = end >= begin ? end - begin : 0;
 				const double elapsed = DateTime::toSeconds(diff);
-				const double expected = 1.0 / BITTY_ACTIVE_FRAME_RATE;
+				const double expected = 1.0 / impl->_frameRate;
 				const double rest = expected - elapsed;
 				if (rest > 0)
 					DateTime::sleep((int)(rest * 1000));

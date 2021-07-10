@@ -609,8 +609,36 @@ private:
 				break;
 			case SDL_KEYDOWN: // Fall through.
 			case SDL_KEYUP: {
-					const int key = evt.key.keysym.scancode;
 					const SDL_Keymod mod = SDL_GetModState();
+					int key = evt.key.keysym.scancode;
+					if (!(mod & KMOD_NUM)) {
+						switch (key) {
+						case SDL_SCANCODE_KP_1:
+							key = SDL_SCANCODE_END;
+
+							break;
+						case SDL_SCANCODE_KP_3:
+							key = SDL_SCANCODE_PAGEDOWN;
+
+							break;
+						case SDL_SCANCODE_KP_7:
+							key = SDL_SCANCODE_HOME;
+
+							break;
+						case SDL_SCANCODE_KP_9:
+							key = SDL_SCANCODE_PAGEUP;
+
+							break;
+						case SDL_SCANCODE_KP_PERIOD:
+							key = SDL_SCANCODE_DELETE;
+
+							break;
+						default:
+							// Do nothing.
+
+							break;
+						}
+					}
 					assert(key >= 0 && key < BITTY_COUNTOF(io.KeysDown));
 					io.KeysDown[key] = evt.type == SDL_KEYDOWN;
 					io.KeyShift = !!(mod & KMOD_SHIFT);

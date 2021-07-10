@@ -69,6 +69,15 @@ EM_JS(
 #endif /* BITTY_OS_HTML */
 
 #if BITTY_SPLASH_ENABLED
+#if defined BITTY_OS_HTML
+static void workspaceSleep(int ms) {
+	emscripten_sleep((unsigned)ms);
+}
+#else /* BITTY_OS_HTML */
+static void workspaceSleep(int ms) {
+	DateTime::sleep(ms);
+}
+#endif /* BITTY_OS_HTML */
 static void workspaceCreateSplash(Window*, Renderer* rnd, Workspace* ws) {
 	if (ws->splashBitty()) {
 		ws->theme()->destroyTexture(rnd, ws->splashBitty());
@@ -154,7 +163,7 @@ static void workspaceWaitSplash(Window* wnd, Renderer* rnd, Workspace* ws, const
 	bool pressed = false;
 	while (true) {
 		constexpr const int STEP = 10;
-		DateTime::sleep(STEP);
+		workspaceSleep(STEP);
 		Platform::idle();
 
 		bool finished = false;
@@ -3288,7 +3297,7 @@ void Workspace::endSplash(class Window* wnd, class Renderer* rnd) {
 			const long long end = begin + DateTime::fromSeconds(0.05);
 			while (DateTime::ticks() < end) {
 				constexpr const int STEP = 20;
-				DateTime::sleep(STEP);
+				workspaceSleep(STEP);
 				Platform::idle();
 			}
 

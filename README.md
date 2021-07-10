@@ -91,11 +91,17 @@ See more in [examples](examples).
 ### Games
 
 ![](docs/imgs/game1_2048.png)
+
 ![](docs/imgs/game2_reversi.png)
+
 ![](docs/imgs/game3_boing.png)
+
 ![](docs/imgs/game4_sweeper.png)
+
 ![](docs/imgs/game5_platformer.png)
+
 ![](docs/imgs/game6_rpg.png)
+
 ![](docs/imgs/game7_racing.png)
 
 ## Redistributing
@@ -106,7 +112,7 @@ Bitty Engine helps you to make standalone binaries for Windows, MacOS, Linux, an
 
 Everything is done with Bitty Engine (pro) by nothing more than a few mouse clicks.
 
-Put an image at "../icon.png" relative to executables to customize the icon dynamically. Put an image at "../splash.png" as well to customize the splash, the image could be transparent.
+Put an image at "../icon.png" relative to executable to customize the icon dynamically. Put an image at "../splash.png" as well to customize the splash, the image could be transparent.
 
 ## Getting Bitty Engine
 
@@ -118,17 +124,6 @@ See [version comparison](versions.md).
 
 ## Compiling from source
 
-You can compile a core version from this repository, and customize redistributable binary to:
-
-* Change application icon natively
-* Change splash natively (keeping is thankful)
-* Encrypt assets in your own way
-* Link with 3rd-party libraries
-* Introduce your own API
-* Bring to other platforms
-
-See the [README](src/README.md) under the "src" directory for source code architecture.
-
 A C++14 capable compiler is required, any compiler came after 2014 should be ok. You need to get this repository and its submodules before build:
 
 ```sh
@@ -137,6 +132,11 @@ cd bitty
 git submodule init
 git submodule update
 ```
+
+<details>
+<summary>Details</summary>
+
+See the [README](src/README.md) under the "src" directory for source code architecture.
 
 There are some customizable macros:
 
@@ -148,6 +148,8 @@ There are some customizable macros:
 * `BITTY_EFFECTS_ENABLED[=0]`: whether full screen effects is enabled
 * `BITTY_PROJECT_STRATEGY_MAP_BATCH_ENABLED[=0]`: indicates whether map batch is preferred; it might speed up map rendering if enabled, but requires more memory and could be slow with `mset(...)`
 
+</details>
+
 ### Startup project
 
 Once you have setup and built a binary, it loads from "../data" or "../data.bit" automatically as startup project. Otherwise it shows a programmable workspace.
@@ -155,6 +157,9 @@ Once you have setup and built a binary, it loads from "../data" or "../data.bit"
 ### Windows
 
 Dependencies: Visual Studio (with C++ development tools installed).
+
+<details>
+<summary>Steps</summary>
 
 1. Build SDL2
 	1. Compile from "lib/sdl/VisualC/SDL.sln"
@@ -165,9 +170,14 @@ Dependencies: Visual Studio (with C++ development tools installed).
 3. Build Bitty Engine
 	1. Compile from "bitty.sln"
 
+</details>
+
 ### MacOS
 
 Dependencies: Xcode.
+
+<details>
+<summary>Steps</summary>
 
 1. Build cURL
 	1. Execute:
@@ -187,9 +197,14 @@ Dependencies: Xcode.
 4. Build Bitty Engine
 	1. Compile from "bitty.xcodeproj"
 
+</details>
+
 ### Linux
 
 Dependencies: CMake, GCC.
+
+<details>
+<summary>Steps</summary>
 
 1. Build cURL
 	1. Execute:
@@ -231,13 +246,20 @@ Dependencies: CMake, GCC.
 		cd ..
 		```
 
+</details>
+
 ### Other platforms
+
+<details>
+<summary>Details</summary>
 
 You can also setup your own build pipeline for other platforms. The "lib" and "src" directories are almost what you need. See the [README](src/README.md) under the "src" directory for code architecture.
 
 The "platform_*" files contain most platform dependent code, you'll probably make a specific port.
 
 Note the file dialog library is only usable on desktop builds, make your own adaption if you need it on other platforms.
+
+</details>
 
 ## Community and contributing
 
