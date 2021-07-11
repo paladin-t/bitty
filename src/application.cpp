@@ -611,8 +611,15 @@ private:
 			case SDL_KEYUP: {
 					const SDL_Keymod mod = SDL_GetModState();
 					int key = evt.key.keysym.scancode;
-					if (!(mod & KMOD_NUM)) {
+#if defined BITTY_OS_WIN || defined BITTY_OS_LINUX
+					if (key == SDL_SCANCODE_KP_ENTER) {
+						key = SDL_SCANCODE_RETURN;
+					} else if (!(mod & KMOD_NUM)) {
 						switch (key) {
+						case SDL_SCANCODE_KP_PERIOD:
+							key = SDL_SCANCODE_DELETE;
+
+							break;
 						case SDL_SCANCODE_KP_1:
 							key = SDL_SCANCODE_END;
 
@@ -629,8 +636,20 @@ private:
 							key = SDL_SCANCODE_PAGEUP;
 
 							break;
-						case SDL_SCANCODE_KP_PERIOD:
-							key = SDL_SCANCODE_DELETE;
+						case SDL_SCANCODE_KP_2:
+							key = SDL_SCANCODE_DOWN;
+
+							break;
+						case SDL_SCANCODE_KP_4:
+							key = SDL_SCANCODE_LEFT;
+
+							break;
+						case SDL_SCANCODE_KP_6:
+							key = SDL_SCANCODE_RIGHT;
+
+							break;
+						case SDL_SCANCODE_KP_8:
+							key = SDL_SCANCODE_UP;
 
 							break;
 						default:
@@ -639,6 +658,7 @@ private:
 							break;
 						}
 					}
+#endif /* Platform macro. */
 					assert(key >= 0 && key < BITTY_COUNTOF(io.KeysDown));
 					io.KeysDown[key] = evt.type == SDL_KEYDOWN;
 					io.KeyShift = !!(mod & KMOD_SHIFT);
