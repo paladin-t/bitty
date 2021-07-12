@@ -1,6 +1,6 @@
 ![](docs/documents/imgs/logo.png)
 
-[Home](https://paladin-t.github.io/bitty/index.html) | [Steam](https://store.steampowered.com/app/1386180/) | [Documents](https://paladin-t.github.io/bitty/documents.html) | [About](https://paladin-t.github.io/bitty/about.html)
+[Home](https://paladin-t.github.io/bitty/index.html) | [Steam](https://store.steampowered.com/app/1386180/) | [Itch](https://tonywang.itch.io/bitty) | [Documents](https://paladin-t.github.io/bitty/documents.html) | [About](https://paladin-t.github.io/bitty/about.html)
 
 ![](docs/imgs/floppy.gif) **An itty bitty game engine.**
 
@@ -116,9 +116,9 @@ Put an image at "../icon.png" relative to executable to customize the icon dynam
 
 ## Getting Bitty Engine
 
-The pro version is available on [Steam](https://store.steampowered.com/app/1386180/).
+The pro version is available on [Steam](https://store.steampowered.com/app/1386180/) and [Itch](https://tonywang.itch.io/bitty).
 
-[![](docs/imgs/steam.png)](https://store.steampowered.com/app/1386180/)
+[![](docs/imgs/steam.png)](https://store.steampowered.com/app/1386180/) [![](docs/imgs/itch.png)](https://tonywang.itch.io/bitty)
 
 See [version comparison](versions.md).
 
@@ -263,7 +263,6 @@ Note the file dialog library is only usable on desktop builds, make your own ada
 
 ## Community and contributing
 
-* [Steam](https://store.steampowered.com/app/1386180/)
 * [Discord](https://discord.gg/372vb8ct2H)
 * [GitHub Discussions](https://github.com/paladin-t/bitty/discussions)
 * [Issues](https://github.com/paladin-t/bitty/issues)

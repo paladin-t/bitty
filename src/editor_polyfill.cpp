@@ -91,10 +91,7 @@
 				ImGui::TextUnformatted("Get pro version to view or edit"); \
 				ImGui::Dummy(ImVec2(8, 0)); \
 				ImGui::SameLine(); \
-				ImGui::Url("Steam", "https://store.steampowered.com/app/1386180/"); \
-				ImGui::Dummy(ImVec2(8, 0)); \
-				ImGui::SameLine(); \
-				ImGui::Url("Homepage", "https://paladin-t.github.io/bitty/"); \
+				ImGui::Url("Homepage", "https://paladin-t.github.io/bitty/#buy-bitty-engine"); \
 				statusBarActived |= ImGui::IsWindowFocused(); \
 			} \
 			ImGui::EndChild(); \

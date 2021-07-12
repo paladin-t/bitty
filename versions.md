@@ -25,4 +25,4 @@
 | Advanced examples: basics, games, libraries, primitives, recipes | | | YES |
 | Desktop binary builder: Windows, MacOS, Linux | | | YES |
 | HTML binary builder: WebAssembly | | | YES |
-| Available on | [GitHub](README.md#compiling-from-source) | [Steam](https://store.steampowered.com/app/1386180/) | [Steam](https://store.steampowered.com/app/1386180/) |
+| Available on | [GitHub](README.md#compiling-from-source) | [Steam](https://store.steampowered.com/app/1386180/), [Itch](https://tonywang.itch.io/bitty) | [Steam](https://store.steampowered.com/app/1386180/), [Itch](https://tonywang.itch.io/bitty) |
