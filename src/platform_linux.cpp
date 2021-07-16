@@ -385,7 +385,7 @@ void Platform::surf(const char* url) {
 }
 
 void Platform::browse(const char* dir) {
-	std::string cmd = "nautilus \"";
+	std::string cmd = "xdg-open \"";
 	cmd += dir;
 	cmd += "\"";
 	system(cmd.c_str());
