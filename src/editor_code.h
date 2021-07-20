@@ -65,7 +65,7 @@ static constexpr const char* const EDITOR_CODE_PRIMITIVES[] = {
 	"camera", "clip",
 	"color",
 	"plot", "line",
-	"circ", "ellipse", "rect",
+	"circ", "ellipse", "pie", "rect",
 	"font", "measure", "text",
 	"tri",
 	"tex", "spr", "map",

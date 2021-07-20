@@ -216,6 +216,12 @@ public:
 	 */
 	virtual void ellipse(int x, int y, int rx, int ry, bool fill, const Color* col /* nullable */) const = 0;
 	/**
+	 * @brief Draws a pie.
+	 *
+	 * @param[in] col The color to draw, `nullptr` to use the current active color.
+	 */
+	virtual void pie(int x, int y, int r, int sa, int ea, bool fill, const Color* col /* nullable */) const = 0;
+	/**
 	 * @brief Draws a rectangle.
 	 *
 	 * @param[in] col The color to draw, `nullptr` to use the current active color.

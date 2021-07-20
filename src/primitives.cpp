@@ -43,6 +43,7 @@ public:
 		LINE,
 		CIRC,
 		ELLIPSE,
+		PIE,
 		RECT,
 		TRI,
 		FONT,
@@ -423,6 +424,52 @@ public:
 			filledEllipseColor(renderer, (Sint16)_x, (Sint16)_y, (Sint16)_rx, (Sint16)_ry, c);
 		else
 			ellipseColor(renderer, (Sint16)_x, (Sint16)_y, (Sint16)_rx, (Sint16)_ry, c);
+
+		clip(rnd, false);
+	}
+};
+
+class CmdPie : public Cmd, public CmdClippable {
+private:
+	int _x = 0, _y = 0, _r = 0;
+	int _sa = 0, _ea = 0;
+	bool _fill = false;
+	Color _color;
+
+public:
+	CmdPie() {
+		type = PIE;
+		dtor = [] (Cmd* cmd) -> void {
+			CmdPie* self = reinterpret_cast<CmdPie*>(cmd);
+			(void)self;
+		};
+	}
+	CmdPie(int x, int y, int r, int sa, int ea, bool fill, const Color &col) {
+		type = PIE;
+		dtor = [] (Cmd* cmd) -> void {
+			CmdPie* self = reinterpret_cast<CmdPie*>(cmd);
+			(void)self;
+		};
+
+		_x = x;
+		_y = y;
+		_r = r;
+		_sa = sa;
+		_ea = ea;
+		_fill = fill;
+		_color = col;
+	}
+
+	void run(Renderer* rnd) {
+		clip(rnd, true);
+
+		SDL_Renderer* renderer = (SDL_Renderer*)rnd->pointer();
+
+		const Uint32 c = _color.toRGBA();
+		if (_fill)
+			filledPieColor(renderer, (Sint16)_x, (Sint16)_y, (Sint16)_r, (Sint16)_sa, (Sint16)_ea, c);
+		else
+			pieColor(renderer, (Sint16)_x, (Sint16)_y, (Sint16)_r, (Sint16)_sa, (Sint16)_ea, c);
 
 		clip(rnd, false);
 	}
@@ -1501,6 +1548,7 @@ public:
 	CmdLine line;
 	CmdCirc circ;
 	CmdEllipse ellipse;
+	CmdPie pie;
 	CmdRect rect;
 	CmdTri tri;
 	CmdFont font;
@@ -1564,6 +1612,11 @@ public:
 		case Cmd::ELLIPSE:
 			new (&ellipse) CmdEllipse();
 			ellipse = other.ellipse;
+
+			break;
+		case Cmd::PIE:
+			new (&pie) CmdPie();
+			pie = other.pie;
 
 			break;
 		case Cmd::RECT:
@@ -1716,6 +1769,11 @@ public:
 			ellipse = other.ellipse;
 
 			break;
+		case Cmd::PIE:
+			new (&pie) CmdPie();
+			pie = other.pie;
+
+			break;
 		case Cmd::RECT:
 			new (&rect) CmdRect();
 			rect = other.rect;
@@ -1848,6 +1906,10 @@ public:
 			break;
 		case Cmd::ELLIPSE:
 			ellipse.run(rnd);
+
+			break;
+		case Cmd::PIE:
+			pie.run(rnd);
 
 			break;
 		case Cmd::RECT:
@@ -2420,6 +2482,21 @@ public:
 		int clpX = 0, clpY = 0, clpW = 0, clpH = 0;
 		if (clipped(clpX, clpY, clpW, clpH))
 			var.ellipse.clip(clpX, clpY, clpW, clpH);
+
+		commit(var, nullptr);
+	}
+	virtual void pie(int x, int y, int r, int sa, int ea, bool fill, const Color* col) const override {
+		translated(x, y);
+
+		const Math::Recti aabb(x - r, y - r, x + r, y + r);
+		if (culled(aabb))
+			return;
+
+		CmdVariant var;
+		new (&var.pie) CmdPie(x, y, r, sa, ea, fill, col ? *col : _color);
+		int clpX = 0, clpY = 0, clpW = 0, clpH = 0;
+		if (clipped(clpX, clpY, clpW, clpH))
+			var.pie.clip(clpX, clpY, clpW, clpH);
 
 		commit(var, nullptr);
 	}

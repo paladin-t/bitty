@@ -8723,6 +8723,26 @@ static int Primitives_ellipse(lua_State* L) {
 	return 0;
 }
 
+static int Primitives_pie(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	const int n = getTop(L);
+	int x = 0, y = 0, r = 0;
+	float startAngle = 0, endAngle = 0;
+	bool fill = false;
+	Color* col = nullptr;
+	if (n == 7)
+		read<>(L, x, y, r, startAngle, endAngle, fill, col);
+	else if (n == 6)
+		read<>(L, x, y, r, startAngle, endAngle, fill);
+	else
+		read<>(L, x, y, r, startAngle, endAngle);
+
+	impl->primitives()->pie(x, y, r, (int)Math::radToDeg(startAngle), (int)Math::radToDeg(endAngle), fill, col);
+
+	return 0;
+}
+
 static int Primitives_rect(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
@@ -9327,6 +9347,7 @@ static void open_Primitives(lua_State* L) {
 			luaL_Reg{ "line", Primitives_line },
 			luaL_Reg{ "circ", Primitives_circ },
 			luaL_Reg{ "ellipse", Primitives_ellipse },
+			luaL_Reg{ "pie", Primitives_pie }, // Undocumented.
 			luaL_Reg{ "rect", Primitives_rect },
 			luaL_Reg{ "font", Primitives_font }, // Frame synchronized.
 			luaL_Reg{ "measure", Primitives_measure },
