@@ -417,6 +417,13 @@ Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
 Homepage: https://paladin-t.github.io/bitty/
 ]]
 
+-- Usage:
+--   press A on gamepad to jump, B to shoot (with full HP);
+--   press Left, Right on gamepad to move.
+-- Note:
+--   gamepad for player 1 is binded to W, A, S, D and J, K on keyboard by
+--   default, you can change this by clicking "File", "Preferences...", "Input".
+
 require 'co'
 require 'gamepad'
 
@@ -435,13 +442,6 @@ require 'objects/coin'
 require 'objects/heart'
 require 'objects/vacuum'
 require 'objects/portal'
-
--- Usage:
---   press A on gamepad to jump, B to shoot (with full HP);
---   press Left, Right on gamepad to move.
--- Note:
---   gamepad for player 1 is binded to W, A, S, D and J, K on keyboard by
---   default, you can change this by clicking "File", "Preferences...", "Input".
 
 --[[
 Constant.
@@ -751,18 +751,18 @@ local function hud(delta)
 		end
 		if tipTicks < 0.4 then
 			if played == 0 then
-				txt = 'Press A+B to start'
+				txt = 'Press ENTER to start'
 				textWidth, _ = measure(txt, bmp8x8)
 				text(txt, (canvasWidth - textWidth) * 0.5 + 1, 261, Color.new(0, 0, 0))
 				text(txt, (canvasWidth - textWidth) * 0.5, 260)
 			else
-				txt = 'Press A+B to restart'
+				txt = 'Press ENTER to restart'
 				textWidth, _ = measure(txt, bmp8x8)
 				text(txt, (canvasWidth - textWidth) * 0.5 + 1, 261, Color.new(0, 0, 0))
 				text(txt, (canvasWidth - textWidth) * 0.5, 260)
 			end
 		end
-		if btn(Gamepad.A) and btn(Gamepad.B) then
+		if keyp(13) then -- Return/Enter key.
 			level = 1
 			played = played + 1
 			saveHighscore(highscore)

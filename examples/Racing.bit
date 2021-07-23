@@ -281,6 +281,13 @@ Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
 Homepage: https://paladin-t.github.io/bitty/
 ]]
 
+-- Usage:
+--   press A on gamepad to speed up the vehicle, B to break;
+--   press Left, Right on gamepad to make turn.
+-- Note:
+--   gamepad for player 1 is binded to W, A, S, D and J, K on keyboard by
+--   default, you can change this by clicking "File", "Preferences...", "Input".
+
 require 'co'
 require 'gamepad'
 
@@ -288,13 +295,6 @@ require 'utils'
 require 'track'
 require 'vehicles/racer'
 require 'vehicles/competitor'
-
--- Usage:
---   press A on gamepad to speed up the vehicle, B to break;
---   press Left, Right on gamepad to make turn.
--- Note:
---   gamepad for player 1 is binded to W, A, S, D and J, K on keyboard by
---   default, you can change this by clicking "File", "Preferences...", "Input".
 
 --[[
 Constant.
@@ -731,18 +731,18 @@ local function hud(delta)
 		if tipTicks < 0.4 then
 			local canvasWidth, _ = Canvas.main:size()
 			if played == 0 then
-				txt = 'Press A+B to start'
+				txt = 'Press ENTER to start'
 				textWidth, _ = measure(txt, bmp8x8)
 				text(txt, (canvasWidth - textWidth) * 0.5 + 1, 261, Color.new(0, 0, 0))
 				text(txt, (canvasWidth - textWidth) * 0.5, 260)
 			else
-				txt = 'Press A+B to restart'
+				txt = 'Press ENTER to restart'
 				textWidth, _ = measure(txt, bmp8x8)
 				text(txt, (canvasWidth - textWidth) * 0.5 + 1, 261, Color.new(0, 0, 0))
 				text(txt, (canvasWidth - textWidth) * 0.5, 260)
 			end
 		end
-		if btn(Gamepad.A) and btn(Gamepad.B) then
+		if keyp(13) then -- Return/Enter key.
 			played = played + 1
 			saveHighscore(highscore)
 			start(true)
