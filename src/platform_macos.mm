@@ -251,6 +251,10 @@ std::string Platform::documentDirectory(void) {
 	return ret;
 }
 
+std::string Platform::savedGamesDirectory(void) {
+	return writableDirectory();
+}
+
 std::string Platform::currentDirectory(void) {
 	NSFileManager* filemgr = [NSFileManager defaultManager];
 	NSString* currentpath = [filemgr currentDirectoryPath];

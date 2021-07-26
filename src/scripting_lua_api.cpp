@@ -3745,6 +3745,10 @@ static std::string Path_writableDirectory(lua_State*) {
 	return Path::writableDirectory();
 }
 
+static std::string Path_savedGamesDirectory(lua_State*) {
+	return Path::savedGamesDirectory();
+}
+
 static int Path_combine(lua_State* L) {
 	const int n = getTop(L);
 	std::string ret;
@@ -3907,7 +3911,8 @@ static void open_Path(lua_State* L) {
 		L,
 		"executableFile", Path_executableFile(L),
 		"documentDirectory", Path_documentDirectory(L),
-		"writableDirectory", Path_writableDirectory(L)
+		"writableDirectory", Path_writableDirectory(L),
+		"savedGamesDirectory", Path_savedGamesDirectory(L)
 	);
 	pop(L);
 }

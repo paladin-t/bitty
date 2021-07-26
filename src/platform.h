@@ -54,6 +54,7 @@ public:
 	static std::string executableFile(void);
 	static std::string documentDirectory(void);
 	static std::string writableDirectory(void);
+	static std::string savedGamesDirectory(void);
 	static std::string currentDirectory(void);
 	static void currentDirectory(const char* dir);
 

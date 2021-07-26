@@ -8,6 +8,7 @@
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
 
+#include "encoding.h"
 #include "platform.h"
 #include <SDL.h>
 #include <direct.h>
@@ -211,6 +212,19 @@ std::string Platform::documentDirectory(void) {
 
 	if (ret == S_OK) {
 		const std::string osstr = myDoc;
+
+		return osstr;
+	} else {
+		return "ERROR";
+	}
+}
+
+std::string Platform::savedGamesDirectory(void) {
+	PWSTR savedGames = nullptr;
+	const HRESULT ret = ::SHGetKnownFolderPath(FOLDERID_SavedGames, KF_FLAG_CREATE, nullptr, &savedGames);
+
+	if (ret == S_OK) {
+		const std::string osstr = Unicode::toOs(Unicode::fromWide(savedGames));
 
 		return osstr;
 	} else {

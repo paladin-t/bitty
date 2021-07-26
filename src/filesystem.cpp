@@ -97,6 +97,13 @@ std::string Path::writableDirectory(void) {
 	return utfstr;
 }
 
+std::string Path::savedGamesDirectory(void) {
+	std::string utfstr = Unicode::fromOs(Platform::savedGamesDirectory());
+	uniform(utfstr);
+
+	return utfstr;
+}
+
 std::string Path::currentDirectory(void) {
 	std::string utfstr = Unicode::fromOs(Platform::currentDirectory());
 	uniform(utfstr);

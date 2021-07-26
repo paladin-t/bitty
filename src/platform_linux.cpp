@@ -358,6 +358,10 @@ std::string Platform::documentDirectory(void) {
 	return homeDir;
 }
 
+std::string Platform::savedGamesDirectory(void) {
+	return writableDirectory();
+}
+
 std::string Platform::currentDirectory(void) {
 	char buf[BITTY_MAX_PATH + 1];
 	buf[BITTY_MAX_PATH] = '\0';
