@@ -419,13 +419,40 @@ static void checkOrRead(lua_State* L, Variant* ret, Index idx, References &refs,
 				IDictionary::Ptr dict(Dictionary::create());
 				*ret = (Object::Ptr)dict;
 
+				int unknownIndex = 1;
 				write(L, nullptr); // Before: ...table (top); after: ...table, nil (top).
 				if (idx < 0)
 					--idx;
 				while (next(L, idx)) {
 					std::string k; // Stack: table, key, value (top).
+					if (options.viewable) {
+						const int y = typeOf(L, -2);
+						switch (y) {
+						case LUA_TNUMBER:
+							if (isInteger(L, -2)) {
+								lua_Integer val = 0;
+								read(L, val, Index(-2));
+								k = Text::toString(val);
+							} else {
+								lua_Number val = 0;
+								read(L, val, Index(-2));
+								k = Text::toString(val);
+							}
+
+							break;
+						case LUA_TSTRING:
+							read(L, k, Index(-2));
+
+							break;
+						default:
+							k = "(?" + Text::toString(unknownIndex++) + ")";
+
+							break;
+						}
+					} else {
+						read(L, k, Index(-2));
+					}
 					Variant v = nullptr;
-					read(L, k, Index(-2));
 					checkOrRead(L, &v, Index(-1), refs, check, level + 1, options);
 
 					dict->set(k, v);
