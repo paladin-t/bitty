@@ -766,6 +766,7 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 * `Path.executableFile`: readonly, gets the executable file path
 * `Path.documentDirectory`: readonly, gets the documents directory path
 * `Path.writableDirectory`: readonly, gets the writable directory path
+* `Path.savedGamesDirectory`: readonly, gets the "Saved Games" directory path on Windows, or same as `Path.writableDirectory` on other platforms
 
 **Constructors**
 

@@ -428,11 +428,38 @@ static void checkOrRead(lua_State* L, Variant* ret, Index idx, References &refs,
 					if (options.viewable) {
 						const int y = typeOf(L, -2);
 						switch (y) {
+						case LUA_TBOOLEAN: {
+								bool val = false;
+								read(L, val, Index(-2));
+								if (val)
+									k = "true";
+								else
+									k = "false";
+							}
+
+							break;
+						case LUA_TLIGHTUSERDATA: {
+								LightUserdata val;
+								read(L, val, Index(-2));
+								if (val.data == nullptr) {
+									k = "null";
+								} else {
+									constexpr bool IS32BIT = sizeof(uintptr_t) == sizeof(UInt32);
+									(void)IS32BIT;
+#if IS32BIT
+									k = "0x" + Text::toHex((UInt32)(uintptr_t)val.data, false);
+#else /* IS32BIT */
+									k = "0x" + Text::toHex((UInt64)(uintptr_t)val.data, false);
+#endif /* IS32BIT */
+								}
+							}
+
+							break;
 						case LUA_TNUMBER:
 							if (isInteger(L, -2)) {
 								lua_Integer val = 0;
 								read(L, val, Index(-2));
-								k = Text::toString(val);
+								k = Text::toString((Int64)val);
 							} else {
 								lua_Number val = 0;
 								read(L, val, Index(-2));
@@ -444,8 +471,24 @@ static void checkOrRead(lua_State* L, Variant* ret, Index idx, References &refs,
 							read(L, k, Index(-2));
 
 							break;
+						case LUA_TTABLE:
+							k = "table (" + Text::toString(unknownIndex++) + ")";
+
+							break;
+						case LUA_TFUNCTION:
+							k = "function (" + Text::toString(unknownIndex++) + ")";
+
+							break;
+						case LUA_TUSERDATA:
+							k = "userdata (" + Text::toString(unknownIndex++) + ")";
+
+							break;
+						case LUA_TTHREAD:
+							k = "thread (" + Text::toString(unknownIndex++) + ")";
+
+							break;
 						default:
-							k = "(?" + Text::toString(unknownIndex++) + ")";
+							k = "unknown (" + Text::toString(unknownIndex++) + ")";
 
 							break;
 						}
