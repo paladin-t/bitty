@@ -8029,6 +8029,8 @@ static int ResourceSprite_play(lua_State* L) {
 			read<>(L, obj, begin, end, reset);
 		else if (n == 3)
 			read<>(L, obj, begin, end);
+		else
+			read<>(L, obj);
 	} else if (isString(L, 2)) {
 		if (n == 4)
 			read<>(L, obj, beginStr, reset, loop);
@@ -8036,6 +8038,10 @@ static int ResourceSprite_play(lua_State* L) {
 			read<>(L, obj, beginStr, reset);
 		else if (n == 2)
 			read<>(L, obj, beginStr);
+		else
+			read<>(L, obj);
+	} else {
+		read<>(L, obj);
 	}
 
 	if (obj && *obj) {

@@ -733,11 +733,12 @@ private:
 			"string", "byte", "dump", "find", "format", "gmatch", "gsub", "lower", "match", "packsize", "rep", "reverse", "sub", "upper",
 			"utf8", "charpattern", "codes", "codepoint", "offset",
 			"table", "concat", "insert", "move", "remove", "sort",
-			"math", "abs", "acos", "asin", "atan", "ceil", "cos", "deg", "exp", "floor", "fmod", "huge", "log", "max", "maxinteger", "min", "mininteger", "modf", "pi", "rad", "random", "randomseed", "sin", "sqrt", "tan", "tointeger", "ult"
+			"math", "abs", "acos", "asin", "atan", "ceil", "cos", "deg", "exp", "floor", "fmod", "huge", "log", "max", "maxinteger", "min", "mininteger", "modf", "pi", "rad", "random", "randomseed", "sin", "sqrt", "tan", "tointeger", "ult",
 			// "io", "close", "flush", "input", "lines", "open", "output", "popen", "read", "tmpfile", "write",
 			// "file", "close", "flush", "lines", "read", "seek", "setvbuf", "write",
 			// "os", "clock", "date", "difftime", "execute", "exit", "getenv", "remove", "rename", "setlocale", "time", "tmpname",
-			// "debug", "gethook", "getinfo", "getlocal", "getmetatable", "getregistry", "getupvalue", "getuservalue", "sethook", "setlocal", "setmetatable", "setupvalue", "setuservalue", "traceback", "upvalueid", "upvaluejoin"
+			// "debug", "gethook", "getinfo", "getlocal", "getmetatable", "getregistry", "getupvalue", "getuservalue", "sethook", "setlocal", "setmetatable", "setupvalue", "setuservalue", "traceback", "upvalueid", "upvaluejoin",
+			"self"
 		};
 		for (const char* const k : identifiers) {
 			Identifier id;
