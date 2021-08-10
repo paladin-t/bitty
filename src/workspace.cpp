@@ -1627,6 +1627,8 @@ void Workspace::editing(class Window* wnd, class Renderer* rnd, const class Proj
 						editingClosing(false);
 						opened = false;
 					}
+				} else {
+					canvasHovering(false);
 				}
 				if (!opened) {
 					Operations::projectStop(rnd, this, project, exec, primitives);
