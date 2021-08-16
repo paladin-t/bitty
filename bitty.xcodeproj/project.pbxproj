@@ -228,6 +228,7 @@
 		037C5EE92621D5BD0028C4BB /* effects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = effects.cpp; path = src/effects.cpp; sourceTree = "<group>"; };
 		037C5EEA2621D5BE0028C4BB /* effects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = effects.h; path = src/effects.h; sourceTree = "<group>"; };
 		038598B726199354007E1603 /* stb_hexwave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_hexwave.h; path = lib/stb/stb_hexwave.h; sourceTree = "<group>"; };
+		038D827D26CA4A5A003D7F32 /* uri.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = uri.h; path = lib/rapidjson/include/rapidjson/uri.h; sourceTree = "<group>"; };
 		038E72612581E04300A94374 /* bitty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = bitty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		038E72B825820C3800A94374 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = src/mac/AppDelegate.h; sourceTree = "<group>"; };
 		038E72B925820C3900A94374 /* bitty.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = bitty.entitlements; path = src/mac/bitty.entitlements; sourceTree = "<group>"; };
@@ -1457,6 +1458,7 @@
 		038E76FB2582127D00A94374 /* rapidjson */ = {
 			isa = PBXGroup;
 			children = (
+				038D827D26CA4A5A003D7F32 /* uri.h */,
 				038E7701258212A300A94374 /* allocators.h */,
 				038E770E258212A900A94374 /* cursorstreamwrapper.h */,
 				038E7709258212A900A94374 /* document.h */,

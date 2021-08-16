@@ -9796,8 +9796,10 @@ static void open_Application(lua_State* L) {
 								luaL_Reg{ "setOption", Application_setOption }, // Frame synchronized.
 								luaL_Reg{ "setCursor", Application_setCursor }, // Frame synchronized.
 								luaL_Reg{ "resize", Application_resize }, // Frame synchronized.
+#if BITTY_EFFECTS_ENABLED
 								luaL_Reg{ "setEffect", Application_setEffect }, // Undocumented. Frame synchronized.
 								luaL_Reg{ "setEffectUniform", Application_setEffectUniform }, // Undocumented. Frame synchronized.
+#endif /* BITTY_EFFECTS_ENABLED */
 								luaL_Reg{ nullptr, nullptr }
 							)
 						);
