@@ -83,9 +83,10 @@ bool ScriptingLua::open(
 	Observer* observer,
 	const class Project* project,
 	const class Project* editing,
-	class Primitives* primitives
+	class Primitives* primitives,
+	bool effectsEnabled
 ) {
-	if (!Scripting::open(observer, project, editing, primitives))
+	if (!Scripting::open(observer, project, editing, primitives, effectsEnabled))
 		return false;
 
 	return true;

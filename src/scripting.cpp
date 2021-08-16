@@ -30,13 +30,16 @@ bool Scripting::open(
 	Observer* obsvr,
 	const class Project* project,
 	const class Project* editing,
-	class Primitives* primitives
+	class Primitives* primitives,
+	bool effectsEnabled
 ) {
 	if (_opened)
 		return false;
 	_opened = true;
 
 	observer(obsvr);
+
+	_effectsEnabled = effectsEnabled;
 
 	_project = project;
 	_editing = editing;
@@ -83,6 +86,10 @@ bool Scripting::close(void) {
 	fprintf(stdout, "Scripting closed: \"%s\".\n", lang.c_str());
 
 	return true;
+}
+
+bool Scripting::effectsEnabled(void) const {
+	return _effectsEnabled;
 }
 
 const class Project* Scripting::project(void) const {

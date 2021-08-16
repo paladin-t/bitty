@@ -58,6 +58,8 @@ public:
 protected:
 	bool _opened = false;
 
+	bool _effectsEnabled = false;
+
 	const class Project* _project = nullptr; // Foreign.
 	const class Project* _editing = nullptr; // Foreign.
 	class Primitives* _primitives = nullptr; // Foreign.
@@ -74,9 +76,12 @@ public:
 		Observer* obsvr,
 		const class Project* project,
 		const class Project* editing,
-		class Primitives* primitives
+		class Primitives* primitives,
+		bool effectsEnabled
 	) override;
 	virtual bool close(void) override;
+
+	virtual bool effectsEnabled(void) const override;
 
 	virtual const class Project* project(void) const override;
 	virtual const class Project* editing(void) const override;

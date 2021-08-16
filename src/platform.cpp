@@ -79,7 +79,7 @@ void Platform::idle(void) {
 		const bool windowResized = evt.type == SDL_WINDOWEVENT && evt.window.event == SDL_WINDOWEVENT_SIZE_CHANGED;
 		const bool targetReset = evt.type == SDL_RENDER_TARGETS_RESET;
 		if (windowResized || targetReset)
-			ImGuiSDL::Reset(); // FIXME: remove this temporary patch.
+			ImGuiSDL::Reset();
 	}
 }
 

@@ -1286,9 +1286,6 @@
     <ClInclude Include="lib\rapidjson\include\rapidjson\msinttypes\stdint.h">
       <Filter>lib\rapidjson\include\rapidjson\msinttypes</Filter>
     </ClInclude>
-    <ClInclude Include="lib\stb\stb.h">
-      <Filter>lib\stb</Filter>
-    </ClInclude>
     <ClInclude Include="lib\stb\stb_c_lexer.h">
       <Filter>lib\stb</Filter>
     </ClInclude>
@@ -2584,6 +2581,9 @@
     </ClInclude>
     <ClInclude Include="lib\glew\include\GL\wglew.h">
       <Filter>lib\glew\include\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\rapidjson\include\rapidjson\uri.h">
+      <Filter>lib\rapidjson\include\rapidjson</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

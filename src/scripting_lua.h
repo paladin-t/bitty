@@ -104,7 +104,8 @@ public:
 		Observer* obsvr,
 		const class Project* project,
 		const class Project* editing,
-		class Primitives* primitives
+		class Primitives* primitives,
+		bool effectsEnabled
 	) override;
 	virtual bool close(void) override;
 

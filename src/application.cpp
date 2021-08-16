@@ -274,7 +274,8 @@ public:
 		_primitives->open(_window, _renderer, _project, _resources, _effects);
 
 		// Initialize the executable module.
-		_executable->open(_workspace, _project, nullptr, _primitives);
+		const bool effectsEnabled = options.find(WORKSPACE_OPTION_RENDERER_EFFECTS_ENABLED_KEY) != options.end();
+		_executable->open(_workspace, _project, nullptr, _primitives, effectsEnabled);
 		if (options.find(WORKSPACE_OPTION_EXECUTABLE_TIMEOUT_DISABLED_KEY) != options.end())
 			_executable->timeout(-1);
 #if defined BITTY_OS_HTML
@@ -286,7 +287,7 @@ public:
 		_workspace->open(_window, _renderer, _project, _executable, _primitives, options);
 
 		// Initialize the effects.
-		_effects->open(_window, _renderer, _workspace, options.find(WORKSPACE_OPTION_RENDERER_EFFECTS_ENABLED_KEY) != options.end());
+		_effects->open(_window, _renderer, _workspace, effectsEnabled);
 
 		// Finish.
 		return true;

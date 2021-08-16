@@ -89,7 +89,7 @@ bool Plugin::open(void) {
 	_project->load(_path.c_str());
 
 	_executable = Scripting::create(Executable::LUA);
-	_executable->open(_observer, _project, _editing, nullptr);
+	_executable->open(_observer, _project, _editing, nullptr, false);
 	_executable->timeout(-1);
 	_executable->prepare();
 	_executable->setup();

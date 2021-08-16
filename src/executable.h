@@ -127,9 +127,12 @@ public:
 		Observer* observer,
 		const class Project* project,
 		const class Project* editing,
-		class Primitives* primitives /* nullable */
+		class Primitives* primitives /* nullable */,
+		bool effectsEnabled
 	) = 0;
 	virtual bool close(void) = 0;
+
+	virtual bool effectsEnabled(void) const = 0;
 
 	virtual const class Project* project(void) const = 0;
 	virtual const class Project* editing(void) const = 0;

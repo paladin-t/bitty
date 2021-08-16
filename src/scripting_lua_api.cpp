@@ -9776,32 +9776,62 @@ static int Application_setEffectUniform(lua_State* L) {
 #endif /* BITTY_EFFECTS_ENABLED */
 
 static void open_Application(lua_State* L) {
-	req(
-		L,
-		array(
-			luaL_Reg{
-				"Application",
-				[] (lua_State* L) -> int {
-					lib(
-						L,
-						array(
-							luaL_Reg{ "setOption", Application_setOption }, // Frame synchronized.
-							luaL_Reg{ "setCursor", Application_setCursor }, // Frame synchronized.
-							luaL_Reg{ "resize", Application_resize }, // Frame synchronized.
 #if BITTY_EFFECTS_ENABLED
-							luaL_Reg{ "setEffect", Application_setEffect }, // Undocumented. Frame synchronized.
-							luaL_Reg{ "setEffectUniform", Application_setEffectUniform }, // Undocumented. Frame synchronized.
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+	const bool effectsEnabled = impl->effectsEnabled();
+#else /* BITTY_EFFECTS_ENABLED */
+	const bool effectsEnabled = false;
 #endif /* BITTY_EFFECTS_ENABLED */
-							luaL_Reg{ nullptr, nullptr }
-						)
-					);
 
-					return 1;
-				}
-			},
-			luaL_Reg{ nullptr, nullptr }
-		)
-	);
+	if (effectsEnabled) {
+		req(
+			L,
+			array(
+				luaL_Reg{
+					"Application",
+					[] (lua_State* L) -> int {
+						lib(
+							L,
+							array(
+								luaL_Reg{ "setOption", Application_setOption }, // Frame synchronized.
+								luaL_Reg{ "setCursor", Application_setCursor }, // Frame synchronized.
+								luaL_Reg{ "resize", Application_resize }, // Frame synchronized.
+								luaL_Reg{ "setEffect", Application_setEffect }, // Undocumented. Frame synchronized.
+								luaL_Reg{ "setEffectUniform", Application_setEffectUniform }, // Undocumented. Frame synchronized.
+								luaL_Reg{ nullptr, nullptr }
+							)
+						);
+
+						return 1;
+					}
+				},
+				luaL_Reg{ nullptr, nullptr }
+			)
+		);
+	} else {
+		req(
+			L,
+			array(
+				luaL_Reg{
+					"Application",
+					[] (lua_State* L) -> int {
+						lib(
+							L,
+							array(
+								luaL_Reg{ "setOption", Application_setOption }, // Frame synchronized.
+								luaL_Reg{ "setCursor", Application_setCursor }, // Frame synchronized.
+								luaL_Reg{ "resize", Application_resize }, // Frame synchronized.
+								luaL_Reg{ nullptr, nullptr }
+							)
+						);
+
+						return 1;
+					}
+				},
+				luaL_Reg{ nullptr, nullptr }
+			)
+		);
+	}
 }
 
 /**< Canvas. */

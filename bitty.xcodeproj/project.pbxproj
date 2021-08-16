@@ -579,7 +579,6 @@
 		038E773D2582130E00A94374 /* stb_textedit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_textedit.h; path = lib/stb/stb_textedit.h; sourceTree = "<group>"; };
 		038E773E2582130F00A94374 /* stb_image_write.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_image_write.h; path = lib/stb/stb_image_write.h; sourceTree = "<group>"; };
 		038E773F2582130F00A94374 /* stb_voxel_render.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_voxel_render.h; path = lib/stb/stb_voxel_render.h; sourceTree = "<group>"; };
-		038E77402582130F00A94374 /* stb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb.h; path = lib/stb/stb.h; sourceTree = "<group>"; };
 		038E77422582130F00A94374 /* stb_herringbone_wang_tile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_herringbone_wang_tile.h; path = lib/stb/stb_herringbone_wang_tile.h; sourceTree = "<group>"; };
 		038E77432582130F00A94374 /* stb_rect_pack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_rect_pack.h; path = lib/stb/stb_rect_pack.h; sourceTree = "<group>"; };
 		038E77442582130F00A94374 /* stb_c_lexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_c_lexer.h; path = lib/stb/stb_c_lexer.h; sourceTree = "<group>"; };
@@ -1269,7 +1268,6 @@
 				038E77452582130F00A94374 /* stb_truetype.h */,
 				038E77392582130E00A94374 /* stb_vorbis.c */,
 				038E773F2582130F00A94374 /* stb_voxel_render.h */,
-				038E77402582130F00A94374 /* stb.h */,
 			);
 			name = stb;
 			sourceTree = "<group>";

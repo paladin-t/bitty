@@ -2378,6 +2378,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClInclude Include="lib\rapidjson\include\rapidjson\schema.h" />
     <ClInclude Include="lib\rapidjson\include\rapidjson\stream.h" />
     <ClInclude Include="lib\rapidjson\include\rapidjson\stringbuffer.h" />
+    <ClInclude Include="lib\rapidjson\include\rapidjson\uri.h" />
     <ClInclude Include="lib\rapidjson\include\rapidjson\writer.h" />
     <ClInclude Include="lib\sdl\include\begin_code.h" />
     <ClInclude Include="lib\sdl\include\close_code.h" />
@@ -2468,7 +2469,6 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClInclude Include="lib\sdl_gfx\SDL2_imageFilter.h" />
     <ClInclude Include="lib\sdl_gfx\SDL2_rotozoom.h" />
     <ClInclude Include="lib\sdl_mixer\include\SDL_mixer.h" />
-    <ClInclude Include="lib\stb\stb.h" />
     <ClInclude Include="lib\stb\stb_connected_components.h" />
     <ClInclude Include="lib\stb\stb_c_lexer.h" />
     <ClInclude Include="lib\stb\stb_divide.h" />
