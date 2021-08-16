@@ -1525,6 +1525,14 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 	* `ry`: the y radius
 	* `fill`: `true` for fill
 	* `col`: omit to use the active `Color`
+* `pie(x, y, r, startAngle, endAngle, fill = false[, col])`: draws a pie
+	* `x`: the x position
+	* `y`: the y position
+	* `r`: the radius
+	* `startAngle`: the start angle in radians
+	* `endAngle`: the end angle in radians
+	* `fill`: `true` for fill
+	* `col`: omit to use the active `Color`
 * `rect(x0, y0, x1, y1, fill = false[, col[, rad]])`: draws a rectangle
 	* `x0`: the first x position
 	* `y0`: the first y position

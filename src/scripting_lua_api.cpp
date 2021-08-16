@@ -9428,7 +9428,7 @@ static void open_Primitives(lua_State* L) {
 			luaL_Reg{ "line", Primitives_line },
 			luaL_Reg{ "circ", Primitives_circ },
 			luaL_Reg{ "ellipse", Primitives_ellipse },
-			luaL_Reg{ "pie", Primitives_pie }, // Undocumented.
+			luaL_Reg{ "pie", Primitives_pie },
 			luaL_Reg{ "rect", Primitives_rect },
 			luaL_Reg{ "font", Primitives_font }, // Frame synchronized.
 			luaL_Reg{ "measure", Primitives_measure },
