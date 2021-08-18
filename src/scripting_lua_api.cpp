@@ -9595,6 +9595,8 @@ static int Application_setCursor(lua_State* L) {
 			cur->fromImage(img->get());
 			impl->primitives()->cursor(cur, x, y);
 		}
+	} else {
+		impl->primitives()->cursor(nullptr, x, y);
 	}
 
 	return 0;
