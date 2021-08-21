@@ -1185,9 +1185,9 @@ void PushID(const std::string &str_id) {
 }
 
 Rect LastItemRect(void) {
-	ImGuiWindow* window = GetCurrentWindow();
+	ImGuiContext &g = *GetCurrentContext();
 
-	return std::make_pair(window->DC.LastItemRect.Min, window->DC.LastItemRect.Max);
+	return std::make_pair(g.LastItemData.Rect.Min, g.LastItemData.Rect.Max);
 }
 
 void Dummy(const ImVec2 &size, ImU32 col) {
@@ -1682,7 +1682,7 @@ static bool ProgressBar(const char* label, void* p_data, const void* p_min, cons
 	bool temp_input_is_active = !readonly && TempInputIsActive(id);
 	bool temp_input_start = false;
 	if (!readonly && !temp_input_is_active) {
-		const bool focus_requested = (window->DC.LastItemStatusFlags & ImGuiItemStatusFlags_Focused) != 0;
+		const bool focus_requested = (g.LastItemData.StatusFlags & ImGuiItemStatusFlags_Focused) != 0;
 		const bool clicked = (hovered && g.IO.MouseClicked[0]);
 		if (focus_requested || clicked || g.NavActivateId == id || g.NavInputId == id) {
 			SetActiveID(id, window);
@@ -2069,7 +2069,8 @@ static bool TreeNodeBehavior(ImGuiID id, ImTextureID texture_id, ImTextureID ope
 
 	// For regular tree nodes, we arbitrary allow to click past 2 worth of ItemSpacing
 	ImRect interact_bb = frame_bb;
-	if (!display_frame && (flags & (ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth)) == 0) {
+	if (!display_frame && (flags & (ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth)) == 0)
+	{
 		//interact_bb.Max.x = frame_bb.Min.x + text_width + style.ItemSpacing.x * 2.0f;
 		interact_bb.Max.x = frame_bb.Min.x + frame_bb.GetWidth();
 	}
@@ -2083,14 +2084,14 @@ static bool TreeNodeBehavior(ImGuiID id, ImTextureID texture_id, ImTextureID ope
 		window->DC.TreeJumpToParentOnPopMask |= (1 << window->DC.TreeDepth);
 
 	bool item_add = ItemAdd(interact_bb, id);
-	window->DC.LastItemStatusFlags |= ImGuiItemStatusFlags_HasDisplayRect;
-	window->DC.LastItemDisplayRect = frame_bb;
+	g.LastItemData.StatusFlags |= ImGuiItemStatusFlags_HasDisplayRect;
+	g.LastItemData.DisplayRect = frame_bb;
 
 	if (!item_add)
 	{
 		if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
 			TreePushOverrideID(id);
-		IMGUI_TEST_ENGINE_ITEM_INFO(window->DC.LastItemId, label, window->DC.LastItemStatusFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
+		IMGUI_TEST_ENGINE_ITEM_INFO(g.LastItemData.ID, label, g.LastItemData.StatusFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
 		return is_open;
 	}
 
@@ -2163,7 +2164,7 @@ static bool TreeNodeBehavior(ImGuiID id, ImTextureID texture_id, ImTextureID ope
 		{
 			is_open = !is_open;
 			window->DC.StateStorage->SetInt(id, is_open);
-			window->DC.LastItemStatusFlags |= ImGuiItemStatusFlags_ToggledOpen;
+			g.LastItemData.StatusFlags |= ImGuiItemStatusFlags_ToggledOpen;
 		}
 	}
 	if (flags & ImGuiTreeNodeFlags_AllowItemOverlap)
@@ -2171,7 +2172,7 @@ static bool TreeNodeBehavior(ImGuiID id, ImTextureID texture_id, ImTextureID ope
 
 	// In this branch, TreeNodeBehavior() cannot toggle the selection so this will never trigger.
 	if (selected != was_selected) //-V547
-		window->DC.LastItemStatusFlags |= ImGuiItemStatusFlags_ToggledSelection;
+		g.LastItemData.StatusFlags |= ImGuiItemStatusFlags_ToggledSelection;
 
 	// Render
 	const ImU32 text_col = GetColorU32(ImGuiCol_Text);
@@ -2209,6 +2210,7 @@ static bool TreeNodeBehavior(ImGuiID id, ImTextureID texture_id, ImTextureID ope
 			text_pos.x -= text_offset_x;
 		if (flags & ImGuiTreeNodeFlags_ClipLabelForTrailingButton)
 			frame_bb.Max.x -= g.FontSize + style.FramePadding.x;
+
 		if (g.LogEnabled)
 			LogSetNextTextDecoration("###", "###");
 		RenderTextClipped(text_pos, frame_bb.Max, label, label_end, &label_size);
@@ -2220,8 +2222,8 @@ static bool TreeNodeBehavior(ImGuiID id, ImTextureID texture_id, ImTextureID ope
 		{
 			const ImU32 bg_col = GetColorU32((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
 			RenderFrame(frame_bb.Min, frame_bb.Max, bg_col, false);
-			RenderNavHighlight(frame_bb, id, nav_highlight_flags);
 		}
+		RenderNavHighlight(frame_bb, id, nav_highlight_flags);
 		if (flags & ImGuiTreeNodeFlags_Bullet)
 		{
 			RenderBullet(window->DrawList, ImVec2(text_pos.x - text_offset_x * 0.5f, text_pos.y + g.FontSize * 0.5f), text_col);
@@ -2253,7 +2255,7 @@ static bool TreeNodeBehavior(ImGuiID id, ImTextureID texture_id, ImTextureID ope
 
 	if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
 		TreePushOverrideID(id);
-	IMGUI_TEST_ENGINE_ITEM_INFO(id, label, window->DC.LastItemStatusFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
+	IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
 	return is_open;
 }
 
