@@ -1,4 +1,4 @@
-// dear imgui, v1.84b
+// dear imgui, v1.84
 // (widgets code)
 
 /*
@@ -7006,7 +7006,7 @@ bool ImGui::MenuItemEx(const char* label, const char* icon, const char* shortcut
         PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(style.ItemSpacing.x * 2.0f, style.ItemSpacing.y));
         pressed = Selectable("", selected, flags, ImVec2(w, 0.0f));
         PopStyleVar();
-        RenderText(pos + ImVec2(offsets->OffsetLabel, 0.0f), label);
+        RenderText(pos + ImVec2(offsets->OffsetLabel, 0.0f), label, NULL, true, !enabled);
         window->DC.CursorPos.x += IM_FLOOR(style.ItemSpacing.x * (-1.0f + 0.5f)); // -1 spacing to compensate the spacing added when Selectable() did a SameLine(). It would also work to call SameLine() ourselves after the PopStyleVar().
     }
     else
@@ -7020,13 +7020,13 @@ bool ImGui::MenuItemEx(const char* label, const char* icon, const char* shortcut
         float min_w = window->DC.MenuColumns.DeclColumns(icon_w, label_size.x, shortcut_w, checkmark_w); // Feedback for next frame
         float stretch_w = ImMax(0.0f, GetContentRegionAvail().x - min_w);
         pressed = Selectable("", false, flags | ImGuiSelectableFlags_SpanAvailWidth, ImVec2(min_w, 0.0f));
-        RenderText(pos + ImVec2(offsets->OffsetLabel, 0.0f), label);
+        RenderText(pos + ImVec2(offsets->OffsetLabel, 0.0f), label, NULL, true, !enabled);
         if (icon_w > 0.0f)
-            RenderText(pos + ImVec2(offsets->OffsetIcon, 0.0f), icon);
+            RenderText(pos + ImVec2(offsets->OffsetIcon, 0.0f), icon, NULL, true, !enabled);
         if (shortcut_w > 0.0f)
         {
             PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_TextDisabled]);
-            RenderText(pos + ImVec2(offsets->OffsetShortcut + stretch_w, 0.0f), shortcut, NULL, false);
+            RenderText(pos + ImVec2(offsets->OffsetShortcut + stretch_w, 0.0f), shortcut, NULL, false, !enabled);
             PopStyleColor();
         }
         if (selected)

@@ -940,7 +940,8 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 	BeginChild(
 		aTitle, aSize, aBorder,
 		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar
+		ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar |
+		ImGuiWindowFlags_NoNav
 	);
 
 	PushAllowKeyboardFocus(true);

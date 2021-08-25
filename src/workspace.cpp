@@ -1255,7 +1255,7 @@ void Workspace::assets(class Window* wnd, class Renderer* rnd, const class Proje
 
 		filterAssets(wnd, rnd, project, exec);
 
-		ImGui::BeginChild("@Asts", ImVec2(), false, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar);
+		ImGui::BeginChild("@Asts", ImVec2(), false, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_NoNav);
 
 		auto sel = [] (Project* prj, Asset* asset) -> void {
 			prj->foreach(
@@ -1966,7 +1966,7 @@ void Workspace::debug(class Window* /* wnd */, class Renderer* rnd, const class 
 			ImGui::SetTooltip(theme()->tooltipDebug_Clear());
 		}
 
-		ImGui::BeginChild("@Dbg/Dtl", ImVec2(0, 0), false, ImGuiWindowFlags_AlwaysVerticalScrollbar);
+		ImGui::BeginChild("@Dbg/Dtl", ImVec2(0, 0), false, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_NoNav);
 		{
 			if (paused()) {
 				Operations::debugSetProgramPointer(this, project, exec);
@@ -2693,7 +2693,7 @@ void Workspace::document(class Window* wnd, class Renderer* rnd) {
 	ImGui::SameLine();
 
 	const ImVec2 size = ImGui::GetContentRegionAvail();
-	ImGui::BeginChild("@Doc", size, false);
+	ImGui::BeginChild("@Doc", size, false, ImGuiWindowFlags_NoNav);
 	{
 		document()->update(wnd, rnd, theme(), false);
 	}

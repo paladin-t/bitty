@@ -32,14 +32,23 @@ HOW TO UPDATE?
 
 
 -----------------------------------------------------------------------
- VERSION 1.84b (Released 2021-08-20)
+ VERSION 1.84.2 (Released 2021-08-23)
 -----------------------------------------------------------------------
 
-Decorated log: https://github.com/ocornut/imgui/releases/tag/v1.84b
+Decorated log: https://github.com/ocornut/imgui/releases/tag/v1.84.2
 
-Other Changes:
+- Disabled: Fixed nested BeginDisabled()/EndDisabled() calls. (#211, #4452, #4453, #4462) [@Legulysse]
+- Backends: OpenGL3: OpenGL: Fixed ES 3.0 shader ("#version 300 es") to use normal precision
+  floats. Avoid wobbly rendering at HD resolutions. (#4463) [@nicolasnoble]
 
-- Fixed BeginDisabled(false) - BeginDisabled(true) was working. (#211, #4452, #4453)
+
+-----------------------------------------------------------------------
+ VERSION 1.84.1 (Released 2021-08-20)
+-----------------------------------------------------------------------
+
+Decorated log: https://github.com/ocornut/imgui/releases/tag/v1.84.1
+
+- Disabled: Fixed BeginDisabled(false) - BeginDisabled(true) was working. (#211, #4452, #4453)
 
 
 -----------------------------------------------------------------------

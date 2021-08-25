@@ -97,14 +97,16 @@ constexpr const ImGuiWindowFlags WORKSPACE_WND_FLAGS_DOCK =
 	ImGuiWindowFlags_NoScrollbar |
 	ImGuiWindowFlags_NoCollapse |
 	ImGuiWindowFlags_NoSavedSettings |
-	ImGuiWindowFlags_NoBringToFrontOnFocus;
+	ImGuiWindowFlags_NoBringToFrontOnFocus |
+	ImGuiWindowFlags_NoNav;
 constexpr const ImGuiWindowFlags WORKSPACE_WND_FLAGS_DOCK_NO_TITLE =
 	WORKSPACE_WND_FLAGS_DOCK |
 	ImGuiWindowFlags_NoTitleBar;
 constexpr const ImGuiWindowFlags WORKSPACE_WND_FLAGS_FLOAT =
 	ImGuiWindowFlags_NoScrollbar |
 	ImGuiWindowFlags_NoCollapse |
-	ImGuiWindowFlags_NoSavedSettings;
+	ImGuiWindowFlags_NoSavedSettings |
+	ImGuiWindowFlags_NoNav;
 
 /* ===========================================================================} */
 

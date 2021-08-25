@@ -83,7 +83,7 @@
 			ImGuiStyle &style = ImGui::GetStyle(); \
 			const float statusBarHeight = ImGui::GetTextLineHeightWithSpacing() + style.FramePadding.y * 2; \
 			bool statusBarActived = ImGui::IsWindowFocused(); \
-			ImGui::BeginChild("@Plyfl/Vu", ImVec2(width, height - statusBarHeight), false, ImGuiWindowFlags_AlwaysHorizontalScrollbar); \
+			ImGui::BeginChild("@Plyfl/Vu", ImVec2(width, height - statusBarHeight), false, ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_NoNav); \
 			{ \
 				ImGui::Dummy(ImVec2(8, 0)); \
 				ImGui::SameLine(); \

@@ -187,7 +187,7 @@ void MessagePopupBox::update(void) {
 	if (_init.begin())
 		OpenPopup(_title);
 
-	if (BeginPopupModal(_title, _cancelHandler.empty() ? nullptr : &isOpen, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (BeginPopupModal(_title, _cancelHandler.empty() ? nullptr : &isOpen, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav)) {
 		TextUnformatted(_content);
 
 		const char* confirm = _confirmText.c_str();
@@ -295,7 +295,7 @@ void InputPopupBox::update(void) {
 	if (_init.begin())
 		OpenPopup(_title);
 
-	if (BeginPopupModal(_title, _cancelHandler.empty() ? nullptr : &isOpen, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (BeginPopupModal(_title, _cancelHandler.empty() ? nullptr : &isOpen, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav)) {
 		TextUnformatted(_content);
 
 		if (!_init.end())
@@ -421,7 +421,7 @@ void AddAssetPopupBox::update(void) {
 		_sizeVec2 = _defaultSizes2[_typeIndex];
 	};
 
-	if (BeginPopupModal(_title, _cancelHandler.empty() ? nullptr : &isOpen, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (BeginPopupModal(_title, _cancelHandler.empty() ? nullptr : &isOpen, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav)) {
 		PushID("@Type");
 		{
 			SetNextItemWidth(60);
@@ -713,7 +713,7 @@ void AddFilePopupBox::update(void) {
 	if (_init.begin())
 		OpenPopup(_title);
 
-	if (BeginPopupModal(_title, _cancelHandler.empty() ? nullptr : &isOpen, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (BeginPopupModal(_title, _cancelHandler.empty() ? nullptr : &isOpen, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav)) {
 		PushID("@Path");
 		{
 			TextUnformatted(_path);
@@ -828,7 +828,7 @@ void ResizePopupBox::update(void) {
 	if (_init.begin())
 		OpenPopup(_title);
 
-	if (BeginPopupModal(_title, _cancelHandler.empty() ? nullptr : &isOpen, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (BeginPopupModal(_title, _cancelHandler.empty() ? nullptr : &isOpen, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav)) {
 		PushID("@Asset/Sz");
 		{
 			PushItemWidth((CalcItemWidth() - style.ItemSpacing.x) * 0.5f);
@@ -963,10 +963,10 @@ void SelectAssetPopupBox::update(void) {
 	if (_init.begin())
 		OpenPopup(_title);
 
-	if (BeginPopupModal(_title, _cancelHandler.empty() ? nullptr : &isOpen, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (BeginPopupModal(_title, _cancelHandler.empty() ? nullptr : &isOpen, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav)) {
 		TextUnformatted(_content);
 
-		BeginChild("@Sel", ImVec2(256.0f * io.FontGlobalScale, 256.0f * io.FontGlobalScale), true, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar);
+		BeginChild("@Sel", ImVec2(256.0f * io.FontGlobalScale, 256.0f * io.FontGlobalScale), true, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_NoNav);
 		int total = 0;
 		if (!_confirmHandlerForSingleSelection.empty())
 			AssetSelector(_project, _singleSelection, _texId, _openTexId, _fileTexId, _color, _filter);
@@ -1088,8 +1088,8 @@ void SwitchAssetPopupBox::update(void) {
 	if (_init.begin())
 		OpenPopup(_title);
 
-	if (BeginPopupModal(_title, _cancelHandler.empty() ? nullptr : &isOpen, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize)) {
-		BeginChild("@Sel", ImVec2(256.0f * io.FontGlobalScale, 256.0f * io.FontGlobalScale), true, ImGuiWindowFlags_AlwaysVerticalScrollbar);
+	if (BeginPopupModal(_title, _cancelHandler.empty() ? nullptr : &isOpen, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav)) {
+		BeginChild("@Sel", ImVec2(256.0f * io.FontGlobalScale, 256.0f * io.FontGlobalScale), true, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_NoNav);
 
 		for (int i = 0; i < (int)_assets.size(); ++i) {
 			const std::string asset = _assets[i];

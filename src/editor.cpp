@@ -25,7 +25,7 @@ float Editor::Ref::windowWidth(float exp) {
 }
 
 int Editor::Ref::windowFlags(void) const {
-	return _verticalScrollBarVisible ? ImGuiWindowFlags_AlwaysVerticalScrollbar : ImGuiWindowFlags_None;
+	return (_verticalScrollBarVisible ? ImGuiWindowFlags_AlwaysVerticalScrollbar : ImGuiWindowFlags_None) | ImGuiWindowFlags_NoNav;
 }
 
 void Editor::Ref::windowResized(void) {

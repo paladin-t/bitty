@@ -1,4 +1,4 @@
-// dear imgui, v1.84b
+// dear imgui, v1.84
 // (main code and documentation)
 
 // Help:
@@ -2695,7 +2695,7 @@ const char* ImGui::FindRenderedTextEnd(const char* text, const char* text_end)
 
 // Internal ImGui functions to render text
 // RenderText***() functions calls ImDrawList::AddText() calls ImBitmapFont::RenderText()
-void ImGui::RenderText(ImVec2 pos, const char* text, const char* text_end, bool hide_text_after_hash)
+void ImGui::RenderText(ImVec2 pos, const char* text, const char* text_end, bool hide_text_after_hash, bool text_disabled)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
@@ -2715,7 +2715,7 @@ void ImGui::RenderText(ImVec2 pos, const char* text, const char* text_end, bool 
 
     if (text != text_display_end)
     {
-        window->DrawList->AddText(g.Font, g.FontSize, pos, GetColorU32(ImGuiCol_Text), text, text_display_end);
+        window->DrawList->AddText(g.Font, g.FontSize, pos, GetColorU32(text_disabled ? ImGuiCol_TextDisabled : ImGuiCol_Text), text, text_display_end);
         if (g.LogEnabled)
             LogRenderedText(&pos, text, text_display_end);
     }
@@ -6627,9 +6627,11 @@ void ImGui::BeginDisabled(bool disabled)
 {
     ImGuiContext& g = *GImGui;
     bool was_disabled = (g.CurrentItemFlags & ImGuiItemFlags_Disabled) != 0;
-    g.DisabledAlphaBackup = g.Style.Alpha;
     if (!was_disabled && disabled)
+    {
+        g.DisabledAlphaBackup = g.Style.Alpha;
         g.Style.Alpha *= g.Style.DisabledAlpha; // PushStyleVar(ImGuiStyleVar_Alpha, g.Style.Alpha * g.Style.DisabledAlpha);
+    }
     if (was_disabled || disabled)
         g.CurrentItemFlags |= ImGuiItemFlags_Disabled;
     g.ItemFlagsStack.push_back(g.CurrentItemFlags);
@@ -6641,7 +6643,7 @@ void ImGui::EndDisabled()
     bool was_disabled = (g.CurrentItemFlags & ImGuiItemFlags_Disabled) != 0;
     //PopItemFlag();
     g.ItemFlagsStack.pop_back();
-    g.CurrentItemFlags &= ~ImGuiItemFlags_Disabled;
+    g.CurrentItemFlags = g.ItemFlagsStack.back();
     if (was_disabled && (g.CurrentItemFlags & ImGuiItemFlags_Disabled) == 0)
         g.Style.Alpha = g.DisabledAlphaBackup; //PopStyleVar();
 }

@@ -67,7 +67,7 @@ void PreferencesPopupBox::update(void) {
 		OpenPopup(_title);
 
 	SetNextWindowSize(ImVec2(384, 0), ImGuiCond_Always);
-	if (BeginPopupModal(_title, nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (BeginPopupModal(_title, nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav)) {
 		if (BeginTabBar("@Pref")) {
 			if (_editable && BeginTabItem(_theme->tabPreferences_Editor(), nullptr, ImGuiTabItemFlags_NoTooltip, _theme->style()->tabTextColor)) {
 				PushID(_theme->windowPreferences_Editor_Project());
@@ -343,7 +343,7 @@ void AboutPopupBox::update(void) {
 	if (_init.begin())
 		OpenPopup(_title);
 
-	if (BeginPopupModal(_title, nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (BeginPopupModal(_title, nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav)) {
 		Url(BITTY_TITLE, "https://paladin-t.github.io/bitty/");
 		SameLine();
 		TextUnformatted(_desc);

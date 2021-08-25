@@ -334,8 +334,8 @@ public:
 			sc = 3.0f;
 		ImGui::SetNextWindowSizeConstraints(ImVec2(320.0f, 240.0f), ImVec2(1e10, 1e10));
 		ImGui::SetNextWindowSize(ImVec2(600.0f * sc, 400.0f  *sc), ImGuiCond_Appearing);
-		if (ImGui::Begin(_title.empty() ? theme->windowDocument().c_str() : _title.c_str(), nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings)) {
-			ImGui::BeginChild("Content", ImVec2(0.0f, ImGui::GetContentRegionAvail().y - ImGui::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_AlwaysVerticalScrollbar);
+		if (ImGui::Begin(_title.empty() ? theme->windowDocument().c_str() : _title.c_str(), nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoNav)) {
+			ImGui::BeginChild("Content", ImVec2(0.0f, ImGui::GetContentRegionAvail().y - ImGui::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_NoNav);
 
 			document(wnd, rnd, theme);
 
@@ -421,9 +421,9 @@ private:
 		case MD_BLOCK_CODE: {
 				ImGui::PushID(context->codeSeed);
 				if (context->codeSeed < (int)_codeHeights.size())
-					ImGui::BeginChild((ImGuiID)context->codeSeed, ImVec2(0.0f, _codeHeights[context->codeSeed].bottom + ImGui::GetFrameHeightWithSpacing()), true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+					ImGui::BeginChild((ImGuiID)context->codeSeed, ImVec2(0.0f, _codeHeights[context->codeSeed].bottom + ImGui::GetFrameHeightWithSpacing()), true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoNav);
 				else
-					ImGui::BeginChild((ImGuiID)context->codeSeed, ImVec2(0.0f, 0.0f), true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+					ImGui::BeginChild((ImGuiID)context->codeSeed, ImVec2(0.0f, 0.0f), true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoNav);
 				++context->codeSeed;
 				if ((int)_codeHeights.size() < context->codeSeed) {
 					_codeHeights.resize(context->codeSeed);
