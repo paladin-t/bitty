@@ -1001,9 +1001,9 @@ void SelectAssetPopupBox::update(void) {
 				CloseCurrentPopup();
 			}
 		} else {
-			PushStyleColor(ImGuiCol_Text, GetStyleColorVec4(ImGuiCol_TextDisabled));
+			BeginDisabled();
 			Button(confirm, ImVec2(WIDGETS_BUTTON_WIDTH, 0));
-			PopStyleColor();
+			EndDisabled();
 		}
 
 		SameLine();

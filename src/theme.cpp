@@ -68,6 +68,9 @@ bool Theme::open(class Renderer* rnd) {
 		return false;
 	_opened = true;
 
+	ImGuiStyle &style_ = ImGui::GetStyle();
+	style_.DisabledAlpha = 0.45f;
+
 	style(&styleDefault());
 
 	static_assert(ImGuiCol_COUNT == 53, "The size of `ImGuiCol_COUNT` has been changed, consider modify corresponding array.");

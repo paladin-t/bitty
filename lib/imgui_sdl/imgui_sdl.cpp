@@ -509,8 +509,10 @@ namespace
 			const int r = std::max(std::min(static_cast<int>(color.R * 255), 255), 0);
 			const int g = std::max(std::min(static_cast<int>(color.G * 255), 255), 0);
 			const int b = std::max(std::min(static_cast<int>(color.B * 255), 255), 0);
+			const int a = std::max(std::min(static_cast<int>(color.A * 255), 255), 0);
 
 			SDL_SetTextureColorMod(texture, static_cast<uint8_t>(r), static_cast<uint8_t>(g), static_cast<uint8_t>(b));
+			SDL_SetTextureAlphaMod(texture, static_cast<uint8_t>(a));
 			SDL_RenderCopyEx(CurrentDevice->Renderer, texture, &source, &destination, 0.0, nullptr, flip);
 		}
 	}

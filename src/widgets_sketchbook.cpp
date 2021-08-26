@@ -200,9 +200,9 @@ void PreferencesPopupBox::update(void) {
 				toApply = true;
 			}
 		} else {
-			PushStyleColor(ImGuiCol_Text, GetStyleColorVec4(ImGuiCol_TextDisabled));
+			BeginDisabled();
 			Button(apply, ImVec2(WIDGETS_BUTTON_WIDTH, 0));
-			PopStyleColor();
+			EndDisabled();
 		}
 
 		if (!_init.begin() && !_init.end())
