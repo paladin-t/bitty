@@ -450,7 +450,7 @@ CodeEditor::LanguageDefinition CodeEditor::LanguageDefinition::Lua(void) {
 			"file", "seek", "setvbuf",
 			"os", "clock", "date", "difftime", "execute", "exit", "getenv", "rename", "setlocale", "time", "tmpname",
 			"debug", "gethook", "getinfo", "getlocal", "getregistry", "getupvalue", "getuservalue", "sethook", "setlocal", "setupvalue", "setuservalue", "traceback", "upvalueid", "upvaluejoin",
-			"self"
+			"const", "self"
 		};
 		for (const char* const k : identifiers) {
 			Identifier id;

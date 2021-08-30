@@ -90,6 +90,8 @@ public:
 	virtual void weight(int r, int g, int b, int a) = 0;
 	virtual bool quantize(const Color* colors, int colorCount, bool p2p) = 0;
 
+	virtual bool blit(Image* dst, int x, int y, int w, int h, int sx, int sy) const = 0;
+
 	virtual bool fromBlank(int width, int height, int paletted) = 0;
 
 	virtual bool fromImage(const Image* src) = 0;

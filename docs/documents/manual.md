@@ -874,6 +874,15 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 	* `y`: starts from 0
 	* `val`: `Color` or `Palette` index
 	* returns `true` for success, otherwise `false`
+* `image:blit(dst, x, y[, w, h[, sx, sy]])`: blits the `Image` to another one
+	* `dst`: the specific destination `Image`
+	* `x`: the destination x
+	* `y`: the destination y
+	* `w`: the destination width
+	* `h`: the destination height
+	* `sx`: the source x
+	* `sy`: the source y
+	* returns `true` for success, otherwise `false`
 * `image:fromImage(img)`: loads content from another `Image`
 	* `img`: the specific `Image` to load
 	* returns `true` for success, otherwise `false`

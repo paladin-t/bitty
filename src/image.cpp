@@ -330,6 +330,41 @@ public:
 		return quantizeLinear(colors, colorCount);
 	}
 
+	virtual bool blit(Image* dst, int x, int y, int w, int h, int sx, int sy) const override {
+		if (!dst)
+			return false;
+
+		if (dst == this)
+			return false;
+
+		auto plot = [] (const Image* src, Image* dst, int sx, int sy, int dx, int dy, bool paletted) -> void {
+			if (paletted) {
+				int idx = 0;
+				if (src->get(sx, sy, idx))
+					dst->set(dx, dy, idx);
+			} else {
+				Color col;
+				if (src->get(sx, sy, col))
+					dst->set(dx, dy, col);
+			}
+		};
+		if (w == 0)
+			w = dst->width();
+		if (h == 0)
+			h = dst->height();
+		for (int y_ = 0; y_ < h; ++y_) {
+			const int sy_ = sy + y_;
+			const int dy_ = y + y_;
+			for (int x_ = 0; x_ < w; ++x_) {
+				const int sx_ = sx + x_;
+				const int dx_ = x + x_;
+				plot(this, dst, sx_, sy_, dx_, dy_, !!_palettedBits);
+			}
+		}
+
+		return true;
+	}
+
 	virtual bool fromBlank(int width, int height, int paletted) override {
 		clear();
 

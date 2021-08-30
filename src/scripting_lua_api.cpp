@@ -4551,6 +4551,28 @@ static int Image_set(lua_State* L) {
 	return 0;
 }
 
+static int Image_blit(lua_State* L) {
+	const int n = getTop(L);
+	Image::Ptr* obj = nullptr;
+	Image::Ptr* other = nullptr;
+	int x = 0, y = 0, w = 0, h = 0;
+	int sx = 0, sy = 0;
+	if (n == 8)
+		read<>(L, obj, other, x, y, w, h, sx, sy);
+	else if (n == 6)
+		read<>(L, obj, other, x, y, w, h);
+	else
+		read<>(L, obj, other, x, y);
+
+	if (obj && other) {
+		const bool ret = obj->get()->blit(other->get(), x, y, w, h, sx, sy);
+
+		return write(L, ret);
+	}
+
+	return 0;
+}
+
 static int Image_fromImage(lua_State* L) {
 	Image::Ptr* obj = nullptr;
 	Image::Ptr* other = nullptr;
@@ -4680,6 +4702,7 @@ static void open_Image(lua_State* L) {
 			luaL_Reg{ "resize", Image_resize },
 			luaL_Reg{ "get", Image_get },
 			luaL_Reg{ "set", Image_set },
+			luaL_Reg{ "blit", Image_blit },
 			luaL_Reg{ "fromImage", Image_fromImage },
 			luaL_Reg{ "fromBlank", Image_fromBlank },
 			luaL_Reg{ "toBytes", Image_toBytes },
