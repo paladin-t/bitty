@@ -1,3 +1,20 @@
+### v1.1.3 Aug. 31, 2021
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added a `Path.savedGamesDirectory` static variable
+* Added a `pie(...)` function
+* Added an `image:blit(...)` method
+* Added navigation by keypad support to text-based editors
+* Fixed a stuck issue of HTML build
+* Fixed a directory browsing issue (Linux)
+* Fixed a table traversing issue of the debugger
+* Fixed a debug panel dragging issue
+* Fixed an exiting issue from code
+* Fixed a sprite playing issue when all parameters omitted
+* Fixed a resetting bug of `Application.setCursor(...)`
+* Upgraded ImGui from v1.83 to v1.84
+
 ### v1.1.2 Jun. 29, 2021
 
 Enhanced modules, improved usability, fixed some bugs.

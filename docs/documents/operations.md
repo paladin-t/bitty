@@ -52,6 +52,8 @@
 * F11: step into
 * Shift+F11: step out
 
+* Ctrl+1/Ctrl+2/Ctrl+3/Ctrl+4: resize running canvas to x1, x2, x3, x4
+
 * F6: take a screenshot
 * F7: start recording frames
 * F8: stop recording frames
