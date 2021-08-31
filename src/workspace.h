@@ -491,6 +491,7 @@ protected:
 	bool immersive(void) const;
 	bool executing(void) const;
 	bool paused(void) const;
+	bool halting(void) const;
 
 	/**
 	 * @param[out] dirty

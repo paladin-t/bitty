@@ -1023,7 +1023,7 @@ void Workspace::execute(class Window* /* wnd */, class Renderer* rnd, const clas
 		primitives->canvas(canvasTexture());
 	}
 
-	if (!alive) {
+	if (!alive || halting()) {
 		primitives->forbid();
 
 		exec->stop();
@@ -2765,6 +2765,10 @@ bool Workspace::executing(void) const {
 
 bool Workspace::paused(void) const {
 	return currentState() == Executable::PAUSED;    // Is paused.
+}
+
+bool Workspace::halting(void) const {
+	return currentState() == Executable::HALTING;   // Is halting.
 }
 
 void Workspace::projectStates(
