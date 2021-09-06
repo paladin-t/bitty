@@ -69,10 +69,10 @@ Color Color::operator - (const Color &other) const {
 
 Color Color::operator * (const Color &other) const {
 	return Color(
-		(Byte)Math::clamp(r * other.r, 0, 255),
-		(Byte)Math::clamp(g * other.g, 0, 255),
-		(Byte)Math::clamp(b * other.b, 0, 255),
-		(Byte)Math::clamp(a * other.a, 0, 255)
+		(Byte)Math::clamp(r * (other.r / 255.0f), 0.0f, 255.0f),
+		(Byte)Math::clamp(g * (other.g / 255.0f), 0.0f, 255.0f),
+		(Byte)Math::clamp(b * (other.b / 255.0f), 0.0f, 255.0f),
+		(Byte)Math::clamp(a * (other.a / 255.0f), 0.0f, 255.0f)
 	);
 }
 
@@ -104,10 +104,10 @@ Color &Color::operator -= (const Color &other) {
 }
 
 Color &Color::operator *= (const Color &other) {
-	r = (Byte)Math::clamp(r * other.r, 0, 255);
-	g = (Byte)Math::clamp(g * other.g, 0, 255);
-	b = (Byte)Math::clamp(b * other.b, 0, 255);
-	a = (Byte)Math::clamp(a * other.a, 0, 255);
+	r = (Byte)Math::clamp(r * (other.r / 255.0f), 0.0f, 255.0f);
+	g = (Byte)Math::clamp(g * (other.g / 255.0f), 0.0f, 255.0f);
+	b = (Byte)Math::clamp(b * (other.b / 255.0f), 0.0f, 255.0f);
+	a = (Byte)Math::clamp(a * (other.a / 255.0f), 0.0f, 255.0f);
 
 	return *this;
 }
