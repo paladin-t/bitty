@@ -106,7 +106,7 @@ public:
 	 */
 	virtual Texture::Ptr sub(class Renderer* rnd, int x, int y, int width, int height) const = 0;
 
-	virtual bool update(double delta) = 0;
+	virtual bool update(double delta, unsigned* id /* nullable */) = 0;
 
 	virtual void render(
 		class Renderer* rnd,

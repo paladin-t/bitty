@@ -47,6 +47,7 @@ private:
 	int _playingBegin = -1;
 	int _playingEnd = -1;
 	bool _playing = false;
+	unsigned _id = 0;
 	int _cursor = 0;
 	double _ticks = 0.0;
 
@@ -290,7 +291,13 @@ public:
 		return get(_cursor, tex, area, interval, key);
 	}
 
-	virtual bool update(double delta) override {
+	virtual bool update(double delta, unsigned* id) override {
+		if (id != nullptr) {
+			if (_id == *id)
+				return true;
+			_id = *id;
+		}
+
 		if (!_playing)
 			return false;
 

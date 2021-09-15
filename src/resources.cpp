@@ -36,7 +36,7 @@ class ResourceKey {
 public:
 	struct Hash {
 		/**
-		 * @brief Gets the hash code of this key.
+		 * @brief Gets the hash code of the specific key.
 		 */
 		size_t operator () (const ResourceKey &key) const {
 			const size_t result = Math::hash(
@@ -48,6 +48,14 @@ public:
 			);
 
 			return result;
+		}
+	};
+	struct Less {
+		/**
+		 * @brief Compares two keys and tells whether the first is less than the second one.
+		 */
+		bool operator () (const ResourceKey &left, const ResourceKey &right) const {
+			return left.compare(right) < 0;
 		}
 	};
 
@@ -112,6 +120,33 @@ public:
 	}
 
 	bool operator == (const ResourceKey &other) const {
+		return equals(other);
+	}
+
+	int compare(const ResourceKey &other) const {
+		if (id() < other.id())
+			return -1;
+		else if (id() > other.id())
+			return 1;
+
+		if (size().compare(other.size()) < 0)
+			return -1;
+		else if (size().compare(other.size()) > 0)
+			return 1;
+
+		if (color().toRGBA() < other.color().toRGBA())
+			return -1;
+		else if (color().toRGBA() > other.color().toRGBA())
+			return 1;
+
+		if (detail() < other.detail())
+			return -1;
+		else if (detail() > other.detail())
+			return 1;
+
+		return 0;
+	}
+	bool equals(const ResourceKey &other) const {
 		return id() == other.id() &&
 			size() == other.size() &&
 			color() == other.color() &&

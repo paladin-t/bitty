@@ -96,7 +96,7 @@ public:
 	 */
 	virtual bool current(int* index /* nullable */, Texture::Ptr* tex /* nullable */, Math::Recti* area /* nullable */, double* interval /* nullable */, const char** key /* nullable */) const = 0;
 
-	virtual bool update(double delta) = 0;
+	virtual bool update(double delta, unsigned* id /* nullable */) = 0;
 
 	virtual void render(
 		class Renderer* rnd,

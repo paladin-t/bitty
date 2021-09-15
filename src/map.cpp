@@ -344,7 +344,7 @@ public:
 		return result;
 	}
 
-	virtual bool update(double /* delta */) override {
+	virtual bool update(double /* delta */, unsigned* /* id */) override {
 		// Do nothing.
 
 		return true;

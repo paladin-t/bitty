@@ -939,7 +939,7 @@ public:
 		_delta = delta;
 	}
 
-	void run(Renderer* rnd, const Project* project, Resources* res, const double* delta) {
+	void run(Renderer* rnd, const Project* project, Resources* res, const double* delta, unsigned frameId) {
 		clip(rnd, true);
 
 		do {
@@ -952,7 +952,7 @@ public:
 
 			LockGuard<RecursiveMutex> guard(_sprite->lock);
 
-			ptr->update(delta ? *delta : _delta);
+			ptr->update(delta ? *delta : _delta, &frameId);
 
 			if (_width <= 0)
 				_width = ptr->width();
@@ -1002,7 +1002,7 @@ public:
 		_delta = delta;
 	}
 
-	void run(Renderer* rnd, const Project* project, Resources* res, const double* delta) {
+	void run(Renderer* rnd, const Project* project, Resources* res, const double* delta, unsigned frameId) {
 		clip(rnd, true);
 
 		do {
@@ -1013,7 +1013,7 @@ public:
 			if (!ptr)
 				break;
 
-			ptr->update(delta ? *delta : _delta);
+			ptr->update(delta ? *delta : _delta, &frameId);
 
 			Color col;
 			bool colorChanged = false, alphaChanged = false;
@@ -1878,7 +1878,7 @@ public:
 		return *this;
 	}
 
-	void run(Primitives* primitives, Renderer* rnd, const Project* project, Resources* res, Audio* audio, const double* delta) {
+	void run(Primitives* primitives, Renderer* rnd, const Project* project, Resources* res, Audio* audio, const double* delta, unsigned frameId) {
 		switch (cmd.type) {
 		case Cmd::TARGET:
 			target.run(primitives, rnd, project, res);
@@ -1933,11 +1933,11 @@ public:
 
 			break;
 		case Cmd::SPR:
-			spr.run(rnd, project, res, delta);
+			spr.run(rnd, project, res, delta, frameId);
 
 			break;
 		case Cmd::MAP:
-			map.run(rnd, project, res, delta);
+			map.run(rnd, project, res, delta, frameId);
 
 			break;
 		case Cmd::PGET:
@@ -2017,9 +2017,9 @@ public:
 	/**
 	 * @brief Runs through all commands in the queue.
 	 */
-	void run(Primitives* primitives, Renderer* rnd, const Project* project, Resources* res, Audio* audio, const double* delta) {
+	void run(Primitives* primitives, Renderer* rnd, const Project* project, Resources* res, Audio* audio, const double* delta, unsigned frameId) {
 		for (CmdVariant &var : _cmds)
-			var.run(primitives, rnd, project, res, audio, delta);
+			var.run(primitives, rnd, project, res, audio, delta, frameId);
 	}
 
 	/**
@@ -2237,6 +2237,7 @@ private:
 	mutable int _commited = 0;
 #endif /* BITTY_MULTITHREAD_ENABLED */
 	mutable unsigned _commands = 0;
+	unsigned _frameId = 1;
 
 	Resources::List<Resources::Asset::Ptr> _loads;
 	Resources::List<Resources::Asset::Ptr> _unloads;
@@ -3116,7 +3117,7 @@ public:
 		CmdQueue q;
 		_buffer.pop(q);
 		_commands = (unsigned)q.size();
-		q.run(this, _renderer, _project, _resources, _audio, &delta);
+		q.run(this, _renderer, _project, _resources, _audio, &delta, _frameId);
 
 		restoreStates();
 #else /* BITTY_MULTITHREAD_ENABLED */
@@ -3128,6 +3129,11 @@ public:
 			_audio->update(delta);
 		_input->update(_window, _renderer, clientArea, canvasSize, scale);
 #endif /* BITTY_MULTITHREAD_ENABLED */
+
+		if (_frameId == std::numeric_limits<unsigned>::max())
+			_frameId = 1;
+		else
+			++_frameId;
 
 		return true;
 	}
@@ -3184,7 +3190,7 @@ private:
 
 		_buffer.add(var);
 #else /* BITTY_MULTITHREAD_ENABLED */
-		var.run(const_cast<PrimitivesImpl*>(this), _renderer, _project, _resources, _audio, delta);
+		var.run(const_cast<PrimitivesImpl*>(this), _renderer, _project, _resources, _audio, delta, _frameId);
 		++_commited;
 		++_commands;
 #endif /* BITTY_MULTITHREAD_ENABLED */
@@ -3197,7 +3203,7 @@ private:
 #else /* BITTY_MULTITHREAD_ENABLED */
 		(void)block;
 
-		var.run(const_cast<PrimitivesImpl*>(this), _renderer, _project, _resources, _audio, delta);
+		var.run(const_cast<PrimitivesImpl*>(this), _renderer, _project, _resources, _audio, delta, _frameId);
 		++_commited;
 		++_commands;
 #endif /* BITTY_MULTITHREAD_ENABLED */
