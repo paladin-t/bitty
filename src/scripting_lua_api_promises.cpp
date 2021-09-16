@@ -396,7 +396,7 @@ static int msgbox(lua_State* L) {
 	bool withConfirm = false, withDeny = false, withCancel = false;
 	std::string confirmTxt, denyTxt, cancelTxt;
 	if (plug) {
-		if (n == 4) {
+		if (n >= 4) {
 			withConfirm = true;
 			withDeny = true;
 			withCancel = true;
@@ -448,7 +448,7 @@ static int input(lua_State* L) {
 	const int n = getTop(L);
 	std::string prompt;
 	std::string default_;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, prompt, default_);
 	else
 		read<>(L, prompt);
@@ -475,7 +475,7 @@ static int input(lua_State* L) {
 	const int n = getTop(L);
 	std::string prompt;
 	std::string default_;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, prompt, default_);
 	else
 		read<>(L, prompt);
@@ -591,7 +591,7 @@ static int Platform_openFile_Promise(lua_State* L) {
 	const char* filter_ = nullptr;
 	std::string default_;
 	Text::Array filter{ "All files (*.*)", "*" };
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, title, filter_, default_);
 	else if (n == 2)
 		read<>(L, title, filter_);
@@ -694,7 +694,7 @@ static int Platform_saveFile_Promise(lua_State* L) {
 	const char* filter_ = nullptr;
 	std::string default_;
 	Text::Array filter{ "All files (*.*)", "*" };
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, title, filter_, default_);
 	else if (n == 2)
 		read<>(L, title, filter_);
@@ -795,7 +795,7 @@ static int Platform_selectDirectory_Promise(lua_State* L) {
 	const int n = getTop(L);
 	const char* title = "Select Directory";
 	std::string default_;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, title, default_);
 	else if (n == 1)
 		read<>(L, title);
@@ -890,7 +890,7 @@ static int Platform_openFile(lua_State* L) {
 	const char* filter_ = nullptr;
 	std::string default_;
 	Text::Array filter{ "All files (*.*)", "*" };
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, title, filter_, default_);
 	else if (n == 2)
 		read<>(L, title, filter_);
@@ -921,7 +921,7 @@ static int Platform_saveFile(lua_State* L) {
 	const char* filter_ = nullptr;
 	std::string default_;
 	Text::Array filter{ "All files (*.*)", "*" };
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, title, filter_, default_);
 	else if (n == 2)
 		read<>(L, title, filter_);
@@ -950,7 +950,7 @@ static int Platform_selectDirectory(lua_State* L) {
 	const int n = getTop(L);
 	const char* title = "Select Directory";
 	std::string default_;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, title, default_);
 	else if (n == 1)
 		read<>(L, title);
@@ -1001,7 +1001,7 @@ static int fetch(lua_State* L) {
 	std::string url;
 	read<>(L, url);
 	Variant options = nullptr;
-	if (n == 2) {
+	if (n >= 2) {
 		if (isUserdata(L, 2)) {
 			Json::Ptr* json = nullptr;
 			read<2>(L, json);

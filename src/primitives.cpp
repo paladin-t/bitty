@@ -50,6 +50,7 @@ public:
 		TEXT,
 		TEX,
 		SPR,
+		PLAY_SPR,
 		MAP,
 		PGET,
 		PSET,
@@ -975,6 +976,67 @@ public:
 	}
 };
 
+class CmdPlaySpr : public Cmd {
+private:
+	Resources::Sprite::Ptr _sprite = nullptr;
+	bool _withNamedKey = false;
+	std::string _key;
+	int _begin = -1, _end = -1;
+	bool _reset = true;
+	bool _loop = true;
+
+public:
+	CmdPlaySpr() {
+		type = PLAY_SPR;
+		dtor = [] (Cmd* cmd) -> void {
+			CmdPlaySpr* self = reinterpret_cast<CmdPlaySpr*>(cmd);
+			self->~CmdPlaySpr();
+		};
+	}
+	CmdPlaySpr(Resources::Sprite::Ptr spr, int begin, int end, bool reset, bool loop) {
+		type = PLAY_SPR;
+		dtor = [] (Cmd* cmd) -> void {
+			CmdPlaySpr* self = reinterpret_cast<CmdPlaySpr*>(cmd);
+			self->~CmdPlaySpr();
+		};
+
+		_withNamedKey = false;
+		_sprite = spr;
+		_begin = begin; _end = end;
+		_reset = reset;
+		_loop = loop;
+	}
+	CmdPlaySpr(Resources::Sprite::Ptr spr, const std::string &key, bool reset, bool loop) {
+		type = PLAY_SPR;
+		dtor = [] (Cmd* cmd) -> void {
+			CmdPlaySpr* self = reinterpret_cast<CmdPlaySpr*>(cmd);
+			self->~CmdPlaySpr();
+		};
+
+		_withNamedKey = true;
+		_sprite = spr;
+		_key = key;
+		_reset = reset;
+		_loop = loop;
+	}
+
+	void run(const Project* project, Resources* res) {
+		if (!res)
+			return;
+
+		Sprite::Ptr ptr = res->load(project, *_sprite);
+		if (!ptr)
+			return;
+
+		LockGuard<RecursiveMutex> guard(_sprite->lock);
+
+		if (_withNamedKey)
+			ptr->play(_key, _reset, _loop, nullptr);
+		else
+			ptr->play(_begin, _end, _reset, _loop, nullptr);
+	}
+};
+
 class CmdMap : public Cmd, public CmdClippable, public CmdColored {
 private:
 	Resources::Map::Ptr _map = nullptr;
@@ -1555,6 +1617,7 @@ public:
 	CmdText text;
 	CmdTex tex;
 	CmdSpr spr;
+	CmdPlaySpr playSpr;
 	CmdMap map;
 	CmdPGet pget;
 	CmdPSet pset;
@@ -1647,6 +1710,11 @@ public:
 		case Cmd::SPR:
 			new (&spr) CmdSpr();
 			spr = other.spr;
+
+			break;
+		case Cmd::PLAY_SPR:
+			new (&playSpr) CmdPlaySpr();
+			playSpr = other.playSpr;
 
 			break;
 		case Cmd::MAP:
@@ -1804,6 +1872,11 @@ public:
 			spr = other.spr;
 
 			break;
+		case Cmd::PLAY_SPR:
+			new (&playSpr) CmdPlaySpr();
+			playSpr = other.playSpr;
+
+			break;
 		case Cmd::MAP:
 			new (&map) CmdMap();
 			map = other.map;
@@ -1934,6 +2007,10 @@ public:
 			break;
 		case Cmd::SPR:
 			spr.run(rnd, project, res, delta, frameId);
+
+			break;
+		case Cmd::PLAY_SPR:
+			playSpr.run(project, res);
 
 			break;
 		case Cmd::MAP:
@@ -2652,6 +2729,24 @@ public:
 			var.spr.clip(clpX, clpY, clpW, clpH);
 		if (col)
 			var.spr.colored(*col);
+
+		commit(var, nullptr);
+	}
+	virtual void play(Resources::Sprite::Ptr spr, int begin, int end, bool reset, bool loop) const override {
+		if (!spr)
+			return;
+
+		CmdVariant var;
+		new (&var.playSpr) CmdPlaySpr(spr, begin, end, reset, loop);
+
+		commit(var, nullptr);
+	}
+	virtual void play(Resources::Sprite::Ptr spr, const std::string &key, bool reset, bool loop) const override {
+		if (!spr)
+			return;
+
+		CmdVariant var;
+		new (&var.playSpr) CmdPlaySpr(spr, key, reset, loop);
 
 		commit(var, nullptr);
 	}

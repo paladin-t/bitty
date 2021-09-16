@@ -1371,7 +1371,7 @@ static int Pathfinder_solve(lua_State* L) {
 	Pathfinder::Ptr* obj = nullptr;
 	Math::Vec2i begin, end;
 	Function::Ptr eval = nullptr;
-	if (n == 4)
+	if (n >= 4)
 		read<>(L, obj, begin, end, eval);
 	else
 		read<>(L, obj, begin, end);
@@ -1478,7 +1478,7 @@ static int Random_seed(lua_State* L) {
 	Randomizer::Ptr* obj = nullptr;
 	Int64 first = 0;
 	Int64 second = 0;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, obj, first, second);
 	else if (n == 2)
 		read<>(L, obj, first);
@@ -1487,7 +1487,7 @@ static int Random_seed(lua_State* L) {
 
 	if (obj) {
 		Randomizer::Seed ret;
-		if (n == 3)
+		if (n >= 3)
 			ret = obj->get()->seed(first, second);
 		else if (n == 2)
 			ret = obj->get()->seed(first);
@@ -1505,7 +1505,7 @@ static int Random_next(lua_State* L) {
 	Randomizer::Ptr* obj = nullptr;
 	Int64 low = 0;
 	Int64 up = 0;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, obj, low, up);
 	else if (n == 2)
 		read<>(L, obj, up);
@@ -1513,7 +1513,7 @@ static int Random_next(lua_State* L) {
 		read<>(L, obj);
 
 	if (obj) {
-		if (n == 3) {
+		if (n >= 3) {
 			const Int64 ret = obj->get()->next(low, up);
 
 			return write(L, ret);
@@ -1720,7 +1720,7 @@ static int Walker_solve(lua_State* L) {
 	Math::Vec2f* expDir = nullptr;
 	Placeholder _4;
 	int slidable = 5;
-	if (n == 5)
+	if (n >= 5)
 		read<>(L, obj, objPos, expDir, _4, slidable);
 	else
 		read<>(L, obj, objPos, expDir, _4);
@@ -1883,7 +1883,7 @@ static int Archive_open(lua_State* L) {
 	const char* path = nullptr;
 	Enum access = Stream::READ;
 	const char* password = nullptr;
-	if (n == 4)
+	if (n >= 4)
 		read<>(L, obj, path, access, password);
 	else if (n == 3)
 		read<>(L, obj, path, access);
@@ -2354,7 +2354,7 @@ static int Bytes_readBytes(lua_State* L) {
 	Bytes::Ptr* obj = nullptr;
 	size_t expSize = 0;
 	Bytes::Ptr* buf = nullptr;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, obj, expSize, buf);
 	else
 		read<>(L, obj, expSize);
@@ -2397,7 +2397,7 @@ static int Bytes_readString(lua_State* L) {
 	const int n = getTop(L);
 	Bytes::Ptr* obj = nullptr;
 	size_t expSize = 0;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, obj, expSize);
 	else
 		read<>(L, obj);
@@ -2575,7 +2575,7 @@ static int Bytes_writeBytes(lua_State* L) {
 	Bytes::Ptr* obj = nullptr;
 	Bytes::Ptr* buf = nullptr;
 	size_t expSize = 0;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, obj, buf, expSize);
 	else
 		read<>(L, obj, buf);
@@ -3240,7 +3240,7 @@ static int File_open(lua_State* L) {
 	File::Ptr* obj = nullptr;
 	const char* path = nullptr;
 	Enum access = Stream::READ;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, obj, path, access);
 	else if (n == 2)
 		read<>(L, obj, path);
@@ -3483,7 +3483,7 @@ static int File_readBytes(lua_State* L) {
 	File::Ptr* obj = nullptr;
 	size_t expSize = 0;
 	Bytes::Ptr* buf = nullptr;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, obj, expSize, buf);
 	else
 		read<>(L, obj, expSize);
@@ -3520,7 +3520,7 @@ static int File_readString(lua_State* L) {
 	const int n = getTop(L);
 	File::Ptr* obj = nullptr;
 	size_t expSize = 0;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, obj, expSize);
 	else
 		read<>(L, obj);
@@ -3698,7 +3698,7 @@ static int File_writeBytes(lua_State* L) {
 	File::Ptr* obj = nullptr;
 	Bytes::Ptr* buf = nullptr;
 	size_t expSize = 0;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, obj, buf, expSize);
 	else
 		read<>(L, obj, buf);
@@ -3906,7 +3906,7 @@ static int Path_removeFile(lua_State* L) {
 	const int n = getTop(L);
 	const char* path = nullptr;
 	bool toTrashBin = true;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, path, toTrashBin);
 	else
 		read<>(L, path);
@@ -3920,7 +3920,7 @@ static int Path_removeDirectory(lua_State* L) {
 	const int n = getTop(L);
 	const char* path = nullptr;
 	bool toTrashBin = true;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, path, toTrashBin);
 	else
 		read<>(L, path);
@@ -4125,7 +4125,7 @@ static int FileInfo_remove(lua_State* L) {
 	const int n = getTop(L);
 	FileInfo::Ptr* obj = nullptr;
 	bool toTrashBin = true;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, obj, toTrashBin);
 	else
 		read<>(L, obj);
@@ -4144,7 +4144,7 @@ static int FileInfo_rename(lua_State* L) {
 	FileInfo::Ptr* obj = nullptr;
 	const char* newName = nullptr;
 	const char* newExt = nullptr;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, obj, newName, newExt);
 	else
 		read<>(L, obj, newName);
@@ -4343,7 +4343,7 @@ static int DirectoryInfo_remove(lua_State* L) {
 	const int n = getTop(L);
 	DirectoryInfo::Ptr* obj = nullptr;
 	bool toTrashBin = true;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, obj, toTrashBin);
 	else
 		read<>(L, obj);
@@ -4376,7 +4376,7 @@ static int DirectoryInfo_getFiles(lua_State* L) {
 	DirectoryInfo::Ptr* obj = nullptr;
 	const char* pattern = "*;*.*";
 	bool recursive = false;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, obj, pattern, recursive);
 	else if (n == 2)
 		read<>(L, obj, pattern);
@@ -4400,7 +4400,7 @@ static int DirectoryInfo_getDirectories(lua_State* L) {
 	const int n = getTop(L);
 	DirectoryInfo::Ptr* obj = nullptr;
 	bool recursive = false;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, obj, recursive);
 	else
 		read<>(L, obj);
@@ -4470,7 +4470,7 @@ static void open_DirectoryInfo(lua_State* L) {
 static int Image_ctor(lua_State* L) {
 	const int n = getTop(L);
 	Palette::Ptr* palette = nullptr;
-	if (n == 1)
+	if (n >= 1)
 		read<>(L, palette);
 
 	Image::Ptr obj(Image::create(palette ? *palette : nullptr));
@@ -4485,7 +4485,7 @@ static int Image_resize(lua_State* L) {
 	Image::Ptr* obj = nullptr;
 	int width = 0, height = 0;
 	bool stretch = true;
-	if (n == 4)
+	if (n >= 4)
 		read<>(L, obj, width, height, stretch);
 	else
 		read<>(L, obj, width, height);
@@ -4557,7 +4557,7 @@ static int Image_blit(lua_State* L) {
 	Image::Ptr* other = nullptr;
 	int x = 0, y = 0, w = 0, h = 0;
 	int sx = 0, sy = 0;
-	if (n == 8)
+	if (n >= 8)
 		read<>(L, obj, other, x, y, w, h, sx, sy);
 	else if (n == 6)
 		read<>(L, obj, other, x, y, w, h);
@@ -4592,7 +4592,7 @@ static int Image_fromBlank(lua_State* L) {
 	Image::Ptr* obj = nullptr;
 	int width = 0, height = 0;
 	int paletted = 0;
-	if (n == 4)
+	if (n >= 4)
 		read<>(L, obj, width, height, paletted);
 	else
 		read<>(L, obj, width, height);
@@ -4611,7 +4611,7 @@ static int Image_toBytes(lua_State* L) {
 	Image::Ptr* obj = nullptr;
 	Bytes::Ptr* val = nullptr;
 	const char* type = "png";
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, obj, val, type);
 	else if (n == 2)
 		read<>(L, obj, val);
@@ -4727,7 +4727,7 @@ static int Json_toString(lua_State* L) {
 	const int n = getTop(L);
 	Json::Ptr* obj = nullptr;
 	bool pretty = true;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, obj, pretty);
 	else
 		read<>(L, obj);
@@ -4761,7 +4761,7 @@ static int Json_toTable(lua_State* L) {
 	const int n = getTop(L);
 	Json::Ptr* obj = nullptr;
 	bool allowNull = false;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, obj, allowNull);
 	else
 		read<>(L, obj);
@@ -4831,7 +4831,7 @@ static void open_Json(lua_State* L) {
 static int Vec2_ctor(lua_State* L) {
 	const int n = getTop(L);
 	Math::Vec2f obj;
-	if (n == 2) {
+	if (n >= 2) {
 		Math::Vec2f::ValueType x = 0, y = 0;
 		read<>(L, x, y);
 
@@ -5046,7 +5046,7 @@ static int Vec2_rotated(lua_State* L) {
 		read<2>(L, rot);
 		angle = rot->angle();
 	}
-	if (n == 3)
+	if (n >= 3)
 		read<3>(L, pivot);
 
 	if (obj) {
@@ -5150,7 +5150,7 @@ static void open_Vec2(lua_State* L) {
 static int Vec3_ctor(lua_State* L) {
 	const int n = getTop(L);
 	Math::Vec3f obj;
-	if (n == 3) {
+	if (n >= 3) {
 		Math::Vec3f::ValueType x = 0, y = 0, z = 0;
 		read<>(L, x, y, z);
 
@@ -5383,7 +5383,7 @@ static void open_Vec3(lua_State* L) {
 static int Vec4_ctor(lua_State* L) {
 	const int n = getTop(L);
 	Math::Vec4f obj;
-	if (n == 4) {
+	if (n >= 4) {
 		Math::Vec4f::ValueType x = 0, y = 0, z = 0, w = 0;
 		read<>(L, x, y, z, w);
 
@@ -5573,7 +5573,7 @@ static void open_Vec4(lua_State* L) {
 static int Rect_ctor(lua_State* L) {
 	const int n = getTop(L);
 	Math::Rectf obj;
-	if (n == 4) {
+	if (n >= 4) {
 		Math::Rectf::ValueType x0 = 0, y0 = 0, x1 = 0, y1 = 0;
 		read<>(L, x0, y0, x1, y1);
 
@@ -5586,7 +5586,7 @@ static int Rect_ctor(lua_State* L) {
 static int Rect_byXYWH(lua_State* L) {
 	const int n = getTop(L);
 	Math::Rectf obj;
-	if (n == 4) {
+	if (n >= 4) {
 		Math::Rectf::ValueType x = 0, y = 0, w = 0, h = 0;
 		read<>(L, x, y, w, h);
 
@@ -5789,7 +5789,7 @@ static void open_Rect(lua_State* L) {
 static int Recti_ctor(lua_State* L) {
 	const int n = getTop(L);
 	Math::Recti obj;
-	if (n == 4) {
+	if (n >= 4) {
 		Math::Recti::ValueType x0 = 0, y0 = 0, x1 = 0, y1 = 0;
 		read<>(L, x0, y0, x1, y1);
 
@@ -5802,7 +5802,7 @@ static int Recti_ctor(lua_State* L) {
 static int Recti_byXYWH(lua_State* L) {
 	const int n = getTop(L);
 	Math::Recti obj;
-	if (n == 4) {
+	if (n >= 4) {
 		Math::Recti::ValueType x = 0, y = 0, w = 0, h = 0;
 		read<>(L, x, y, w, h);
 
@@ -6005,7 +6005,7 @@ static void open_Recti(lua_State* L) {
 static int Rot_ctor(lua_State* L) {
 	const int n = getTop(L);
 	Math::Rotf obj;
-	if (n == 2) {
+	if (n >= 2) {
 		Math::Rotf::ValueType s = 0, c = 0;
 		read<>(L, s, c);
 
@@ -6501,7 +6501,7 @@ static int Network_ctor(lua_State* L) {
 	Function::Ptr recv = nullptr;
 	Function::Ptr estb = nullptr;
 	Function::Ptr disc = nullptr;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, recv, estb, disc);
 	else if (n == 2)
 		read<>(L, recv, estb);
@@ -6571,7 +6571,7 @@ static int Network_open(lua_State* L) {
 	Network::Ptr* obj = nullptr;
 	const char* addr = nullptr;
 	Enum protocal = Network::ALL;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, obj, addr, protocal);
 	else
 		read<>(L, obj, addr);
@@ -6613,7 +6613,7 @@ static int Network_poll(lua_State* L) {
 	const int n = getTop(L);
 	Network::Ptr* obj = nullptr;
 	int timeoutMs = 0;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, obj, timeoutMs);
 	else
 		read<>(L, obj);
@@ -6691,7 +6691,7 @@ static int Network_broadcast(lua_State* L) {
 	Network::Ptr* obj = nullptr;
 	Placeholder _2;
 	bool filterPolling = true;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, obj, _2, filterPolling);
 	else
 		read<>(L, obj, _2);
@@ -7020,7 +7020,7 @@ static int Web_ctor(lua_State* L) {
 
 	const int n = getTop(L);
 	Function::Ptr rspd = nullptr;
-	if (n == 1)
+	if (n >= 1)
 		read<>(L, rspd);
 
 	Web::Ptr obj(Web::create());
@@ -7055,7 +7055,7 @@ static int Web_open(lua_State* L) {
 	Web::Ptr* obj = nullptr;
 	unsigned short port = 8080;
 	const char* root = nullptr;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, obj, port, root);
 	else
 		read<>(L, obj, port);
@@ -7088,7 +7088,7 @@ static int Web_poll(lua_State* L) {
 	const int n = getTop(L);
 	Web::Ptr* obj = nullptr;
 	int timeoutMs = 0;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, obj, timeoutMs);
 	else
 		read<>(L, obj);
@@ -7141,7 +7141,7 @@ static int Web_respond(lua_State* L) {
 	Web::Ptr* obj = nullptr;
 	Placeholder _2;
 	const char* mimeType = nullptr;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, obj, _2, mimeType);
 	else
 		read<>(L, obj, _2);
@@ -7657,7 +7657,7 @@ static int Resources_unload(lua_State* L) {
 
 	const int n = getTop(L);
 	unsigned type = Asset::TYPE();
-	if (n == 1) {
+	if (n >= 1) {
 		std::string y;
 		if (getMetaOf(L)) {
 			getTable(L, "__name", y);
@@ -8045,8 +8045,11 @@ static int ResourceSprite_play(lua_State* L) {
 	std::string beginStr;
 	bool reset = true;
 	bool loop = true;
+	bool async = false;
 	if (isNumber(L, 2)) {
-		if (n == 5)
+		if (n >= 6)
+			read<>(L, obj, begin, end, reset, loop, async);
+		else if (n == 5)
 			read<>(L, obj, begin, end, reset, loop);
 		else if (n == 4)
 			read<>(L, obj, begin, end, reset);
@@ -8055,7 +8058,9 @@ static int ResourceSprite_play(lua_State* L) {
 		else
 			read<>(L, obj);
 	} else if (isString(L, 2)) {
-		if (n == 4)
+		if (n >= 5)
+			read<>(L, obj, beginStr, reset, loop, async);
+		else if (n == 4)
 			read<>(L, obj, beginStr, reset, loop);
 		else if (n == 3)
 			read<>(L, obj, beginStr, reset);
@@ -8068,19 +8073,28 @@ static int ResourceSprite_play(lua_State* L) {
 	}
 
 	if (obj && *obj) {
-		Sprite::Ptr ptr = Resources_waitUntilProcessed<Sprite::Ptr>(impl, impl->primitives(), *obj, obj->get()->ref);
-		if (!ptr)
-			return write(L, false);
+		if (async) {
+			if (beginStr.empty())
+				impl->primitives()->play(*obj, begin, end, reset, loop);
+			else
+				impl->primitives()->play(*obj, beginStr, reset, loop);
 
-		LockGuard<RecursiveMutex> guardAsset(obj->get()->lock);
+			return write(L, true, -1);
+		} else {
+			Sprite::Ptr ptr = Resources_waitUntilProcessed<Sprite::Ptr>(impl, impl->primitives(), *obj, obj->get()->ref);
+			if (!ptr)
+				return write(L, false);
 
-		double duration = 0;
-		if (beginStr.empty())
-			ptr->play(begin, end, reset, loop, &duration);
-		else
-			ptr->play(beginStr, reset, loop, &duration);
+			LockGuard<RecursiveMutex> guardAsset(obj->get()->lock);
 
-		return write(L, true, duration);
+			double duration = 0;
+			if (beginStr.empty())
+				ptr->play(begin, end, reset, loop, &duration);
+			else
+				ptr->play(beginStr, reset, loop, &duration);
+
+			return write(L, true, duration);
+		}
 	}
 
 	return write(L, false, 0);
@@ -8253,7 +8267,7 @@ static void open_ResourceSprite(lua_State* L) {
 			luaL_Reg{ nullptr, nullptr }
 		),
 		array(
-			luaL_Reg{ "play", ResourceSprite_play }, // Resources synchronized.
+			luaL_Reg{ "play", ResourceSprite_play }, // Resources synchronized, or asynchronized (specified by parameter).
 			luaL_Reg{ "pause", ResourceSprite_pause },
 			luaL_Reg{ "resume", ResourceSprite_resume },
 			luaL_Reg{ "stop", ResourceSprite_stop },
@@ -8453,7 +8467,7 @@ static int Font_ctor(lua_State* L) {
 		}
 	}
 	int permeation = 1;
-	if (n == 3)
+	if (n >= 3)
 		read<3>(L, permeation);
 
 	const unsigned type = name ? Asset::typeOf(name, false) : 0;
@@ -8670,7 +8684,7 @@ static int Primitives_cls(lua_State* L) {
 
 	const int n = getTop(L);
 	Color* col = nullptr;
-	if (n == 1)
+	if (n >= 1)
 		read<>(L, col);
 
 	Color ret;
@@ -8686,7 +8700,7 @@ static int Primitives_blend(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
 	const int n = getTop(L);
-	if (n == 1) {
+	if (n >= 1) {
 		Enum blendMode = SDL_BLENDMODE_NONE;
 		read<>(L, blendMode);
 
@@ -8703,12 +8717,12 @@ static int Primitives_camera(lua_State* L) {
 
 	const int n = getTop(L);
 	int x = 0, y = 0;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, x, y);
 
 	int oldX = 0, oldY = 0;
 	const bool changed = impl->primitives()->camera(&oldX, &oldY);
-	if (n == 2)
+	if (n >= 2)
 		impl->primitives()->camera(x, y);
 	else
 		impl->primitives()->camera();
@@ -8724,12 +8738,12 @@ static int Primitives_clip(lua_State* L) {
 
 	const int n = getTop(L);
 	int x = 0, y = 0, w = 0, h = 0;
-	if (n == 4)
+	if (n >= 4)
 		read<>(L, x, y, w, h);
 
 	int oldX = 0, oldY = 0, oldW = 0, oldH = 0;
 	const bool changed = impl->primitives()->clip(&oldX, &oldY, &oldW, &oldH);
-	if (n == 4)
+	if (n >= 4)
 		impl->primitives()->clip(x, y, w, h);
 	else
 		impl->primitives()->clip();
@@ -8745,11 +8759,11 @@ static int Primitives_color(lua_State* L) {
 
 	const int n = getTop(L);
 	Color* col = nullptr;
-	if (n == 1)
+	if (n >= 1)
 		read<>(L, col);
 
 	Color ret;
-	if (n == 1)
+	if (n >= 1)
 		ret = impl->primitives()->color(col);
 	else
 		ret = impl->primitives()->color();
@@ -8763,7 +8777,7 @@ static int Primitives_plot(lua_State* L) {
 	const int n = getTop(L);
 	int x = 0, y = 0;
 	Color* col = nullptr;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, x, y, col);
 	else
 		read<>(L, x, y);
@@ -8779,7 +8793,7 @@ static int Primitives_line(lua_State* L) {
 	const int n = getTop(L);
 	int x0 = 0, y0 = 0, x1 = 0, y1 = 0;
 	Color* col = nullptr;
-	if (n == 5)
+	if (n >= 5)
 		read<>(L, x0, y0, x1, y1, col);
 	else
 		read<>(L, x0, y0, x1, y1);
@@ -8796,7 +8810,7 @@ static int Primitives_circ(lua_State* L) {
 	int x = 0, y = 0, r = 0;
 	bool fill = false;
 	Color* col = nullptr;
-	if (n == 5)
+	if (n >= 5)
 		read<>(L, x, y, r, fill, col);
 	else if (n == 4)
 		read<>(L, x, y, r, fill);
@@ -8815,7 +8829,7 @@ static int Primitives_ellipse(lua_State* L) {
 	int x = 0, y = 0, rx = 0, ry = 0;
 	bool fill = false;
 	Color* col = nullptr;
-	if (n == 6)
+	if (n >= 6)
 		read<>(L, x, y, rx, ry, fill, col);
 	else if (n == 5)
 		read<>(L, x, y, rx, ry, fill);
@@ -8835,7 +8849,7 @@ static int Primitives_pie(lua_State* L) {
 	float startAngle = 0, endAngle = 0;
 	bool fill = false;
 	Color* col = nullptr;
-	if (n == 7)
+	if (n >= 7)
 		read<>(L, x, y, r, startAngle, endAngle, fill, col);
 	else if (n == 6)
 		read<>(L, x, y, r, startAngle, endAngle, fill);
@@ -8855,7 +8869,7 @@ static int Primitives_rect(lua_State* L) {
 	bool fill = false;
 	Color* col = nullptr;
 	int rad = -1;
-	if (n == 7)
+	if (n >= 7)
 		read<>(L, x0, y0, x1, y1, fill, col, rad);
 	else if (n == 6)
 		read<>(L, x0, y0, x1, y1, fill, col);
@@ -8890,7 +8904,7 @@ static int Primitives_measure(lua_State* L) {
 	Placeholder _1;
 	Font::Ptr* font = nullptr;
 	int margin = 1;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, _1, font, margin);
 	else if (n == 2)
 		read<>(L, _1, font);
@@ -8921,7 +8935,7 @@ static int Primitives_text(lua_State* L) {
 	int x = 0, y = 0;
 	Color* col = nullptr;
 	int margin = 1;
-	if (n == 5)
+	if (n >= 5)
 		read<>(L, _1, x, y, col, margin);
 	else if (n == 4)
 		read<>(L, _1, x, y, col);
@@ -8961,7 +8975,7 @@ static int Primitives_tri(lua_State* L) {
 	if (isUserdata(L, 4)) {
 		read<>(L, p0, p1, p2, res, uv0, uv1, uv2); // Undocumented.
 	} else {
-		if (n == 5)
+		if (n >= 5)
 			read<>(L, p0, p1, p2, fill, col);
 		else if (n == 4)
 			read<>(L, p0, p1, p2, fill);
@@ -8988,7 +9002,7 @@ static int Primitives_tex(lua_State* L) {
 	Math::Vec2f* rotCenter = nullptr;
 	bool hFlip = false, vFlip = false;
 	Color* col = nullptr;
-	if (n == 14)
+	if (n >= 14)
 		read<>(L, res, x, y, w, h, sx, sy, sw, sh, rotAngle, rotCenter, hFlip, vFlip, col);
 	else if (n == 13)
 		read<>(L, res, x, y, w, h, sx, sy, sw, sh, rotAngle, rotCenter, hFlip, vFlip);
@@ -9033,7 +9047,7 @@ static int Primitives_spr(lua_State* L) {
 	double rotAngle = 0;
 	Math::Vec2f* rotCenter = nullptr;
 	Color* col = nullptr;
-	if (n == 8)
+	if (n >= 8)
 		read<>(L, res, x, y, w, h, rotAngle, rotCenter, col);
 	else if (n == 7)
 		read<>(L, res, x, y, w, h, rotAngle, rotCenter);
@@ -9071,7 +9085,7 @@ static int Primitives_map(lua_State* L) {
 	Resources::Map::Ptr* res = nullptr;
 	int x = 0, y = 0;
 	Color* col = nullptr;
-	if (n == 4)
+	if (n >= 4)
 		read<>(L, res, x, y, col);
 	else
 		read<>(L, res, x, y);
@@ -9172,7 +9186,7 @@ static int Primitives_volume(lua_State* L) {
 	Audio::SfxVolume sfxVols;
 	float sfxVol = 1;
 	float musicVol = -1;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, _1, musicVol);
 	else
 		read<>(L, _1);
@@ -9205,7 +9219,7 @@ static int Primitives_play(lua_State* L) {
 		bool loop = false;
 		float fade = -1;
 		int channel = -1;
-		if (n == 4)
+		if (n >= 4)
 			read<2>(L, loop, fade, channel);
 		else if (n == 3)
 			read<2>(L, loop, fade);
@@ -9225,7 +9239,7 @@ static int Primitives_play(lua_State* L) {
 	if (mus && *mus) {
 		bool loop = false;
 		float fade = -1;
-		if (n == 3)
+		if (n >= 3)
 			read<2>(L, loop, fade);
 		else if (n == 2)
 			read<2>(L, loop);
@@ -9250,7 +9264,7 @@ static int Primitives_stop(lua_State* L) {
 
 	if (sfx && *sfx) {
 		int fade = -1;
-		if (n == 2)
+		if (n >= 2)
 			read<2>(L, fade);
 
 		impl->primitives()->stop(*sfx, fade > 0 ? &fade : nullptr);
@@ -9263,7 +9277,7 @@ static int Primitives_stop(lua_State* L) {
 
 	if (mus && *mus) {
 		int fade = -1;
-		if (n == 2)
+		if (n >= 2)
 			read<2>(L, fade);
 
 		impl->primitives()->stop(*mus, fade > 0 ? &fade : nullptr);
@@ -9281,7 +9295,7 @@ static int Primitives_btn(lua_State* L) {
 
 	const int n = getTop(L);
 	int btn = -1, idx = 1;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, btn, idx);
 	else if (n == 1)
 		read<>(L, btn);
@@ -9310,7 +9324,7 @@ static int Primitives_btnp(lua_State* L) {
 
 	const int n = getTop(L);
 	int btn = -1, idx = 1;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, btn, idx);
 	else if (n == 1)
 		read<>(L, btn);
@@ -9341,7 +9355,7 @@ static int Primitives_rumble(lua_State* L) {
 	int idx = 1;
 	int lowHz = 100, hiHz = 0;
 	unsigned ms = 100;
-	if (n == 4)
+	if (n >= 4)
 		read<>(L, idx, lowHz, hiHz, ms);
 	else if (n == 3)
 		read<>(L, idx, lowHz, hiHz);
@@ -9368,7 +9382,7 @@ static int Primitives_key(lua_State* L) {
 
 	const int n = getTop(L);
 	int key = -1;
-	if (n == 1) {
+	if (n >= 1) {
 		if (isNumber(L, 1)) {
 			read<>(L, key);
 		} else if (isString(L, 1)) {
@@ -9388,7 +9402,7 @@ static int Primitives_keyp(lua_State* L) {
 
 	const int n = getTop(L);
 	int key = -1;
-	if (n == 1) {
+	if (n >= 1) {
 		if (isNumber(L, 1)) {
 			read<>(L, key);
 		} else if (isString(L, 1)) {
@@ -9408,7 +9422,7 @@ static int Primitives_mouse(lua_State* L) {
 
 	const int n = getTop(L);
 	int idx = 1;
-	if (n == 1)
+	if (n >= 1)
 		read<>(L, idx);
 
 	--idx; // 1-based.
@@ -9602,7 +9616,7 @@ static int Application_setCursor(lua_State* L) {
 	const int n = getTop(L);
 	Image::Ptr* img = nullptr;
 	float x = 0, y = 0;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, img, x, y);
 	else
 		read<>(L, img);
@@ -9631,12 +9645,12 @@ static int Application_resize(lua_State* L) {
 	const int n = getTop(L);
 	int w = 0, h = 0;
 	std::string s;
-	if (n == 2)
+	if (n >= 2)
 		read<>(L, w, h);
 	else
 		read<>(L, s);
 
-	if (n == 2) {
+	if (n >= 2) {
 		if (w <= 0 || h <= 0) {
 			error(L, "Invalid size.");
 
@@ -9955,7 +9969,7 @@ static int Canvas___newindex(lua_State* L) {
 
 static int Canvas_compose(lua_State* L) {
 	const int n = getTop(L);
-	if (n == 6) {
+	if (n >= 6) {
 		Enum srcColFactor = SDL_BLENDFACTOR_ONE;
 		Enum dstColFactor = SDL_BLENDFACTOR_ZERO;
 		Enum colOp = SDL_BLENDOPERATION_ADD;
@@ -10412,7 +10426,7 @@ static int Project_write(lua_State* L) {
 	std::string name;
 	Bytes::Ptr* bytes = nullptr;
 	bool overwrite = true;
-	if (n == 4)
+	if (n >= 4)
 		read<>(L, obj, name, bytes, overwrite);
 	else
 		read<>(L, obj, name, bytes);
@@ -10681,7 +10695,7 @@ static int Debug_setBreakpoint(lua_State* L) {
 	std::string name;
 	int ln = -1;
 	bool brk = true;
-	if (n == 3)
+	if (n >= 3)
 		read<>(L, name, ln, brk);
 	else
 		read<>(L, name, ln);
@@ -10723,7 +10737,7 @@ static int Debug_clearBreakpoints(lua_State* L) {
 
 	const int n = getTop(L);
 	std::string name = EXECUTABLE_ANY_NAME;
-	if (n == 1)
+	if (n >= 1)
 		read<>(L, name);
 
 #if BITTY_DEBUG_ENABLED
@@ -10806,7 +10820,7 @@ static int Debug_setTimeout(lua_State* L) {
 #if BITTY_DEBUG_ENABLED
 	const int n = getTop(L);
 	double val = DateTime::toSeconds(SCRIPTING_LUA_TIMEOUT);
-	if (n == 1) {
+	if (n >= 1) {
 		if (isNil(L))
 			val = 0;
 		else

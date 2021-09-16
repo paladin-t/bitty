@@ -1448,17 +1448,19 @@ Can be loaded by `Resources.load(...)`.
 
 **Methods**
 
-* `sprite:play(beginIndex = -1, endIndex = -1, reset = true, loop = true)`: plays the specific animation, use -1 for both begin and end indices to play through all frames
+* `sprite:play(beginIndex = -1, endIndex = -1, reset = true, loop = true, async = false)`: plays the specific animation, use -1 for both begin and end indices to play through all frames
 	* `beginIndex`: the begin frame index, starts from 0
 	* `endIndex`: the end frame index, starts from 0
 	* `reset`: whether resets to the initial animation frame
 	* `loop`: `true` for loop, otherwise plays once
-	* returns `true` for success, otherwise `false`, and a secondary value for estimated duration
-* `sprite:play(beginStr, reset = true, loop = true)`: plays the specific animation
+	* `async`: `true` for asynchronously playing, otherwise plays synchronously
+	* returns `true` for success, otherwise `false`, and a secondary value for estimated duration if plays synchronously; the secondary value would be always -1 if plays asynchronously
+* `sprite:play(beginStr, reset = true, loop = true, async = false)`: plays the specific animation
 	* `beginStr`: the animation name string
 	* `reset`: whether resets to the initial animation frame
 	* `loop`: `true` for loop, otherwise plays once
-	* returns `true` for success, otherwise `false`, and a secondary value for estimated duration
+	* `async`: `true` for asynchronously playing, otherwise plays synchronously
+	* returns `true` for success, otherwise `false`, and a secondary value for estimated duration if plays synchronously; the secondary value would be always -1 if plays asynchronously
 * `sprite:pause()`: pauses playing
 	* returns `true` for success, otherwise `false`
 * `sprite:resume()`: resumes playing

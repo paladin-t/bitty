@@ -272,6 +272,14 @@ public:
 	 */
 	virtual void spr(Resources::Sprite::Ptr spr, int x, int y, int width, int height, const double* rotAngle /* nullable */, const Math::Vec2f* rotCenter /* nullable */, double delta, const Color* col /* nullable */) const = 0;
 	/**
+	 * @brief Plays the specific sprite, asynchronized.
+	 */
+	virtual void play(Resources::Sprite::Ptr spr, int begin, int end, bool reset, bool loop) const = 0;
+	/**
+	 * @brief Plays the specific sprite, asynchronized.
+	 */
+	virtual void play(Resources::Sprite::Ptr spr, const std::string &key, bool reset, bool loop) const = 0;
+	/**
 	 * @brief Draws a map.
 	 */
 	virtual void map(Resources::Map::Ptr map, int x, int y, double delta, const Color* col /* nullable */) const = 0;
