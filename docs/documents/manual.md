@@ -1381,7 +1381,7 @@ foo = Resources.load('bar.mp3', Music) -- Load a piece of music.
 
 The asynchronous `Resources.load(...)` returns a resource handle immediately. It is lazy evaluated, loading is deferred until specific reading and writing access happens. The synchronous `Resources.wait(...)` also loads it, it returns immediately if the specific resource is already loaded, otherwise it waits until loaded or timeout.
 
-Consider use `Resources.unload(...)` or `Resources.collect()` to unload unused resources (loaded by `Resources.load(...)`) periodically and properly, or there would be memory leak. One possible practice is to call Lua's GC then collect resources after loading a new level, since the old one is no longer in use:
+Consider using `Resources.unload(...)` or `Resources.collect()` to unload unused resources (loaded by `Resources.load(...)`) periodically and properly, or there would be memory leak. One possible practice is to call Lua's GC then collect resources after loading a new level, since the old one is no longer in use:
 
 ```lua
 collectgarbage()
@@ -1467,6 +1467,8 @@ Can be loaded by `Resources.load(...)`.
 	* returns `true` for success, otherwise `false`
 * `sprite:stop()`: stops playing
 	* returns `true` for success, otherwise `false`
+
+It communicates across internal threads when play a sprite animation synchronously, this might take lots of time if there are lots of sprites. Consider playing it asynchronously if this matters in your actual project.
 
 ### Map Asset
 
