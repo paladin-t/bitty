@@ -9,7 +9,7 @@ data:text/json;count=149;path=info.json;
   "genre": "TUTORIAL",
   "url": ""
 }
-data:text/lua;count=1499;path=main.lua;
+data:text/lua;count=1514;path=main.lua;
 --[[
 Example for the Bitty Engine
 
@@ -43,6 +43,7 @@ function setup()
 
 	-- Load a sprite dynamically.
 	local bytes = Project.main:read('bank.png')
+	bytes:poke(1)
 	local img = Image.new()
 	img:fromBytes(bytes)
 	tex_ = Resources.load(img, Texture)
