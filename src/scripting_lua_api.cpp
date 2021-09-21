@@ -10405,6 +10405,8 @@ static int Project_read(lua_State* L) {
 	if (!saved)
 		return write(L, nullptr);
 
+	bytes->poke(bytes->count());
+
 	return write(L, &bytes);
 }
 
