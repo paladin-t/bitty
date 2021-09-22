@@ -970,7 +970,7 @@ static void open_Builtin(lua_State* L) {
 			luaL_Reg{ LUA_STRLIBNAME, luaopen_string },
 			luaL_Reg{ LUA_MATHLIBNAME, luaopen_math },
 			luaL_Reg{ LUA_UTF8LIBNAME, luaopen_utf8 },
-			// luaL_Reg{ LUA_DBLIBNAME, luaopen_debug },
+			luaL_Reg{ LUA_DBLIBNAME, luaopen_debug },
 			luaL_Reg{ nullptr, nullptr }
 		)
 	);
@@ -6354,7 +6354,7 @@ static void open_Math(lua_State* L) {
 #if BITTY_NETWORK_ENABLED
 
 static int Network_getOnReceived(lua_State* L, Network::Ptr &obj) {
-	const Network::ReceivedHandler &handler = obj.get()->receivedCallback();
+	const Network::ReceivedHandler &handler = obj->receivedCallback();
 	if (!handler.empty()) {
 		Function::Ptr* val = (Function::Ptr*)handler.userdata().get();
 
@@ -6427,11 +6427,11 @@ static void Network_setOnReceived(lua_State* L, Network::Ptr &obj, const Functio
 	);
 	Network::ReceivedHandler cb(func, ud);
 
-	obj.get()->callback(cb);
+	obj->callback(cb);
 }
 
 static int Network_getOnEstablished(lua_State* L, Network::Ptr &obj) {
-	const Network::EstablishedHandler &handler = obj.get()->establishedCallback();
+	const Network::EstablishedHandler &handler = obj->establishedCallback();
 	if (!handler.empty()) {
 		Function::Ptr* val = (Function::Ptr*)handler.userdata().get();
 
@@ -6459,11 +6459,11 @@ static void Network_setOnEstablished(lua_State* L, Network::Ptr &obj, const Func
 	);
 	Network::EstablishedHandler cb(func, ud);
 
-	obj.get()->callback(cb);
+	obj->callback(cb);
 }
 
 static int Network_getOnDisconnected(lua_State* L, Network::Ptr &obj) {
-	const Network::DisconnectedHandler &handler = obj.get()->disconnectedCallback();
+	const Network::DisconnectedHandler &handler = obj->disconnectedCallback();
 	if (!handler.empty()) {
 		Function::Ptr* val = (Function::Ptr*)handler.userdata().get();
 
@@ -6491,7 +6491,7 @@ static void Network_setOnDisconnected(lua_State* L, Network::Ptr &obj, const Fun
 	);
 	Network::DisconnectedHandler cb(func, ud);
 
-	obj.get()->callback(cb);
+	obj->callback(cb);
 }
 
 static int Network_ctor(lua_State* L) {
@@ -6981,7 +6981,7 @@ static void open_Stream(lua_State* L) {
 #if BITTY_WEB_ENABLED
 
 static int Web_getOnRequested(lua_State* L, Web::Ptr &obj) {
-	const Web::RequestedHandler &handler = obj.get()->requestedCallback();
+	const Web::RequestedHandler &handler = obj->requestedCallback();
 	if (!handler.empty()) {
 		Function::Ptr* val = (Function::Ptr*)handler.userdata().get();
 
@@ -7012,7 +7012,7 @@ static void Web_setOnRequested(lua_State* L, Web::Ptr &obj, const Function::Ptr 
 	);
 	Web::RequestedHandler cb(func, ud);
 
-	obj.get()->callback(cb);
+	obj->callback(cb);
 }
 
 static int Web_ctor(lua_State* L) {

@@ -737,7 +737,7 @@ private:
 			// "io", "close", "flush", "input", "lines", "open", "output", "popen", "read", "tmpfile", "write",
 			// "file", "close", "flush", "lines", "read", "seek", "setvbuf", "write",
 			// "os", "clock", "date", "difftime", "execute", "exit", "getenv", "remove", "rename", "setlocale", "time", "tmpname",
-			// "debug", "gethook", "getinfo", "getlocal", "getmetatable", "getregistry", "getupvalue", "getuservalue", "sethook", "setlocal", "setmetatable", "setupvalue", "setuservalue", "traceback", "upvalueid", "upvaluejoin",
+			"debug", "gethook", "getinfo", "getlocal", "getmetatable", "getregistry", "getupvalue", "getuservalue", "sethook", "setlocal", "setmetatable", "setupvalue", "setuservalue", "traceback", "upvalueid", "upvaluejoin",
 			"const", "self"
 		};
 		for (const char* const k : identifiers) {

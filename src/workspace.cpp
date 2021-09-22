@@ -2644,7 +2644,7 @@ void Workspace::scene(class Window* wnd, class Renderer* rnd, const class Projec
 	// Render the canvas image.
 	ImGui::SetCursorPos(dstPos);
 	ImGui::Image(
-		canvasTexture().get()->pointer(rnd),
+		canvasTexture()->pointer(rnd),
 		dstSize,
 		ImVec2(0, 0), ImVec2(1, 1),
 		ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 0.5f)
