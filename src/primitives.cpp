@@ -1428,6 +1428,8 @@ public:
 		if (!ptr)
 			return;
 
+		LockGuard<Mutex> guard(_music->lock);
+
 		ptr->play(_loop, _fadeInMs <= 0 ? nullptr : &_fadeInMs);
 	}
 };
@@ -1499,6 +1501,8 @@ public:
 		Music::Ptr ptr = res->load(project, *_music);
 		if (!ptr)
 			return;
+
+		LockGuard<Mutex> guard(_music->lock);
 
 		ptr->stop(_fadeOutMs <= 0 ? nullptr : &_fadeOutMs);
 	}
@@ -3225,7 +3229,7 @@ public:
 		_input->update(_window, _renderer, clientArea, canvasSize, scale);
 #endif /* BITTY_MULTITHREAD_ENABLED */
 
-		if (_frameId == std::numeric_limits<unsigned>::max())
+		if (_frameId == std::numeric_limits<decltype(_frameId)>::max())
 			_frameId = 1;
 		else
 			++_frameId;

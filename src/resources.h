@@ -276,6 +276,9 @@ public:
 
 		friend class ResourcesImpl;
 
+	public:
+		Mutex lock;
+
 	private:
 		std::string _asset;
 

@@ -138,6 +138,7 @@ public:
 
 	virtual double length(void) const = 0;
 
+	virtual bool playing(void) const = 0;
 	virtual bool play(bool loop, const int* fadeInMs /* nullable */) = 0;
 	virtual bool paused(void) const = 0;
 	virtual void pause(void) = 0;

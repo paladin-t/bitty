@@ -580,6 +580,9 @@ public:
 #endif /* BITTY_OS_HTML */
 	}
 
+	virtual bool playing(void) const override {
+		return _playing;
+	}
 	virtual bool play(bool loop, const int* fadeInMs) override {
 		_playing = true;
 
@@ -795,7 +798,12 @@ public:
 	}
 
 	virtual void update(double) override {
-		// Do nothing.
+		if (_musicOccupation) {
+			if (!Mix_PlayingMusic()) {
+				MusicImpl* impl = (MusicImpl*)_musicOccupation;
+				impl->stop(nullptr);
+			}
+		}
 	}
 
 	virtual void reset(void) override {

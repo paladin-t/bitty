@@ -322,7 +322,7 @@ public:
 
 		return fromCacheOrAsset<Object::Ptr, Asset>(
 			project,
-			[] (::Asset* asset, Asset &/* req */) -> Object::Ptr {
+			[] (::Asset* asset, Asset &req) -> Object::Ptr {
 				switch (asset->type()) {
 				case ::Image::TYPE(): {
 						::Texture::Ptr ptr = asset->texture(::Asset::RUNNING);
@@ -330,7 +330,10 @@ public:
 						return ptr;
 					}
 				case ::Sound::TYPE(): {
-						Object::Ptr ptr = asset->sound(::Sfx::TYPE());
+						unsigned target = req.target();
+						if (target != ::Sfx::TYPE() && target != ::Music::TYPE())
+							target = ::Sfx::TYPE();
+						Object::Ptr ptr = asset->sound(target);
 
 						return ptr;
 					}
