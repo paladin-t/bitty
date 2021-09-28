@@ -1040,6 +1040,10 @@ void Workspace::execute(class Window* /* wnd */, class Renderer* rnd, const clas
 		BITTY_RENDER_TARGET(rnd, canvasTexture().get())
 		BITTY_RENDER_SCALE(rnd, 1)
 		exec->update(delta);
+
+		const Executable::States current = exec ? exec->current() : Executable::READY;
+		if (current != Executable::RUNNING && current != Executable::PAUSED)
+			currentState(Executable::HALTING);
 	}
 #endif /* BITTY_MULTITHREAD_ENABLED */
 }

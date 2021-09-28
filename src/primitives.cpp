@@ -2743,7 +2743,7 @@ public:
 		CmdVariant var;
 		new (&var.playSpr) CmdPlaySpr(spr, begin, end, reset, loop);
 
-		commit(var, nullptr);
+		commit(var, nullptr, true);
 	}
 	virtual void play(Resources::Sprite::Ptr spr, const std::string &key, bool reset, bool loop) const override {
 		if (!spr)
@@ -2752,7 +2752,7 @@ public:
 		CmdVariant var;
 		new (&var.playSpr) CmdPlaySpr(spr, key, reset, loop);
 
-		commit(var, nullptr);
+		commit(var, nullptr, true);
 	}
 	virtual void map(Resources::Map::Ptr map, int x, int y, double delta, const Color* col) const override {
 		if (!map)
