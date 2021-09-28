@@ -683,7 +683,11 @@ public:
 		_bytes->poke(0);
 
 		_music = Mix_LoadMUS_RW(SDL_RWFromMem(_bytes->pointer(), (int)_bytes->count()), SDL_TRUE);
+#if defined BITTY_OS_HTML
+		_length = 0.0;
+#else /* BITTY_OS_HTML */
 		_length = Mix_MusicDuration(_music);
+#endif /* BITTY_OS_HTML */
 		_playing = false;
 
 		return true;
