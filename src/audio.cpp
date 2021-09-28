@@ -301,7 +301,12 @@ public:
 		_buffer->writeBytes(val, size);
 		_buffer->poke(0);
 
+		_title.clear();
+		_path.clear();
 		_music = Mix_LoadMUS_RW(SDL_RWFromConstMem(_buffer->pointer(), (int)_buffer->count()), SDL_TRUE);
+		_playing = false;
+		_feeder = nullptr;
+		_stopper = nullptr;
 
 		return true;
 	}
@@ -547,6 +552,7 @@ private:
 	Mix_Music* _music = nullptr;
 	Bytes* _bytes = nullptr;
 
+	double _length = 0.0;
 	mutable bool _playing = false;
 
 public:
@@ -576,7 +582,7 @@ public:
 		if (!_music)
 			return 0;
 
-		return Mix_MusicDuration(_music);
+		return _length;
 #endif /* BITTY_OS_HTML */
 	}
 
@@ -654,6 +660,7 @@ public:
 	virtual void clear(void) override {
 		if (_playing)
 			stop(nullptr);
+		_length = 0;
 		if (_music) {
 			Mix_FreeMusic(_music);
 			_music = nullptr;
@@ -676,6 +683,8 @@ public:
 		_bytes->poke(0);
 
 		_music = Mix_LoadMUS_RW(SDL_RWFromMem(_bytes->pointer(), (int)_bytes->count()), SDL_TRUE);
+		_length = Mix_MusicDuration(_music);
+		_playing = false;
 
 		return true;
 	}
