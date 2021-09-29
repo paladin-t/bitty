@@ -1,3 +1,17 @@
+### v1.1.4 Sep. 29, 2021
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added an asynchronized sprite playing mode
+* Added support of the standard `debug` module
+* Fixed a calculation bug of the `color:__mul(color_)` operator
+* Fixed a cursor moving bug of the `project:read(...)` method
+* Fixed an audio type detection bug when load
+* Fixed an exiting issue from code
+* Improved sprite rendering with a same object for multiple times
+* Improved redundant argument handling
+* Improved the color filling tool
+
 ### v1.1.3 Aug. 31, 2021
 
 Enhanced modules, improved usability, fixed some bugs.
