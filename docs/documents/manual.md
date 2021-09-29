@@ -164,9 +164,9 @@ Lua uses GC to free unused memory automatically, thus you don't have to do that 
 
 ### Standard Libraries
 
-The ready to use modules, `package`, `coroutine`, `table`, `string`, `math`, `utf8`, are reserved from the original.
+The ready to use modules, `package`, `coroutine`, `math`, `table`, `string`, `utf8`, `debug` are reserved from the original.
 
-The trivial modules, `io`, `os`, `debug`, are removed. Bitty Engine offers alternatives.
+The trivial modules, `io`, `os` are removed. Bitty Engine offers alternatives.
 
 Bitty Engine offers some handy built-in functions, some are reserved from the original but the behaviour is improved, some are extended.
 
