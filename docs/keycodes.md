@@ -1,5 +1,7 @@
 ## Keycodes
 
+Pick whatever you need from the list below.
+
 ```lua
 local function asc(s)
 	return string.byte(s, 1)

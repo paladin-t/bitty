@@ -1700,7 +1700,7 @@ A gamepad is a virtual entity, its buttons are binded to a keyboard or an actual
 * `rumble(index, lowHz = 100[, hiHz, ms = 100])`: rumbles the specific gamepad, if an actual hardware is binded to any key of the gamepad entity
 	* `index`: the gamepad index, starts from 1
 
-For the `button` parameter, 0, 1, 2, 3, 4, 5 are for Left, Right, Up, Down, A, B respectively.
+For the `button` parameter, 0, 1, 2, 3, 4, 5 are for Left, Right, Up, Down, A, B respectively. Seealso the "Gamepad" example under the "Primitives" category.
 
 ### Keyboard
 
@@ -1713,7 +1713,7 @@ For the `button` parameter, 0, 1, 2, 3, 4, 5 are for Left, Right, Up, Down, A, B
 	* `code`: the key code on keyboard
 	* returns `true` for released, otherwise `false`
 
-See [keycodes](https://paladin-t.github.io/bitty/keycodes.html) for more.
+See [keycodes](https://paladin-t.github.io/bitty/keycodes.html) for more readable presentation. Seealso the "Keyboard" example under the "Primitives" category.
 
 ### Mouse
 
@@ -1722,6 +1722,8 @@ See [keycodes](https://paladin-t.github.io/bitty/keycodes.html) for more.
 * `mouse([index])`: gets the current mouse (or touch) states
 	* `index`: always 1 for the mouse, or the finger index with touch screens, starts from 1
 	* returns `x`, `y`, `b1`, `b2`, `b3`, `wheel` for the mouse position and the LMB, RMB, MMB, wheel state respectively, `x` and `y` could be NaN if the mouse is outside the canvas, `wheel` can be negative, positive or zero
+
+Seealso the "Mouse" example under the "Primitives" category.
 
 ### Camera
 
