@@ -82,7 +82,7 @@ public:
 	/**
 	 * @brief Opens the renderer for further operation.
 	 */
-	virtual bool open(class Window* wnd) = 0;
+	virtual bool open(class Window* wnd, bool software) = 0;
 	/**
 	 * @brief Closes the renderer after all operations.
 	 */

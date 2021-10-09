@@ -472,6 +472,7 @@ bool Workspace::close(class Window* /* wnd */, class Renderer* /* rnd */, const 
 	Recorder::destroy(recorder());
 	recorder(nullptr);
 
+	// Dispose properties.
 	if (document()) {
 		Document::destroy(document());
 		document(nullptr);

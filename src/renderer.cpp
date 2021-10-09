@@ -35,15 +35,25 @@ public:
 		return _renderer;
 	}
 
-	virtual bool open(class Window* wnd) override {
+	virtual bool open(class Window* wnd, bool software) override {
 		if (_renderer)
 			return false;
 
+		Uint32 flags = SDL_RENDERER_TARGETTEXTURE;
+		if (software)
+			flags |= SDL_RENDERER_SOFTWARE;
+		else
+			flags |= SDL_RENDERER_ACCELERATED;
 		_renderer = SDL_CreateRenderer(
 			(SDL_Window*)wnd->pointer(),
 			-1,
-			SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE
+			flags
 		);
+		if (!_renderer) {
+			fprintf(stderr, "Cannot create renderer.\n");
+
+			return false;
+		}
 
 		SDL_RendererInfo info;
 		SDL_GetRendererInfo(_renderer, &info);

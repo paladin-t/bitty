@@ -41,6 +41,9 @@
 #ifndef APPLICATION_ICON_FILE
 #	define APPLICATION_ICON_FILE "../icon.png"
 #endif /* APPLICATION_ICON_FILE */
+#ifndef APPLICATION_ARGS_FILE
+#	define APPLICATION_ARGS_FILE "../args.txt"
+#endif /* APPLICATION_ARGS_FILE */
 
 #ifndef APPLICATION_IDLE_FRAME_RATE
 #	define APPLICATION_IDLE_FRAME_RATE 15
@@ -56,11 +59,9 @@
 ** Utilities
 */
 
-static Text::Dictionary applicationParseArgs(int argc, const char* argv[]) {
-	Text::Dictionary result;
-
+static void applicationParseArgs(int argc, const char* argv[], Text::Dictionary &options) {
 	if (argc == 0 || !argv)
-		return result;
+		return;
 
 	int i = 0;
 	while (i < argc) {
@@ -76,7 +77,7 @@ static Text::Dictionary applicationParseArgs(int argc, const char* argv[]) {
 				}
 			}
 			Text::toLowerCase(key);
-			result[key] = val;
+			options[key] = val;
 		} else if (*arg == '\0') {
 			// Do nothing.
 		} else {
@@ -85,12 +86,32 @@ static Text::Dictionary applicationParseArgs(int argc, const char* argv[]) {
 				val.erase(val.begin());
 				val.pop_back();
 			}
-			result[""] = val;
+			options[""] = val;
 		}
 		++i;
 	}
+}
 
-	return result;
+static void applicationLoadArgs(const char* path, Text::Dictionary &options) {
+	File::Ptr file(File::create());
+	if (!file->open(path, Stream::READ))
+		return;
+
+	std::string buf;
+	file->readString(buf);
+	file->close();
+
+	Text::Array args = Text::split(buf, " ");
+	std::vector<const char*> argv;
+	for (std::string &a : args) {
+		a = Text::trim(a);
+		if (!a.empty())
+			argv.push_back(a.c_str());
+	}
+	const int argc = (int)argv.size();
+
+	if (argc > 0)
+		applicationParseArgs(argc, &argv.front(), options);
 }
 
 /* ===========================================================================} */
@@ -216,8 +237,14 @@ public:
 			highDpi, opengl
 		);
 
+		int driver = 0;
+		Text::Dictionary::const_iterator drvOpt = options.find(WORKSPACE_OPTION_RENDERER_DRIVER_KEY);
+		if (drvOpt != options.end()) {
+			const std::string drvStr = drvOpt->second;
+			Text::fromString(drvStr, driver);
+		}
 		_renderer = Renderer::create();
-		_renderer->open(_window);
+		_renderer->open(_window, !!driver);
 
 		int wndScale = 1;
 		if (highDpi) {
@@ -848,6 +875,7 @@ private:
 			" [-" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY " ]"
 			" [-" WORKSPACE_OPTION_RENDERER_X2_KEY "]"
 			" [-" WORKSPACE_OPTION_RENDERER_X3_KEY "]"
+			" [-" WORKSPACE_OPTION_RENDERER_DRIVER_KEY " 1]"
 #if BITTY_EFFECTS_ENABLED
 			" [-" WORKSPACE_OPTION_RENDERER_EFFECTS_ENABLED_KEY "]"
 #endif /* BITTY_EFFECTS_ENABLED */
@@ -864,6 +892,7 @@ private:
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY                 "        Disable high-DPI.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X2_KEY                 "       Set renderer scale to x2.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X3_KEY                 "       Set renderer scale to x3.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_DRIVER_KEY             " 1      Use software renderer.\n");
 #if BITTY_EFFECTS_ENABLED
 		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_EFFECTS_ENABLED_KEY             "        Enable effects.\n");
 #endif /* BITTY_EFFECTS_ENABLED */
@@ -905,7 +934,9 @@ private:
 
 class Application* createApplication(class Workspace* workspace, int argc, const char* argv[]) {
 	// Prepare.
-	Text::Dictionary options = applicationParseArgs(argc, argv);
+	Text::Dictionary options;
+	applicationParseArgs(argc, argv, options);
+	applicationLoadArgs(APPLICATION_ARGS_FILE, options);
 
 	// Initialize locale.
 	Platform::locale("");
