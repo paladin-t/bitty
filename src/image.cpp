@@ -64,7 +64,7 @@ private:
 	Byte* _pixels = nullptr;
 	int _width = 0;
 	int _height = 0;
-	int _chanels = 0;
+	int _channels = 0;
 
 	SDL_Surface* _surface = nullptr;
 
@@ -92,11 +92,11 @@ public:
 
 		result->_blank = _blank;
 		result->_palettedBits = _palettedBits;
-		result->_pixels = (Byte*)malloc(_width * _height * _chanels);
-		memcpy(result->_pixels, _pixels, _width * _height * _chanels);
+		result->_pixels = (Byte*)malloc(_width * _height * _channels);
+		memcpy(result->_pixels, _pixels, _width * _height * _channels);
 		result->_width = _width;
 		result->_height = _height;
-		result->_chanels = _chanels;
+		result->_channels = _channels;
 
 		result->_quantizationRedWeight = _quantizationRedWeight;
 		result->_quantizationGreenWeight = _quantizationGreenWeight;
@@ -153,7 +153,7 @@ public:
 	}
 
 	virtual int channels(void) const override {
-		return _chanels;
+		return _channels;
 	}
 
 	virtual bool resize(int width, int height, bool stretch) override {
@@ -174,7 +174,7 @@ public:
 					for (int i = 0; i < width; ++i) {
 						int index = 0;
 						if (get(i, j, index)) {
-							Byte* unit = &tmp[(i + j * width) * _chanels];
+							Byte* unit = &tmp[(i + j * width) * _channels];
 							*unit = (Byte)index;
 						}
 					}
@@ -184,26 +184,26 @@ public:
 				_pixels = tmp;
 				_width = width;
 				_height = height;
-				_chanels = 1;
+				_channels = 1;
 			} else {
 				Byte* tmp = (Byte*)malloc(width * height * sizeof(Byte));
 				memset(tmp, 0, width * height * sizeof(Byte));
 				_pixels = tmp;
 				_width = width;
 				_height = height;
-				_chanels = 1;
+				_channels = 1;
 			}
 		} else {
 			if (_pixels && stretch) {
 				const bool blank = _blank;
 				Byte* tmp = (Byte*)malloc(width * height * sizeof(Color));
-				stbir_resize_uint8(_pixels, _width, _height, 0, tmp, width, height, 0, _chanels);
+				stbir_resize_uint8(_pixels, _width, _height, 0, tmp, width, height, 0, _channels);
 				clear();
 				_blank = blank;
 				_pixels = tmp;
 				_width = width;
 				_height = height;
-				_chanels = 4;
+				_channels = 4;
 			} else if (_pixels && !stretch) {
 				const bool blank = _blank;
 				Byte* tmp = (Byte*)malloc(width * height * sizeof(Color));
@@ -212,7 +212,7 @@ public:
 					for (int i = 0; i < width; ++i) {
 						Color col(0, 0, 0, 0);
 						if (get(i, j, col)) {
-							Byte* unit = &tmp[(i + j * width) * _chanels];
+							Byte* unit = &tmp[(i + j * width) * _channels];
 							memcpy(unit, &col, sizeof(Color));
 						}
 					}
@@ -222,14 +222,14 @@ public:
 				_pixels = tmp;
 				_width = width;
 				_height = height;
-				_chanels = 4;
+				_channels = 4;
 			} else {
 				Byte* tmp = (Byte*)malloc(width * height * sizeof(Color));
 				memset(tmp, 0, width * height * sizeof(Color));
 				_pixels = tmp;
 				_width = width;
 				_height = height;
-				_chanels = 4;
+				_channels = 4;
 			}
 		}
 
@@ -256,7 +256,7 @@ public:
 		if (x < 0 || x >= _width || y < 0 || y >= _height)
 			return false;
 
-		Byte* unit = &_pixels[(x + y * _width) * _chanels];
+		Byte* unit = &_pixels[(x + y * _width) * _channels];
 		memcpy(&col, unit, sizeof(Color));
 
 		return true;
@@ -268,7 +268,7 @@ public:
 		if (x < 0 || x >= _width || y < 0 || y >= _height)
 			return false;
 
-		Byte* unit = &_pixels[(x + y * _width) * _chanels];
+		Byte* unit = &_pixels[(x + y * _width) * _channels];
 		memcpy(unit, &col, sizeof(Color));
 
 		if (_surface) {
@@ -288,7 +288,7 @@ public:
 		if (x < 0 || x >= _width || y < 0 || y >= _height)
 			return false;
 
-		Byte* unit = &_pixels[(x + y * _width) * _chanels];
+		Byte* unit = &_pixels[(x + y * _width) * _channels];
 		index = *unit;
 
 		return true;
@@ -303,7 +303,7 @@ public:
 		if (index < 0 || index >= std::pow(2, _palettedBits))
 			return false;
 
-		Byte* unit = &_pixels[(x + y * _width) * _chanels];
+		Byte* unit = &_pixels[(x + y * _width) * _channels];
 		*unit = (Byte)index;
 
 		if (_surface) {
@@ -378,12 +378,12 @@ public:
 		_width = width;
 		_height = height;
 		if (_palettedBits) {
-			_chanels = 1;
+			_channels = 1;
 			_pixels = (Byte*)malloc(_width * _height * sizeof(Byte));
 			memset(_pixels, 0, _width * _height * sizeof(Byte));
 		} else {
 			_palette = nullptr;
-			_chanels = 4;
+			_channels = 4;
 			_pixels = (Byte*)malloc(_width * _height * sizeof(Color));
 			memset(_pixels, 0, _width * _height * sizeof(Color));
 		}
@@ -522,7 +522,7 @@ public:
 			_palettedBits = bitCount; assert(_palettedBits == 0 || _palettedBits == IMAGE_PALETTE_BITS);
 		}
 		if (_pixels) {
-			_chanels = 1;
+			_channels = 1;
 
 			_blank = false;
 
@@ -546,15 +546,15 @@ public:
 			_palettedBits = bitCount; assert(_palettedBits == 0 || _palettedBits == IMAGE_PALETTE_BITS);
 		}
 		if (_pixels) {
-			_chanels = 4;
+			_channels = 4;
 
 			_blank = false;
 
 			return !!_pixels;
 		}
 
-		_pixels = stbi_load_from_memory(val, (int)size, &_width, &_height, &_chanels, 4);
-		_chanels = 4;
+		_pixels = stbi_load_from_memory(val, (int)size, &_width, &_height, &_channels, 4);
+		_channels = 4;
 
 		_blank = false;
 
@@ -683,7 +683,7 @@ private:
 		if (_surface)
 			return _surface;
 
-		if (_chanels == 1) {
+		if (_channels == 1) {
 			_surface = SDL_CreateRGBSurfaceFrom(
 				_pixels,
 				_width, _height,
@@ -696,7 +696,7 @@ private:
 				palette = (SDL_Palette*)_palette->pointer();
 			if (palette)
 				SDL_SetSurfacePalette(_surface, palette);
-		} else if (_chanels == 4) {
+		} else if (_channels == 4) {
 			_surface = SDL_CreateRGBSurfaceFrom(
 				_pixels,
 				_width, _height,
@@ -725,7 +725,7 @@ private:
 		}
 		_width = 0;
 		_height = 0;
-		_chanels = 0;
+		_channels = 0;
 
 		_quantizationRedWeight = 1;
 		_quantizationGreenWeight = 1;
@@ -768,7 +768,7 @@ private:
 		_pixels = palettedPixels;
 
 		_palettedBits = IMAGE_PALETTE_BITS;
-		_chanels = 1;
+		_channels = 1;
 
 		surface(nullptr);
 
@@ -784,7 +784,7 @@ private:
 		constexpr const int BPP = (sizeof(Color) / sizeof(Byte));
 
 		Byte* ditheredPixels = new Byte[size * 4];
-		if (_chanels == 4) {
+		if (_channels == 4) {
 			memcpy(ditheredPixels, _pixels, size * 4);
 		} else {
 			for (int i = 0; i < size; ++i) {
@@ -841,7 +841,7 @@ private:
 		_pixels = palettedPixels;
 
 		_palettedBits = IMAGE_PALETTE_BITS;
-		_chanels = 1;
+		_channels = 1;
 
 		surface(nullptr);
 
