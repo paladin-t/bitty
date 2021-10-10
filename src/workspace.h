@@ -235,6 +235,9 @@ protected:
 	BITTY_PROPERTY(bool, effectCustomized)
 	BITTY_PROPERTY(std::string, effectConfig)
 
+	BITTY_PROPERTY(Math::Vec2i, applicationSize_)
+	BITTY_FIELD(Mutex, applicationSizeLock)
+
 	BITTY_PROPERTY_READONLY(ImGui::PopupBox::Ptr, popupBox)
 	BITTY_PROPERTY(ImGui::Initializer, popupPromiseInit)
 	BITTY_PROPERTY(PopupPromiseTypes, popupPromiseType)
@@ -270,7 +273,7 @@ protected:
 	BITTY_PROPERTY_READONLY_PTR(unsigned, canvasState)
 	BITTY_PROPERTY_READONLY_PTR(bool, canvasFixRatio)
 	BITTY_PROPERTY(Math::Vec2i, canvasValidation)
-	BITTY_PROPERTY(Math::Vec2i, canvasSize)
+	BITTY_PROPERTY(Math::Vec2i, canvasSize_)
 	BITTY_FIELD(Mutex, canvasSizeLock)
 	BITTY_PROPERTY_READONLY(Texture::Ptr, canvasTexture)
 	BITTY_PROPERTY_READONLY(bool, canvasHovering)
@@ -396,13 +399,21 @@ public:
 	 */
 	virtual void stop(void) override;
 	/**
+	 * @brief Implements `Executable::Observer`. Gets the size of the application.
+	 */
+	virtual Math::Vec2i applicationSize(void) override;
+	/**
+	 * @brief Implements `Executable::Observer`. Sets the size of the application.
+	 */
+	virtual bool resizeApplication(const Math::Vec2i &size) override;
+	/**
 	 * @brief Implements `Executable::Observer`. Gets the size of the rendering canvas.
 	 */
-	virtual Math::Vec2i size(void) override;
+	virtual Math::Vec2i canvasSize(void) override;
 	/**
 	 * @brief Implements `Executable::Observer`. Sets the size of the rendering canvas.
 	 */
-	virtual bool resize(const Math::Vec2i &size) override;
+	virtual bool resizeCanvas(const Math::Vec2i &size) override;
 	/**
 	 * @brief Implements `Executable::Observer`. Sets fullscreen effect.
 	 */

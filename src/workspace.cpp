@@ -364,6 +364,12 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 			settings()->applicationWindowSize = size;
 #if !defined BITTY_OS_HTML
 			wnd->size(settings()->applicationWindowSize);
+			resizeApplication(
+				Math::Vec2i(
+					settings()->applicationWindowSize.x / rnd->scale(),
+					settings()->applicationWindowSize.y / rnd->scale()
+				)
+			);
 #endif /* BITTY_OS_HTML */
 			wnd->displayIndex(settings()->applicationWindowDisplayIndex);
 			settings()->applicationWindowFullscreen = false;
@@ -383,7 +389,7 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 	canvasState(&settings()->canvasState);
 	canvasFixRatio(&settings()->canvasFixRatio);
 	canvasValidation(Math::Vec2i(0, 0));
-	canvasSize(Math::Vec2i(BITTY_CANVAS_DEFAULT_WIDTH, BITTY_CANVAS_DEFAULT_HEIGHT));
+	canvasSize_(Math::Vec2i(BITTY_CANVAS_DEFAULT_WIDTH, BITTY_CANVAS_DEFAULT_HEIGHT));
 	canvasHovering(false);
 	canvasFull(false);
 	canvasInitialized(false);
@@ -718,22 +724,39 @@ void Workspace::stop(void) {
 	debugStopping() = true;
 }
 
-Math::Vec2i Workspace::size(void) {
-	LockGuard<decltype(canvasSizeLock())> guard(canvasSizeLock());
+Math::Vec2i Workspace::applicationSize(void) {
+	LockGuard<decltype(applicationSizeLock())> guard(applicationSizeLock());
 
-	return Math::Vec2i(std::abs(canvasSize().x), std::abs(canvasSize().y));
+	return Math::Vec2i(std::abs(applicationSize_().x), std::abs(applicationSize_().y));
 }
 
-bool Workspace::resize(const Math::Vec2i &size) {
+bool Workspace::resizeApplication(const Math::Vec2i &size) {
+	LockGuard<decltype(applicationSizeLock())> guard(applicationSizeLock());
+
+	if (size.x == applicationSize_().x && size.y == applicationSize_().y)
+		return true;
+
+	applicationSize_(size);
+
+	return true;
+}
+
+Math::Vec2i Workspace::canvasSize(void) {
+	LockGuard<decltype(canvasSizeLock())> guard(canvasSizeLock());
+
+	return Math::Vec2i(std::abs(canvasSize_().x), std::abs(canvasSize_().y));
+}
+
+bool Workspace::resizeCanvas(const Math::Vec2i &size) {
 	if (size.x > BITTY_CANVAS_MAX_WIDTH || size.y > BITTY_CANVAS_MAX_HEIGHT)
 		return false;
 
 	LockGuard<decltype(canvasSizeLock())> guard(canvasSizeLock());
 
-	if (size.x == canvasSize().x && size.y == canvasSize().y)
+	if (size.x == canvasSize_().x && size.y == canvasSize_().y)
 		return true;
 
-	canvasSize(size);
+	canvasSize_(size);
 
 	return true;
 }
@@ -859,7 +882,7 @@ Variant Workspace::post(unsigned msg, int argc, const Variant* argv) {
 	return Variant();
 }
 
-bool Workspace::load(class Window* wnd, class Renderer*, const class Project* project, class Primitives* primitives, const rapidjson::Document &doc) {
+bool Workspace::load(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives, const rapidjson::Document &doc) {
 	LockGuard<RecursiveMutex>::UniquePtr acquired;
 	Project* prj = project->acquire(acquired);
 
@@ -930,8 +953,15 @@ bool Workspace::load(class Window* wnd, class Renderer*, const class Project* pr
 	if (settings()->applicationWindowSize == Math::Vec2i(0, 0))
 		settings()->applicationWindowSize = size;
 #if !defined BITTY_OS_HTML
-	if (size != settings()->applicationWindowSize)
+	if (size != settings()->applicationWindowSize) {
 		wnd->size(settings()->applicationWindowSize);
+		resizeApplication(
+			Math::Vec2i(
+				settings()->applicationWindowSize.x / rnd->scale(),
+				settings()->applicationWindowSize.y / rnd->scale()
+			)
+		);
+	}
 #endif /* BITTY_OS_HTML */
 	wnd->displayIndex(settings()->applicationWindowDisplayIndex);
 	if (settings()->applicationWindowFullscreen)
@@ -1714,7 +1744,7 @@ bool Workspace::canvas(class Window* wnd, class Renderer* rnd, const class Proje
 		do {
 			LockGuard<decltype(canvasSizeLock())> guard(canvasSizeLock());
 
-			cvsSize = canvasSize();
+			cvsSize = canvasSize_();
 		} while (false);
 		float canvasRatio = BITTY_CANVAS_DEFAULT_WIDTH / BITTY_CANVAS_DEFAULT_HEIGHT;
 		if (cvsSize.x > 0 && cvsSize.y > 0) {
@@ -2520,24 +2550,24 @@ void Workspace::scene(class Window* wnd, class Renderer* rnd, const class Projec
 	do {
 		LockGuard<decltype(canvasSizeLock())> guard(canvasSizeLock());
 
-		if (canvasSize().x <= 0 && canvasSize().y <= 0) {
+		if (canvasSize_().x <= 0 && canvasSize_().y <= 0) {
 			srcSize = Math::Vec2i((Int)regSize.x, (Int)regSize.y);
-			canvasSize().x = -srcSize.x;
-			canvasSize().y = -srcSize.y;
-		} else if (canvasSize().x <= 0) {
+			canvasSize_().x = -srcSize.x;
+			canvasSize_().y = -srcSize.y;
+		} else if (canvasSize_().x <= 0) {
 			srcSize = Math::Vec2i(
-				(Int)(canvasSize().y * regSize.x / regSize.y),
-				canvasSize().y
+				(Int)(canvasSize_().y * regSize.x / regSize.y),
+				canvasSize_().y
 			);
-			canvasSize().x = -srcSize.x;
-		} else if (canvasSize().y <= 0) {
+			canvasSize_().x = -srcSize.x;
+		} else if (canvasSize_().y <= 0) {
 			srcSize = Math::Vec2i(
-				canvasSize().x,
-				(Int)(canvasSize().x * regSize.y / regSize.x)
+				canvasSize_().x,
+				(Int)(canvasSize_().x * regSize.y / regSize.x)
 			);
-			canvasSize().y = -srcSize.y;
+			canvasSize_().y = -srcSize.y;
 		} else {
-			srcSize = Math::Vec2i(canvasSize().x, canvasSize().y);
+			srcSize = Math::Vec2i(canvasSize_().x, canvasSize_().y);
 		}
 	} while (false);
 

@@ -52,19 +52,19 @@ public:
 	class Observer {
 	public:
 		/**
-		 * @brief Clears output.
+		 * @brief Clears output in the console window.
 		 */
 		virtual void clear(void) = 0;
 		/**
-		 * @brief Outputs message text.
+		 * @brief Outputs a specific message to the console window.
 		 */
 		virtual bool print(const char* msg) = 0;
 		/**
-		 * @brief Outputs warning text.
+		 * @brief Outputs a specific warning to the console window.
 		 */
 		virtual bool warn(const char* msg) = 0;
 		/**
-		 * @brief Outputs error text.
+		 * @brief Outputs a specific error to the console window.
 		 */
 		virtual bool error(const char* msg) = 0;
 		/**
@@ -88,7 +88,7 @@ public:
 		 */
 		virtual void input(Promise::Ptr &promise /* nullable */, const char* prompt /* nullable */, const char* default_ /* nullable */) = 0;
 		/**
-		 * @brief Locates cursor to specific souce code line.
+		 * @brief Sets focus to a specific source file and line.
 		 */
 		virtual bool focus(const char* src, int ln) = 0;
 		/**
@@ -96,17 +96,25 @@ public:
 		 */
 		virtual void require(Executable* exec) = 0;
 		/**
-		 * @brief Terminates execution.
+		 * @brief Stops execution.
 		 */
 		virtual void stop(void) = 0;
 		/**
-		 * @brief Gets canvas size.
+		 * @brief Gets the size of the application.
 		 */
-		virtual Math::Vec2i size(void) = 0;
+		virtual Math::Vec2i applicationSize(void) = 0;
 		/**
-		 * @brief Sets canvas size.
+		 * @brief Sets the size of the application.
 		 */
-		virtual bool resize(const Math::Vec2i &size) = 0;
+		virtual bool resizeApplication(const Math::Vec2i &size) = 0;
+		/**
+		 * @brief Gets the size of the rendering canvas.
+		 */
+		virtual Math::Vec2i canvasSize(void) = 0;
+		/**
+		 * @brief Sets the size of the rendering canvas.
+		 */
+		virtual bool resizeCanvas(const Math::Vec2i &size) = 0;
 		/**
 		 * @brief Sets fullscreen effect.
 		 */

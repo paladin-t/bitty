@@ -25,6 +25,7 @@
 #include "project.h"
 #include "randomizer.h"
 #include "raycaster.h"
+#include "renderer.h"
 #include "scripting_lua.h"
 #include "scripting_lua_api.h"
 #include "walker.h"
@@ -9685,6 +9686,14 @@ static int Application_setCursor(lua_State* L) {
 	return 0;
 }
 
+static int Application_size(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	const Math::Vec2i ret = impl->observer()->applicationSize();
+
+	return write(L, ret.x, ret.y);
+}
+
 static int Application_resize(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
@@ -9706,9 +9715,16 @@ static int Application_resize(lua_State* L) {
 		impl->primitives()->function(
 			[=] (const Variant &) -> void {
 				Window* wnd = impl->primitives()->window();
+				Renderer* rnd = impl->primitives()->renderer();
 				wnd->fullscreen(false);
 				wnd->size(Math::Vec2i(w, h));
 				wnd->centralize();
+				impl->observer()->resizeApplication(
+					Math::Vec2i(
+						w / rnd->scale(),
+						h / rnd->scale()
+					)
+				);
 			},
 			nullptr,
 			true
@@ -9880,6 +9896,7 @@ static void open_Application(lua_State* L) {
 							array(
 								luaL_Reg{ "setOption", Application_setOption }, // Frame synchronized.
 								luaL_Reg{ "setCursor", Application_setCursor }, // Frame synchronized.
+								luaL_Reg{ "size", Application_size }, // Frame synchronized.
 								luaL_Reg{ "resize", Application_resize }, // Frame synchronized.
 #if BITTY_EFFECTS_ENABLED
 								luaL_Reg{ "setEffect", Application_setEffect }, // Undocumented. Frame synchronized.
@@ -9907,6 +9924,7 @@ static void open_Application(lua_State* L) {
 							array(
 								luaL_Reg{ "setOption", Application_setOption }, // Frame synchronized.
 								luaL_Reg{ "setCursor", Application_setCursor }, // Frame synchronized.
+								luaL_Reg{ "size", Application_size }, // Frame synchronized.
 								luaL_Reg{ "resize", Application_resize }, // Frame synchronized.
 								luaL_Reg{ nullptr, nullptr }
 							)
@@ -9938,7 +9956,7 @@ static int Canvas_size(lua_State* L) {
 
 	Math::Vec2i ret;
 	if (canvas == impl->primitives())
-		ret = impl->observer()->size();
+		ret = impl->observer()->canvasSize();
 
 	return write(L, ret.x, ret.y);
 }
@@ -9959,7 +9977,7 @@ static int Canvas_resize(lua_State* L) {
 
 	bool ret = false;
 	if (canvas == impl->primitives())
-		ret = impl->observer()->resize(Math::Vec2i(width, height));
+		ret = impl->observer()->resizeCanvas(Math::Vec2i(width, height));
 
 	return write(L, ret);
 }

@@ -559,6 +559,12 @@ private:
 						int w = 0, h = 0;
 						SDL_GetWindowSize(wnd, &w, &h);
 						_workspace->resized(_window, _renderer, _project, Math::Vec2i(w, h));
+						_workspace->resizeApplication(
+							Math::Vec2i(
+								w / _renderer->scale(),
+								h / _renderer->scale()
+							)
+						);
 					}
 
 					break;

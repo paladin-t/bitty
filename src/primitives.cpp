@@ -591,9 +591,13 @@ public:
 			if (!ptr)
 				break;
 
+#if SDL_VERSION_ATLEAST(2, 0, 18)
+			Texture::Ptr &src = ptr;
+#else /* SDL_VERSION_ATLEAST(2, 0, 18) */
 			Image::Ptr src = _texture->source.lock();
 			if (!src)
 				break;
+#endif /* SDL_VERSION_ATLEAST(2, 0, 18) */
 
 			drew = true;
 
@@ -603,11 +607,19 @@ public:
 
 			const bool swapped = side == 1 && _bothSides;
 			if (side == -1 || swapped) {
+#if SDL_VERSION_ATLEAST(2, 0, 18)
+				Math::Vec4f points[3] = {
+					Math::Vec4f(_p0.x, _p0.y, _uv0.x, _uv0.y),
+					Math::Vec4f(_p1.x, _p1.y, _uv1.x, _uv1.y),
+					Math::Vec4f(_p2.x, _p2.y, _uv2.x, _uv2.y)
+				};
+#else /* SDL_VERSION_ATLEAST(2, 0, 18) */
 				Math::Vec4f points[3] = {
 					Math::Vec4f(_p0.x, _p0.y, _uv0.x * ptr->width(), _uv0.y * ptr->height()),
 					Math::Vec4f(_p1.x, _p1.y, _uv1.x * ptr->width(), _uv1.y * ptr->height()),
 					Math::Vec4f(_p2.x, _p2.y, _uv2.x * ptr->width(), _uv2.y * ptr->height())
 				};
+#endif /* SDL_VERSION_ATLEAST(2, 0, 18) */
 				Real depth[3] = {
 					_p0.z, _p1.z, _p2.z
 				};
@@ -633,7 +645,7 @@ public:
 
 			const Uint32 c = _color.toRGBA();
 			if (_fill)
-				filledTrigonColor(renderer, (Sint16)_p0.x, (Sint16)_p0.y, (Sint16)_p1.x, (Sint16)_p1.y, (Sint16)_p2.x, (Sint16)_p2.y, c);
+				filledTriangle(rnd, _p0, _p1, _p2, _color);
 			else
 				trigonColor(renderer, (Sint16)_p0.x, (Sint16)_p0.y, (Sint16)_p1.x, (Sint16)_p1.y, (Sint16)_p2.x, (Sint16)_p2.y, c);
 		}
@@ -642,6 +654,31 @@ public:
 	}
 
 private:
+#if SDL_VERSION_ATLEAST(2, 0, 18)
+	static void renderTriangle(Renderer* rnd, Texture::Ptr tex, const Math::Vec4f points[3], const Real* /* pdepth */, const Math::Vec4f* /* clipping */) {
+		SDL_Renderer* renderer = (SDL_Renderer*)rnd->pointer();
+		SDL_Texture* texture = (SDL_Texture*)tex->pointer(rnd);
+		const SDL_Vertex vertices[3] = {
+			SDL_Vertex{
+				SDL_FPoint{ (float)points[0].x, (float)points[0].y },
+				SDL_Color{ 255, 255, 255, 255 },
+				SDL_FPoint{ (float)points[0].z, (float)points[0].w }
+			},
+			SDL_Vertex{
+				SDL_FPoint{ (float)points[1].x, (float)points[1].y },
+				SDL_Color{ 255, 255, 255, 255 },
+				SDL_FPoint{ (float)points[1].z, (float)points[1].w }
+			},
+			SDL_Vertex{
+				SDL_FPoint{ (float)points[2].x, (float)points[2].y },
+				SDL_Color{ 255, 255, 255, 255 },
+				SDL_FPoint{ (float)points[2].z, (float)points[2].w }
+			}
+		};
+
+		SDL_RenderGeometry(renderer, texture, vertices, 3, nullptr, 0);
+	}
+#else /* SDL_VERSION_ATLEAST(2, 0, 18) */
 	static Real getDet(const Math::Vec4f points[3]) {
 		return (points[1].y - points[2].y) * (points[0].x - points[2].x) + (points[2].x - points[1].x) * (points[0].y - points[2].y);
 	}
@@ -715,6 +752,38 @@ private:
 			}
 		}
 	}
+#endif /* SDL_VERSION_ATLEAST(2, 0, 18) */
+#if SDL_VERSION_ATLEAST(2, 0, 18)
+	static void filledTriangle(Renderer* rnd, const Math::Vec3f &p0, const Math::Vec3f &p1, const Math::Vec3f &p2, const Color &col) {
+		SDL_Renderer* renderer = (SDL_Renderer*)rnd->pointer();
+		const SDL_Vertex vertices[3] = {
+			SDL_Vertex{
+				SDL_FPoint{ (float)p0.x, (float)p0.y },
+				SDL_Color{ col.r, col.g, col.b, col.a },
+				SDL_FPoint{ 0, 0 }
+			},
+			SDL_Vertex{
+				SDL_FPoint{ (float)p1.x, (float)p1.y },
+				SDL_Color{ col.r, col.g, col.b, col.a },
+				SDL_FPoint{ 0, 0 }
+			},
+			SDL_Vertex{
+				SDL_FPoint{ (float)p2.x, (float)p2.y },
+				SDL_Color{ col.r, col.g, col.b, col.a },
+				SDL_FPoint{ 0, 0 }
+			}
+		};
+
+		SDL_RenderGeometry(renderer, nullptr, vertices, 3, nullptr, 0);
+	}
+#else /* SDL_VERSION_ATLEAST(2, 0, 18) */
+	static void filledTriangle(Renderer* rnd, const Math::Vec3f &p0, const Math::Vec3f &p1, const Math::Vec3f &p2, const Color &col) {
+		SDL_Renderer* renderer = (SDL_Renderer*)rnd->pointer();
+		const Uint32 c = col.toRGBA();
+
+		filledTrigonColor(renderer, (Sint16)p0.x, (Sint16)p0.y, (Sint16)p1.x, (Sint16)p1.y, (Sint16)p2.x, (Sint16)p2.y, c);
+	}
+#endif /* SDL_VERSION_ATLEAST(2, 0, 18) */
 };
 
 class CmdFont : public Cmd {
@@ -2382,6 +2451,9 @@ public:
 
 	virtual class Window* window(void) override {
 		return _window;
+	}
+	virtual class Renderer* renderer(void) override {
+		return _renderer;
 	}
 
 	virtual class Effects* effects(void) override {

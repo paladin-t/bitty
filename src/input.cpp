@@ -40,7 +40,7 @@ private:
 		std::string name;
 #if SDL_VERSION_ATLEAST(2, 0, 12)
 		SDL_GameControllerType type = SDL_CONTROLLER_TYPE_UNKNOWN;
-#endif /* SDL_VERSION_ATLEAST */
+#endif /* SDL_VERSION_ATLEAST(2, 0, 12) */
 		bool attached = false;
 		AxisInitialValues axisInitialValues;
 
@@ -167,7 +167,7 @@ public:
 #if SDL_VERSION_ATLEAST(2, 0, 12)
 					const SDL_GameControllerType y = SDL_GameControllerTypeForIndex(i);
 					ctrl.type = y;
-#endif /* SDL_VERSION_ATLEAST */
+#endif /* SDL_VERSION_ATLEAST(2, 0, 12) */
 					_controllers.push_back(ctrl);
 					for (int k = 0; k < SDL_CONTROLLER_AXIS_MAX; ++k) {
 						Sint16 state = 0;
@@ -275,15 +275,25 @@ public:
 				*type = "PlayStation 5";
 
 				break;
-#endif /* SDL_VERSION_ATLEAST */
+#endif /* SDL_VERSION_ATLEAST(2, 0, 14) */
+#if SDL_VERSION_ATLEAST(2, 0, 16)
+			case SDL_CONTROLLER_TYPE_AMAZON_LUNA:
+				*type = "Luna";
+
+				break;
+			case SDL_CONTROLLER_TYPE_GOOGLE_STADIA:
+				*type = "Stadia";
+
+				break;
+#endif /* SDL_VERSION_ATLEAST(2, 0, 16) */
 			default:
 				*type = "Unknown";
 
 				break;
 			}
-#else /* SDL_VERSION_ATLEAST */
+#else /* SDL_VERSION_ATLEAST(2, 0, 12) */
 			*type = "Unknown";
-#endif /* SDL_VERSION_ATLEAST */
+#endif /* SDL_VERSION_ATLEAST(2, 0, 12) */
 		}
 		if (attached)
 			*attached = _controllers[index].attached;

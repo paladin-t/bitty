@@ -68,6 +68,12 @@ public:
 	 * @note By the graphics thread.
 	 */
 	virtual class Window* window(void) = 0;
+	/**
+	 * @brief Gets the renderer object.
+	 *
+	 * @note By the graphics thread.
+	 */
+	virtual class Renderer* renderer(void) = 0;
 
 	/**
 	 * @brief Gets the effects object.
