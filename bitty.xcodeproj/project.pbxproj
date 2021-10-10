@@ -575,7 +575,6 @@
 		038E77382582130D00A94374 /* stb_sprintf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_sprintf.h; path = lib/stb/stb_sprintf.h; sourceTree = "<group>"; };
 		038E77392582130E00A94374 /* stb_vorbis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stb_vorbis.c; path = lib/stb/stb_vorbis.c; sourceTree = "<group>"; };
 		038E773A2582130E00A94374 /* stb_connected_components.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_connected_components.h; path = lib/stb/stb_connected_components.h; sourceTree = "<group>"; };
-		038E773B2582130E00A94374 /* stb_perlin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_perlin.h; path = lib/stb/stb_perlin.h; sourceTree = "<group>"; };
 		038E773C2582130E00A94374 /* stb_ds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_ds.h; path = lib/stb/stb_ds.h; sourceTree = "<group>"; };
 		038E773D2582130E00A94374 /* stb_textedit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_textedit.h; path = lib/stb/stb_textedit.h; sourceTree = "<group>"; };
 		038E773E2582130F00A94374 /* stb_image_write.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_image_write.h; path = lib/stb/stb_image_write.h; sourceTree = "<group>"; };
@@ -1261,7 +1260,6 @@
 				038E77312582130C00A94374 /* stb_image.h */,
 				038E77342582130D00A94374 /* stb_include.h */,
 				038E77372582130D00A94374 /* stb_leakcheck.h */,
-				038E773B2582130E00A94374 /* stb_perlin.h */,
 				038E77432582130F00A94374 /* stb_rect_pack.h */,
 				038E77382582130D00A94374 /* stb_sprintf.h */,
 				038E773D2582130E00A94374 /* stb_textedit.h */,
