@@ -37,7 +37,8 @@
 class Executable {
 public:
 	enum Languages {
-		LUA
+		LUA = 1 << 0,
+		NATIVE = 1 << 1
 	};
 
 	enum States {

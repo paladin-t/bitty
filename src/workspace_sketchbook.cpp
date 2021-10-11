@@ -351,8 +351,8 @@ unsigned WorkspaceSketchbook::update(class Window* wnd, class Renderer* rnd, con
 }
 
 void WorkspaceSketchbook::require(Executable* exec) {
-	switch (exec->language()) {
-	case Executable::LUA:
+	const Executable::Languages lang = exec->language();
+	if (lang & Executable::LUA) {
 		// Common.
 		Lua::Standard::open(exec);
 		Lua::Libs::open(exec);
@@ -364,12 +364,9 @@ void WorkspaceSketchbook::require(Executable* exec) {
 		// Promise.
 		Lua::Standard::promise(exec);
 		Lua::Libs::promise(exec);
-
-		break;
-	default:
-		assert(false && "Not supported.");
-
-		break;
+	}
+	if (lang & Executable::NATIVE) {
+		// Do nothing.
 	}
 }
 

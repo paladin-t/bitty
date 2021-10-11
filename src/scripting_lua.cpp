@@ -365,6 +365,7 @@ bool ScriptingLua::cycle(double delta) {
 
 	if (_primitives)
 		_primitives->newFrame();
+
 	Lua::ProtectedFunction func = [] (lua_State* L, void* ud) -> void {
 		ScriptingLua* impl = (ScriptingLua*)ud;
 
@@ -387,6 +388,17 @@ bool ScriptingLua::cycle(double delta) {
 #endif /* BITTY_DEBUG_ENABLED */
 	if (check(_L, ret) != LUA_OK || _code != LUA_OK)
 		return false;
+
+	// For native developers who write gameplay code in mixed Lua/C++ or pure C++,
+	// put your C++ entry here. You can also implement your own `Scripting` or
+	// `Executable` instead of this `ScriptingLua`.
+	// Eg.
+#if false
+	if (_primitives) {
+		_primitives->text("Hello World!", 2, 2, nullptr, 1);
+	}
+#endif
+
 	if (_primitives)
 		_primitives->commit();
 

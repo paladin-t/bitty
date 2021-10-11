@@ -109,7 +109,7 @@ Scripting* Scripting::create(Languages language) {
 	case LUA:
 		return new ScriptingLua();
 	default:
-		assert(false && "Unknown.");
+		assert(false && "Not implemented.");
 
 		return nullptr;
 	}
@@ -124,7 +124,7 @@ void Scripting::destroy(Executable* ptr) {
 
 		break;
 	default:
-		assert(false && "Unknown.");
+		assert(false && "Not implemented.");
 
 		break;
 	}
