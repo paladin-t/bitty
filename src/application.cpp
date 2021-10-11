@@ -826,7 +826,7 @@ private:
 
 #define MAP_BUTTON(NAV_NO, BUTTON_NO) { io.NavInputs[NAV_NO] = SDL_GameControllerGetButton(gameController, BUTTON_NO) ? 1.0f : 0.0f; }
 #define MAP_ANALOG(NAV_NO, AXIS_NO, V0, V1) { float vn = (float)(SDL_GameControllerGetAxis(gameController, AXIS_NO) - V0) / (float)(V1 - V0); if (vn > 1.0f) vn = 1.0f; if (vn > 0.0f && io.NavInputs[NAV_NO] < vn) io.NavInputs[NAV_NO] = vn; }
-			const int thumbDeadZone = 8000; // "SDL_gamecontroller.h" suggests using this value.
+			constexpr int THUMB_DEAD_ZONE = 8000; // "SDL_gamecontroller.h" suggests using this value.
 			MAP_BUTTON(ImGuiNavInput_Activate, SDL_CONTROLLER_BUTTON_A);              // A/Cross.
 			MAP_BUTTON(ImGuiNavInput_Cancel, SDL_CONTROLLER_BUTTON_B);                // B/Circle.
 			MAP_BUTTON(ImGuiNavInput_Menu, SDL_CONTROLLER_BUTTON_X);                  // X/Square.
@@ -839,10 +839,10 @@ private:
 			MAP_BUTTON(ImGuiNavInput_FocusNext, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER); // R1/RB.
 			MAP_BUTTON(ImGuiNavInput_TweakSlow, SDL_CONTROLLER_BUTTON_LEFTSHOULDER);  // L1/LB.
 			MAP_BUTTON(ImGuiNavInput_TweakFast, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER); // R1/RB.
-			MAP_ANALOG(ImGuiNavInput_LStickLeft, SDL_CONTROLLER_AXIS_LEFTX, -thumbDeadZone, -32768);
-			MAP_ANALOG(ImGuiNavInput_LStickRight, SDL_CONTROLLER_AXIS_LEFTX, +thumbDeadZone, +32767);
-			MAP_ANALOG(ImGuiNavInput_LStickUp, SDL_CONTROLLER_AXIS_LEFTY, -thumbDeadZone, -32767);
-			MAP_ANALOG(ImGuiNavInput_LStickDown, SDL_CONTROLLER_AXIS_LEFTY, +thumbDeadZone, +32767);
+			MAP_ANALOG(ImGuiNavInput_LStickLeft, SDL_CONTROLLER_AXIS_LEFTX, -THUMB_DEAD_ZONE, -32768);
+			MAP_ANALOG(ImGuiNavInput_LStickRight, SDL_CONTROLLER_AXIS_LEFTX, +THUMB_DEAD_ZONE, +32767);
+			MAP_ANALOG(ImGuiNavInput_LStickUp, SDL_CONTROLLER_AXIS_LEFTY, -THUMB_DEAD_ZONE, -32767);
+			MAP_ANALOG(ImGuiNavInput_LStickDown, SDL_CONTROLLER_AXIS_LEFTY, +THUMB_DEAD_ZONE, +32767);
 
 			io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
 #undef MAP_BUTTON
@@ -929,11 +929,13 @@ private:
 		const std::string currentDir = Unicode::toOs(Path::currentDirectory());
 		const std::string docDir = Unicode::toOs(Path::documentDirectory());
 		const std::string writableDir = Unicode::toOs(Path::writableDirectory());
+		const std::string savedGamesDir = Unicode::toOs(Path::savedGamesDirectory());
 
-		fprintf(stdout, "   Executable file: \"%s\".\n", exeFile.c_str());
-		fprintf(stdout, " Current directory: \"%s\".\n", currentDir.c_str());
-		fprintf(stdout, "Document directory: \"%s\".\n", docDir.c_str());
-		fprintf(stdout, "Writable directory: \"%s\".\n", writableDir.c_str());
+		fprintf(stdout, "      Executable file: \"%s\".\n", exeFile.c_str());
+		fprintf(stdout, "    Current directory: \"%s\".\n", currentDir.c_str());
+		fprintf(stdout, "   Document directory: \"%s\".\n", docDir.c_str());
+		fprintf(stdout, "   Writable directory: \"%s\".\n", writableDir.c_str());
+		fprintf(stdout, "Saved games directory: \"%s\".\n", savedGamesDir.c_str());
 		fprintf(stdout, "\n");
 	}
 };

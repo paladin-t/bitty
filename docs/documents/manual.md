@@ -835,7 +835,7 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 	* `newName`: the new directory name
 	* returns `true` for success, otherwise `false`
 * `directoryInfo:getFiles(pattern = '*.*', recursive = false)`: gets sub-files under the directory represented by the `DirectoryInfo`
-	* `pattern`: lookup pattern, supports wildcards
+	* `pattern`: lookup pattern, supports wildcards, eg. `"*.txt;*.json"`
 	* `recursive`: whether lookup its sub-directories
 	* returns a list of `FileInfo` objects
 * `directoryInfo:getDirectories(recursive = false)`: gets sub-directories under the directory represented by the `DirectoryInfo`
@@ -1199,7 +1199,7 @@ For both "string" and "json", the underneath data flow always end up with a zero
 
 * `Platform.openFile([title[, filter]])`: popups an open-file-dialog
 	* `title`: the title text
-	* `filter`: the file filter, eg. "Text files (*.txt);*.txt;All files (*.*);*"
+	* `filter`: the file filter, eg. `"Text files (*.txt);*.txt;All files (*.*);*"`
 	* returns selected file path, or `nil` for canceled
 * `Platform.saveFile([title[, filter]])`: popups a save-file-dialog
 	* `title`: the title text
@@ -1779,6 +1779,8 @@ Available options:
 	* `img`: the specific `Image` to set, `nil` to reset
 	* `x`: the spot x, with range of values from 0.0 to 1.0
 	* `y`: the spot y, with range of values from 0.0 to 1.0
+* `Application.size()`: gets the application window size
+	* returns `width`, `height`
 * `Application.resize(w, h)`: resizes the application window
 	* `w`: the expected width
 	* `h`: the expected height
