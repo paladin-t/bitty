@@ -261,7 +261,7 @@ public:
 				do {
 					constexpr char HEAD[] = "## Table of Content";
 					constexpr char TAIL[] = "<!-- End Table of Content -->";
-					size_t b, e;
+					size_t b = 0, e = 0;
 					b = Text::indexOf(_content, HEAD);
 					if (b == std::string::npos)
 						break;
@@ -270,12 +270,26 @@ public:
 						break;
 					_tableOfContent = _content.substr(b + 19, e - (b + 19));
 				} while (false);
+				do {
+					if (_tableOfContent.empty())
+						break;
+					constexpr char HEAD[] = "<!--";
+					constexpr char TAIL[] = "-->";
+					size_t b, e;
+					b = Text::indexOf(_tableOfContent, HEAD);
+					if (b == std::string::npos)
+						break;
+					e = Text::indexOf(_tableOfContent, TAIL, b);
+					if (e == std::string::npos)
+						break;
+					_tableOfContent.erase(b, e - b + 3);
+				} while (true);
 
 				// Remove comments.
 				do {
 					constexpr char HEAD[] = "<!--";
 					constexpr char TAIL[] = "-->";
-					size_t b, e;
+					size_t b = 0, e = 0;
 					b = Text::indexOf(_content, HEAD);
 					if (b == std::string::npos)
 						break;
@@ -390,7 +404,6 @@ public:
 		ImGui::PushStyleColor(ImGuiCol_BorderShadow, ImVec4(0, 0, 0, 0));
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 2.0f * scale));
-
 
 		// Process document jumping.
 		if (!_docTarget.empty()) {
