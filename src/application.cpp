@@ -194,7 +194,7 @@ public:
 		_opened = true;
 
 		// Initialize the window and renderer.
-		const bool borderless = options.find(WORKSPACE_OPTION_WINDOW_BORDERLESS_KEY) != options.end();
+		const bool borderless = options.find(WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY) != options.end();
 		int scale = 1;
 		if (options.find(WORKSPACE_OPTION_RENDERER_X2_KEY) != options.end())
 			scale = 2;
@@ -229,12 +229,14 @@ public:
 #else /* BITTY_EFFECTS_ENABLED */
 		const bool opengl = false;
 #endif /* BITTY_EFFECTS_ENABLED */
+		const bool alwaysOnTop = options.find(WORKSPACE_OPTION_WINDOW_ALWAYS_ON_TOP_ENABLED_KEY) != options.end();
 		_window = Window::create();
 		_window->open(
 			BITTY_TITLE " v" BITTY_VERSION_STRING,
 			0, WINDOW_DEFAULT_WIDTH, WINDOW_DEFAULT_HEIGHT,
 			WINDOW_MIN_WIDTH * scale, WINDOW_MIN_HEIGHT * scale, borderless,
-			highDpi, opengl
+			highDpi, opengl,
+			alwaysOnTop
 		);
 
 		int driver = 0;
@@ -876,7 +878,7 @@ private:
 #if defined BITTY_OS_WIN
 			" [-" WORKSPACE_OPTION_APPLICATION_CONSOLE_ENABLED_KEY "]"
 #endif /* BITTY_OS_WIN */
-			" [-" WORKSPACE_OPTION_WINDOW_BORDERLESS_KEY "]"
+			" [-" WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY "]"
 			" [-" WORKSPACE_OPTION_WINDOW_SIZE_KEY " MxN]"
 			" [-" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY " ]"
 			" [-" WORKSPACE_OPTION_RENDERER_X2_KEY "]"
@@ -893,7 +895,7 @@ private:
 #if defined BITTY_OS_WIN
 		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_CONSOLE_ENABLED_KEY "        Enable console window.\n");
 #endif /* BITTY_OS_WIN */
-		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_BORDERLESS_KEY           "        Run with borderless window.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY           "        Run with borderless window.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_SIZE_KEY                 " MxN    Specify window size.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY                 "        Disable high-DPI.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X2_KEY                 "       Set renderer scale to x2.\n");

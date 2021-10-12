@@ -309,6 +309,7 @@ unsigned WorkspaceSketchbook::update(class Window* wnd, class Renderer* rnd, con
 	unsigned result = 0;
 
 	execute(wnd, rnd, project, exec, primitives, delta, alive);
+	checkAliveness(wnd, rnd, project, exec, primitives);
 
 	prepare(wnd, rnd, project, exec, primitives);
 	shortcuts(wnd, rnd, project, exec, primitives);
@@ -394,6 +395,16 @@ void WorkspaceSketchbook::renderTargetsReset(class Window* wnd, class Renderer* 
 	Workspace::renderTargetsReset(wnd, rnd, project, exec, primitives);
 
 	exec->renderTargetsReset();
+}
+
+void WorkspaceSketchbook::checkAliveness(class Window* wnd, class Renderer*, const class Project*, Executable*, class Primitives*) {
+	if (halting() || !canvasTexture()) {
+#if defined BITTY_DEBUG
+		wnd->title(BITTY_TITLE " v" BITTY_VERSION_STRING " [DEBUG]");
+#else /* BITTY_DEBUG */
+		wnd->title(BITTY_TITLE " v" BITTY_VERSION_STRING);
+#endif /* BITTY_DEBUG */
+	}
 }
 
 void WorkspaceSketchbook::shortcuts(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {

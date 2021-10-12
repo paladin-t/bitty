@@ -19,6 +19,7 @@
 #include "theme.h"
 #include "../lib/md4c/src/md4c.h"
 #include <stack>
+#include <SDL.h>
 
 /*
 ** {===========================================================================
@@ -140,6 +141,7 @@ private:
 	std::string _scrollTarget;
 	unsigned _scrollTargetDelay = 0;
 	std::string _title;
+	std::string _tableOfContent;
 	std::string _content;
 
 	BlockStack _blockStack;
@@ -222,6 +224,7 @@ public:
 		return _document.c_str();
 	}
 	virtual void show(const char* doc) override {
+		// Prepare.
 		if (_shown)
 			return;
 
@@ -234,51 +237,77 @@ public:
 		_tableRowIndex = 0;
 		_tableColumnIndex = 0;
 
-		if (_content.empty()) {
-			auto load = [&] (const char* doc_) -> bool {
-				bool result = false;
-				File* file = File::create();
-				if (file->open(doc_, Stream::READ)) {
-					size_t l = file->count();
-					Byte* buf = new Byte[l + 1];
-					file->readBytes(buf, (size_t)l);
-					buf[l] = '\0';
-					_content = (const char*)buf;
-					delete [] buf;
-					file->close();
+		if (!_content.empty())
+			return;
 
-					do {
-						size_t b, e;
-						b = Text::indexOf(_content, "<!--");
-						if (b == std::string::npos)
-							break;
-						e = Text::indexOf(_content, "-->", b);
-						if (e == std::string::npos)
-							break;
-						_content.erase(b, e - b + 3);
-					} while (true);
+		// Load document.
+		auto load = [&] (const char* doc_) -> bool {
+			// Prepare.
+			bool result = false;
+			File* file = File::create();
 
-					FileInfo::Ptr fileInfo = FileInfo::make(doc_);
-					_title = fileInfo->fileName().c_str();
-					if (!_title.empty())
-						_title[0] = (char)::toupper(_title[0]);
+			// Open the file.
+			if (file->open(doc_, Stream::READ)) {
+				// Read from file.
+				size_t l = file->count();
+				Byte* buf = new Byte[l + 1];
+				file->readBytes(buf, (size_t)l);
+				buf[l] = '\0';
+				_content = (const char*)buf;
+				delete [] buf;
+				file->close();
 
-					_document = doc_;
+				// Parse table of content.
+				do {
+					constexpr char HEAD[] = "## Table of Content";
+					constexpr char TAIL[] = "<!-- End Table of Content -->";
+					size_t b, e;
+					b = Text::indexOf(_content, HEAD);
+					if (b == std::string::npos)
+						break;
+					e = Text::indexOf(_content, TAIL, b);
+					if (e == std::string::npos)
+						break;
+					_tableOfContent = _content.substr(b + 19, e - (b + 19));
+				} while (false);
 
-					result = true;
-				}
-				File::destroy(file);
+				// Remove comments.
+				do {
+					constexpr char HEAD[] = "<!--";
+					constexpr char TAIL[] = "-->";
+					size_t b, e;
+					b = Text::indexOf(_content, HEAD);
+					if (b == std::string::npos)
+						break;
+					e = Text::indexOf(_content, TAIL, b);
+					if (e == std::string::npos)
+						break;
+					_content.erase(b, e - b + 3);
+				} while (true);
 
-				return result;
-			};
-			if (!load(doc)) {
-				std::string base, ext, parent;
-				Path::split(doc, &base, &ext, &parent);
-				if (!base.empty())
-					base[0] = (char)::toupper(base[0]);
-				const std::string doc_ = Path::combine(parent.c_str(), base.c_str()) + "." + ext;
-				load(doc_.c_str());
+				// Get meta information.
+				FileInfo::Ptr fileInfo = FileInfo::make(doc_);
+				_title = fileInfo->fileName().c_str();
+				if (!_title.empty())
+					_title[0] = (char)::toupper(_title[0]);
+
+				_document = doc_;
+
+				result = true;
 			}
+
+			// Finish.
+			File::destroy(file);
+
+			return result;
+		};
+		if (!load(doc)) {
+			std::string base, ext, parent;
+			Path::split(doc, &base, &ext, &parent);
+			if (!base.empty())
+				base[0] = (char)::toupper(base[0]);
+			const std::string doc_ = Path::combine(parent.c_str(), base.c_str()) + "." + ext;
+			load(doc_.c_str());
 		}
 	}
 	virtual void hide(void) override {
@@ -288,6 +317,7 @@ public:
 		_shown = 0;
 
 		_title.clear();
+		_tableOfContent.clear();
 		_content.clear();
 
 		_codeHeights.clear();
@@ -310,6 +340,8 @@ public:
 	virtual void update(class Window* wnd, class Renderer* rnd, const class Theme* theme, bool windowed) override {
 		if (!_shown)
 			return;
+
+		shortcuts();
 
 		if (!windowed) {
 			document(wnd, rnd, theme);
@@ -351,6 +383,7 @@ public:
 	}
 
 	void document(class Window* wnd, class Renderer* rnd, const class Theme* theme) {
+		// Prepare.
 		const float scale = ImGui::GetIO().FontGlobalScale;
 
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.5f, 0.5f, 0.5f, 0.62f));
@@ -358,32 +391,110 @@ public:
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 2.0f * scale));
 
+
+		// Process document jumping.
 		if (!_docTarget.empty()) {
 			hide();
 			show(_docTarget.c_str());
 			_docTarget.clear();
 		}
-		Context context(wnd, rnd, this, theme, scale);
-		md_parse(
-			(const MD_CHAR*)_content.c_str(), (MD_SIZE)_content.length(), 
-			&_renderer, &context
-		);
-		assert(_blockStack.empty());
-		assert(_spanStack.empty());
-		assert(_scaleStack.empty());
-		while (!_blockStack.empty())
-			_blockStack.pop();
-		while (!_spanStack.empty())
-			_spanStack.pop();
-		while (!_scaleStack.empty())
-			_scaleStack.pop();
+		// Render the content.
+		float width = 0;
+		const bool withTableOfContent = !_tableOfContent.empty() && ImGui::GetWindowWidth() > 800;
+		if (withTableOfContent)
+			width = ImGui::GetWindowWidth() - 266;
+		ImGui::BeginChild("@Doc/Ctt", ImVec2(width, 0), false, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoNav);
+		{
+			// Render the content.
+			Context context(wnd, rnd, this, theme, scale);
+			md_parse(
+				(const MD_CHAR*)_content.c_str(), (MD_SIZE)_content.length(),
+				&_renderer, &context
+			);
+			assert(_blockStack.empty());
+			assert(_spanStack.empty());
+			assert(_scaleStack.empty());
+			while (!_blockStack.empty())
+				_blockStack.pop();
+			while (!_spanStack.empty())
+				_spanStack.pop();
+			while (!_scaleStack.empty())
+				_scaleStack.pop();
 
+			// Process navigation.
+			if (!_scrollTarget.empty()) {
+				if (_scrollTargetDelay > 0)
+					--_scrollTargetDelay;
+				else
+					_scrollTarget.clear();
+
+				if (_scrollTarget == ">>TOP") {
+					ImGui::SetScrollY(0);
+				} else if (_scrollTarget == ">>BOTTOM") {
+					const float y = ImGui::GetCursorPosY();
+					ImGui::SetScrollY(y);
+				}
+				if (_scrollTarget == ">>UP") {
+					ImGui::SetScrollY(ImGui::GetScrollY() - 16);
+				} else if (_scrollTarget == ">>DOWN") {
+					ImGui::SetScrollY(ImGui::GetScrollY() + 16);
+				}
+			}
+		}
+		ImGui::EndChild();
+
+		// Render table of content.
+		if (withTableOfContent) {
+			ImGui::SameLine();
+			ImGui::BeginChild("@Doc/ToC", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_NoNav);
+			{
+				Context context(wnd, rnd, this, theme, scale);
+				md_parse(
+					(const MD_CHAR*)_tableOfContent.c_str(), (MD_SIZE)_tableOfContent.length(),
+					&_renderer, &context
+				);
+				assert(_blockStack.empty());
+				assert(_spanStack.empty());
+				assert(_scaleStack.empty());
+				while (!_blockStack.empty())
+					_blockStack.pop();
+				while (!_spanStack.empty())
+					_spanStack.pop();
+				while (!_scaleStack.empty())
+					_scaleStack.pop();
+			}
+			ImGui::EndChild();
+		}
+
+		// Finish.
 		ImGui::PopStyleVar();
 
 		ImGui::PopStyleColor(2);
 	}
 
 private:
+	void shortcuts(void) {
+		const bool home = ImGui::IsKeyPressed(SDL_SCANCODE_HOME);
+		const bool end = ImGui::IsKeyPressed(SDL_SCANCODE_END);
+		const bool up = ImGui::IsKeyPressed(SDL_SCANCODE_UP);
+		const bool down = ImGui::IsKeyPressed(SDL_SCANCODE_DOWN);
+
+		if (home) {
+			_scrollTarget = ">>TOP";
+			_scrollTargetDelay = 1;
+		} else if (end) {
+			_scrollTarget = ">>BOTTOM";
+			_scrollTargetDelay = 1;
+		}
+		if (up) {
+			_scrollTarget = ">>UP";
+			_scrollTargetDelay = 1;
+		} else if (down) {
+			_scrollTarget = ">>DOWN";
+			_scrollTargetDelay = 1;
+		}
+	}
+
 	int enterBlock(MD_BLOCKTYPE type, void* detail, Context* context) {
 		_blockStack.push(type);
 

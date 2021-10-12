@@ -40,7 +40,8 @@ public:
 		const char* title,
 		int displayIndex, int width, int height,
 		int minWidth, int minHeight, bool borderless,
-		bool highDpi, bool opengl
+		bool highDpi, bool opengl,
+		bool alwaysOnTop
 	) override {
 		if (_window)
 			return false;
@@ -51,6 +52,8 @@ public:
 			flags |= SDL_WINDOW_BORDERLESS;
 		if (opengl)
 			flags |= SDL_WINDOW_OPENGL;
+		if (alwaysOnTop)
+			flags |= SDL_WINDOW_ALWAYS_ON_TOP;
 #else /* BITTY_OS_HTML */
 		Uint32 flags = SDL_WINDOW_RESIZABLE;
 		if (borderless)
@@ -59,6 +62,8 @@ public:
 			flags |= SDL_WINDOW_ALLOW_HIGHDPI;
 		if (opengl)
 			flags |= SDL_WINDOW_OPENGL;
+		if (alwaysOnTop)
+			flags |= SDL_WINDOW_ALWAYS_ON_TOP;
 #endif /* BITTY_OS_HTML */
 		_window = SDL_CreateWindow(
 			title,
@@ -170,6 +175,16 @@ public:
 		_resizable = val;
 
 		SDL_SetWindowResizable(_window, val ? SDL_TRUE : SDL_FALSE);
+	}
+
+	virtual void show(void) override {
+		SDL_ShowWindow(_window);
+	}
+	virtual void hide(void) override {
+		SDL_HideWindow(_window);
+	}
+	virtual void raise(void) override {
+		SDL_RaiseWindow(_window);
 	}
 
 	virtual bool maximized(void) const override {

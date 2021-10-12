@@ -9586,7 +9586,24 @@ static int Application_setOption(lua_State* L) {
 	std::string key;
 	read<>(L, key);
 
-	if (key == "minimum_size") {
+	if (key == "title") {
+		std::string title;
+		read<2>(L, title);
+		if (title.empty()) {
+			error(L, "Invalid title.");
+
+			return 0;
+		}
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				Window* wnd = impl->primitives()->window();
+				wnd->title(title.c_str());
+			},
+			nullptr,
+			true
+		);
+	} else if (key == "minimum_size") {
 		int w = 0, h = 0;
 		read<2>(L, w, h);
 		if (w < 0 || h < 0) {
@@ -9754,6 +9771,21 @@ static int Application_resize(lua_State* L) {
 	return 0;
 }
 
+static int Application_raise(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	impl->primitives()->function(
+		[=] (const Variant &) -> void {
+			Window* wnd = impl->primitives()->window();
+			wnd->raise();
+		},
+		nullptr,
+		true
+	);
+
+	return 0;
+}
+
 #if BITTY_EFFECTS_ENABLED
 static int Application_setEffect(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
@@ -9898,6 +9930,7 @@ static void open_Application(lua_State* L) {
 								luaL_Reg{ "setCursor", Application_setCursor }, // Frame synchronized.
 								luaL_Reg{ "size", Application_size }, // Frame synchronized.
 								luaL_Reg{ "resize", Application_resize }, // Frame synchronized.
+								luaL_Reg{ "raise", Application_raise }, // Frame synchronized.
 #if BITTY_EFFECTS_ENABLED
 								luaL_Reg{ "setEffect", Application_setEffect }, // Undocumented. Frame synchronized.
 								luaL_Reg{ "setEffectUniform", Application_setEffectUniform }, // Undocumented. Frame synchronized.
@@ -9926,6 +9959,7 @@ static void open_Application(lua_State* L) {
 								luaL_Reg{ "setCursor", Application_setCursor }, // Frame synchronized.
 								luaL_Reg{ "size", Application_size }, // Frame synchronized.
 								luaL_Reg{ "resize", Application_resize }, // Frame synchronized.
+								luaL_Reg{ "raise", Application_raise }, // Frame synchronized.
 								luaL_Reg{ nullptr, nullptr }
 							)
 						);

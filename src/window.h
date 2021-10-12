@@ -67,7 +67,8 @@ public:
 		const char* title,
 		int displayIndex, int width, int height,
 		int minWidth, int minHeight, bool borderless,
-		bool highDpi, bool opengl
+		bool highDpi, bool opengl,
+		bool alwaysOnTop
 	) = 0;
 	/**
 	 * @brief Closes the window after all operations.
@@ -149,6 +150,19 @@ public:
 	 * @brief Sets whether the window is resizable.
 	 */
 	virtual void resizable(bool val) = 0;
+
+	/**
+	 * @brief Shows the window.
+	 */
+	virtual void show(void) = 0;
+	/**
+	 * @brief Hides the window.
+	 */
+	virtual void hide(void) = 0;
+	/**
+	 * @brief Raises the window.
+	 */
+	virtual void raise(void) = 0;
 
 	/**
 	 * @brief Gets whether the window is maximized.

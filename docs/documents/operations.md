@@ -18,6 +18,8 @@
 * [Font Preview](#font-preview)
 * [Sound Preview](#sound-preview)
 
+<!-- End Table of Content -->
+
 [TOP](#operations)
 
 # General

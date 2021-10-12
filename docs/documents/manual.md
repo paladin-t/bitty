@@ -86,6 +86,8 @@
 	* [Building for Desktop](#building-for-desktop)
 	* [Building for HTML](#building-for-html)
 
+<!-- End Table of Content -->
+
 [TOP](#reference-manual)
 
 # Fundamental
@@ -1770,6 +1772,7 @@ Available options:
 
 | Key | Value | Note |
 |---|---|---|
+| "title" | String, `title` | Sets the title of the application window |
 | "minimum_size" | Integers, `width`, `height` | Sets the minimum size of the application window |
 | "maximum_size" | Integers, `width`, `height` | Sets the maximum size of the application window |
 | "bordered" | Boolean, `bordered` | Sets whether the application window is bordered |
@@ -1786,6 +1789,7 @@ Available options:
 	* `h`: the expected height
 * `Application.resize(size)`: resizes the application window
 	* `size`: can be one in "fullscreen", "windowed"
+* `Application.raise()`: raises the application window
 
 ### Canvas
 

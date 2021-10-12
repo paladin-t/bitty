@@ -68,6 +68,8 @@ protected:
 	using Workspace::save;
 
 private:
+	void checkAliveness(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
+
 	void shortcuts(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 	void menu(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 
