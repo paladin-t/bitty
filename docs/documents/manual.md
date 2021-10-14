@@ -94,14 +94,14 @@
 
 ## Specifications
 
-* Display: defaults to 480x320 pixels, configurable to bigger, smaller or self-adaption
-* Audio: 1 BGM channel, 4 SFX channels; supports MP3, OGG, WAV, etc.
-* Font: supports Bitmap and TrueType
+* Display: configurable resolution
 * Code: Lua, supports multiple source files
-* Sprite: up to 1024x1024 pixels per frame, up to 1024 frames per sprite
-* Map: up to 4096x4096 tiles per page
 * Image: either true-color (PNG, JPG, BMP, TGA) or paletted, up to 1024x1024 pixels per file
 * Palette: 256 colors with transparency support
+* Sprite: up to 1024x1024 pixels per frame, up to 1024 frames per sprite
+* Map: up to 4096x4096 tiles per page
+* Font: supports Bitmap and TrueType
+* Audio: 1 BGM channel, 4 SFX channels; supports MP3, OGG, WAV, etc.
 * Gamepad: 6 buttons for each pad (D-Pad + A/B), up to 2 players
 * Keyboard and mouse: supported
 

@@ -11,6 +11,7 @@
   <link rel="shortcut icon" href="favicon.ico" />
   <link rel="apple-touch-icon" href="icon.png" />
   <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" type="text/css" href="slides.css">
 </head>
 <body onclick>
   <div class="page">
@@ -58,6 +59,10 @@
         <br>
 
         Bitty Engine is a cross-platform itty bitty <b>Game Engine</b> and open-source <b>Framework</b>. The full featured engine is programmable in Lua and integrated with built-in editors. It keeps the nature of both engine's productivity, and fantasy computer/console's ease to iterate. It boosts your commercial/non-commercial projects, prototypes, game jams, or just thought experiments.
+
+        <br>
+
+        It is supposed to be your ultimate 2D game creating software.
       </p>
 
       <p align="left">
@@ -82,14 +87,14 @@
         <b>Technical specifications</b>
 
         <ul>
-          <li>Display: defaults to 480x320 pixels, configurable to bigger, smaller or self-adaption</li>
-          <li>Audio: 1 BGM channel, 4 SFX channels; supports MP3, OGG, WAV, etc.</li>
-          <li>Font: supports Bitmap and TrueType</li>
+          <li>Display: configurable resolution</li>
           <li>Code: Lua, supports multiple source files</li>
-          <li>Sprite: up to 1024x1024 pixels per frame, up to 1024 frames per sprite</li>
-          <li>Map: up to 4096x4096 tiles per page</li>
           <li>Image: either true-color (PNG, JPG, BMP, TGA) or paletted, up to 1024x1024 pixels per file</li>
           <li>Palette: 256 colors with transparency support</li>
+          <li>Sprite: up to 1024x1024 pixels per frame, up to 1024 frames per sprite</li>
+          <li>Map: up to 4096x4096 tiles per page</li>
+          <li>Font: supports Bitmap and TrueType</li>
+          <li>Audio: 1 BGM channel, 4 SFX channels; supports MP3, OGG, WAV, etc.</li>
           <li>Gamepad: 6 buttons for each pad (D-Pad + A/B), up to 2 players</li>
           <li>Keyboard and mouse: supported</li>
         </ul>
@@ -100,81 +105,86 @@
         Make your own games
       </h2>
 
-      <p align="center">
-        <img src="imgs/screenshot1_edit_code.png" class="box">
-        <br>
-        Edit code
+      <p align="center" class="slider-frame">
+        <iframe id="slider-iframe" src="slides.html" scrolling="no" style="width: 720px; height: 480px; border: none;"></iframe>
       </p>
-      <hr class='hr'>
-      <p align="center">
-        <img src="imgs/screenshot2_edit_sprite.png" class="box">
-        <br>
-        Edit sprite
-      </p>
-      <hr class='hr'>
-      <p align="center">
-        <img src="imgs/screenshot3_edit_map.png" class="box">
-        <br>
-        Edit map
-      </p>
-      <hr class='hr'>
-      <p align="center">
-        <img src="imgs/screenshot4_edit_image.png" class="box">
-        <br>
-        Edit image
-      </p>
-      <hr class='hr'>
-      <span class="more" id="more-screenshots">
+      <div align="center" class="slider-vertical">
         <p align="center">
-          <img src="imgs/screenshot5_view_sound.png" class="box">
+          <img src="imgs/screenshot1_edit_code.png" class="box">
           <br>
-          View sound
+          Edit code
         </p>
         <hr class='hr'>
         <p align="center">
-          <img src="imgs/screenshot6_view_font.png" class="box">
+          <img src="imgs/screenshot2_edit_sprite.png" class="box">
           <br>
-          View font
+          Edit sprite
         </p>
         <hr class='hr'>
         <p align="center">
-          <img src="imgs/screenshot7_play.png" class="box">
+          <img src="imgs/screenshot3_edit_map.png" class="box">
           <br>
-          Play
+          Edit map
         </p>
         <hr class='hr'>
         <p align="center">
-          <img src="imgs/screenshot8_palette.png" class="box">
+          <img src="imgs/screenshot4_edit_image.png" class="box">
           <br>
-          Palette
+          Edit image
         </p>
         <hr class='hr'>
-        <p align="center">
-          <img src="imgs/screenshot9_blend.png" class="box">
-          <br>
-          Blend
-        </p>
-        <hr class='hr'>
-        <p align="center">
-          <img src="imgs/screenshot10_custom_clip.png" class="box">
-          <br>
-          Custom clip
-        </p>
-        <hr class='hr'>
-        <p align="center">
-          <img src="imgs/screenshot11_terminal.png" class="box">
-          <br>
-          Terminal
-        </p>
-        <hr class='hr'>
-        <p align="center">
-          <img src="imgs/screenshot12_pathfinding.png" class="box">
-          <br>
-          Pathfinding
-        </p>
-      </span>
-      <div class="more-button">
-        <button class="button" id="toggle-screenshots">Show more...</button>
+        <span class="more" id="more-screenshots">
+          <p align="center">
+            <img src="imgs/screenshot5_view_sound.png" class="box">
+            <br>
+            View sound
+          </p>
+          <hr class='hr'>
+          <p align="center">
+            <img src="imgs/screenshot6_view_font.png" class="box">
+            <br>
+            View font
+          </p>
+          <hr class='hr'>
+          <p align="center">
+            <img src="imgs/screenshot7_play.png" class="box">
+            <br>
+            Play
+          </p>
+          <hr class='hr'>
+          <p align="center">
+            <img src="imgs/screenshot8_palette.png" class="box">
+            <br>
+            Palette
+          </p>
+          <hr class='hr'>
+          <p align="center">
+            <img src="imgs/screenshot9_blend.png" class="box">
+            <br>
+            Blend
+          </p>
+          <hr class='hr'>
+          <p align="center">
+            <img src="imgs/screenshot10_custom_clip.png" class="box">
+            <br>
+            Custom clip
+          </p>
+          <hr class='hr'>
+          <p align="center">
+            <img src="imgs/screenshot11_terminal.png" class="box">
+            <br>
+            Terminal
+          </p>
+          <hr class='hr'>
+          <p align="center">
+            <img src="imgs/screenshot12_pathfinding.png" class="box">
+            <br>
+            Pathfinding
+          </p>
+        </span>
+        <div class="more-button">
+          <button class="button" id="toggle-screenshots">Show more...</button>
+        </div>
       </div>
 
       <h2>

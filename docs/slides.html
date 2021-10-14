@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" type="text/css" href="slides.css">
+</head>
+<body style="margin: 0;">
+  <div class="slider">
+    <span id="slide-1"></span>
+    <span id="slide-2"></span>
+    <span id="slide-3"></span>
+    <span id="slide-4"></span>
+    <span id="slide-5"></span>
+    <span id="slide-6"></span>
+    <span id="slide-7"></span>
+    <span id="slide-8"></span>
+    <span id="slide-9"></span>
+    <span id="slide-10"></span>
+    <span id="slide-11"></span>
+    <span id="slide-12"></span>
+    <div class="slide-images" id="slide-images">
+      <img src="imgs/screenshot1_edit_code.png" class="slide" />
+      <img src="imgs/screenshot2_edit_sprite.png" class="slide" />
+      <img src="imgs/screenshot3_edit_map.png" class="slide" />
+      <img src="imgs/screenshot4_edit_image.png" class="slide" />
+      <img src="imgs/screenshot5_view_sound.png" class="slide" />
+      <img src="imgs/screenshot6_view_font.png" class="slide" />
+      <img src="imgs/screenshot7_play.png" class="slide" />
+      <img src="imgs/screenshot8_palette.png" class="slide" />
+      <img src="imgs/screenshot9_blend.png" class="slide" />
+      <img src="imgs/screenshot10_custom_clip.png" class="slide" />
+      <img src="imgs/screenshot11_terminal.png" class="slide" />
+      <img src="imgs/screenshot12_pathfinding.png" class="slide" />
+    </div>
+    <div class="slide-buttons">
+      <button id="button1"></button>
+      <button id="button2"></button>
+      <button id="button3"></button>
+      <button id="button4"></button>
+      <button id="button5"></button>
+      <button id="button6"></button>
+      <button id="button7"></button>
+      <button id="button8"></button>
+      <button id="button9"></button>
+      <button id="button10"></button>
+      <button id="button11"></button>
+      <button id="button12"></button>
+    </div>
+  </div>
+  <script>
+    // Slides.
+    var slideRoutine = null;
+    var slideIndex = 0;
+    var slideImages = document.getElementById('slide-images');
+    var slides = document.getElementsByClassName('slide');
+    function setCursor(index) {
+      for (var i = 0; i < slides.length; ++i) {
+        var button = document.getElementById('button' + (i + 1).toString());
+        if (i + 1 == index)
+          button.style = 'background-color: gray;';
+        else
+          button.style = 'background-color: white;';
+      }
+    }
+    function showSlides() {
+      ++slideIndex;
+      if (slideIndex > slides.length)
+        slideIndex = 1;
+      slideImages.style = 'left: -' + ((slideIndex - 1) * 720).toString() + 'px;';
+      setCursor(slideIndex);
+      slideRoutine = setTimeout(showSlides, 3000);
+    }
+    for (var i = 0; i < slides.length; ++i) {
+      var button = document.getElementById('button' + (i + 1).toString());
+      (function () {
+        var index = i;
+        button.onclick = function () {
+          slideIndex = index + 1;
+          slideImages.style = 'left: -' + (index * 720).toString() + 'px;';
+          setCursor(index + 1);
+          if (slideRoutine != null) {
+            clearTimeout(slideRoutine);
+            slideRoutine = setTimeout(showSlides, 5000);
+          }
+        };
+      })();
+    }
+    showSlides();
+  </script>
+</body>
+</html>

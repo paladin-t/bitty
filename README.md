@@ -27,6 +27,8 @@
 
 Bitty Engine is a cross-platform itty bitty **Game Engine** and open-source **Framework**. The full featured engine is programmable in Lua and integrated with built-in editors. It keeps the nature of both engine's productivity, and fantasy computer/console's ease to iterate. It boosts your commercial/non-commercial projects, prototypes, game jams, or just thought experiments.
 
+It is supposed to be your ultimate 2D game creating software.
+
 ### Features
 
 Bitty Engine offers a set of orthogonal features that makes game development comfortable and enjoyable.
@@ -58,14 +60,14 @@ These features are quite stable. Things just change, but it is very important th
 
 ### Technical specifications
 
-* Display: defaults to 480x320 pixels, configurable to bigger, smaller or self-adaption
-* Audio: 1 BGM channel, 4 SFX channels; supports MP3, OGG, WAV, FLAC, etc.
-* Font: supports Bitmap and TrueType
+* Display: configurable resolution
 * Code: Lua, supports multiple source files
-* Sprite: up to 1024x1024 pixels per frame, up to 1024 frames per sprite
-* Map: up to 4096x4096 tiles per page
 * Image: either true-color (PNG, JPG, BMP, TGA) or paletted, up to 1024x1024 pixels per file
 * Palette: 256 colors with transparency support
+* Sprite: up to 1024x1024 pixels per frame, up to 1024 frames per sprite
+* Map: up to 4096x4096 tiles per page
+* Font: supports Bitmap and TrueType
+* Audio: 1 BGM channel, 4 SFX channels; supports MP3, OGG, WAV, FLAC, etc.
 * Gamepad: 6 buttons for each pad (D-Pad + A/B), up to 2 players
 * Keyboard and mouse: supported
 
