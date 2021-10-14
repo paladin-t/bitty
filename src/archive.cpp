@@ -49,7 +49,8 @@ Archive* Archive::create(Formats type) {
 }
 
 void Archive::destroy(Archive* ptr) {
-	switch (ptr->format()) {
+	const Formats type = ptr->format();
+	switch (type) {
 	case TXT:
 		archive_destroy_txt(ptr);
 
