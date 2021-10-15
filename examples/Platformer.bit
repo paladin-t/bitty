@@ -1,5 +1,5 @@
 package:application/vnd.bitty-archive;
-data:text/json;count=145;path=info.json;
+data:text/json;count=184;path=info.json;
 {
   "id": 0,
   "title": "Games/05. Platformer",
@@ -7,7 +7,10 @@ data:text/json;count=145;path=info.json;
   "author": "Tony",
   "version": "1.0",
   "genre": "TUTORIAL",
-  "url": ""
+  "url": "",
+  "strategies": [
+    "batch_map"
+  ]
 }
 data:text/lua;count=4306;path=character.lua;
 --[[
