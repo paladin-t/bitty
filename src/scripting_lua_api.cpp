@@ -9310,11 +9310,12 @@ static int Primitives_stop(lua_State* L) {
 	read<>(L, sfx);
 
 	if (sfx && *sfx) {
-		int fade = -1;
+		float fade = -1;
 		if (n >= 2)
 			read<2>(L, fade);
 
-		impl->primitives()->stop(*sfx, fade > 0 ? &fade : nullptr);
+		const int fadeMs = fade >= 0 ? (int)fade * 1000 : -1;
+		impl->primitives()->stop(*sfx, fadeMs > 0 ? &fadeMs : nullptr);
 
 		return 0;
 	}
@@ -9323,11 +9324,12 @@ static int Primitives_stop(lua_State* L) {
 	read<>(L, mus);
 
 	if (mus && *mus) {
-		int fade = -1;
+		float fade = -1;
 		if (n >= 2)
 			read<2>(L, fade);
 
-		impl->primitives()->stop(*mus, fade > 0 ? &fade : nullptr);
+		const int fadeMs = fade >= 0 ? (int)fade * 1000 : -1;
+		impl->primitives()->stop(*mus, fadeMs > 0 ? &fadeMs : nullptr);
 
 		return 0;
 	}
