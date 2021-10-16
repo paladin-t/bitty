@@ -40,7 +40,7 @@ static int documentSameLineIfPossible(float /* scale */, bool sameLine, const ch
 	const float spacingW = -1.0f;
 	ImGui::SameLine(posX, spacingW);
 	const float curX = ImGui::GetCursorPosX();
-	float wndR = ImGui::GetWindowContentRegionWidth();
+	float wndR = ImGui::GetContentRegionAvail().x;
 	if (ImGui::TableGetColumnCount() > 1)
 		wndR = endX;
 	wndR -= 5.0f; // Move to right a bit.
@@ -744,9 +744,9 @@ private:
 				}
 				if (tex) {
 					ImVec2 size((float)tex->width(), (float)tex->height());
-					if (ImGui::GetWindowContentRegionWidth() < size.x) {
-						size.y = ImGui::GetWindowContentRegionWidth() * size.y / size.x;
-						size.x = ImGui::GetWindowContentRegionWidth();
+					if (ImGui::GetContentRegionAvail().x < size.x) {
+						size.y = ImGui::GetContentRegionAvail().x * size.y / size.x;
+						size.x = ImGui::GetContentRegionAvail().x;
 					}
 					ImGui::Image(tex->pointer(context->renderer), size);
 				}

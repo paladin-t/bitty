@@ -277,10 +277,12 @@ AboutPopupBox::AboutPopupBox(
 
 #if BITTY_EFFECTS_ENABLED
 	Effects* effects = _primitives->effects();
-	_specs += "Effects supported:\n";
-	_specs += "  ";
-	_specs += (effects && effects->valid()) ? "true" : "false";
-	_specs += "\n";
+	if (effects && effects->valid()) {
+		_specs += "Effects supported:\n";
+		_specs += "  ";
+		_specs += (effects && effects->valid()) ? "true" : "false";
+		_specs += "\n";
+	}
 #endif /* BITTY_EFFECTS_ENABLED */
 
 	_specs += "Render target supported:\n";

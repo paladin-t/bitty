@@ -116,7 +116,7 @@ On most platforms and when using C++, **you should be able to use a combination 
 Integrating Dear ImGui within your custom engine is a matter of 1) wiring mouse/keyboard/gamepad inputs 2) uploading one texture to your GPU/render engine 3) providing a render function that can bind textures and render textured triangles. The [examples/](https://github.com/ocornut/imgui/tree/master/examples) folder is populated with applications doing just that. If you are an experienced programmer at ease with those concepts, it should take you less than two hours to integrate Dear ImGui in your custom engine. **Make sure to spend time reading the [FAQ](https://www.dearimgui.org/faq), comments, and some of the examples/ application!**
 
 Officially maintained backends/bindings (in repository):
-- Renderers: DirectX9, DirectX10, DirectX11, DirectX12, Metal, OpenGL/ES/ES2, Vulkan, WebGPU.
+- Renderers: DirectX9, DirectX10, DirectX11, DirectX12, Metal, OpenGL/ES/ES2, SDL_Renderer, Vulkan, WebGPU.
 - Platforms: GLFW, SDL2, Win32, Glut, OSX, Android.
 - Frameworks: Emscripten, Allegro5, Marmalade.
 
@@ -162,7 +162,9 @@ See: [Wiki](https://github.com/ocornut/imgui/wiki) for many links, references, a
 
 See: [Articles about the IMGUI paradigm](https://github.com/ocornut/imgui/wiki#about-the-imgui-paradigm) to read/learn about the Immediate Mode GUI paradigm.
 
-For questions, bug reports, requests, feedback, you may post on [GitHub Issues](https://github.com/ocornut/imgui/issues) or [GitHub Discussions](https://github.com/ocornut/imgui/discussions). Please read and fill the New Issue template carefully.
+Getting started? For first-time users having issues compiling/linking/running or issues loading fonts, please use [GitHub Discussions](https://github.com/ocornut/imgui/discussions).
+
+For other questions, bug reports, requests, feedback, you may post on [GitHub Issues](https://github.com/ocornut/imgui/issues). Please read and fill the New Issue template carefully.
 
 Private support is available for paying business customers (E-mail: _contact @ dearimgui dot com_).
 

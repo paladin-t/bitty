@@ -30,6 +30,94 @@ HOW TO UPDATE?
   and API updates have been a little more frequent lately. They are documented below and in imgui.cpp and should not affect all users.
 - Please report any issue!
 
+-----------------------------------------------------------------------
+ VERSION 1.85 (Released 2021-10-12)
+-----------------------------------------------------------------------
+
+This is the last release officially supporting C++03 and Visual Studio 2008/2010. (#4537)
+We expect that the next release will require a subset of the C++11 language (VS 2012~, GCC 4.8.1, Clang 3.3).
+We may use some C++11 language features but we will not use any C++ library headers.
+If you are stuck on ancient compiler you may need to stay at this version onward.
+
+Breaking Changes:
+
+- Removed GetWindowContentRegionWidth() function. keep inline redirection helper.
+  Can use 'GetWindowContentRegionMax().x - GetWindowContentRegionMin().x' instead but it's not
+  very useful in practice, and the only use of it in the demo was illfit.
+  Using 'GetContentRegionAvail().x' is generally a better choice.
+
+Other Changes:
+
+- Debug: Stack Tool: Added "Stack Tool" available in "Demo->Tools->Stack Tool", "Metrics->Tools",
+  or by calling the ShowStackToolWindow() function. The tool run queries on hovered id to display
+  details about individual components that were hashed to create an ID. It helps understanding
+  the ID stack system and debugging potential ID collisions. (#4631) [@ocornut, @rokups]
+- Windows: Fixed background order of overlapping childs submitted sequentially. (#4493)
+- IsWindowFocused: Added ImGuiFocusedFlags_NoPopupHierarchy flag allowing to exclude child popups
+  from the tested windows when combined with _ChildWindows.
+- IsWindowHovered: Added ImGuiHoveredFlags_NoPopupHierarchy flag allowing to exclude child popups
+  from the tested windows when combined with _ChildWindows.
+- InputTextMultiline: Fixed label size not being included into window contents rect unless
+  the whole widget is clipped.
+- InputText: Allow activating/cancelling/validating input with gamepad nav events. (#2321, #4552)
+- InputText: Fixed selection rectangle appearing one frame late when selecting all.
+- TextUnformatted: Accept null ranges including (NULL,NULL) without asserting, in order to conform
+  to common idioms (e.g. passing .data(), .data() + .size() from a null string). (#3615)
+- Disabled: Added assert guard for mismatching BeginDisabled()/EndDisabled() blocks. (#211)
+- Nav: Fixed using SetKeyboardFocusHere() on non-visible/clipped items. It now works and will scroll
+  toward the item. When called during a frame where the parent window is appearing, scrolling will
+  aim to center the item in the window. When calling during a frame where the parent window is already
+  visible, scrolling will aim to scroll as little as possible to make the item visible. We will later
+  expose scroll functions and flags in public API to select those behaviors. (#343, #4079, #2352)
+- Nav: Fixed using SetKeyboardFocusHere() from activating a different item on the next frame if
+  submitted items have changed during that frame. (#432)
+- Nav: Fixed toggling menu layer with Alt or exiting menu layer with Esc not moving mouse when
+  the ImGuiConfigFlags_NavEnableSetMousePos config flag is set.
+- Nav: Fixed a few widgets from not setting reference keyboard/gamepad navigation ID when
+  activated with mouse. More specifically: BeginTabItem(), the scrolling arrows of BeginTabBar(),
+  the arrow section of TreeNode(), the +/- buttons of InputInt()/InputFloat(), Selectable() with
+  ImGuiSelectableFlags_SelectOnRelease. More generally: any direct use of ButtonBehavior() with
+  the PressedOnClick/PressedOnDoubleClick/PressedOnRelease button policy.
+- Nav: Fixed an issue with losing focus on docked windows when pressing Alt while keyboard navigation
+  is disabled. (#4547, #4439) [@PathogenDavid]
+- Nav: Fixed vertical scoring offset when wrapping on Y in a decorated window.
+- Nav: Improve scrolling behavior when navigating to an item larger than view.
+- TreePush(): removed unnecessary/inconsistent legacy behavior where passing a NULL value to
+  the TreePush(const char*) and TreePush(const void*) functions would use an hard-coded replacement.
+  The only situation where that change would make a meaningful difference is TreePush((const char*)NULL)
+  (_explicitly_ casting a null pointer to const char*), which is unlikely and will now crash.
+  You may replace it with anything else.
+- ColorEdit4: Fixed not being able to change hue when saturation is 0. (#4014) [@rokups]
+- ColorEdit4: Fixed hue resetting to 0 when it is set to 255. [@rokups]
+- ColorEdit4: Fixed hue value jitter when source color is stored as RGB in 32-bit integer and perform
+  RGB<>HSV round trips every frames. [@rokups]
+- ColorPicker4: Fixed picker being unable to select exact 1.0f color when dragging toward the edges
+  of the SV square (previously picked 0.999989986f). (#3517) [@rokups]
+- Menus: Fixed vertical alignments of MenuItem() calls within a menu bar (broken in 1.84). (#4538)
+- Menus: Improve closing logic when moving diagonally in empty between between parent and child menus to
+  accommodate for varying font size and dpi.
+- Menus: Fixed crash when navigating left inside a child window inside a sub-menu. (#4510).
+- Menus: Fixed an assertion happening in some situations when closing nested menus (broken in 1.83). (#4640)
+- Drag and Drop: Fixed using BeginDragDropSource() inside a BeginChild() that returned false. (#4515)
+- PlotHistogram: Fixed zero-line position when manually specifying min<0 and max>0. (#4349) [@filippocrocchini]
+- Misc: Added asserts for missing PopItemFlag() calls.
+- Misc: Fixed printf-style format checks on Clang+MinGW. (#4626, #4183, #3592) [@guusw]
+- IO: Added 'io.WantCaptureMouseUnlessPopupClose' alternative to `io.WantCaptureMouse'. (#4480)
+  This allows apps to receive the click on void when that click is used to close popup (by default,
+  clicking on a void when a popup is open will close the popup but not release io.WantCaptureMouse).
+- Fonts: imgui_freetype: Fixed crash when FT_Render_Glyph() fails to render a glyph and returns NULL
+  (which apparently happens with Freetype 2.11). (#4394, #4145?).
+- Fonts: Fixed ImFontAtlas::ClearInputData() marking atlas as not built. (#4455, #3487)
+- Backends: Added more implicit asserts to detect invalid/redundant calls to Shutdown functions. (#4562)
+- Backends: OpenGL3: Fixed our custom GL loader conflicting with user using GL3W. (#4445) [@rokups]
+- Backends: WebGPU: Fixed for latest specs. (#4472, #4512) [@Kangz, @bfierz]
+- Backends: SDL_Renderer: Added SDL_Renderer backend compatible with upcoming SDL 2.0.18. (#3926) [@1bsyl]
+- Backends: Metal: Fixed a crash when clipping rect larger than framebuffer is submitted via
+  a direct unclipped PushClipRect() call. (#4464)
+- Backends: OSX: Use mach_absolute_time as CFAbsoluteTimeGetCurrent can jump backwards. (#4557, #4563) [@lfnoise]
+- Backends: All renderers: Normalize clipping rect handling across backends. (#4464)
+- Examples: Added SDL + SDL_Renderer example in "examples/example_sdl_sdlrenderer/" folder. (#3926) [@1bsyl]
+
 
 -----------------------------------------------------------------------
  VERSION 1.84.2 (Released 2021-08-23)

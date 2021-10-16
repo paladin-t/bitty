@@ -18,7 +18,7 @@
 */
 
 float Editor::Ref::windowWidth(float exp) {
-	const float w = ImGui::GetWindowContentRegionWidth();
+	const float w = ImGui::GetContentRegionAvail().x;
 	_verticalScrollBarVisible = w < std::floor(exp);
 
 	return w;

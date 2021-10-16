@@ -23,7 +23,7 @@ or view this file with any Markdown viewer.
 | [I integrated Dear ImGui in my engine and some elements are clipping or disappearing when I move windows around...](#q-i-integrated-dear-imgui-in-my-engine-and-some-elements-are-clipping-or-disappearing-when-i-move-windows-around) |
 | [I integrated Dear ImGui in my engine and some elements are displaying outside their expected windows boundaries...](#q-i-integrated-dear-imgui-in-my-engine-and-some-elements-are-displaying-outside-their-expected-windows-boundaries) |
 | **Q&A: Usage** |
-| **[Why is my widget not reacting when I click on it?<br>How can I have widgets with an empty label?<br>How can I have multiple widgets with the same label?](#q-why-is-my-widget-not-reacting-when-i-click-on-it)** |
+| **[About the ID Stack system..<br>Why is my widget not reacting when I click on it?<br>How can I have widgets with an empty label?<br>How can I have multiple widgets with the same label?](#q-about-the-id-stack-system)** |
 | [How can I display an image? What is ImTextureID, how does it work?](#q-how-can-i-display-an-image-what-is-imtextureid-how-does-it-work)|
 | [How can I use my own math types instead of ImVec2/ImVec4?](#q-how-can-i-use-my-own-math-types-instead-of-imvec2imvec4) |
 | [How can I interact with standard C++ types (such as std::string and std::vector)?](#q-how-can-i-interact-with-standard-c-types-such-as-stdstring-and-stdvector) |
@@ -94,6 +94,8 @@ Read [BACKENDS.md](https://github.com/ocornut/imgui/blob/master/docs/BACKENDS.md
 Read `PROGRAMMER GUIDE` section of [imgui.cpp](https://github.com/ocornut/imgui/blob/master/imgui.cpp). <BR>
 The [Wiki](https://github.com/ocornut/imgui/wiki) is a hub to many resources and links.
 
+For first-time users having issues compiling/linking/running or issues loading fonts, please use [GitHub Discussions](https://github.com/ocornut/imgui/discussions).
+
 ##### [Return to Index](#index)
 
 ---
@@ -160,7 +162,7 @@ Console SDK also sometimes provide equivalent tooling or wrapper for Synergy-lik
 ---
 
 ### Q: I integrated Dear ImGui in my engine and little squares are showing instead of text...
-Your renderer is not using the font texture correctly or it hasn't be uploaded to GPU.
+Your renderer is not using the font texture correctly or it hasn't been uploaded to the GPU.
 - If this happens using the standard backends: A) have you modified the font atlas after `ImGui_ImplXXX_NewFrame()`? B) maybe the texture failed to upload, which could happens if for some reason your texture is too big. Also see [docs/FONTS.md](https://github.com/ocornut/imgui/blob/master/docs/FONTS.md).
 - If this happens with a custom backend: make sure you have uploaded the font texture to the GPU, that all shaders are rendering states are setup properly (e.g. texture is bound). Compare your code to existing backends and use a graphics debugger such as [RenderDoc](https://renderdoc.org) to debug your rendering states.
 
@@ -184,17 +186,23 @@ Refer to rendering backends in the [examples/](https://github.com/ocornut/imgui/
 
 # Q&A: Usage
 
+### Q: About the ID Stack system...
 ### Q: Why is my widget not reacting when I click on it?
 ### Q: How can I have widgets with an empty label?
 ### Q: How can I have multiple widgets with the same label?
 
 A primer on labels and the ID Stack...
 
-Dear ImGui internally need to uniquely identify UI elements.
+Dear ImGui internally needs to uniquely identify UI elements.
 Elements that are typically not clickable (such as calls to the Text functions) don't need an ID.
 Interactive widgets (such as calls to Button buttons) need a unique ID.
-Unique ID are used internally to track active widgets and occasionally associate state to widgets.
-Unique ID are implicitly built from the hash of multiple elements that identify the "path" to the UI element.
+
+**Unique ID are used internally to track active widgets and occasionally associate state to widgets.<BR>
+Unique ID are implicitly built from the hash of multiple elements that identify the "path" to the UI element.**
+
+Since Dear ImGui 1.85 you can use `Demo>Tools>Stack Tool` or call `ImGui::ShowStackToolWindow()`. The tool display intermediate values leading to the creation of a unique ID, making things easier to debug and understand.
+
+![Stack tool](https://user-images.githubusercontent.com/8225057/136235657-a0ea5665-dcd1-423f-9be6-dc3f8ced8f12.png)
 
 - Unique ID are often derived from a string label and at minimum scoped within their host window:
 ```cpp

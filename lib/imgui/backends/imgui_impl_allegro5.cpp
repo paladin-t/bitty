@@ -171,9 +171,15 @@ void ImGui_ImplAllegro5_RenderDrawData(ImDrawData* draw_data)
             }
             else
             {
-                // Draw
+                // Project scissor/clipping rectangles into framebuffer space
+                ImVec2 clip_min(pcmd->ClipRect.x - clip_off.x, pcmd->ClipRect.y - clip_off.y);
+                ImVec2 clip_max(pcmd->ClipRect.z - clip_off.x, pcmd->ClipRect.w - clip_off.y);
+                if (clip_max.x < clip_min.x || clip_max.y < clip_min.y)
+                    continue;
+
+                // Apply scissor/clipping rectangle, Draw
                 ALLEGRO_BITMAP* texture = (ALLEGRO_BITMAP*)pcmd->GetTexID();
-                al_set_clipping_rectangle(pcmd->ClipRect.x - clip_off.x, pcmd->ClipRect.y - clip_off.y, pcmd->ClipRect.z - pcmd->ClipRect.x, pcmd->ClipRect.w - pcmd->ClipRect.y);
+                al_set_clipping_rectangle(clip_min.x, clip_min.y, clip_max.x - clip_min.x, clip_max.y - clip_min.y);
                 al_draw_prim(&vertices[0], bd->VertexDecl, texture, idx_offset, idx_offset + pcmd->ElemCount, ALLEGRO_PRIM_TRIANGLE_LIST);
             }
             idx_offset += pcmd->ElemCount;
@@ -329,8 +335,9 @@ bool ImGui_ImplAllegro5_Init(ALLEGRO_DISPLAY* display)
 
 void ImGui_ImplAllegro5_Shutdown()
 {
-    ImGuiIO& io = ImGui::GetIO();
     ImGui_ImplAllegro5_Data* bd = ImGui_ImplAllegro5_GetBackendData();
+    IM_ASSERT(bd != NULL && "No platform backend to shutdown, or already shutdown?");
+    ImGuiIO& io = ImGui::GetIO();
 
     ImGui_ImplAllegro5_InvalidateDeviceObjects();
     if (bd->VertexDecl)

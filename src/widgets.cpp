@@ -1653,6 +1653,8 @@ void Indicator(const char* label, const ImVec2 &pos) {
 }
 
 static bool ProgressBar(const char* label, void* p_data, const void* p_min, const void* p_max, const char* format, bool readonly) {
+	// See: `SliderScalar` in "./lib/imgui/imgui_widgets.cpp".
+
 	// Prepare.
 	ImGuiWindow* window = GetCurrentWindow();
 
@@ -1682,14 +1684,14 @@ static bool ProgressBar(const char* label, void* p_data, const void* p_min, cons
 	bool temp_input_is_active = !readonly && TempInputIsActive(id);
 	bool temp_input_start = false;
 	if (!readonly && !temp_input_is_active) {
-		const bool focus_requested = (g.LastItemData.StatusFlags & ImGuiItemStatusFlags_Focused) != 0;
+		const bool input_requested_by_tabbing = (g.LastItemData.StatusFlags & ImGuiItemStatusFlags_FocusedByTabbing) != 0;
 		const bool clicked = (hovered && g.IO.MouseClicked[0]);
-		if (focus_requested || clicked || g.NavActivateId == id || g.NavInputId == id) {
+		if (input_requested_by_tabbing || clicked || g.NavActivateId == id || g.NavActivateInputId == id) {
 			SetActiveID(id, window);
 			SetFocusID(id, window);
 			FocusWindow(window);
 			g.ActiveIdUsingNavDirMask |= (1 << ImGuiDir_Left) | (1 << ImGuiDir_Right);
-			if (focus_requested || (clicked && g.IO.KeyCtrl) || g.NavInputId == id) {
+			if (input_requested_by_tabbing || (clicked && g.IO.KeyCtrl) || g.NavActivateInputId == id) {
 				temp_input_start = true;
 			}
 		}
@@ -2149,12 +2151,12 @@ static bool TreeNodeBehavior(ImGuiID id, ImTextureID texture_id, ImTextureID ope
 				toggled = true;
 		}
 
-		if (g.NavId == id && g.NavMoveRequest && g.NavMoveDir == ImGuiDir_Left && is_open)
+		if (g.NavId == id && g.NavMoveDir && g.NavMoveDir == ImGuiDir_Left && is_open)
 		{
 			toggled = true;
 			NavMoveRequestCancel();
 		}
-		if (g.NavId == id && g.NavMoveRequest && g.NavMoveDir == ImGuiDir_Right && !is_open) // If there's something upcoming on the line we may want to give it the priority?
+		if (g.NavId == id && g.NavMoveDir && g.NavMoveDir == ImGuiDir_Right && !is_open) // If there's something upcoming on the line we may want to give it the priority?
 		{
 			toggled = true;
 			NavMoveRequestCancel();
