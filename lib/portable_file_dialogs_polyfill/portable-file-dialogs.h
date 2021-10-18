@@ -12,7 +12,14 @@ enum class opt : unsigned char {
 	none = 0,
 	multiselect     = 0x1,
 	force_overwrite = 0x2,
-	force_path      = 0x4,
+	force_path      = 0x4
+};
+
+enum class icon {
+	info = 0,
+	warning,
+	error,
+	question
 };
 
 class open_file {
@@ -89,6 +96,19 @@ public:
 
 	std::string result() {
 		return std::string();
+	}
+};
+
+class notify {
+public:
+	notify(
+		std::string const &title,
+		std::string const &message,
+		icon _icon = icon::info
+	) {
+		(void)title;
+		(void)message;
+		(void)_icon;
 	}
 };
 

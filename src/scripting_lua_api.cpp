@@ -2902,10 +2902,10 @@ static int Color___mul(lua_State* L) {
 			check<2>(L, vec);
 			if (vec) {
 				const Color ret(
-					obj->r * vec->x,
-					obj->g * vec->y,
-					obj->b * vec->z,
-					obj->a * vec->w
+					(Byte)Math::clamp((float)(obj->r * vec->x), 0.0f, 255.0f),
+					(Byte)Math::clamp((float)(obj->g * vec->y), 0.0f, 255.0f),
+					(Byte)Math::clamp((float)(obj->b * vec->z), 0.0f, 255.0f),
+					(Byte)Math::clamp((float)(obj->a * vec->w), 0.0f, 255.0f)
 				);
 
 				return write(L, &ret);

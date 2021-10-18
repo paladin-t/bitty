@@ -350,7 +350,7 @@ This module provides a random algorithm organized by object, other than the buil
 * `random:next(n)`: generates a random number
 	* returns equivalent to `random:next(1, n)` for a positive `n`; returns an integer with all bits random for a zero `n`
 * `random:next()`: generates a random number
-	* returns a pseudo random float with uniform distribution in the range [0, 1)
+	* returns a pseudo random real number with uniform distribution in the range [0, 1)
 
 #### Raycaster
 
@@ -563,11 +563,15 @@ Being the same as Lua list, `Bytes` index starts from 1. Implements a `Stream` p
 
 **Operators**
 
-* `color:__add(color_)`: adds with another `Color` componentwise
-* `color:__sub(color_)`: subtracts by another `Color` componentwise
+* `color:__add(color_)`: adds with another `Color` componentwisely
+* `color:__sub(color_)`: subtracts by another `Color` componentwisely
 * `color:__mul(num)`: multiplies with another number
-* `color:__mul(color_)`: multiplies with another `Color` componentwise
-* `color:__unm()`: takes the opposite `Color` componentwise
+	* `num`: real number
+* `color:__mul(color_)`: multiplies with another `Color` componentwisely
+	* `color_`: with range of values from 0 to 255 for each component
+* `color:__mul(vec4)`: multiplies with another `Vec4` componentwisely
+	* `vec4`: real number for each component
+* `color:__unm()`: takes the opposite `Color` componentwisely
 * `color:__eq(color_)`: compares with another `Color` for equality
 
 **Object Fields**
@@ -952,27 +956,27 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 
 **Operators**
 
-* `vec2:__add(vec2_)`: adds with another `Vec2` componentwise
-* `vec2:__sub(vec2_)`: subtracts by another `Vec2` componentwise
+* `vec2:__add(vec2_)`: adds with another `Vec2` componentwisely
+* `vec2:__sub(vec2_)`: subtracts by another `Vec2` componentwisely
 * `vec2:__mul(num)`: multiplies with another number
-* `vec2:__mul(vec2_)`: multiplies with another `Vec2` componentwise
-* `vec2:__unm()`: takes the opposite `Vec2` componentwise
+* `vec2:__mul(vec2_)`: multiplies with another `Vec2` componentwisely
+* `vec2:__unm()`: takes the opposite `Vec2` componentwisely
 * `vec2:__len()`: gets the length of the `Vec2`
 * `vec2:__eq(vec2_)`: compares with another `Vec2` for equality
 
-* `vec3:__add(vec3_)`: adds with another `Vec3` componentwise
-* `vec3:__sub(vec3_)`: subtracts by another `Vec3` componentwise
+* `vec3:__add(vec3_)`: adds with another `Vec3` componentwisely
+* `vec3:__sub(vec3_)`: subtracts by another `Vec3` componentwisely
 * `vec3:__mul(num)`: multiplies with another number
-* `vec3:__mul(vec3_)`: multiplies with another `Vec3` componentwise
-* `vec3:__unm()`: takes the opposite `Vec3` componentwise
+* `vec3:__mul(vec3_)`: multiplies with another `Vec3` componentwisely
+* `vec3:__unm()`: takes the opposite `Vec3` componentwisely
 * `vec3:__len()`: gets the length of the `Vec3`
 * `vec3:__eq(vec3_)`: compares with another `Vec3` for equality
 
-* `vec4:__add(vec4_)`: adds with another `Vec4` componentwise
-* `vec4:__sub(vec4_)`: subtracts by another `Vec4` componentwise
+* `vec4:__add(vec4_)`: adds with another `Vec4` componentwisely
+* `vec4:__sub(vec4_)`: subtracts by another `Vec4` componentwisely
 * `vec4:__mul(num)`: multiplies with another number
-* `vec4:__mul(vec4_)`: multiplies with another `Vec4` componentwise
-* `vec4:__unm()`: takes the opposite `Vec4` componentwise
+* `vec4:__mul(vec4_)`: multiplies with another `Vec4` componentwisely
+* `vec4:__unm()`: takes the opposite `Vec4` componentwisely
 * `vec4:__eq(vec4_)`: compares with another `Vec4` for equality
 
 * `rot:__add(rot_)`: adds with another `Rot` in angle

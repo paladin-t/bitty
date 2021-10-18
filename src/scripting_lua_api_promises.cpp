@@ -970,6 +970,30 @@ static int Platform_selectDirectory(lua_State* L) {
 	return write(L, path);
 }
 
+static int Platform_notify(lua_State* L) {
+	const int n = getTop(L);
+	const char* title = BITTY_NAME;
+	std::string message;
+	std::string icon = "info";
+	if (n >= 3)
+		read<>(L, title, message, icon);
+	else if (n == 2)
+		read<>(L, title, message);
+	else if (n == 1)
+		read<>(L, title);
+
+	pfd::icon icon_ = pfd::icon::info;
+	if (icon == "warning")
+		icon_ = pfd::icon::warning;
+	else if (icon == "error")
+		icon_ = pfd::icon::error;
+	else if (icon == "question")
+		icon_ = pfd::icon::question;
+	pfd::notify notify(title, message, icon_);
+
+	return 0;
+}
+
 static void open_Platform(lua_State* L) {
 	getGlobal(L, "Platform");
 	if (isPlugin(L)) {
@@ -977,14 +1001,16 @@ static void open_Platform(lua_State* L) {
 			L,
 			"openFile", Platform_openFile, // Synchronized.
 			"saveFile", Platform_saveFile, // Synchronized.
-			"selectDirectory", Platform_selectDirectory // Synchronized.
+			"selectDirectory", Platform_selectDirectory, // Synchronized.
+			"notify", Platform_notify // Undocumented. Synchronized.
 		);
 	} else {
 		setTable(
 			L,
 			"openFile", Platform_openFile_Promise, // Synchronized.
 			"saveFile", Platform_saveFile_Promise, // Synchronized.
-			"selectDirectory", Platform_selectDirectory_Promise // Synchronized.
+			"selectDirectory", Platform_selectDirectory_Promise, // Synchronized.
+			"notify", Platform_notify // Undocumented. Synchronized.
 		);
 	}
 	pop(L);
