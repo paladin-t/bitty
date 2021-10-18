@@ -2880,6 +2880,7 @@ static int Color___sub(lua_State* L) {
 static int Color___mul(lua_State* L) {
 	Color* obj = nullptr;
 	Color* other = nullptr;
+	Math::Vec4f* vec = nullptr;
 	Real num = 0;
 	check<>(L, obj);
 
@@ -2892,12 +2893,25 @@ static int Color___mul(lua_State* L) {
 			return write(L, &ret);
 		} else {
 			check<2>(L, other);
-			if (!other)
-				return 0;
+			if (other) {
+				const Color ret = *obj * *other;
 
-			const Color ret = *obj * *other;
+				return write(L, &ret);
+			}
 
-			return write(L, &ret);
+			check<2>(L, vec);
+			if (vec) {
+				const Color ret(
+					obj->r * vec->x,
+					obj->g * vec->y,
+					obj->b * vec->z,
+					obj->a * vec->w
+				);
+
+				return write(L, &ret);
+			}
+
+			return 0;
 		}
 	}
 
