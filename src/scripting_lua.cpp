@@ -939,7 +939,6 @@ Variant ScriptingLua::invoke(Invokable func, int argc, const Variant* argv) {
 			[] (lua_State* L, void* ud) -> void {
 				Context* ctx = (Context*)ud;
 
-				Variant retv[2] = { nullptr, nullptr };
 				check(
 					L,
 					Lua::call(
