@@ -121,7 +121,7 @@ static void applicationLoadArgs(const char* path, Text::Dictionary &options) {
 ** Application
 */
 
-class Application {
+class Application : public NonCopyable {
 private:
 	struct Context {
 		unsigned expectedFrameRate = BITTY_ACTIVE_FRAME_RATE;

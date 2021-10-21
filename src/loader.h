@@ -13,6 +13,7 @@
 
 #include "bitty.h"
 #include "cloneable.h"
+#include "plus.h"
 
 /*
 ** {===========================================================================
@@ -23,7 +24,7 @@
  * @brief Loader middleware. Override this class to make your own loader for
  *   encrypting, pre/post-processing and other customization.
  */
-class Loader : public Cloneable<Loader> {
+class Loader : public Cloneable<Loader>, public NonCopyable {
 public:
 	Loader();
 	virtual ~Loader();

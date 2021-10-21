@@ -137,7 +137,7 @@ class CodeEditor;
 /**
  * @brief Workspace entity.
  */
-class Workspace : public Executable::Observer, public Dispatchable {
+class Workspace : public Executable::Observer, public Dispatchable, public NonCopyable {
 public:
 	struct Settings {
 		int applicationWindowDisplayIndex = 0;

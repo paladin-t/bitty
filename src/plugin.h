@@ -47,7 +47,7 @@
 /**
  * @brief Plugin.
  */
-class Plugin {
+class Plugin : public NonCopyable {
 public:
 	typedef std::vector<Plugin*> Array;
 

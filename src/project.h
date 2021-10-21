@@ -38,7 +38,7 @@
 /**
  * @brief Project entity.
  */
-class Project {
+class Project : public NonCopyable {
 public:
 	struct Factory {
 		Asset::Creator create = nullptr;

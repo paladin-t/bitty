@@ -15,6 +15,7 @@
 #include "entry.h"
 #include "generic.h"
 #include "json.h"
+#include "plus.h"
 #include "texture.h"
 
 /*
@@ -36,7 +37,7 @@
 /**
  * @brief Asset entity.
  */
-class Asset {
+class Asset : public NonCopyable {
 public:
 	typedef Dual<Asset*> List;
 
