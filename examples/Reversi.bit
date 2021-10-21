@@ -620,7 +620,7 @@ KeyCode = {
 	RGui = toKeycode(231)
 }
 
-data:text/lua;count=5684;path=main.lua;
+data:text/lua;count=5771;path=main.lua;
 --[[
 Example for the Bitty Engine
 
@@ -854,7 +854,7 @@ local function hud(delta)
 			font()
 			text('Press ENTER to restart', 300, 260)
 		end
-		if keyp(KeyCode.Return) then
+		if keyp(KeyCode.Return) or keyp(KeyCode.KeypadEnter) then -- Return/Enter key on either the main section or numpad.
 			start()
 		end
 	end
