@@ -1041,6 +1041,175 @@ bool Workspace::save(class Window* wnd, class Renderer*, const class Project*, c
 	return true;
 }
 
+void Workspace::loadProject(class Renderer* rnd, const class Project* project, Executable* exec) {
+	Operations::fileNew(rnd, this, project, exec);
+}
+
+void Workspace::unloadProject(const class Project* project, Executable* exec) {
+	canvasFull(false);
+
+	exec->clearBreakpoints(nullptr);
+
+	LockGuard<RecursiveMutex>::UniquePtr acquired;
+	Project* prj = project->acquire(acquired);
+	if (!prj)
+		return;
+
+	prj->unload();
+	prj->readonly(false);
+}
+
+void Workspace::loadExamples(class Renderer* rnd, const class Project* project) {
+	LockGuard<RecursiveMutex>::UniquePtr acquired;
+	Project* prj = project->acquire(acquired);
+
+	DirectoryInfo::Ptr dirInfo = DirectoryInfo::make(WORKSPACE_EXAMPLE_PROJECT_DIR);
+	FileInfos::Ptr fileInfos = dirInfo->getFiles("*." BITTY_PROJECT_EXT, true);
+	for (int i = 0; i < fileInfos->count(); ++i) {
+		FileInfo::Ptr fileInfo = fileInfos->get(i);
+
+		const std::string path = fileInfo->fullPath();
+
+		std::shared_ptr<Project> newPrj(new Project());
+		if (prj)
+			newPrj->loader(prj->loader());
+		newPrj->factory(prj->factory());
+		newPrj->open(rnd);
+		if (newPrj->load(path.c_str())) {
+			const Entry entry = newPrj->title();
+			examples()[entry] = path;
+
+			newPrj->unload();
+		}
+		newPrj->close();
+		newPrj->loader(nullptr);
+
+		Platform::idle();
+	}
+}
+
+void Workspace::unloadExamples(void) {
+	examples().clear();
+}
+
+void Workspace::loadPlugins(class Renderer* rnd, const class Project* project) {
+	if (!pluginsEnabled())
+		return;
+
+	auto load = [this] (Renderer* rnd, const Project* project, const DirectoryInfo::Ptr &dirInfo, const FileInfo::Ptr &fileInfo) -> bool {
+		const std::string package = dirInfo->fullPath();
+		const std::string &entry = fileInfo->fullPath();
+
+		Plugin* plugin = new Plugin(
+			rnd,
+			this,
+			project,
+			entry.c_str()
+		);
+		if (plugin->open()) {
+			if (plugin->instant())
+				plugin->close();
+
+			Plugin::Array::const_iterator exists = std::find_if(
+				plugins().begin(), plugins().end(),
+				[&] (const Plugin *val) -> bool {
+					return Entry::compare(val->entry(), plugin->entry()) == 0;
+				}
+			);
+			if (exists != plugins().end()) {
+				const std::string msg = Text::cformat("Ignored duplicate plugin: \"%s\".\n", (*exists)->entry().c_str());
+				warn(msg.c_str());
+
+				plugin->close();
+				delete plugin;
+
+				return false;
+			}
+
+			plugins().push_back(plugin);
+
+			const Text::Array parts = plugin->entry().parts();
+			if (!parts.empty() && parts.front() == PLUGIN_MENU_PROJECT_NAME)
+				pluginsMenuProjectItemCount(pluginsMenuProjectItemCount() + 1);
+			if (!parts.empty() && parts.front() == PLUGIN_MENU_PLUGIN_NAME)
+				pluginsMenuPluginsItemCount(pluginsMenuPluginsItemCount() + 1);
+			if (!parts.empty() && parts.front() == PLUGIN_MENU_HELP_NAME)
+				pluginsMenuHelpItemCount(pluginsMenuHelpItemCount() + 1);
+		} else {
+			plugin->close();
+			delete plugin;
+
+			return false;
+		}
+
+		return true;
+	};
+
+	DirectoryInfo::Ptr dirInfo = DirectoryInfo::make(PLUGIN_BUILTIN_DIR);
+	FileInfos::Ptr fileInfos = dirInfo->getFiles("*." BITTY_PROJECT_EXT, true);
+	for (int i = 0; i < fileInfos->count(); ++i) {
+		FileInfo::Ptr fileInfo = fileInfos->get(i);
+
+		load(rnd, project, dirInfo, fileInfo);
+
+		Platform::idle();
+	}
+
+	const std::string customDir = Path::combine(Path::writableDirectory().c_str(), PLUGIN_CUSTOM_DIR);
+	dirInfo = DirectoryInfo::make(customDir.c_str());
+	fileInfos = dirInfo->getFiles("*." BITTY_PROJECT_EXT, true);
+	for (int i = 0; i < fileInfos->count(); ++i) {
+		FileInfo::Ptr fileInfo = fileInfos->get(i);
+
+		load(rnd, project, dirInfo, fileInfo);
+
+		Platform::idle();
+	}
+
+	std::sort(
+		plugins().begin(), plugins().end(),
+		[] (const Plugin* left, const Plugin* right) -> bool {
+			if (left->order() != right->order())
+				return left->order() < right->order();
+
+			return Entry::compare(left->entry(), right->entry()) < 0;
+		}
+	);
+}
+
+void Workspace::unloadPlugins(void) {
+	pluginsMenuProjectItemCount(0);
+	pluginsMenuPluginsItemCount(0);
+	pluginsMenuHelpItemCount(0);
+
+	for (Plugin* plugin : plugins()) {
+		plugin->close();
+		delete plugin;
+	}
+	plugins().clear();
+}
+
+void Workspace::loadDocuments(void) {
+	DirectoryInfo::Ptr dirInfo = DirectoryInfo::make(DOCUMENT_MARKDOWN_DIR);
+	FileInfos::Ptr fileInfos = dirInfo->getFiles("*." DOCUMENT_MARKDOWN_EXT, true);
+	for (int i = 0; i < fileInfos->count(); ++i) {
+		FileInfo::Ptr fileInfo = fileInfos->get(i);
+
+		const std::string package = dirInfo->fullPath();
+		const std::string path = fileInfo->fullPath();
+		std::string entry = path.substr(package.length());
+		entry = entry.substr(0, entry.length() - strlen("." DOCUMENT_MARKDOWN_EXT));
+
+		documents()[Entry(entry)] = path;
+
+		Platform::idle();
+	}
+}
+
+void Workspace::unloadDocuments(void) {
+	documents().clear();
+}
+
 void Workspace::execute(class Window* /* wnd */, class Renderer* rnd, const class Project* /* project */, Executable* exec, class Primitives* primitives, double delta, bool alive) {
 	currentState(exec ? exec->current() : Executable::READY);
 
@@ -3362,175 +3531,6 @@ void Workspace::endSplash(class Window* wnd, class Renderer* rnd) {
 	const Color color(0x00, 0x00, 0x00, 0x00);
 	rnd->clear(&color);
 #endif /* BITTY_SPLASH_ENABLED */
-}
-
-void Workspace::loadProject(class Renderer* rnd, const class Project* project, Executable* exec) {
-	Operations::fileNew(rnd, this, project, exec);
-}
-
-void Workspace::unloadProject(const class Project* project, Executable* exec) {
-	canvasFull(false);
-
-	exec->clearBreakpoints(nullptr);
-
-	LockGuard<RecursiveMutex>::UniquePtr acquired;
-	Project* prj = project->acquire(acquired);
-	if (!prj)
-		return;
-
-	prj->unload();
-	prj->readonly(false);
-}
-
-void Workspace::loadExamples(class Renderer* rnd, const class Project* project) {
-	LockGuard<RecursiveMutex>::UniquePtr acquired;
-	Project* prj = project->acquire(acquired);
-
-	DirectoryInfo::Ptr dirInfo = DirectoryInfo::make(WORKSPACE_EXAMPLE_PROJECT_DIR);
-	FileInfos::Ptr fileInfos = dirInfo->getFiles("*." BITTY_PROJECT_EXT, true);
-	for (int i = 0; i < fileInfos->count(); ++i) {
-		FileInfo::Ptr fileInfo = fileInfos->get(i);
-
-		const std::string path = fileInfo->fullPath();
-
-		std::shared_ptr<Project> newPrj(new Project());
-		if (prj)
-			newPrj->loader(prj->loader());
-		newPrj->factory(prj->factory());
-		newPrj->open(rnd);
-		if (newPrj->load(path.c_str())) {
-			const Entry entry = newPrj->title();
-			examples()[entry] = path;
-
-			newPrj->unload();
-		}
-		newPrj->close();
-		newPrj->loader(nullptr);
-
-		Platform::idle();
-	}
-}
-
-void Workspace::unloadExamples(void) {
-	examples().clear();
-}
-
-void Workspace::loadPlugins(class Renderer* rnd, const class Project* project) {
-	if (!pluginsEnabled())
-		return;
-
-	auto load = [this] (Renderer* rnd, const Project* project, const DirectoryInfo::Ptr &dirInfo, const FileInfo::Ptr &fileInfo) -> bool {
-		const std::string package = dirInfo->fullPath();
-		const std::string &entry = fileInfo->fullPath();
-
-		Plugin* plugin = new Plugin(
-			rnd,
-			this,
-			project,
-			entry.c_str()
-		);
-		if (plugin->open()) {
-			if (plugin->instant())
-				plugin->close();
-
-			Plugin::Array::const_iterator exists = std::find_if(
-				plugins().begin(), plugins().end(),
-				[&] (const Plugin *val) -> bool {
-					return Entry::compare(val->entry(), plugin->entry()) == 0;
-				}
-			);
-			if (exists != plugins().end()) {
-				const std::string msg = Text::cformat("Ignored duplicate plugin: \"%s\".\n", (*exists)->entry().c_str());
-				warn(msg.c_str());
-
-				plugin->close();
-				delete plugin;
-
-				return false;
-			}
-
-			plugins().push_back(plugin);
-
-			const Text::Array parts = plugin->entry().parts();
-			if (!parts.empty() && parts.front() == PLUGIN_MENU_PROJECT_NAME)
-				pluginsMenuProjectItemCount(pluginsMenuProjectItemCount() + 1);
-			if (!parts.empty() && parts.front() == PLUGIN_MENU_PLUGIN_NAME)
-				pluginsMenuPluginsItemCount(pluginsMenuPluginsItemCount() + 1);
-			if (!parts.empty() && parts.front() == PLUGIN_MENU_HELP_NAME)
-				pluginsMenuHelpItemCount(pluginsMenuHelpItemCount() + 1);
-		} else {
-			plugin->close();
-			delete plugin;
-
-			return false;
-		}
-
-		return true;
-	};
-
-	DirectoryInfo::Ptr dirInfo = DirectoryInfo::make(PLUGIN_BUILTIN_DIR);
-	FileInfos::Ptr fileInfos = dirInfo->getFiles("*." BITTY_PROJECT_EXT, true);
-	for (int i = 0; i < fileInfos->count(); ++i) {
-		FileInfo::Ptr fileInfo = fileInfos->get(i);
-
-		load(rnd, project, dirInfo, fileInfo);
-
-		Platform::idle();
-	}
-
-	const std::string customDir = Path::combine(Path::writableDirectory().c_str(), PLUGIN_CUSTOM_DIR);
-	dirInfo = DirectoryInfo::make(customDir.c_str());
-	fileInfos = dirInfo->getFiles("*." BITTY_PROJECT_EXT, true);
-	for (int i = 0; i < fileInfos->count(); ++i) {
-		FileInfo::Ptr fileInfo = fileInfos->get(i);
-
-		load(rnd, project, dirInfo, fileInfo);
-
-		Platform::idle();
-	}
-
-	std::sort(
-		plugins().begin(), plugins().end(),
-		[] (const Plugin* left, const Plugin* right) -> bool {
-			if (left->order() != right->order())
-				return left->order() < right->order();
-
-			return Entry::compare(left->entry(), right->entry()) < 0;
-		}
-	);
-}
-
-void Workspace::unloadPlugins(void) {
-	pluginsMenuProjectItemCount(0);
-	pluginsMenuPluginsItemCount(0);
-	pluginsMenuHelpItemCount(0);
-
-	for (Plugin* plugin : plugins()) {
-		plugin->close();
-		delete plugin;
-	}
-	plugins().clear();
-}
-
-void Workspace::loadDocuments(void) {
-	DirectoryInfo::Ptr dirInfo = DirectoryInfo::make(DOCUMENT_MARKDOWN_DIR);
-	FileInfos::Ptr fileInfos = dirInfo->getFiles("*." DOCUMENT_MARKDOWN_EXT, true);
-	for (int i = 0; i < fileInfos->count(); ++i) {
-		FileInfo::Ptr fileInfo = fileInfos->get(i);
-
-		const std::string package = dirInfo->fullPath();
-		const std::string path = fileInfo->fullPath();
-		std::string entry = path.substr(package.length());
-		entry = entry.substr(0, entry.length() - strlen("." DOCUMENT_MARKDOWN_EXT));
-
-		documents()[Entry(entry)] = path;
-
-		Platform::idle();
-	}
-}
-
-void Workspace::unloadDocuments(void) {
-	documents().clear();
 }
 
 /* ===========================================================================} */

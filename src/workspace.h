@@ -467,6 +467,18 @@ protected:
 	 */
 	virtual bool save(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives, rapidjson::Document &doc);
 
+	virtual void loadProject(class Renderer* rnd, const class Project* project, Executable* exec);
+	virtual void unloadProject(const class Project* project, Executable* exec);
+
+	virtual void loadExamples(class Renderer* rnd, const class Project* project);
+	virtual void unloadExamples(void);
+
+	virtual void loadPlugins(class Renderer* rnd, const class Project* project);
+	virtual void unloadPlugins(void);
+
+	virtual void loadDocuments(void);
+	virtual void unloadDocuments(void);
+
 	void execute(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, bool alive);
 	void prepare(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 	void dialog(class Window* wnd, class Renderer* rnd, const class Project* project);
@@ -553,19 +565,6 @@ protected:
 
 	void beginSplash(class Window* wnd, class Renderer* rnd, const class Project* project);
 	void endSplash(class Window* wnd, class Renderer* rnd);
-
-private:
-	void loadProject(class Renderer* rnd, const class Project* project, Executable* exec);
-	void unloadProject(const class Project* project, Executable* exec);
-
-	void loadExamples(class Renderer* rnd, const class Project* project);
-	void unloadExamples(void);
-
-	void loadPlugins(class Renderer* rnd, const class Project* project);
-	void unloadPlugins(void);
-
-	void loadDocuments(void);
-	void unloadDocuments(void);
 };
 
 /* ===========================================================================} */

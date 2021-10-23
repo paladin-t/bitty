@@ -36,7 +36,7 @@
 */
 
 class ScriptingLua : public Scripting {
-private:
+protected:
 	typedef std::set<std::string> Requirement;
 	typedef std::list<std::string> Dependency;
 
@@ -48,7 +48,7 @@ private:
 
 	typedef std::list<class Updatable*> Updatables;
 
-private:
+protected:
 	lua_State* _L = nullptr;
 
 	Requirement _requirement;                               // By the Lua thread.
@@ -168,7 +168,7 @@ public:
 
 	static ScriptingLua* instanceOf(lua_State* L);
 
-private:
+protected:
 	bool hasBreakpoint(const char* src, int ln) const;
 
 	void hookNormal(void);
