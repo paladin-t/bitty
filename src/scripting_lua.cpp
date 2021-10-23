@@ -206,7 +206,7 @@ void ScriptingLua::finish(void) {
 		_fps = 0;
 
 		if (_timeout >= 0)
-			_timeout = SCRIPTING_LUA_TIMEOUT;
+			_timeout = SCRIPTING_LUA_TIMEOUT_NANOSECONDS;
 
 		_requirement.clear();
 		_dependency.clear();

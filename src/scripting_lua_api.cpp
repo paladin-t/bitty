@@ -10935,7 +10935,7 @@ static int Debug_setTimeout(lua_State* L) {
 
 #if BITTY_DEBUG_ENABLED
 	const int n = getTop(L);
-	double val = DateTime::toSeconds(SCRIPTING_LUA_TIMEOUT);
+	double val = DateTime::toSeconds(SCRIPTING_LUA_TIMEOUT_NANOSECONDS);
 	if (n >= 1) {
 		if (isNil(L))
 			val = 0;

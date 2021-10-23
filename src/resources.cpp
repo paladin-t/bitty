@@ -777,7 +777,7 @@ Resources::Async::Async() {
 
 bool Resources::Async::await(void) {
 #if BITTY_MULTITHREAD_ENABLED
-	constexpr const int TIMEOUT = 3000; // 3 seconds.
+	constexpr const int TIMEOUT = RESOURCES_AWAIT_TIMEOUT_MILLISECONDS;
 	constexpr const int STEP = 10;
 	for (int i = 0; i < TIMEOUT / STEP && !_processed; ++i) // Wait until processed or timeout.
 		DateTime::sleep(STEP);
