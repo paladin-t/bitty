@@ -70,6 +70,19 @@
 #	define LUA_WRITE_OBJ_CONST(Y) LUA_WRITE_ALIAS_CONST(Y::Ptr, Y)
 #endif /* LUA_WRITE_OBJ_CONST */
 
+#ifndef LUA_CHECK_REF
+#	define LUA_CHECK_REF(Y) static inline void check(lua_State* L, Y::Ptr* &ret, Index idx = Index(1), const char* type = #Y) { check<>(L, ret, idx, type); }
+#endif /* LUA_CHECK_REF */
+#ifndef LUA_READ_REF
+#	define LUA_READ_REF(Y) static inline void read(lua_State* L, Y::Ptr* &ret, Index idx = Index(1), const char* type = #Y) { read<>(L, ret, idx, type); }
+#endif /* LUA_READ_REF */
+#ifndef LUA_WRITE_REF
+#	define LUA_WRITE_REF(Y) template<> inline int write(lua_State* L, Y::Ptr &val) { return writeClass(L, &val, #Y); }
+#endif /* LUA_WRITE_REF */
+#ifndef LUA_WRITE_REF_CONST
+#	define LUA_WRITE_REF_CONST(Y) template<> inline int write(lua_State* L, const Y::Ptr &val) { return writeClass(L, &val, #Y); }
+#endif /* LUA_WRITE_REF_CONST */
+
 #ifndef LUA_LIB
 #	define LUA_LIB(R) [] (lua_State* L) -> int { Lua::lib(L, R); return 1; }
 #endif /* LUA_LIB */
