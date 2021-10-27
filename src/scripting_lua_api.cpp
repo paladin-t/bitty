@@ -2886,20 +2886,20 @@ static int Color___mul(lua_State* L) {
 
 	if (obj) {
 		if (isNumber(L, 2)) {
-			check<2>(L, num);
+			read<2>(L, num);
 
 			const Color ret = *obj * num;
 
 			return write(L, &ret);
 		} else {
-			check<2>(L, other);
+			read<2>(L, other);
 			if (other) {
 				const Color ret = *obj * *other;
 
 				return write(L, &ret);
 			}
 
-			check<2>(L, vec);
+			read<2>(L, vec);
 			if (vec) {
 				const Color ret(
 					(Byte)Math::clamp((float)(obj->r * vec->x), 0.0f, 255.0f),
@@ -2910,6 +2910,8 @@ static int Color___mul(lua_State* L) {
 
 				return write(L, &ret);
 			}
+
+			error(L, "Number, Color or Vec4 expected.");
 
 			return 0;
 		}
