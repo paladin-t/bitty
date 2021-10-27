@@ -171,7 +171,7 @@ public:
 public:
 	virtual bool next(void) = 0;
 
-	virtual Variant::Pair current(void) = 0;
+	virtual Variant::Pair current(void) const = 0;
 
 	virtual void invalidate(void) = 0;
 };
@@ -207,7 +207,7 @@ public:
 public:
 	virtual int count(void) const = 0;
 
-	virtual Variant at(int index) = 0;
+	virtual Variant at(int index) const = 0;
 
 	virtual void add(const Variant &val) = 0;
 	virtual bool insert(int index, const Variant &val) = 0;
@@ -231,7 +231,7 @@ public:
 
 	virtual Keys keys(void) const = 0;
 	virtual bool contains(const std::string &key) const = 0;
-	virtual Variant get(const std::string &key) = 0;
+	virtual Variant get(const std::string &key) const = 0;
 
 	virtual void add(const std::string &key, const Variant &val) = 0;
 	virtual void set(const std::string &key, const Variant &val) = 0;

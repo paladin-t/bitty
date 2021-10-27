@@ -477,7 +477,7 @@ private:
 			return _iterator != _collection->end();
 		}
 
-		virtual Variant::Pair current(void) override {
+		virtual Variant::Pair current(void) const override {
 			if (_invalidated)
 				return Variant::Pair(Variant(), Variant());
 
@@ -506,7 +506,7 @@ public:
 		return (int)_collection.size();
 	}
 
-	virtual Variant at(int index) override {
+	virtual Variant at(int index) const override {
 		if (index < 0 || index >= (int)_collection.size())
 			return Variant();
 
@@ -605,7 +605,7 @@ private:
 			return _iterator != _collection->end();
 		}
 
-		virtual Variant::Pair current(void) override {
+		virtual Variant::Pair current(void) const override {
 			if (_invalidated)
 				return Variant::Pair(Variant(), Variant());
 
@@ -647,8 +647,8 @@ public:
 
 		return it != _collection.end();
 	}
-	virtual Variant get(const std::string &key) override {
-		Collection::iterator it = _collection.find(key);
+	virtual Variant get(const std::string &key) const override {
+		Collection::const_iterator it = _collection.find(key);
 		if (it == _collection.end())
 			return Variant();
 

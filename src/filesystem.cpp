@@ -496,7 +496,7 @@ private:
 			return _iterator != _collection->end();
 		}
 
-		virtual Variant::Pair current(void) override {
+		virtual Variant::Pair current(void) const override {
 			if (_invalidated)
 				return Variant::Pair(Variant(), Variant());
 
@@ -788,7 +788,7 @@ private:
 			return _iterator != _collection->end();
 		}
 
-		virtual Variant::Pair current(void) override {
+		virtual Variant::Pair current(void) const override {
 			if (_invalidated)
 				return Variant::Pair(Variant(), Variant());
 
