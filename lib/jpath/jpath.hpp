@@ -3,7 +3,7 @@
 **
 ** For the latest info, see https://github.com/paladin-t/jpath
 **
-** Copyright (C) 2020 Tony Wang
+** Copyright (C) 2020 - 2021 Tony Wang
 **
 ** Permission is hereby granted, free of charge, to any person obtaining a copy
 ** of this software and associated documentation files (the "Software"), to deal
@@ -330,6 +330,28 @@ template<typename Src, typename ...Path> bool set(rapidjson::Document &doc, rapi
 		return false;
 
 	setValue(*tmp, src, doc);
+
+	return true;
+}
+template<typename Src, typename ...Path> bool set(rapidjson::Document &doc, rapidjson::Value &obj, Src* src, Path ...path) {
+	rapidjson::Value* tmp = nullptr;
+	if (!write(doc, obj, tmp, path ...))
+		return false;
+	if (!tmp)
+		return false;
+
+	setValue(*tmp, *src, doc);
+
+	return true;
+}
+template<typename Src, typename ...Path> bool set(rapidjson::Document &doc, rapidjson::Value &obj, const Src* src, Path ...path) {
+	rapidjson::Value* tmp = nullptr;
+	if (!write(doc, obj, tmp, path ...))
+		return false;
+	if (!tmp)
+		return false;
+
+	setValue(*tmp, *src, doc);
 
 	return true;
 }

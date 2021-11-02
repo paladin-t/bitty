@@ -3,7 +3,7 @@
 **
 ** For the latest info, see https://github.com/paladin-t/jpath
 **
-** Copyright (C) 2020 Tony Wang
+** Copyright (C) 2020 - 2021 Tony Wang
 **
 ** Permission is hereby granted, free of charge, to any person obtaining a copy
 ** of this software and associated documentation files (the "Software"), to deal
