@@ -171,8 +171,8 @@ private:
 	bool renderWithImage(
 		Codepoint cp,
 		class Bytes* out /* nullable */,
-		const Color* color /* nullable */,
-		int* width, int* height
+		const Color* color,
+		int* width /* nullable */, int* height /* nullable */
 	) {
 		if (!_data)
 			return false;
@@ -265,8 +265,8 @@ private:
 	bool renderWithFontInfo(
 		Codepoint cp,
 		class Bytes* out /* nullable */,
-		const Color* color /* nullable */,
-		int* width, int* height
+		const Color* color,
+		int* width /* nullable */, int* height /* nullable */
 	) {
 		if (!_data)
 			return false;
