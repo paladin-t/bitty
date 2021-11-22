@@ -67,14 +67,14 @@ protected:
 	using Workspace::load;
 	using Workspace::save;
 
+	virtual void loadProject(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, const Text::Dictionary &options);
+	virtual void unloadProject(const class Project* project, Executable* exec) override;
+
 private:
 	void checkAliveness(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 
 	void shortcuts(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 	void menu(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
-
-	void loadProject(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, const Text::Dictionary &options);
-	void unloadProject(const class Project* project, Executable* exec);
 
 	void showPreferences(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives);
 	void showAbout(class Window* wnd, class Renderer* rnd, class Primitives* primitives);

@@ -397,6 +397,123 @@ void WorkspaceSketchbook::renderTargetsReset(class Window* wnd, class Renderer* 
 	exec->renderTargetsReset();
 }
 
+void WorkspaceSketchbook::loadProject(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, const Text::Dictionary &options) {
+	promise::Defer start;
+
+	Text::Dictionary::const_iterator pathOpt = options.find(WORKSPACE_OPTION_APPLICATION_DEFAULT_KEY); // The non-flag option indicates initial directory/file path.
+	if (pathOpt == options.end()) {
+		auto run = [] (WorkspaceSketchbook* self, Window* wnd, Renderer* rnd, const Project* project, Executable* exec, Primitives* primitives, const char* /* name */) -> void {
+			do {
+				LockGuard<RecursiveMutex>::UniquePtr acquired;
+				Project* prj = project->acquire(acquired);
+				if (!prj)
+					break;
+
+				wnd->title(prj->title().c_str());
+
+				prj->readonly(true);
+
+				Asset* configAsset = prj->get(WORKSPACE_CONFIG_NAME "." BITTY_JSON_EXT);
+				if (!configAsset)
+					break;
+
+				configAsset->prepare(Asset::RUNNING, true);
+				Object::Ptr obj = configAsset->object(Asset::RUNNING);
+				configAsset->finish(Asset::RUNNING, true);
+				Json::Ptr json = Object::as<Json::Ptr>(obj);
+
+				if (!json)
+					break;
+				rapidjson::Document doc;
+				if (!json->toJson(doc))
+					break;
+
+				self->load(wnd, rnd, project, primitives, doc);
+			} while (false);
+
+			self->canvasFull(true);
+
+			do {
+				LockGuard<decltype(self->consoleLock())> guard(self->consoleLock());
+
+				self->consoleEnabled(false);
+			} while (false);
+
+			Operations::projectRun(rnd, self, project, exec, primitives);
+		};
+
+		if (Path::existsDirectory(WORKSPACE_AUTORUN_PROJECT_DIR WORKSPACE_AUTORUN_PROJECT_NAME)) {
+			// Open the autorun directory.
+			start = Operations::fileOpenDirectory(rnd, this, project, exec, WORKSPACE_AUTORUN_PROJECT_DIR WORKSPACE_AUTORUN_PROJECT_NAME)
+				.then(
+					[this, wnd, rnd, project, exec, primitives, run] (void) -> void {
+						run(
+							this,
+							wnd, rnd,
+							project,
+							exec,
+							primitives,
+							WORKSPACE_AUTORUN_PROJECT_DIR WORKSPACE_AUTORUN_PROJECT_NAME
+						);
+					}
+				);
+		} else if (Path::existsFile(WORKSPACE_AUTORUN_PROJECT_DIR WORKSPACE_AUTORUN_PROJECT_NAME "." BITTY_PROJECT_EXT)) {
+			// Open the autorun file.
+			start = Operations::fileOpenFile(rnd, this, project, exec, WORKSPACE_AUTORUN_PROJECT_DIR WORKSPACE_AUTORUN_PROJECT_NAME "." BITTY_PROJECT_EXT)
+				.then(
+					[this, wnd, rnd, project, exec, primitives, run] (void) -> void {
+						run(
+							this,
+							wnd, rnd,
+							project,
+							exec,
+							primitives,
+							WORKSPACE_AUTORUN_PROJECT_DIR WORKSPACE_AUTORUN_PROJECT_NAME "." BITTY_PROJECT_EXT
+						);
+					}
+				);
+		} else {
+			// Rejection.
+			start = promise::newPromise([] (promise::Defer df) -> void { df.reject(); });
+		}
+	} else {
+		// Open the initial directory or file.
+		std::string path = pathOpt->second;
+		path = Unicode::fromOs(path);
+		start = Path::existsDirectory(path.c_str()) ?
+			Operations::fileOpenDirectory(rnd, this, project, exec, path.c_str()) :
+			Operations::fileOpenFile(rnd, this, project, exec, path.c_str());
+	}
+
+	start
+		.fail(
+			[rnd, this, project, exec] (void) -> void {
+				// Create a new project.
+				Operations::fileNew(rnd, this, project, exec);
+			}
+		);
+}
+
+void WorkspaceSketchbook::unloadProject(const class Project* project, Executable* exec) {
+	do {
+		LockGuard<decltype(consoleLock())> guard(consoleLock());
+
+		consoleEnabled(true);
+	} while (false);
+
+	canvasFull(false);
+
+	exec->clearBreakpoints(nullptr);
+
+	LockGuard<RecursiveMutex>::UniquePtr acquired;
+	Project* prj = project->acquire(acquired);
+	if (!prj)
+		return;
+
+	prj->unload();
+	prj->readonly(false);
+}
+
 void WorkspaceSketchbook::checkAliveness(class Window* wnd, class Renderer*, const class Project*, Executable*, class Primitives*) {
 	if (halting() || !canvasTexture()) {
 #if defined BITTY_DEBUG
@@ -1124,123 +1241,6 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 
 		ImGui::EndMainMenuBar();
 	}
-}
-
-void WorkspaceSketchbook::loadProject(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, const Text::Dictionary &options) {
-	promise::Defer start;
-
-	Text::Dictionary::const_iterator pathOpt = options.find(WORKSPACE_OPTION_APPLICATION_DEFAULT_KEY); // The non-flag option indicates initial directory/file path.
-	if (pathOpt == options.end()) {
-		auto run = [] (WorkspaceSketchbook* self, Window* wnd, Renderer* rnd, const Project* project, Executable* exec, Primitives* primitives, const char* /* name */) -> void {
-			do {
-				LockGuard<RecursiveMutex>::UniquePtr acquired;
-				Project* prj = project->acquire(acquired);
-				if (!prj)
-					break;
-
-				wnd->title(prj->title().c_str());
-
-				prj->readonly(true);
-
-				Asset* configAsset = prj->get(WORKSPACE_CONFIG_NAME "." BITTY_JSON_EXT);
-				if (!configAsset)
-					break;
-
-				configAsset->prepare(Asset::RUNNING, true);
-				Object::Ptr obj = configAsset->object(Asset::RUNNING);
-				configAsset->finish(Asset::RUNNING, true);
-				Json::Ptr json = Object::as<Json::Ptr>(obj);
-
-				if (!json)
-					break;
-				rapidjson::Document doc;
-				if (!json->toJson(doc))
-					break;
-
-				self->load(wnd, rnd, project, primitives, doc);
-			} while (false);
-
-			self->canvasFull(true);
-
-			do {
-				LockGuard<decltype(self->consoleLock())> guard(self->consoleLock());
-
-				self->consoleEnabled(false);
-			} while (false);
-
-			Operations::projectRun(rnd, self, project, exec, primitives);
-		};
-
-		if (Path::existsDirectory(WORKSPACE_AUTORUN_PROJECT_DIR WORKSPACE_AUTORUN_PROJECT_NAME)) {
-			// Open the autorun directory.
-			start = Operations::fileOpenDirectory(rnd, this, project, exec, WORKSPACE_AUTORUN_PROJECT_DIR WORKSPACE_AUTORUN_PROJECT_NAME)
-				.then(
-					[this, wnd, rnd, project, exec, primitives, run] (void) -> void {
-						run(
-							this,
-							wnd, rnd,
-							project,
-							exec,
-							primitives,
-							WORKSPACE_AUTORUN_PROJECT_DIR WORKSPACE_AUTORUN_PROJECT_NAME
-						);
-					}
-				);
-		} else if (Path::existsFile(WORKSPACE_AUTORUN_PROJECT_DIR WORKSPACE_AUTORUN_PROJECT_NAME "." BITTY_PROJECT_EXT)) {
-			// Open the autorun file.
-			start = Operations::fileOpenFile(rnd, this, project, exec, WORKSPACE_AUTORUN_PROJECT_DIR WORKSPACE_AUTORUN_PROJECT_NAME "." BITTY_PROJECT_EXT)
-				.then(
-					[this, wnd, rnd, project, exec, primitives, run] (void) -> void {
-						run(
-							this,
-							wnd, rnd,
-							project,
-							exec,
-							primitives,
-							WORKSPACE_AUTORUN_PROJECT_DIR WORKSPACE_AUTORUN_PROJECT_NAME "." BITTY_PROJECT_EXT
-						);
-					}
-				);
-		} else {
-			// Rejection.
-			start = promise::newPromise([] (promise::Defer df) -> void { df.reject(); });
-		}
-	} else {
-		// Open the initial directory or file.
-		std::string path = pathOpt->second;
-		path = Unicode::fromOs(path);
-		start = Path::existsDirectory(path.c_str()) ?
-			Operations::fileOpenDirectory(rnd, this, project, exec, path.c_str()) :
-			Operations::fileOpenFile(rnd, this, project, exec, path.c_str());
-	}
-
-	start
-		.fail(
-			[rnd, this, project, exec] (void) -> void {
-				// Create a new project.
-				Operations::fileNew(rnd, this, project, exec);
-			}
-		);
-}
-
-void WorkspaceSketchbook::unloadProject(const class Project* project, Executable* exec) {
-	do {
-		LockGuard<decltype(consoleLock())> guard(consoleLock());
-
-		consoleEnabled(true);
-	} while (false);
-
-	canvasFull(false);
-
-	exec->clearBreakpoints(nullptr);
-
-	LockGuard<RecursiveMutex>::UniquePtr acquired;
-	Project* prj = project->acquire(acquired);
-	if (!prj)
-		return;
-
-	prj->unload();
-	prj->readonly(false);
 }
 
 void WorkspaceSketchbook::showPreferences(class Window* wnd, class Renderer*, const class Project* project, class Primitives* primitives) {

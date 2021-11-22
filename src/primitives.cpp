@@ -2242,7 +2242,8 @@ public:
 	 * @brief Transfers all commands from this queue to another queue.
 	 */
 	void transferTo(CmdQueue &other) {
-		other._cmds.clear();
+		assert(other._cmds.empty());
+
 		for (int i = 0; i < (int)_cmds.size(); ++i) {
 			other._cmds.push_back(_cmds[i]);
 			_cmds[i].transfer();
