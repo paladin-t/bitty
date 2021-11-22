@@ -1381,6 +1381,7 @@ private:
 		float _sfxVolume = 1;
 	};
 	float _musicVolume = 1;
+	bool _transferred = false;
 
 public:
 	CmdVolume() {
@@ -1412,7 +1413,13 @@ public:
 		_musicVolume = musicVol;
 	}
 
+	void transfer(void) {
+		_transferred = true;
+	}
 	void run(Audio* audio) {
+		if (_transferred)
+			return;
+
 		if (audio) {
 			if (_sfxVolumeCount == 1)
 				audio->sfxVolume(_sfxVolume);
@@ -1429,6 +1436,7 @@ private:
 	bool _loop = false;
 	int _fadeInMs = -1;
 	int _channel = -1;
+	bool _transferred = false;
 
 public:
 	CmdPlaySfx() {
@@ -1451,7 +1459,13 @@ public:
 		_channel = channel;
 	}
 
+	void transfer(void) {
+		_transferred = true;
+	}
 	void run(const Project* project, Resources* res) {
+		if (_transferred)
+			return;
+
 		if (!res)
 			return;
 
@@ -1468,6 +1482,7 @@ private:
 	Resources::Music::Ptr _music = nullptr;
 	bool _loop = false;
 	int _fadeInMs = -1;
+	bool _transferred = false;
 
 public:
 	CmdPlayMusic() {
@@ -1489,7 +1504,13 @@ public:
 		_fadeInMs = fadeInMs ? *fadeInMs : -1;
 	}
 
+	void transfer(void) {
+		_transferred = true;
+	}
 	void run(const Project* project, Resources* res) {
+		if (_transferred)
+			return;
+
 		if (!res)
 			return;
 
@@ -1507,6 +1528,7 @@ class CmdStopSfx : public Cmd {
 private:
 	Resources::Sfx::Ptr _sfx = nullptr;
 	int _fadeOutMs = -1;
+	bool _transferred = false;
 
 public:
 	CmdStopSfx() {
@@ -1527,7 +1549,13 @@ public:
 		_fadeOutMs = fadeOutMs ? *fadeOutMs : -1;
 	}
 
+	void transfer(void) {
+		_transferred = true;
+	}
 	void run(const Project* project, Resources* res) {
+		if (_transferred)
+			return;
+
 		if (!res)
 			return;
 
@@ -1543,6 +1571,7 @@ class CmdStopMusic : public Cmd {
 private:
 	Resources::Music::Ptr _music = nullptr;
 	int _fadeOutMs = -1;
+	bool _transferred = false;
 
 public:
 	CmdStopMusic() {
@@ -1563,7 +1592,13 @@ public:
 		_fadeOutMs = fadeOutMs ? *fadeOutMs : -1;
 	}
 
+	void transfer(void) {
+		_transferred = true;
+	}
 	void run(const Project* project, Resources* res) {
+		if (_transferred)
+			return;
+
 		if (!res)
 			return;
 
@@ -1582,6 +1617,7 @@ private:
 	int _index = 0;
 	int _lowHz = 100, _hiHz = 100;
 	int _ms = -1;
+	bool _transferred = false;
 
 public:
 	CmdRumble() {
@@ -1604,7 +1640,13 @@ public:
 		_ms = ms;
 	}
 
+	void transfer(void) {
+		_transferred = true;
+	}
 	void run(Primitives* primitives) {
+		if (_transferred)
+			return;
+
 		Input* input = primitives->input();
 		if (_index >= 0)
 			input->rumbleGamepad(_index, _lowHz, _hiHz, _ms);
@@ -2024,6 +2066,38 @@ public:
 		return *this;
 	}
 
+	void transfer(void) {
+		switch (cmd.type) {
+		case Cmd::VOLUME:
+			volume.transfer();
+
+			break;
+		case Cmd::PLAY_SFX:
+			playSfx.transfer();
+
+			break;
+		case Cmd::PLAY_MUSIC:
+			playMusic.transfer();
+
+			break;
+		case Cmd::STOP_SFX:
+			stopSfx.transfer();
+
+			break;
+		case Cmd::STOP_MUSIC:
+			stopMusic.transfer();
+
+			break;
+		case Cmd::RUMBLE:
+			rumble.transfer();
+
+			break;
+		default:
+			// Do nothing.
+
+			break;
+		}
+	}
 	void run(Primitives* primitives, Renderer* rnd, const Project* project, Resources* res, Audio* audio, const double* delta, unsigned frameId) {
 		switch (cmd.type) {
 		case Cmd::TARGET:
@@ -2165,6 +2239,16 @@ private:
 
 public:
 	/**
+	 * @brief Transfers all commands from this queue to another queue.
+	 */
+	void transferTo(CmdQueue &other) {
+		other._cmds.clear();
+		for (int i = 0; i < (int)_cmds.size(); ++i) {
+			other._cmds.push_back(_cmds[i]);
+			_cmds[i].transfer();
+		}
+	}
+	/**
 	 * @brief Runs through all commands in the queue.
 	 */
 	void run(Primitives* primitives, Renderer* rnd, const Project* project, Resources* res, Audio* audio, const double* delta, unsigned frameId) {
@@ -2226,7 +2310,7 @@ public:
 	void pop(CmdQueue &q) {
 		LockGuard<decltype(_lock)> guard(_lock);
 
-		q = _consuming;
+		_consuming.transferTo(q);
 		_discarded.clear(false);
 
 		_syncing = false;
