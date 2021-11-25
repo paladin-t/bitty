@@ -1,3 +1,22 @@
+### v1.1.5 Nov. 25, 2021
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added "args.txt" to specify launch options
+* Added a launch option to enable software renderer
+* Added an `Application` "title" option to set the title of the application window
+* Added an `Application.size()` function to get size of the application window
+* Added an `Application.raise()` function to raise the application window
+* Added a transparent color template to the image editor
+* Added a `color:__mul(vec4)` operator
+* Added encryption support for binary builders
+* Fixed a fading bug of the `stop(sfx)` and `stop(music)` functions
+* Fixed a duplicate execution bug of audio primitives
+* Fixed a crash bug when clicked missing asset
+* Fixed a size issue of the painting tools
+* Improved the in-app document reader
+* Upgraded ImGui from v1.84 to v1.85
+
 ### v1.1.4 Sep. 29, 2021
 
 Enhanced modules, improved usability, fixed some bugs.

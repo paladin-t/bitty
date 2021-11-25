@@ -2244,6 +2244,7 @@ public:
 	void transferTo(CmdQueue &other) {
 		assert(other._cmds.empty());
 
+		other._cmds.reserve(_cmds.size());
 		for (int i = 0; i < (int)_cmds.size(); ++i) {
 			other._cmds.push_back(_cmds[i]);
 			_cmds[i].transfer();
