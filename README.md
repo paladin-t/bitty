@@ -1,4 +1,4 @@
-![](docs/documents/imgs/logo.png)
+![](docs/imgs/logo.png)
 
 [Home](https://paladin-t.github.io/bitty/index.html) | [Steam](https://store.steampowered.com/app/1386180/) | [Itch](https://tonywang.itch.io/bitty) | [Documents](https://paladin-t.github.io/bitty/documents.html) | [About](https://paladin-t.github.io/bitty/about.html)
 
