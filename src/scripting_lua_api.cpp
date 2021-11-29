@@ -9751,7 +9751,10 @@ static int Application_resize(lua_State* L) {
 			[=] (const Variant &) -> void {
 				Window* wnd = impl->primitives()->window();
 				Renderer* rnd = impl->primitives()->renderer();
-				wnd->fullscreen(false);
+				if (wnd->fullscreen())
+					wnd->fullscreen(false);
+				if (wnd->maximized())
+					wnd->restore();
 				wnd->size(Math::Vec2i(w, h));
 				wnd->centralize();
 				impl->observer()->resizeApplication(
