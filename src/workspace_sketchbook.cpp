@@ -210,7 +210,7 @@ bool WorkspaceSketchbook::open(class Window* wnd, class Renderer* rnd, const cla
 		return false;
 	}
 
-	consoleTextBox()->SetPalette(ImGui::CodeEditor::GetLightPalette());
+	consoleTextBox()->SetPalette(ImGui::CodeEditor::GetDarkPalette());
 
 	loadProject(wnd, rnd, project, exec, primitives, options);
 
@@ -516,11 +516,19 @@ void WorkspaceSketchbook::unloadProject(const class Project* project, Executable
 
 void WorkspaceSketchbook::checkAliveness(class Window* wnd, class Renderer*, const class Project*, Executable*, class Primitives*) {
 	if (halting() || !canvasTexture()) {
-#if defined BITTY_DEBUG
+#if BITTY_TRIAL_ENABLED
+#	if defined BITTY_DEBUG
+		wnd->title(BITTY_TITLE " Trial v" BITTY_VERSION_STRING " [DEBUG]");
+#	else /* BITTY_DEBUG */
+		wnd->title(BITTY_TITLE " Trial v" BITTY_VERSION_STRING);
+#	endif /* BITTY_DEBUG */
+#else /* BITTY_TRIAL_ENABLED */
+#	if defined BITTY_DEBUG
 		wnd->title(BITTY_TITLE " v" BITTY_VERSION_STRING " [DEBUG]");
-#else /* BITTY_DEBUG */
+#	else /* BITTY_DEBUG */
 		wnd->title(BITTY_TITLE " v" BITTY_VERSION_STRING);
-#endif /* BITTY_DEBUG */
+#	endif /* BITTY_DEBUG */
+#endif /* BITTY_TRIAL_ENABLED */
 	}
 }
 

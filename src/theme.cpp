@@ -74,67 +74,67 @@ bool Theme::open(class Renderer* rnd) {
 	style(&styleDefault());
 
 	static_assert(ImGuiCol_COUNT == 53, "The size of `ImGuiCol_COUNT` has been changed, consider modify corresponding array.");
-	styleDefault().builtin[ImGuiCol_Text]                   = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
-	styleDefault().builtin[ImGuiCol_TextDisabled]           = ImVec4(0.60f, 0.60f, 0.60f, 1.00f);
-	styleDefault().builtin[ImGuiCol_WindowBg]               = ImVec4(0.94f, 0.94f, 0.94f, 1.00f);
+	styleDefault().builtin[ImGuiCol_Text]                   = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
+	styleDefault().builtin[ImGuiCol_TextDisabled]           = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
+	styleDefault().builtin[ImGuiCol_WindowBg]               = ImVec4(0.06f, 0.06f, 0.06f, 0.94f);
 	styleDefault().builtin[ImGuiCol_ChildBg]                = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	styleDefault().builtin[ImGuiCol_PopupBg]                = ImVec4(1.00f, 1.00f, 1.00f, 0.98f);
-	styleDefault().builtin[ImGuiCol_Border]                 = ImVec4(0.00f, 0.00f, 0.00f, 0.30f);
+	styleDefault().builtin[ImGuiCol_PopupBg]                = ImVec4(0.08f, 0.08f, 0.08f, 0.94f);
+	styleDefault().builtin[ImGuiCol_Border]                 = ImVec4(0.43f, 0.43f, 0.50f, 0.50f);
 	styleDefault().builtin[ImGuiCol_BorderShadow]           = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	styleDefault().builtin[ImGuiCol_FrameBg]                = ImVec4(0.90f, 0.90f, 0.90f, 1.00f);
-	styleDefault().builtin[ImGuiCol_FrameBgHovered]         = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
-	styleDefault().builtin[ImGuiCol_FrameBgActive]          = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
-	styleDefault().builtin[ImGuiCol_TitleBg]                = ImVec4(0.96f, 0.96f, 0.96f, 1.00f);
-	styleDefault().builtin[ImGuiCol_TitleBgActive]          = ImVec4(0.82f, 0.82f, 0.82f, 1.00f);
-	styleDefault().builtin[ImGuiCol_TitleBgCollapsed]       = ImVec4(1.00f, 1.00f, 1.00f, 0.51f);
-	styleDefault().builtin[ImGuiCol_MenuBarBg]              = ImVec4(0.86f, 0.86f, 0.86f, 1.00f);
-	styleDefault().builtin[ImGuiCol_ScrollbarBg]            = ImVec4(0.98f, 0.98f, 0.98f, 0.53f);
-	styleDefault().builtin[ImGuiCol_ScrollbarGrab]          = ImVec4(0.69f, 0.69f, 0.69f, 0.80f);
-	styleDefault().builtin[ImGuiCol_ScrollbarGrabHovered]   = ImVec4(0.49f, 0.49f, 0.49f, 0.80f);
-	styleDefault().builtin[ImGuiCol_ScrollbarGrabActive]    = ImVec4(0.49f, 0.49f, 0.49f, 1.00f);
+	styleDefault().builtin[ImGuiCol_FrameBg]                = ImVec4(0.16f, 0.19f, 0.18f, 0.54f);
+	styleDefault().builtin[ImGuiCol_FrameBgHovered]         = ImVec4(0.16f, 0.29f, 0.38f, 0.40f);
+	styleDefault().builtin[ImGuiCol_FrameBgActive]          = ImVec4(0.16f, 0.29f, 0.38f, 0.67f);
+	styleDefault().builtin[ImGuiCol_TitleBg]                = ImVec4(0.04f, 0.04f, 0.04f, 1.00f);
+	styleDefault().builtin[ImGuiCol_TitleBgActive]          = ImVec4(0.16f, 0.29f, 0.48f, 1.00f);
+	styleDefault().builtin[ImGuiCol_TitleBgCollapsed]       = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
+	styleDefault().builtin[ImGuiCol_MenuBarBg]              = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+	styleDefault().builtin[ImGuiCol_ScrollbarBg]            = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+	styleDefault().builtin[ImGuiCol_ScrollbarGrab]          = ImVec4(0.31f, 0.31f, 0.31f, 1.00f);
+	styleDefault().builtin[ImGuiCol_ScrollbarGrabHovered]   = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
+	styleDefault().builtin[ImGuiCol_ScrollbarGrabActive]    = ImVec4(0.51f, 0.51f, 0.51f, 1.00f);
 	styleDefault().builtin[ImGuiCol_CheckMark]              = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-	styleDefault().builtin[ImGuiCol_SliderGrab]             = ImVec4(0.26f, 0.59f, 0.98f, 0.78f);
-	styleDefault().builtin[ImGuiCol_SliderGrabActive]       = ImVec4(0.46f, 0.54f, 0.80f, 0.60f);
-	styleDefault().builtin[ImGuiCol_Button]                 = ImVec4(0.82f, 0.82f, 0.82f, 1.00f);
-	styleDefault().builtin[ImGuiCol_ButtonHovered]          = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-	styleDefault().builtin[ImGuiCol_ButtonActive]           = ImVec4(0.06f, 0.53f, 0.98f, 1.00f);
+	styleDefault().builtin[ImGuiCol_SliderGrab]             = ImVec4(0.24f, 0.52f, 0.88f, 1.00f);
+	styleDefault().builtin[ImGuiCol_SliderGrabActive]       = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+	styleDefault().builtin[ImGuiCol_Button]                 = ImVec4(0.36f, 0.36f, 0.36f, 0.40f);
+	styleDefault().builtin[ImGuiCol_ButtonHovered]          = ImVec4(0.36f, 0.36f, 0.36f, 1.00f);
+	styleDefault().builtin[ImGuiCol_ButtonActive]           = ImVec4(0.46f, 0.46f, 0.46f, 1.00f);
 	styleDefault().builtin[ImGuiCol_Header]                 = ImVec4(0.26f, 0.59f, 0.98f, 0.31f);
 	styleDefault().builtin[ImGuiCol_HeaderHovered]          = ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
 	styleDefault().builtin[ImGuiCol_HeaderActive]           = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-	styleDefault().builtin[ImGuiCol_Separator]              = ImVec4(0.39f, 0.39f, 0.39f, 0.62f);
-	styleDefault().builtin[ImGuiCol_SeparatorHovered]       = ImVec4(0.14f, 0.44f, 0.80f, 0.78f);
-	styleDefault().builtin[ImGuiCol_SeparatorActive]        = ImVec4(0.14f, 0.44f, 0.80f, 1.00f);
-	styleDefault().builtin[ImGuiCol_ResizeGrip]             = ImVec4(0.80f, 0.80f, 0.80f, 0.56f);
+	styleDefault().builtin[ImGuiCol_Separator]              = styleDefault().builtin[ImGuiCol_Border];
+	styleDefault().builtin[ImGuiCol_SeparatorHovered]       = ImVec4(0.10f, 0.40f, 0.75f, 0.78f);
+	styleDefault().builtin[ImGuiCol_SeparatorActive]        = ImVec4(0.10f, 0.40f, 0.75f, 1.00f);
+	styleDefault().builtin[ImGuiCol_ResizeGrip]             = ImVec4(0.26f, 0.59f, 0.98f, 0.25f);
 	styleDefault().builtin[ImGuiCol_ResizeGripHovered]      = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
 	styleDefault().builtin[ImGuiCol_ResizeGripActive]       = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
-	styleDefault().builtin[ImGuiCol_Tab]                    = ImLerp(styleDefault().builtin[ImGuiCol_Header],       styleDefault().builtin[ImGuiCol_TitleBgActive], 0.90f);
-	styleDefault().builtin[ImGuiCol_TabHovered]             = ImVec4(0.00f, 0.48f, 0.80f, 1.00f);
-	styleDefault().builtin[ImGuiCol_TabActive]              = ImVec4(0.00f, 0.42f, 0.74f, 1.00f);
+	styleDefault().builtin[ImGuiCol_Tab]                    = ImLerp(styleDefault().builtin[ImGuiCol_Header],       styleDefault().builtin[ImGuiCol_TitleBgActive], 0.80f);
+	styleDefault().builtin[ImGuiCol_TabHovered]             = styleDefault().builtin[ImGuiCol_HeaderHovered];
+	styleDefault().builtin[ImGuiCol_TabActive]              = ImLerp(styleDefault().builtin[ImGuiCol_HeaderActive], styleDefault().builtin[ImGuiCol_TitleBgActive], 0.60f);
 	styleDefault().builtin[ImGuiCol_TabUnfocused]           = ImLerp(styleDefault().builtin[ImGuiCol_Tab],          styleDefault().builtin[ImGuiCol_TitleBg], 0.80f);
 	styleDefault().builtin[ImGuiCol_TabUnfocusedActive]     = ImLerp(styleDefault().builtin[ImGuiCol_TabActive],    styleDefault().builtin[ImGuiCol_TitleBg], 0.40f);
-	styleDefault().builtin[ImGuiCol_PlotLines]              = ImVec4(0.39f, 0.39f, 0.39f, 1.00f);
+	styleDefault().builtin[ImGuiCol_PlotLines]              = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
 	styleDefault().builtin[ImGuiCol_PlotLinesHovered]       = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
 	styleDefault().builtin[ImGuiCol_PlotHistogram]          = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
-	styleDefault().builtin[ImGuiCol_PlotHistogramHovered]   = ImVec4(1.00f, 0.45f, 0.00f, 1.00f);
-	styleDefault().builtin[ImGuiCol_TableHeaderBg]          = ImVec4(0.78f, 0.87f, 0.98f, 1.00f);
-	styleDefault().builtin[ImGuiCol_TableBorderStrong]      = ImVec4(0.57f, 0.57f, 0.64f, 1.00f);
-	styleDefault().builtin[ImGuiCol_TableBorderLight]       = ImVec4(0.68f, 0.68f, 0.74f, 1.00f);
+	styleDefault().builtin[ImGuiCol_PlotHistogramHovered]   = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
+	styleDefault().builtin[ImGuiCol_TableHeaderBg]          = ImVec4(0.19f, 0.19f, 0.20f, 1.00f);
+	styleDefault().builtin[ImGuiCol_TableBorderStrong]      = ImVec4(0.31f, 0.31f, 0.35f, 1.00f);
+	styleDefault().builtin[ImGuiCol_TableBorderLight]       = ImVec4(0.23f, 0.23f, 0.25f, 1.00f);
 	styleDefault().builtin[ImGuiCol_TableRowBg]             = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	styleDefault().builtin[ImGuiCol_TableRowBgAlt]          = ImVec4(0.30f, 0.30f, 0.30f, 0.09f);
+	styleDefault().builtin[ImGuiCol_TableRowBgAlt]          = ImVec4(1.00f, 1.00f, 1.00f, 0.06f);
 	styleDefault().builtin[ImGuiCol_TextSelectedBg]         = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
-	styleDefault().builtin[ImGuiCol_DragDropTarget]         = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
-	styleDefault().builtin[ImGuiCol_NavHighlight]           = styleDefault().builtin[ImGuiCol_HeaderHovered];
-	styleDefault().builtin[ImGuiCol_NavWindowingHighlight]  = ImVec4(0.70f, 0.70f, 0.70f, 0.70f);
-	styleDefault().builtin[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.20f, 0.20f, 0.20f, 0.20f);
-	styleDefault().builtin[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
+	styleDefault().builtin[ImGuiCol_DragDropTarget]         = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
+	styleDefault().builtin[ImGuiCol_NavHighlight]           = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+	styleDefault().builtin[ImGuiCol_NavWindowingHighlight]  = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
+	styleDefault().builtin[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
+	styleDefault().builtin[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 	styleDefault().tabTextColor                             = ImGui::GetColorU32(ImVec4(1.00f, 1.00f, 1.00f, 1.00f));
 	styleDefault().tabTextPendingColor                      = ImGui::GetColorU32(ImVec4(1.00f, 1.00f, 1.00f, 1.00f));
 	styleDefault().tabPendingColor                          = ImGui::GetColorU32(ImVec4(0.40f, 0.13f, 0.47f, 1.00f));
 	styleDefault().tabPendingHoveredColor                   = ImGui::GetColorU32(ImVec4(0.50f, 0.23f, 0.57f, 1.00f));
-	styleDefault().iconColor                                = ImGui::GetColorU32(ImVec4(0.00f, 0.00f, 0.00f, 1.00f));
+	styleDefault().iconColor                                = ImGui::GetColorU32(ImVec4(1.00f, 1.00f, 1.00f, 1.00f));
 	styleDefault().iconDisabledColor                        = ImGui::GetColorU32(ImVec4(0.50f, 0.50f, 0.50f, 1.00f));
-	styleDefault().messageColor                             = ImGui::GetColorU32(ImVec4(0.00f, 0.00f, 0.00f, 1.00f));
-	styleDefault().warningColor                             = ImGui::GetColorU32(ImVec4(1.00f, 0.69f, 0.06f, 1.00f));
+	styleDefault().messageColor                             = ImGui::GetColorU32(ImVec4(1.00f, 1.00f, 1.00f, 1.00f));
+	styleDefault().warningColor                             = ImGui::GetColorU32(ImVec4(0.95f, 0.93f, 0.10f, 1.00f));
 	styleDefault().errorColor                               = ImGui::GetColorU32(ImVec4(0.93f, 0.00f, 0.00f, 1.00f));
 
 	generic_AddFile("Add file");
@@ -583,6 +583,7 @@ bool Theme::load(class Renderer* rnd) {
 		FileInfo::Ptr fileInfo = fileInfos->get(i);
 		if (fileInfo->fileName() == THEME_CONFIG_DEFAULT_NAME)
 			continue;
+
 		fromFile(fileInfo->fullPath().c_str());
 	}
 
@@ -796,14 +797,18 @@ void Theme::fromFile(const char* path_) {
 			fontCfg.GlyphOffset = ImVec2((float)glyphOffset.x, (float)glyphOffset.y);
 			fontCfg.MergeMode = operation == "merge";
 			if (operation == "set" || operation == "merge") {
+				const bool setDefault = operation == "set" && usage == "generic" && glyphRanges == io.Fonts->GetGlyphRangesDefault();
+				if (setDefault)
+					io.Fonts->Clear();
 				ImFont* font = io.Fonts->AddFontFromFileTTF(
 					path.c_str(),
 					size,
 					&fontCfg, glyphRanges
 				);
-				if (usage == "code") {
+				if (setDefault && !font)
+					io.Fonts->AddFontDefault();
+				if (usage == "code")
 					fontCode(font);
-				}
 			} else if (operation == "clear") {
 				io.Fonts->Clear();
 				io.Fonts->AddFontDefault();

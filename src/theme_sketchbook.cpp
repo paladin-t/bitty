@@ -22,7 +22,7 @@ ThemeSketchbook::~ThemeSketchbook() {
 }
 
 Theme::Styles ThemeSketchbook::styleIndex(void) const {
-	return LIGHT;
+	return DARK;
 }
 
 void ThemeSketchbook::styleIndex(Styles) {
@@ -35,7 +35,7 @@ bool ThemeSketchbook::open(class Renderer* rnd) {
 	if (!Theme::open(rnd))
 		return false;
 
-	styleIndex(LIGHT);
+	styleIndex(DARK);
 
 	fprintf(stdout, "Theme opened.\n");
 
