@@ -2460,6 +2460,7 @@ private:
 	Math::Vec2i _camera;
 	bool _cameraChanged = false;
 
+	Math::Recti _clipData;
 	Math::Recti _clip;
 	bool _clipChanged = false;
 
@@ -2630,19 +2631,20 @@ public:
 	}
 	virtual bool clip(int* x, int* y, int* width, int* height) const override {
 		if (x)
-			*x = _clip.xMin();
+			*x = _clipData.xMin();
 		if (y)
-			*y = _clip.yMin();
+			*y = _clipData.yMin();
 		if (width)
-			*width = _clip.width();
+			*width = _clipData.width();
 		if (height)
-			*height = _clip.height();
+			*height = _clipData.height();
 
 		return _clipChanged;
 	}
 	virtual void clip(int x, int y, int width, int height) override {
 		translated(x, y);
 
+		_clipData = Math::Recti::byXYWH(x, y, width, height);
 		if (width < 0) {
 			x += width;
 			width = -width;
@@ -2655,6 +2657,7 @@ public:
 		_clipChanged = true;
 	}
 	virtual void clip(void) override {
+		_clipData = Math::Recti();
 		_clip = Math::Recti();
 		_clipChanged = false;
 	}
@@ -3320,6 +3323,7 @@ public:
 		_camera = Math::Vec2i();
 		_cameraChanged = false;
 
+		_clipData = Math::Recti();
 		_clip = Math::Recti();
 		_clipChanged = false;
 
