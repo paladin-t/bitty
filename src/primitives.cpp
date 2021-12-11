@@ -2643,6 +2643,14 @@ public:
 	virtual void clip(int x, int y, int width, int height) override {
 		translated(x, y);
 
+		if (width < 0) {
+			x += width;
+			width = -width;
+		}
+		if (height < 0) {
+			y += height;
+			height = -height;
+		}
 		_clip = Math::Recti::byXYWH(x, y, width, height);
 		_clipChanged = true;
 	}
