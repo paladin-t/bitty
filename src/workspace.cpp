@@ -3222,7 +3222,7 @@ void Workspace::filterAssets(class Window*, class Renderer* rnd, const class Pro
 		if (ImGui::MenuItem(theme()->menuAsset_Fonts()))
 			filter("*." BITTY_FONT_EXT);
 		if (ImGui::MenuItem(theme()->menuAsset_Audio()))
-			filter("*.mp3,*.ogg,*.wav,*.mid,*.aiff,*.voc,*.mod,*.opus,*.flac");
+			filter("*.mp3,*.ogg,*.wav,*.mid,*.aiff,*.voc,*.mod,*.xm,*.s3m,*.669,*.it,*.med,*.opus,*.flac");
 		if (ImGui::MenuItem(theme()->menuAsset_Json()))
 			filter("*." BITTY_JSON_EXT);
 		if (ImGui::MenuItem(theme()->menuAsset_Text()))

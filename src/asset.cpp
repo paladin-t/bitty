@@ -1585,24 +1585,31 @@ unsigned Asset::typeOf(const std::string &ext, bool alowBytes) {
 	if (ext.empty())
 		return alowBytes ? Bytes::TYPE() : 0;
 
-	if (match(ext, BITTY_PALETTE_EXT))
+	if (match(ext, BITTY_PALETTE_EXT)) {
 		return Palette::TYPE();
-	else if (match(ext, BITTY_IMAGE_EXT) || match(ext, "png") || match(ext, "jpg") || match(ext, "bmp") || match(ext, "tga"))
+	} else if (match(ext, BITTY_IMAGE_EXT) || match(ext, "png") || match(ext, "jpg") || match(ext, "bmp") || match(ext, "tga")) {
 		return Image::TYPE();
-	else if (match(ext, BITTY_SPRITE_EXT))
+	} else if (match(ext, BITTY_SPRITE_EXT)) {
 		return Sprite::TYPE();
-	else if (match(ext, BITTY_MAP_EXT))
+	} else if (match(ext, BITTY_MAP_EXT)) {
 		return Map::TYPE();
-	else if (match(ext, "mp3") || match(ext, "ogg") || match(ext, "wav") || match(ext, "mid") || match(ext, "aiff") || match(ext, "voc") || match(ext, "mod") || match(ext, "opus") || match(ext, "flac"))
+	} else if (
+		match(ext, "mp3") || match(ext, "ogg") || match(ext, "wav") ||
+		match(ext, "mid") || match(ext, "aiff") || match(ext, "voc") ||
+		match(ext, "mod") || match(ext, "xm") || match(ext, "s3m") || match(ext, "669") || match(ext, "it") || match(ext, "med") ||
+		match(ext, "opus") ||
+		match(ext, "flac")
+	) {
 		return Sound::TYPE();
-	else if (match(ext, BITTY_FONT_EXT))
+	} else if (match(ext, BITTY_FONT_EXT)) {
 		return Font::TYPE();
-	else if (match(ext, BITTY_LUA_EXT))
+	} else if (match(ext, BITTY_LUA_EXT)) {
 		return Code::TYPE();
-	else if (match(ext, BITTY_JSON_EXT))
+	} else if (match(ext, BITTY_JSON_EXT)) {
 		return Json::TYPE();
-	else if (match(ext, BITTY_TEXT_EXT))
+	} else if (match(ext, BITTY_TEXT_EXT)) {
 		return Text::TYPE();
+	}
 
 	return alowBytes ? Bytes::TYPE() : 0;
 }

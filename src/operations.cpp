@@ -82,7 +82,7 @@
 				"*." BITTY_SPRITE_EXT " " \
 				"*." BITTY_MAP_EXT " " \
 				"*." BITTY_FONT_EXT " " \
-				"*.mp3 *.ogg *.wav *.mid *.aiff *.voc *.mod *.opus *.flac" " " \
+				"*.mp3 *.ogg *.wav *.mid *.aiff *.voc *.mod *.xm *.s3m *.669 *.it *.med *.opus *.flac" " " \
 				"*." BITTY_TEXT_EXT " *." BITTY_JSON_EXT, \
 			"Code files (*." OPERATIONS_CODE_PLACEHOLDER ")", "*." OPERATIONS_CODE_PLACEHOLDER, \
 			"Palette files (*." BITTY_PALETTE_EXT ")", "*." BITTY_PALETTE_EXT, \
@@ -90,7 +90,7 @@
 			"Sprite files (*." BITTY_SPRITE_EXT ")", "*." BITTY_SPRITE_EXT, \
 			"Map files (*." BITTY_MAP_EXT ")", "*." BITTY_MAP_EXT, \
 			"Font files (*." BITTY_FONT_EXT ")", "*." BITTY_FONT_EXT, \
-			"Audio files (*.mp3, *.ogg, *.wav, etc.)", "*.mp3 *.ogg *.wav *.mid *.aiff *.voc *.mod *.opus *.flac", \
+			"Audio files (*.mp3, *.ogg, *.wav, etc.)", "*.mp3 *.ogg *.wav *.mid *.aiff *.voc *.mod *.xm *.s3m *.669 *.it *.med *.opus *.flac", \
 			"Data files (*." BITTY_TEXT_EXT ", *." BITTY_JSON_EXT ")", "*." BITTY_TEXT_EXT " *." BITTY_JSON_EXT, \
 			"All files (*.*)", "*" \
 		}
