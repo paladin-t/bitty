@@ -363,7 +363,7 @@ void AboutPopupBox::update(void) {
 		Separator();
 
 		InputTextMultiline(
-			"",
+			"##Ipt",
 			(char*)_specs.c_str(), _specs.length(),
 			ImVec2(460 * io.FontGlobalScale, 200 * io.FontGlobalScale),
 			ImGuiInputTextFlags_ReadOnly
