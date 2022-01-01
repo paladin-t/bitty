@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -273,9 +273,15 @@ promise::Defer Operations::popupWait(class Renderer*, Workspace* ws, const char*
 	);
 }
 
-promise::Defer Operations::fileBackup(class Renderer*, Workspace*, const Project* project) {
+promise::Defer Operations::fileBackup(class Renderer*, Workspace* ws, const Project* project) {
 	return promise::newPromise(
 		[&] (promise::Defer df) -> void {
+			if (!ws->settings()->projectAutoBackup) {
+				df.resolve(true);
+
+				return;
+			}
+
 			LockGuard<RecursiveMutex>::UniquePtr acquired;
 			Project* prj = project->acquire(acquired);
 			if (!prj) {
@@ -520,6 +526,8 @@ promise::Defer Operations::fileOpenFile(class Renderer* rnd, Workspace* ws, cons
 			states->activate(Asset::States::EDITABLE);
 		}
 
+		ws->openedFile(path_.c_str());
+
 		df.resolve(true);
 
 #if defined BITTY_DEBUG
@@ -637,6 +645,8 @@ promise::Defer Operations::fileOpenDirectory(class Renderer* rnd, Workspace* ws,
 			states->activate(Asset::States::EDITABLE);
 		}
 
+		ws->openedDirectory(path_.c_str());
+
 		df.resolve(true);
 
 #if defined BITTY_DEBUG
@@ -666,7 +676,7 @@ promise::Defer Operations::fileOpenDirectory(class Renderer* rnd, Workspace* ws,
 
 promise::Defer Operations::fileOpenExample(class Renderer* rnd, Workspace* ws, const class Project* project, Executable* exec, const char* path_) {
 	const std::string path = path_ ? path_ : "";
-	auto next = [project, path] (promise::Defer df) -> void {
+	auto next = [ws, project, path] (promise::Defer df) -> void {
 		std::string path_ = path;
 		Path::uniform(path_);
 
@@ -691,6 +701,8 @@ promise::Defer Operations::fileOpenExample(class Renderer* rnd, Workspace* ws, c
 			Asset::States* states = asset->states();
 			states->activate(Asset::States::EDITABLE);
 		}
+
+		ws->openedExample(path_.c_str());
 
 		df.resolve(true);
 	};

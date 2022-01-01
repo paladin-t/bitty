@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -237,9 +237,10 @@ public:
 		}
 
 		const char* fmt = result > 1 ?
-			"Collected %d resources.\n" :
-			"Collected %d resource.\n";
-		fprintf(stdout, fmt, result);
+			"Collected %d resources, retaining %d.\n" :
+			"Collected %d resource, retaining %d.\n";
+		const int dictCount = (int)_dictionary.size();
+		fprintf(stdout, fmt, result, dictCount);
 
 		return result;
 	}
@@ -259,8 +260,8 @@ public:
 		_idSeed = 1;
 
 		const char* fmt = dictCount > 1 ?
-			"Resources reset, unloaded %d resources.\n" :
-			"Resources reset, unloaded %d resource.\n";
+			"Resources reset, unloaded %d resources, retaining 0.\n" :
+			"Resources reset, unloaded %d resource, retaining 0.\n";
 		fprintf(stdout, fmt, dictCount);
 	}
 

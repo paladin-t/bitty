@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -97,6 +97,8 @@ public:
 	BITTY_PROPERTY_READONLY(std::string, menuFile_Open)
 	BITTY_PROPERTY_READONLY(std::string, menuFile_OpenDirectory)
 	BITTY_PROPERTY_READONLY(std::string, menuFile_OpenExamples)
+	BITTY_PROPERTY_READONLY(std::string, menuFile_OpenRecent)
+	BITTY_PROPERTY_READONLY(std::string, menuFile_Clear)
 	BITTY_PROPERTY_READONLY(std::string, menuFile_Close)
 	BITTY_PROPERTY_READONLY(std::string, menuFile_SaveAsset)
 	BITTY_PROPERTY_READONLY(std::string, menuFile_Save)
@@ -197,6 +199,7 @@ public:
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_InvalidProject)
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_InvalidRef)
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_NotUndoable)
+	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_PathDoesntExistRemoveThisRecord)
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_Reading)
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_Running)
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_Saving)
@@ -240,6 +243,7 @@ public:
 	BITTY_PROPERTY_READONLY(std::string, tabPreferences_Onscreen)
 
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences)
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_AutoBackup)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_ClearOnStart)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_Console)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_IgnoreDotFiles)

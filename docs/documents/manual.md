@@ -722,6 +722,8 @@ Being the same as Lua list, `File` index starts from 1. Implements a `Stream` pr
 	* `val`: the line to write
 	* returns the written size in bytes
 
+Note that when open a file as `Stream.Append`, it always writes data at the end of the file, expanding it, and `file:poke(...)` are ignored.
+
 ### Filesystem
 
 **Static Functions**
@@ -1681,10 +1683,11 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 
 **Functions**
 
-* `play(music, loop = false[, fade])`: plays the specific `Music` resource
+* `play(music, loop = false[, fade[, pos]])`: plays the specific `Music` resource
 	* `music`: the `Music` resource
 	* `loop`: `true` for loop, otherwise plays once
 	* `fade`: the fade in time in seconds
+	* `pos`: real number, the specific position in seconds to start from; only affects MP3, OGG, WAV, FLAC, and some MOD formats
 * `stop(music[, fade])`: stops the specific `Music` resource
 	* `music`: the `Music` resource
 	* `fade`: the fade out time in seconds

@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -9302,13 +9302,16 @@ static int Primitives_play(lua_State* L) {
 	if (mus && *mus) {
 		bool loop = false;
 		float fade = -1;
-		if (n >= 3)
+		double pos = 0.0;
+		if (n >= 4)
+			read<2>(L, loop, fade, pos);
+		else if (n == 3)
 			read<2>(L, loop, fade);
 		else if (n == 2)
 			read<2>(L, loop);
 
 		const int fadeMs = fade >= 0 ? (int)fade * 1000 : -1;
-		impl->primitives()->play(*mus, loop, fadeMs > 0 ? &fadeMs : nullptr);
+		impl->primitives()->play(*mus, loop, fadeMs > 0 ? &fadeMs : nullptr, n >= 4 && pos != 0.0 ? &pos : nullptr);
 
 		return 0;
 	}
@@ -10503,6 +10506,11 @@ static int Project_read(lua_State* L) {
 
 	if (!obj)
 		return write(L, nullptr);
+
+	if (!isPlugin(L)) {
+		if (Text::endsWith(name, "." BITTY_LUA_EXT, true))
+			error(L, "Cannot read Lua source via Project.");
+	}
 
 	const Project* project = obj->get();
 	if (!project)

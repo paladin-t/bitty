@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -167,6 +167,8 @@ bool Theme::open(class Renderer* rnd) {
 	menuFile_Open("Open...");
 	menuFile_OpenDirectory("Open Directory...");
 	menuFile_OpenExamples("Open Examples");
+	menuFile_OpenRecent("Open Recent");
+	menuFile_Clear("Clear");
 	menuFile_Close("Close");
 	menuFile_SaveAsset("Save Asset");
 	menuFile_Save("Save");
@@ -267,6 +269,7 @@ bool Theme::open(class Renderer* rnd) {
 	dialogPrompt_InvalidProject("Invalid project.");
 	dialogPrompt_InvalidRef("Invalid ref.");
 	dialogPrompt_NotUndoable("(Not undoable)");
+	dialogPrompt_PathDoesntExistRemoveThisRecord("Path doesn't exist,\nremove this record?");
 	dialogPrompt_Reading("Reading...");
 	dialogPrompt_Running("Running...");
 	dialogPrompt_Saving("Saving...");
@@ -310,6 +313,7 @@ bool Theme::open(class Renderer* rnd) {
 	tabPreferences_Onscreen("Onscreen");
 
 	windowPreferences("Preferences");
+	windowPreferences_Editor_AutoBackup("Auto backup");
 	windowPreferences_Editor_ClearOnStart("Clear on start");
 	windowPreferences_Editor_Console("Console:");
 	windowPreferences_Editor_IgnoreDotFiles("Ignore dot files");

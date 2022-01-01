@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -236,14 +236,17 @@ bool ScriptingLua::setup(void) {
 
 		main->prepare(Asset::RUNNING, true);
 		Object::Ptr obj = main->object(Asset::RUNNING);
-		main->finish(Asset::RUNNING, true);
 		if (!obj) {
+			main->finish(Asset::RUNNING, true);
+
 			observer()->warn("Cannot find main entry.");
 
 			return false;
 		}
 		Code::Ptr code = Object::as<Code::Ptr>(obj);
 		if (!code) {
+			main->finish(Asset::RUNNING, true);
+
 			observer()->warn("Invalid main entry.");
 
 			return false;
@@ -256,6 +259,14 @@ bool ScriptingLua::setup(void) {
 
 		src.assign(txt, len);
 		ent = prj->entry();
+
+		len = 0;
+		txt = nullptr;
+		code = nullptr;
+		obj = nullptr;
+		main->finish(Asset::RUNNING, true);
+		main = nullptr;
+		prj = nullptr;
 	} while (false);
 
 	do {
@@ -1246,27 +1257,39 @@ int ScriptingLua::require(lua_State* L) {
 
 			asset->prepare(Asset::RUNNING, true);
 			Object::Ptr obj = asset->object(Asset::RUNNING);
-			asset->finish(Asset::RUNNING, true);
-			if (!obj)
+			if (!obj) {
+				asset->finish(Asset::RUNNING, true);
+
 				break;
+			}
 			Code::Ptr code = Object::as<Code::Ptr>(obj);
-			if (!code)
+			if (!code) {
+				asset->finish(Asset::RUNNING, true);
+
 				break;
+			}
 
 			size_t len = 0;
 			const char* txt = code->text(&len);
-			if (!txt || len == 0)
+			if (!txt || len == 0) {
+				asset->finish(Asset::RUNNING, true);
+
 				break;
+			}
 
 			impl->_requirement.insert(path);
 			impl->_dependency.push_back(path);
 
 			check(L, luaL_loadbuffer(L, txt, len, full.c_str()));
 
-			prj = nullptr;
 			txt = nullptr;
 			len = 0;
+			code = nullptr;
+			obj = nullptr;
+			asset->finish(Asset::RUNNING, true);
+			asset = nullptr;
 			acquired.reset();
+			prj = nullptr;
 
 			check(L, lua_pcall(L, 0, LUA_MULTRET, 0));
 

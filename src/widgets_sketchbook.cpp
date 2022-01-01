@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -91,6 +91,8 @@ void PreferencesPopupBox::update(void) {
 					SameLine();
 
 					TextUnformatted(_theme->windowPreferences_NeedToReopen());
+
+					Checkbox(_theme->windowPreferences_Editor_AutoBackup(), &_settingsShadow.projectAutoBackup);
 				}
 				PopID();
 
@@ -357,7 +359,7 @@ void AboutPopupBox::update(void) {
 			SameLine();
 			Url("Tony Wang", "https://paladin-t.github.io/");
 			SameLine();
-			TextUnformatted(", 2020 - 2021");
+			TextUnformatted(", 2020 - 2022");
 			NewLine();
 		}
 		Separator();
