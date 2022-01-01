@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -1603,7 +1603,7 @@ unsigned Asset::typeOf(const std::string &ext, bool alowBytes) {
 		return Sound::TYPE();
 	} else if (match(ext, BITTY_FONT_EXT)) {
 		return Font::TYPE();
-	} else if (match(ext, BITTY_LUA_EXT)) {
+	} else if (match(ext, BITTY_LUA_EXT) || match(ext, "luax")) {
 		return Code::TYPE();
 	} else if (match(ext, BITTY_JSON_EXT)) {
 		return Json::TYPE();
