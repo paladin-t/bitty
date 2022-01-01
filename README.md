@@ -5,6 +5,7 @@
 ![](docs/imgs/floppy.gif) **An itty bitty game engine.**
 
 * [About Bitty Engine](#about-bitty-engine)
+	* [Why Bitty Engine?](#why-bitty-engine)
 	* [Features](#features)
 	* [Technical specifications](#technical-specifications)
 * [Glance](#glance)
@@ -26,6 +27,10 @@
 ![](docs/imgs/banner_coding.png)
 
 Bitty Engine is a cross-platform itty bitty **Game Engine** and open-source **Framework**. The full featured engine is programmable in Lua and integrated with built-in editors. It keeps the nature of both engine's productivity, and fantasy computer/console's ease to iterate. It boosts your commercial/non-commercial projects, prototypes, game jams, or just thought experiments.
+
+### Why Bitty Engine?
+
+Bitty Engine has everything built-in for coding, graphics composing, etc; it has a full featured debugger for breakpoint, variable inspecting, stepping, and call-stack traversing; it offers a set of well-designed API with full documentation; it builds fast binaries with code and asset obfuscating, moreover its package size is small (around 10MB with empty project, other engine outputs more than 10 times bigger).
 
 It is supposed to be your ultimate 2D game creating software.
 
