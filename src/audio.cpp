@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -589,13 +589,15 @@ public:
 	virtual bool playing(void) const override {
 		return _playing;
 	}
-	virtual bool play(bool loop, const int* fadeInMs) override {
+	virtual bool play(bool loop, const int* fadeInMs, const double* pos) override {
 		_playing = true;
 
 		if (fadeInMs)
 			Mix_FadeInMusic(_music, loop ? -1 : 0, *fadeInMs);
 		else
 			Mix_PlayMusic(_music, loop ? -1 : 0);
+		if (pos)
+			Mix_SetMusicPosition(*pos);
 
 		_musicOccupation = (uintptr_t)this;
 

@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -139,7 +139,7 @@ public:
 	virtual double length(void) const = 0;
 
 	virtual bool playing(void) const = 0;
-	virtual bool play(bool loop, const int* fadeInMs /* nullable */) = 0;
+	virtual bool play(bool loop, const int* fadeInMs /* nullable */, const double* pos = nullptr) = 0;
 	virtual bool paused(void) const = 0;
 	virtual void pause(void) = 0;
 	virtual void resume(void) = 0;

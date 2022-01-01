@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -1482,6 +1482,8 @@ private:
 	Resources::Music::Ptr _music = nullptr;
 	bool _loop = false;
 	int _fadeInMs = -1;
+	bool _located = false;
+	double _position = 0.0;
 	bool _transferred = false;
 
 public:
@@ -1492,7 +1494,7 @@ public:
 			self->~CmdPlayMusic();
 		};
 	}
-	CmdPlayMusic(Resources::Music::Ptr mus, bool loop, const int* fadeInMs) {
+	CmdPlayMusic(Resources::Music::Ptr mus, bool loop, const int* fadeInMs, const double* pos) {
 		type = PLAY_MUSIC;
 		dtor = [] (Cmd* cmd) -> void {
 			CmdPlayMusic* self = reinterpret_cast<CmdPlayMusic*>(cmd);
@@ -1502,6 +1504,10 @@ public:
 		_music = mus;
 		_loop = loop;
 		_fadeInMs = fadeInMs ? *fadeInMs : -1;
+		if (pos) {
+			_located = true;
+			_position = *pos;
+		}
 	}
 
 	void transfer(void) {
@@ -1520,7 +1526,7 @@ public:
 
 		LockGuard<Mutex> guard(_music->lock);
 
-		ptr->play(_loop, _fadeInMs <= 0 ? nullptr : &_fadeInMs);
+		ptr->play(_loop, _fadeInMs <= 0 ? nullptr : &_fadeInMs, _located ? &_position : nullptr);
 	}
 };
 
@@ -2997,12 +3003,12 @@ public:
 
 		commit(var, nullptr, true);
 	}
-	virtual void play(Resources::Music::Ptr mus, bool loop, const int* fadeInMs) const override {
+	virtual void play(Resources::Music::Ptr mus, bool loop, const int* fadeInMs, const double* pos) const override {
 		if (!mus)
 			return;
 
 		CmdVariant var;
-		new (&var.playMusic) CmdPlayMusic(mus, loop, fadeInMs);
+		new (&var.playMusic) CmdPlayMusic(mus, loop, fadeInMs, pos);
 
 		commit(var, nullptr, true);
 	}

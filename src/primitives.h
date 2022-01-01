@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -329,7 +329,7 @@ public:
 	/**
 	 * @brief Plays the specific music.
 	 */
-	virtual void play(Resources::Music::Ptr mus, bool loop, const int* fadeInMs /* nullable */) const = 0;
+	virtual void play(Resources::Music::Ptr mus, bool loop, const int* fadeInMs /* nullable */, const double* pos = nullptr) const = 0;
 	/**
 	 * @brief Stops the specific SFX.
 	 */
