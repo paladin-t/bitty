@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -62,6 +62,7 @@ WorkspaceSketchbook::SketchbookSettings &WorkspaceSketchbook::SketchbookSettings
 
 	projectPreference = other.projectPreference;
 	projectIgnoreDotFiles = other.projectIgnoreDotFiles;
+	projectAutoBackup = other.projectAutoBackup;
 
 	bannerVisible = other.bannerVisible;
 	assetsVisible = other.assetsVisible;
@@ -111,7 +112,8 @@ bool WorkspaceSketchbook::SketchbookSettings::operator != (const SketchbookSetti
 	}
 
 	if (projectPreference != other.projectPreference ||
-		projectIgnoreDotFiles != other.projectIgnoreDotFiles
+		projectIgnoreDotFiles != other.projectIgnoreDotFiles ||
+		projectAutoBackup != other.projectAutoBackup
 	) {
 		return true;
 	}
@@ -419,16 +421,31 @@ void WorkspaceSketchbook::loadProject(class Window* wnd, class Renderer* rnd, co
 
 				configAsset->prepare(Asset::RUNNING, true);
 				Object::Ptr obj = configAsset->object(Asset::RUNNING);
-				configAsset->finish(Asset::RUNNING, true);
-				Json::Ptr json = Object::as<Json::Ptr>(obj);
+				if (!obj) {
+					configAsset->finish(Asset::RUNNING, true);
 
-				if (!json)
 					break;
+				}
+				Json::Ptr json = Object::as<Json::Ptr>(obj);
+				if (!json) {
+					configAsset->finish(Asset::RUNNING, true);
+
+					break;
+				}
 				rapidjson::Document doc;
-				if (!json->toJson(doc))
+				if (!json->toJson(doc)) {
+					configAsset->finish(Asset::RUNNING, true);
+
 					break;
+				}
 
 				self->load(wnd, rnd, project, primitives, doc);
+
+				json = nullptr;
+				obj = nullptr;
+				configAsset->finish(Asset::RUNNING, true);
+				configAsset = nullptr;
+				prj = nullptr;
 			} while (false);
 
 			self->canvasFull(true);
@@ -1265,6 +1282,9 @@ void WorkspaceSketchbook::showPreferences(class Window* wnd, class Renderer*, co
 			}
 			if (sets.projectIgnoreDotFiles != prj->ignoreDotFiles()) {
 				prj->ignoreDotFiles(sets.projectIgnoreDotFiles);
+			}
+			if (sets.projectAutoBackup != settings()->projectAutoBackup) {
+				settings()->projectAutoBackup = sets.projectAutoBackup;
 			}
 
 			if (sets.editorShowWhiteSpaces != settings()->editorShowWhiteSpaces) {

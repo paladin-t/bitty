@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -512,6 +512,18 @@ bool Workspace::canSaveTo(const char* path) const {
 	return true;
 }
 
+void Workspace::openedFile(const char*) {
+	// Do nothing.
+}
+
+void Workspace::openedDirectory(const char*) {
+	// Do nothing.
+}
+
+void Workspace::openedExample(const char*) {
+	// Do nothing.
+}
+
 void Workspace::clear(void) {
 	LockGuard<decltype(consoleLock())> guard(consoleLock());
 
@@ -898,6 +910,7 @@ bool Workspace::load(class Window* wnd, class Renderer* rnd, const class Project
 
 	Jpath::get(doc, settings()->projectPreference, "project", "preference");
 	Jpath::get(doc, settings()->projectIgnoreDotFiles, "project", "ignore_dot_files");
+	Jpath::get(doc, settings()->projectAutoBackup, "project", "auto_backup");
 
 	Jpath::get(doc, settings()->editorShowWhiteSpaces, "editor", "show_white_spaces");
 	Jpath::get(doc, settings()->editorCaseSensitive, "editor", "case_sensitive");
@@ -953,15 +966,14 @@ bool Workspace::load(class Window* wnd, class Renderer* rnd, const class Project
 	if (settings()->applicationWindowSize == Math::Vec2i(0, 0))
 		settings()->applicationWindowSize = size;
 #if !defined BITTY_OS_HTML
-	if (size != settings()->applicationWindowSize) {
+	if (size != settings()->applicationWindowSize)
 		wnd->size(settings()->applicationWindowSize);
-		resizeApplication(
-			Math::Vec2i(
-				settings()->applicationWindowSize.x / rnd->scale(),
-				settings()->applicationWindowSize.y / rnd->scale()
-			)
-		);
-	}
+	resizeApplication(
+		Math::Vec2i(
+			settings()->applicationWindowSize.x / rnd->scale(),
+			settings()->applicationWindowSize.y / rnd->scale()
+		)
+	);
 #endif /* BITTY_OS_HTML */
 	wnd->displayIndex(settings()->applicationWindowDisplayIndex);
 	if (settings()->applicationWindowFullscreen)
@@ -994,6 +1006,7 @@ bool Workspace::save(class Window* wnd, class Renderer*, const class Project*, c
 
 	Jpath::set(doc, doc, settings()->projectPreference, "project", "preference");
 	Jpath::set(doc, doc, settings()->projectIgnoreDotFiles, "project", "ignore_dot_files");
+	Jpath::set(doc, doc, settings()->projectAutoBackup, "project", "auto_backup");
 
 	Jpath::set(doc, doc, settings()->editorShowWhiteSpaces, "editor", "show_white_spaces");
 	Jpath::set(doc, doc, settings()->editorCaseSensitive, "editor", "case_sensitive");
@@ -3210,7 +3223,7 @@ void Workspace::filterAssets(class Window*, class Renderer* rnd, const class Pro
 
 	if (ImGui::BeginPopup("@Asts/Fltr/Opt")) {
 		if (ImGui::MenuItem(theme()->menuAsset_Code()))
-			filter("*.lua");
+			filter("*." BITTY_LUA_EXT);
 		if (ImGui::MenuItem(theme()->menuAsset_Sprites()))
 			filter("*." BITTY_SPRITE_EXT);
 		if (ImGui::MenuItem(theme()->menuAsset_Maps()))

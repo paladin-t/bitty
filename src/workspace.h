@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2021 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -148,6 +148,7 @@ public:
 
 		unsigned projectPreference = 0;
 		bool projectIgnoreDotFiles = true;
+		bool projectAutoBackup = false;
 
 		bool bannerVisible = true;
 
@@ -338,6 +339,19 @@ public:
 	 * @brief Gets whether it's possible to save to a specific path.
 	 */
 	bool canSaveTo(const char* path) const;
+
+	/**
+	 * @brief Handles on project file opened.
+	 */
+	virtual void openedFile(const char* path);
+	/**
+	 * @brief Handles on project directory opened.
+	 */
+	virtual void openedDirectory(const char* path);
+	/**
+	 * @brief Handles on example project opened.
+	 */
+	virtual void openedExample(const char* path);
 
 	/**
 	 * @brief Loads workspace data.
