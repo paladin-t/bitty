@@ -158,7 +158,9 @@ Lua is widely used and validated in the software industry, there are a lot of le
 
 Lua is 1-based for list accessing, Bitty Engine follows the same convention for sequenced structures, like `Bytes`, `File`, etc. Otherwise it is 0-based for coordinates and graphical units, like `Noiser`, `Pathfinder`, `Image`, `Sprite`, `Palette`, `Map`, etc.
 
-This document uses a meta method form to describe operators. Eg. `foo:__len()` denotes `#foo`, `foo:__add(bar)` denotes `foo + bar`, `foo:__unm()` denotes `-foo`, etc.
+This document uses a meta method form to describe operators. Eg. `foo:__len()` denotes `#foo`, `foo:__add(bar)` denotes `foo + bar`, `foo:__unm()` denotes `-foo`, etc. Just write the symbol form `#`, `+`, `-`, etc. in your calculation.
+
+Additionally, this is not true syntax, but for description convenience in this document, optional parameter is described between square brackets `[optional]`; default value is appended after an equal sign `foo = 42`; variadic list is described as `...`.
 
 ### Memory Management
 
@@ -1202,7 +1204,7 @@ For both "string" and "json", the underneath data flow always end up with a zero
 	* returns text content
 * `Platform.setClipboardText(txt)`: sets the text content in the clipboard
 	* `txt`: the text to set
-* `Platform.execute(cmd)`: executes the specific system command
+* `Platform.execute(cmd)`: executes the specific system command; this function invokes native command on desktops, and JavaScript function in browser
 	* `cmd`: the command to execute
 
 * `Platform.openFile([title[, filter]])`: popups an open-file-dialog
@@ -1687,7 +1689,7 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 	* `music`: the `Music` resource
 	* `loop`: `true` for loop, otherwise plays once
 	* `fade`: the fade in time in seconds
-	* `pos`: real number, the specific position in seconds to start from; only affects MP3, OGG, WAV, FLAC, and some MOD formats
+	* `pos`: real number, the specific position in seconds to start from; affects MP3, OGG, WAV, FLAC, and some MOD formats
 * `stop(music[, fade])`: stops the specific `Music` resource
 	* `music`: the `Music` resource
 	* `fade`: the fade out time in seconds
@@ -1896,7 +1898,7 @@ Currently there is only one available strategy, change and try if it's needed:
 * `project:exists(name)`: gets whether the specific asset exists in the `Project`
 	* `name`: the asset name to look for
 	* returns `true` for exists, otherwise `false`
-* `project:read(name)`: reads the content of the specific asset
+* `project:read(name)`: reads the content of the specific asset; this method can read all asset types except for code
 	* `name`: the asset name to read
 	* returns asset content as `Bytes` and its cursor will be at the end, or `nil`
 * `project:write(name, bytes, overwrite = true)`: writes the specific `Bytes` to the `Project`; for user constructed `Project` only

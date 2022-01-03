@@ -61,8 +61,6 @@ Bitty Engine offers a set of orthogonal features that makes game development com
 * Application interfaces
 	* `Application`, `Canvas`, `Project`, `Debug`
 
-These features are quite stable. Things just change, but it is very important that there won't be unthoughtful breaking changes in future development.
-
 ### Technical specifications
 
 * Display: configurable resolution
