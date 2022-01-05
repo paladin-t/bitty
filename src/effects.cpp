@@ -798,7 +798,7 @@ public:
 		if (!_texture) {
 			_texture = Texture::create();
 			const Color color[] = { Color(), Color(), Color(), Color() };
-			_texture->fromBytes(rnd, Texture::TARGET, (Byte*)color, 2, 2, 0);
+			_texture->fromBytes(rnd, Texture::TARGET, (Byte*)color, 2, 2, 0, Texture::NEAREST);
 			_texture->blend(Texture::BLEND);
 		}
 		int width = 0, height = 0;

@@ -648,7 +648,7 @@ class Texture* Theme::createTexture(class Renderer* rnd, const Byte* buf, size_t
 	Texture* texture = Texture::create();
 	Image::Ptr image(Image::create(nullptr));
 	image->fromBytes(buf, len);
-	texture->fromImage(rnd, Texture::STATIC, image.get());
+	texture->fromImage(rnd, Texture::STATIC, image.get(), Texture::NEAREST);
 
 	return texture;
 }

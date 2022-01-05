@@ -53,7 +53,9 @@ public:
 
 	enum Strategies {
 		NONE = 0,
-		BATCH_MAP = 1 << 0
+		BATCH_MAP = 1 << 0,
+		LINEAR_CANVAS = 1 << 1,
+		ANISOTROPIC_CANVAS = 1 << 2
 	};
 
 	typedef std::function<void(const char*)> ErrorHandler;

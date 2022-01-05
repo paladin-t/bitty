@@ -280,6 +280,7 @@ protected:
 	BITTY_PROPERTY(Math::Vec2i, canvasSize_)
 	BITTY_FIELD(Mutex, canvasSizeLock)
 	BITTY_PROPERTY_READONLY(Texture::Ptr, canvasTexture)
+	BITTY_PROPERTY_READONLY(Texture::ScaleModes, canvasScaleMode)
 	BITTY_PROPERTY_READONLY(bool, canvasHovering)
 	BITTY_PROPERTY_READONLY(bool, canvasFull)
 	BITTY_PROPERTY_READONLY(bool, canvasInitialized)

@@ -526,6 +526,12 @@ promise::Defer Operations::fileOpenFile(class Renderer* rnd, Workspace* ws, cons
 			states->activate(Asset::States::EDITABLE);
 		}
 
+		Texture::ScaleModes canvasScaleMode = Texture::NEAREST;
+		if ((prj->strategy() & Project::LINEAR_CANVAS) != Project::NONE)
+			canvasScaleMode = Texture::LINEAR;
+		if ((prj->strategy() & Project::ANISOTROPIC_CANVAS) != Project::NONE)
+			canvasScaleMode = Texture::ANISOTROPIC;
+		ws->canvasScaleMode(canvasScaleMode);
 		ws->openedFile(path_.c_str());
 
 		df.resolve(true);
@@ -645,6 +651,12 @@ promise::Defer Operations::fileOpenDirectory(class Renderer* rnd, Workspace* ws,
 			states->activate(Asset::States::EDITABLE);
 		}
 
+		Texture::ScaleModes canvasScaleMode = Texture::NEAREST;
+		if ((prj->strategy() & Project::LINEAR_CANVAS) != Project::NONE)
+			canvasScaleMode = Texture::LINEAR;
+		if ((prj->strategy() & Project::ANISOTROPIC_CANVAS) != Project::NONE)
+			canvasScaleMode = Texture::ANISOTROPIC;
+		ws->canvasScaleMode(canvasScaleMode);
 		ws->openedDirectory(path_.c_str());
 
 		df.resolve(true);
@@ -702,6 +714,12 @@ promise::Defer Operations::fileOpenExample(class Renderer* rnd, Workspace* ws, c
 			states->activate(Asset::States::EDITABLE);
 		}
 
+		Texture::ScaleModes canvasScaleMode = Texture::NEAREST;
+		if ((prj->strategy() & Project::LINEAR_CANVAS) != Project::NONE)
+			canvasScaleMode = Texture::LINEAR;
+		if ((prj->strategy() & Project::ANISOTROPIC_CANVAS) != Project::NONE)
+			canvasScaleMode = Texture::ANISOTROPIC;
+		ws->canvasScaleMode(canvasScaleMode);
 		ws->openedExample(path_.c_str());
 
 		df.resolve(true);
@@ -1087,8 +1105,15 @@ promise::Defer Operations::fileSaveAsset(class Renderer* rnd, Workspace* ws, con
 					asset->save(Asset::EDITING);
 					asset->dirty(false);
 
-					if (asset == prj->info())
+					if (asset == prj->info()) {
 						prj->parse();
+						Texture::ScaleModes canvasScaleMode = Texture::NEAREST;
+						if ((prj->strategy() & Project::LINEAR_CANVAS) != Project::NONE)
+							canvasScaleMode = Texture::LINEAR;
+						if ((prj->strategy() & Project::ANISOTROPIC_CANVAS) != Project::NONE)
+							canvasScaleMode = Texture::ANISOTROPIC;
+						ws->canvasScaleMode(canvasScaleMode);
+					}
 
 					df.resolve(true);
 				}
@@ -1215,6 +1240,13 @@ promise::Defer Operations::fileSaveFile(class Renderer* rnd, Workspace* ws, cons
 				);
 				prj->readonly(false);
 				prj->dirty(false);
+				prj->parse();
+				Texture::ScaleModes canvasScaleMode = Texture::NEAREST;
+				if ((prj->strategy() & Project::LINEAR_CANVAS) != Project::NONE)
+					canvasScaleMode = Texture::LINEAR;
+				if ((prj->strategy() & Project::ANISOTROPIC_CANVAS) != Project::NONE)
+					canvasScaleMode = Texture::ANISOTROPIC;
+				ws->canvasScaleMode(canvasScaleMode);
 
 				df.resolve(true);
 
@@ -1359,6 +1391,13 @@ promise::Defer Operations::fileSaveDirectory(class Renderer* rnd, Workspace* ws,
 				);
 				prj->readonly(false);
 				prj->dirty(false);
+				prj->parse();
+				Texture::ScaleModes canvasScaleMode = Texture::NEAREST;
+				if ((prj->strategy() & Project::LINEAR_CANVAS) != Project::NONE)
+					canvasScaleMode = Texture::LINEAR;
+				if ((prj->strategy() & Project::ANISOTROPIC_CANVAS) != Project::NONE)
+					canvasScaleMode = Texture::ANISOTROPIC;
+				ws->canvasScaleMode(canvasScaleMode);
 
 				df.resolve(true);
 

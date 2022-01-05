@@ -559,7 +559,7 @@ private:
 			}
 			img->fromBytes(bytes);
 			::Texture::Ptr ptr(::Texture::create());
-			ptr->fromBytes(rnd, ::Texture::STATIC, img->pixels(), img->width(), img->height(), 0);
+			ptr->fromBytes(rnd, ::Texture::STATIC, img->pixels(), img->width(), img->height(), 0, ::Texture::NEAREST);
 			ptr->blend(::Texture::BLEND);
 			::Image::destroy(img);
 			Bytes::destroy(bytes);
@@ -614,7 +614,7 @@ private:
 			}
 			assert((int)bytes->count() == width * height * sizeof(Color));
 			ptr = ::Texture::Ptr(::Texture::create());
-			ptr->fromBytes(rnd, ::Texture::STATIC, bytes->pointer(), width, height, 0);
+			ptr->fromBytes(rnd, ::Texture::STATIC, bytes->pointer(), width, height, 0, ::Texture::NEAREST);
 			ptr->blend(::Texture::BLEND);
 			Bytes::destroy(bytes);
 

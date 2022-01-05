@@ -276,7 +276,7 @@ Texture::Ptr Asset::texture(Usages usage) {
 
 	const Texture::Usages usg = img->blank() ? Texture::TARGET : Texture::STATIC;
 	Texture::Ptr tex(Texture::create());
-	tex->fromImage(_project->renderer(), usg, img.get());
+	tex->fromImage(_project->renderer(), usg, img.get(), Texture::NEAREST);
 	tex->blend(Texture::BLEND);
 
 	switch (usage) {

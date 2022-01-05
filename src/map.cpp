@@ -560,7 +560,7 @@ private:
 		Texture::Ptr result(Texture::create());
 		Byte* pixels = new Byte[(width * _tileWidth) * (height * _tileHeight) * bits];
 		memset(pixels, 0, (width * _tileWidth) * (height * _tileHeight) * bits);
-		result->fromBytes(rnd, Texture::TARGET, pixels, width * _tileWidth, height * _tileHeight, paletted);
+		result->fromBytes(rnd, Texture::TARGET, pixels, width * _tileWidth, height * _tileHeight, paletted, Texture::NEAREST);
 		result->blend(Texture::BLEND);
 		delete [] pixels;
 

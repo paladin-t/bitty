@@ -1231,6 +1231,7 @@ void Workspace::execute(class Window* /* wnd */, class Renderer* rnd, const clas
 
 	if (executing() && !canvasTexture()) {
 		canvasTexture(Texture::Ptr(Texture::create()));
+		canvasTexture()->scale(canvasScaleMode());
 		canvasTexture()->blend(Texture::BLEND);
 
 		primitives->canvas(canvasTexture());
@@ -2754,7 +2755,7 @@ void Workspace::scene(class Window* wnd, class Renderer* rnd, const class Projec
 	} while (false);
 
 	if (canvasTexture()->width() == 0 || canvasTexture()->height() == 0) {
-		canvasTexture()->fromBytes(rnd, Texture::TARGET, nullptr, srcSize.x, srcSize.y, 0);
+		canvasTexture()->fromBytes(rnd, Texture::TARGET, nullptr, srcSize.x, srcSize.y, 0, canvasScaleMode());
 
 		BITTY_RENDER_TARGET(rnd, canvasTexture().get())
 		BITTY_RENDER_SCALE(rnd, 1)

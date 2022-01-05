@@ -117,7 +117,7 @@ public:
 	/**
 	 * @brief Loads the paletted or 32bit true-color texture from another `Image`.
 	 */
-	virtual bool fromImage(class Renderer* rnd, Usages usg, class Image* img) = 0;
+	virtual bool fromImage(class Renderer* rnd, Usages usg, class Image* img, ScaleModes scaleMode) = 0;
 
 	/**
 	 * @brief Saves the paletted or 32bit true-color texture to bytes.
@@ -127,7 +127,7 @@ public:
 	/**
 	 * @brief Loads the paletted or 32bit true-color texture from bytes.
 	 */
-	virtual bool fromBytes(class Renderer* rnd, Usages usg, const Byte* pixels, int width, int height, int paletted) = 0;
+	virtual bool fromBytes(class Renderer* rnd, Usages usg, const Byte* pixels, int width, int height, int paletted, ScaleModes scaleMode) = 0;
 
 	static Texture* create(void);
 	static void destroy(Texture* ptr);

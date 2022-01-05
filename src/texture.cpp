@@ -344,7 +344,7 @@ public:
 		return true;
 	}
 
-	virtual bool fromImage(class Renderer* rnd, Usages usg, class Image* img) override {
+	virtual bool fromImage(class Renderer* rnd, Usages usg, class Image* img, ScaleModes scaleMode) override {
 		// Prepare.
 		if (_texture)
 			clear();
@@ -362,7 +362,7 @@ public:
 
 		// Create.
 		if (usg != STATIC) {
-			if (fromBytes(rnd, usg, img->pixels(), img->width(), img->height(), img->paletted()))
+			if (fromBytes(rnd, usg, img->pixels(), img->width(), img->height(), img->paletted(), scaleMode))
 				return true;
 		}
 
@@ -412,7 +412,7 @@ public:
 			tex = SDL_CreateTextureFromSurface(renderer, surface);
 
 #if SDL_VERSION_ATLEAST(2, 0, 12)
-		SDL_SetTextureScaleMode(tex, SDL_ScaleModeNearest);
+		SDL_SetTextureScaleMode(tex, (SDL_ScaleMode)scaleMode);
 #endif /* SDL_VERSION_ATLEAST(2, 0, 12) */
 		Uint32 format = 0;
 		int access = 0;
@@ -477,7 +477,7 @@ public:
 
 		return result;
 	}
-	virtual bool fromBytes(class Renderer* rnd, Usages usg, const Byte* pixels, int expWidth, int expHeight, int paletted) override {
+	virtual bool fromBytes(class Renderer* rnd, Usages usg, const Byte* pixels, int expWidth, int expHeight, int paletted, ScaleModes scaleMode) override {
 		// Prepare.
 		if (_texture)
 			clear();
@@ -514,7 +514,7 @@ public:
 		}
 		SDL_Texture* tex = SDL_CreateTexture(renderer, format, access, expWidth, expHeight);
 #if SDL_VERSION_ATLEAST(2, 0, 12)
-		SDL_SetTextureScaleMode(tex, SDL_ScaleModeNearest);
+		SDL_SetTextureScaleMode(tex, (SDL_ScaleMode)scaleMode);
 #endif /* SDL_VERSION_ATLEAST(2, 0, 12) */
 		_texture = tex;
 		if (!tex)

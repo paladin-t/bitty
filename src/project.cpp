@@ -126,6 +126,10 @@ Text::Array Project::strategies(void) {
 	if (strategy() != NONE) {
 		if ((strategy() & BATCH_MAP) != NONE)
 			result.push_back("batch_map");
+		if ((strategy() & LINEAR_CANVAS) != NONE)
+			result.push_back("linear_canvas");
+		if ((strategy() & ANISOTROPIC_CANVAS) != NONE)
+			result.push_back("anisotropic_canvas");
 	}
 
 	return result;
@@ -371,6 +375,10 @@ bool Project::parse(void) {
 		for (const std::string &s : strategies) {
 			if (s == "batch_map")
 				strategy((Strategies)(strategy() | BATCH_MAP));
+			else if (s == "linear_canvas")
+				strategy((Strategies)(strategy() | LINEAR_CANVAS));
+			else if (s == "anisotropic_canvas")
+				strategy((Strategies)(strategy() | ANISOTROPIC_CANVAS));
 		}
 	}
 
@@ -404,6 +412,10 @@ bool Project::serialize(void) {
 		Text::Array strategies;
 		if ((strategy() & BATCH_MAP) != NONE)
 			strategies.push_back("batch_map");
+		if ((strategy() & LINEAR_CANVAS) != NONE)
+			strategies.push_back("linear_canvas");
+		if ((strategy() & ANISOTROPIC_CANVAS) != NONE)
+			strategies.push_back("anisotropic_canvas");
 		if (!strategies.empty())
 			Jpath::set(doc, doc, strategies, "strategies");
 	}
