@@ -8967,7 +8967,11 @@ static int Primitives_measure(lua_State* L) {
 	Placeholder _1;
 	Font::Ptr* font = nullptr;
 	int margin = 1;
-	if (n >= 3)
+	float scale = 1.0f;
+	const bool scaled = n >= 4;
+	if (n >= 4)
+		read<>(L, _1, font, margin, scale);
+	else if (n == 3)
 		read<>(L, _1, font, margin);
 	else if (n == 2)
 		read<>(L, _1, font);
@@ -8976,7 +8980,7 @@ static int Primitives_measure(lua_State* L) {
 		const char* txt = nullptr;
 		read<1>(L, txt);
 
-		const Math::Vec2f size_ = impl->primitives()->measure(txt, font ? *font : nullptr, margin);
+		const Math::Vec2f size_ = impl->primitives()->measure(txt, font ? *font : nullptr, margin, scaled ? &scale : nullptr);
 
 		return write(L, size_.x, size_.y);
 	} else {
@@ -8984,7 +8988,7 @@ static int Primitives_measure(lua_State* L) {
 		read<1>(L, &var);
 
 		const std::string str = var.toString();
-		const Math::Vec2f size_ = impl->primitives()->measure(str.c_str(), font ? *font : nullptr, margin);
+		const Math::Vec2f size_ = impl->primitives()->measure(str.c_str(), font ? *font : nullptr, margin, scaled ? &scale : nullptr);
 
 		return write(L, size_.x, size_.y);
 	}
@@ -8998,7 +9002,11 @@ static int Primitives_text(lua_State* L) {
 	int x = 0, y = 0;
 	Color* col = nullptr;
 	int margin = 1;
-	if (n >= 5)
+	float scale = 1.0f;
+	const bool scaled = n >= 6;
+	if (n >= 6)
+		read<>(L, _1, x, y, col, margin, scale);
+	else if (n == 5)
 		read<>(L, _1, x, y, col, margin);
 	else if (n == 4)
 		read<>(L, _1, x, y, col);
@@ -9010,13 +9018,13 @@ static int Primitives_text(lua_State* L) {
 		read<1>(L, txt);
 
 		if (txt)
-			impl->primitives()->text(txt, x, y, col, margin);
+			impl->primitives()->text(txt, x, y, col, margin, scaled ? &scale : nullptr);
 	} else {
 		Variant var = nullptr;
 		read<1>(L, &var);
 
 		const std::string str = var.toString();
-		impl->primitives()->text(str.c_str(), x, y, col, margin);
+		impl->primitives()->text(str.c_str(), x, y, col, margin, scaled ? &scale : nullptr);
 	}
 
 	return 0;

@@ -821,6 +821,8 @@ private:
 	std::wstring _text;
 	int _x = 0, _y = 0;
 	int _margin = 0;
+	bool _scaled = false;
+	float _scale = 1.0f;
 
 public:
 	CmdText() {
@@ -830,7 +832,7 @@ public:
 			self->~CmdText();
 		};
 	}
-	CmdText(const char* text, int x, int y, int margin) {
+	CmdText(const char* text, int x, int y, int margin, const float* scale) {
 		type = TEXT;
 		dtor = [] (Cmd* cmd) -> void {
 			CmdText* self = reinterpret_cast<CmdText*>(cmd);
@@ -841,6 +843,10 @@ public:
 		_x = x;
 		_y = y;
 		_margin = margin;
+		if (scale) {
+			_scaled = true;
+			_scale = *scale;
+		}
 	}
 
 	void run(Renderer* rnd, Resources* res) {
@@ -861,10 +867,18 @@ public:
 			if (!ptr)
 				continue;
 
-			const Math::Recti dstRect(
+			Math::Recti dstRect(
 				x, y,
 				x + ptr->width() - 1, y + ptr->height() - 1
 			);
+			int margin = _margin;
+			if (_scaled) {
+				dstRect = Math::Recti(
+					x, y,
+					x + (Int)(ptr->width() * _scale) - 1, y + (Int)(ptr->height() * _scale) - 1
+				);
+				margin = (int)(margin * _scale);
+			}
 
 			Color col;
 			bool colorChanged = false, alphaChanged = false;
@@ -879,7 +893,7 @@ public:
 			);
 			x += dstRect.width();
 			if (*text)
-				x += _margin;
+				x += margin;
 		}
 
 		clip(rnd, false);
@@ -2826,7 +2840,7 @@ public:
 
 		commit(var, nullptr, true);
 	}
-	virtual Math::Vec2f measure(const char* text, Font::Ptr font, int margin) const override {
+	virtual Math::Vec2f measure(const char* text, Font::Ptr font, int margin, const float* scale) const override {
 		Math::Vec2f result;
 
 		if (!font) {
@@ -2840,6 +2854,9 @@ public:
 		if (!font)
 			return result;
 
+		int margin_ = margin;
+		if (scale)
+			margin_ = (int)(margin_ * *scale);
 		std::wstring wstr = Unicode::toWide(text);
 		const wchar_t* wtext = wstr.c_str();
 		int x = 0;
@@ -2850,27 +2867,32 @@ public:
 			if (!font->measure(cp, &width, &height))
 				continue;
 
+			if (scale) {
+				width = (int)(width * *scale);
+				height = (int)(height * *scale);
+			}
+
 			x += width;
 			if (*wtext)
-				x += margin;
+				x += margin_;
 
 			result.x += width;
 			if (*wtext)
-				result.x += margin;
+				result.x += margin_;
 			if (height > result.y)
 				result.y = height;
 		}
 
 		return result;
 	}
-	virtual void text(const char* text, int x, int y, const Color* col, int margin) const override {
+	virtual void text(const char* text, int x, int y, const Color* col, int margin, const float* scale) const override {
 		if (!text)
 			return;
 
 		translated(x, y);
 
 		CmdVariant var;
-		new (&var.text) CmdText(text, x, y, margin);
+		new (&var.text) CmdText(text, x, y, margin, scale);
 		int clpX = 0, clpY = 0, clpW = 0, clpH = 0;
 		if (clipped(clpX, clpY, clpW, clpH))
 			var.text.clip(clpX, clpY, clpW, clpH);

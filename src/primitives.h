@@ -258,13 +258,13 @@ public:
 	 *
 	 * @param[in] font The font to use, `nullptr` for the default built-in.
 	 */
-	virtual Math::Vec2f measure(const char* text, Font::Ptr font /* nullable */, int margin) const = 0;
+	virtual Math::Vec2f measure(const char* text, Font::Ptr font /* nullable */, int margin, const float* scale /* nullable */) const = 0;
 	/**
 	 * @brief Draws a piece of text with the current active font.
 	 *
 	 * @param[in] col The color to draw, `nullptr` to use the current active color.
 	 */
-	virtual void text(const char* text, int x, int y, const Color* col /* nullable */, int margin) const = 0;
+	virtual void text(const char* text, int x, int y, const Color* col /* nullable */, int margin, const float* scale /* nullable */) const = 0;
 	/**
 	 * @brief Draws a texture.
 	 *
