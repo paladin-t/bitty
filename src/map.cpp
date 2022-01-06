@@ -353,7 +353,8 @@ public:
 	virtual void render(
 		class Renderer* rnd,
 		int x, int y,
-		const Color* color, bool colorChanged, bool alphaChanged
+		const Color* color, bool colorChanged, bool alphaChanged,
+		int scale
 	) const override {
 		if (!_tiles.texture)
 			return;
@@ -365,9 +366,15 @@ public:
 		if (batchable) {
 			Texture::Ptr batch = sub(rnd, 0, 0, _width, _height);
 			if (batch) {
-				const Math::Recti dstRect = Math::Recti::byXYWH(x, y, _width * _tileWidth, _height * _tileHeight);
+				if (scale > 1) {
+					const Math::Recti dstRect = Math::Recti::byXYWH(x * scale, y * scale, _width * _tileWidth * scale, _height * _tileHeight * scale);
 
-				rnd->render(batch.get(), nullptr, &dstRect, nullptr, nullptr, false, false, color, colorChanged, alphaChanged);
+					rnd->render(batch.get(), nullptr, &dstRect, nullptr, nullptr, false, false, color, colorChanged, alphaChanged);
+				} else {
+					const Math::Recti dstRect = Math::Recti::byXYWH(x, y, _width * _tileWidth, _height * _tileHeight);
+
+					rnd->render(batch.get(), nullptr, &dstRect, nullptr, nullptr, false, false, color, colorChanged, alphaChanged);
+				}
 
 				return;
 			}
@@ -391,7 +398,12 @@ public:
 
 				const int dstX = x + i * _tileWidth;
 				const int dstY = y + j * _tileHeight;
-				const Math::Recti dstRect = Math::Recti::byXYWH(dstX, dstY, _tileWidth, _tileHeight);
+				Math::Recti dstRect;
+				if (scale > 1) {
+					dstRect = Math::Recti::byXYWH(dstX * scale, dstY * scale, _tileWidth * scale, _tileHeight * scale);
+				} else {
+					dstRect = Math::Recti::byXYWH(dstX, dstY, _tileWidth, _tileHeight);
+				}
 
 				rnd->render(_tiles.texture.get(), &srcRect, &dstRect, nullptr, nullptr, false, false, color, colorChanged, alphaChanged);
 			}

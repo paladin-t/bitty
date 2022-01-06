@@ -1564,12 +1564,13 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 	* `fill`: `true` for fill
 	* `col`: omit to use the active `Color`
 	* `rad`: the radius of the corner arcs of the rectangle
-* `text(txt, x, y[, col, margin = 1])`: draws text
+* `text(txt, x, y[, col, margin = 1, scale = 1])`: draws text
 	* `txt`: the text to draw
 	* `x`: the x position
 	* `y`: the y position
 	* `col`: omit to use the active `Color`
 	* `margin`: the margin distance
+	* `scale`: the scale factor
 * `tri(p0, p1, p2, fill = false[, col])`: draws a triangle
 	* `p0`: `Vec2` for the first point
 	* `p1`: `Vec2` for the second point
@@ -1597,10 +1598,11 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 * `font(font_)`: sets the active `Font` for the `text(...)` function
 	* `font_`: the `Font` resource
 * `font()`: resets the active `Font` to default
-* `measure(txt, font, margin = 1)`: measures the size of the specific text
+* `measure(txt, font, margin = 1, scale = 1)`: measures the size of the specific text
 	* `txt`: the text to measure
 	* `font`: the `Font` to measure with, `nil` to use default
 	* `margin`: the margin distance
+	* `scale`: the scale factor
 	* returns `width`, `height` for both dimensions respectively
 
 ### Texture
@@ -1641,11 +1643,12 @@ The zero point is to the top-left corner, the x, y axises increase in right, bot
 
 **Functions**
 
-* `map(res, x, y, col = Color.new(255, 255, 255, 255))`: draws the specific `Map` resource
+* `map(res, x, y, col = Color.new(255, 255, 255, 255), scale = 1)`: draws the specific `Map` resource
 	* `res`: the `Map` resource
 	* `x`: the destination x position
 	* `y`: the destination y position
 	* `col`: additional `Color` multiplied to render the `Map`
+	* `scale`: positive integer, the scale factor
 * `mget(res, x, y)`: gets the tile index from the specific `Map` resource
 	* `res`: the `Map` resource
 	* `x`: starts from 0

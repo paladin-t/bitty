@@ -288,7 +288,7 @@ public:
 	/**
 	 * @brief Draws a map.
 	 */
-	virtual void map(Resources::Map::Ptr map, int x, int y, double delta, const Color* col /* nullable */) const = 0;
+	virtual void map(Resources::Map::Ptr map, int x, int y, double delta, const Color* col /* nullable */, int scale) const = 0;
 	/**
 	 * @brief Gets the palette color at the specific index.
 	 *

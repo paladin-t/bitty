@@ -1124,6 +1124,7 @@ class CmdMap : public Cmd, public CmdClippable, public CmdColored {
 private:
 	Resources::Map::Ptr _map = nullptr;
 	int _x = 0, _y = 0;
+	int _scale = 1;
 	double _delta = 0.0;
 
 public:
@@ -1134,7 +1135,7 @@ public:
 			self->~CmdMap();
 		};
 	}
-	CmdMap(Resources::Map::Ptr map, int x, int y, double delta) {
+	CmdMap(Resources::Map::Ptr map, int x, int y, int scale, double delta) {
 		type = MAP;
 		dtor = [] (Cmd* cmd) -> void {
 			CmdMap* self = reinterpret_cast<CmdMap*>(cmd);
@@ -1144,6 +1145,7 @@ public:
 		_map = map;
 		_x = x;
 		_y = y;
+		_scale = scale;
 		_delta = delta;
 	}
 
@@ -1167,7 +1169,8 @@ public:
 			ptr->render(
 				rnd,
 				_x, _y,
-				&col, colorChanged, alphaChanged
+				&col, colorChanged, alphaChanged,
+				_scale
 			);
 		} while (false);
 
@@ -2951,14 +2954,14 @@ public:
 
 		commit(var, nullptr, true);
 	}
-	virtual void map(Resources::Map::Ptr map, int x, int y, double delta, const Color* col) const override {
+	virtual void map(Resources::Map::Ptr map, int x, int y, double delta, const Color* col, int scale) const override {
 		if (!map)
 			return;
 
 		translated(x, y);
 
 		CmdVariant var;
-		new (&var.map) CmdMap(map, x, y, delta);
+		new (&var.map) CmdMap(map, x, y, scale, delta);
 		int clpX = 0, clpY = 0, clpW = 0, clpH = 0;
 		if (clipped(clpX, clpY, clpW, clpH))
 			var.map.clip(clpX, clpY, clpW, clpH);

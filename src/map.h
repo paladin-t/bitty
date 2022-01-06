@@ -111,7 +111,8 @@ public:
 	virtual void render(
 		class Renderer* rnd,
 		int x, int y,
-		const Color* color /* nullable */, bool colorChanged, bool alphaChanged
+		const Color* color /* nullable */, bool colorChanged, bool alphaChanged,
+		int scale
 	) const = 0;
 
 	virtual bool load(const int* cels, int width, int height) = 0;

@@ -9156,13 +9156,16 @@ static int Primitives_map(lua_State* L) {
 	Resources::Map::Ptr* res = nullptr;
 	int x = 0, y = 0;
 	Color* col = nullptr;
-	if (n >= 4)
+	int scale = 1;
+	if (n >= 5)
+		read<>(L, res, x, y, col, scale);
+	else if (n == 4)
 		read<>(L, res, x, y, col);
 	else
 		read<>(L, res, x, y);
 
 	if (res && *res)
-		impl->primitives()->map(*res, x, y, impl->delta(), col);
+		impl->primitives()->map(*res, x, y, impl->delta(), col, scale);
 	else
 		error(L, "Map resource expected.");
 
