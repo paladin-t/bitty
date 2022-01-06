@@ -1877,6 +1877,8 @@ Currently there is only one available strategy, change and try if it's needed:
 | Strategy | Description | Note |
 |---|---|---|
 | "batch_map" | Hints to batch map for better rendering performance, but requires more memory and could be slow with `mset(...)` | Always on for HTML build |
+| "linear_canvas" | Hints to set canvas filtering as linear | |
+| "anisotropic_canvas" | Hints to set canvas filtering as anisotropic | |
 
 **Constants**
 
