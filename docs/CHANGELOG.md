@@ -1,3 +1,22 @@
+### v1.1.6 Jan. 7, 2022
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added a parameter to specify font scaling for the `measure(...)` and `text(...)` functions
+* Added a parameter to specify map scaling for the `map(...)` function
+* Added project strategy for non-pixelated canvas preference
+* Added extension recognition of ".xm", ".s3m", ".669", ".it" and ".med" formats
+* Added a menu entry to open recent projects
+* Added an option to toggle project backup
+* Removed Lua source reading from Lua (can still read other asset types)
+* Fixed a bug of `Application.size()`
+* Fixed a bug of `Application.resize(...)` when restored from fullscreen
+* Fixed a clip issue when size is negative
+* Fixed a crash bug of the image and map editors
+* Fixed a directory accessing bug with Russian localization (Windows)
+* Fixed a font customization bug
+* Improved code asset releasing
+
 ### v1.1.5 Nov. 25, 2021
 
 Enhanced modules, improved usability, fixed some bugs.
