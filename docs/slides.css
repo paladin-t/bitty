@@ -4,6 +4,11 @@
 .slider-vertical {
   display: none;
 }
+.slider-horizontal {
+  display: none;
+  overflow: auto;
+  white-space: nowrap;
+}
 .slider {
   width: 720px;
   height: 480px;
@@ -49,7 +54,10 @@
   .slider-frame {
     display: none;
   }
-  .slider-vertical {
+  /* .slider-vertical {
+    display: block;
+  } */
+  .slider-horizontal {
     display: block;
   }
 }
