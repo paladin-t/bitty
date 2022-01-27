@@ -138,6 +138,8 @@ private:
 		bool mousePressed[3] = { false, false, false };
 		ImVec2 mousePosition;
 		bool mouseCanUseGlobalState = true;
+
+		bool imeCompositing = false;
 	};
 
 private:
@@ -494,6 +496,8 @@ private:
 		_context.mouseCanUseGlobalState = !!strncmp(SDL_GetCurrentVideoDriver(), "wayland", 7);
 
 #if defined BITTY_OS_WIN
+		SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
+
 		SDL_SysWMinfo wmInfo;
 		SDL_VERSION(&wmInfo.version);
 		SDL_GetWindowWMInfo(wnd, &wmInfo);
@@ -696,7 +700,8 @@ private:
 					}
 #endif /* Platform macro. */
 					assert(key >= 0 && key < BITTY_COUNTOF(io.KeysDown));
-					io.KeysDown[key] = evt.type == SDL_KEYDOWN;
+					if (!_context.imeCompositing)
+						io.KeysDown[key] = evt.type == SDL_KEYDOWN;
 					io.KeyShift = !!(mod & KMOD_SHIFT);
 					if (!!(mod & KMOD_LCTRL) && !(mod & KMOD_RCTRL) && !(mod & KMOD_LALT) && !!(mod & KMOD_RALT)) {
 						// FIXME: this is not a perfect solution, just works, to avoid some
@@ -721,6 +726,25 @@ private:
 				io.AddInputCharactersUTF8(evt.text.text);
 
 				requestFrameRate(APPLICATION_INPUTING_FRAME_RATE);
+
+				break;
+			case SDL_SYSWMEVENT: {
+#if defined BITTY_OS_WIN
+					auto winMsg = evt.syswm.msg->msg.win;
+					switch (winMsg.msg) {
+					case WM_IME_STARTCOMPOSITION:
+						_context.imeCompositing = true;
+
+						break;
+					case WM_IME_ENDCOMPOSITION:
+						_context.imeCompositing = false;
+
+						break;
+					default:
+						break;
+					}
+#endif /* BITTY_OS_WIN */
+				}
 
 				break;
 			default: // Do nothing.
