@@ -282,42 +282,42 @@ bool Text::fromString(const std::string &str, Int32 &val) {
 	char* convSuc = nullptr;
 	val = (Int32)strtoull(str.c_str(), &convSuc, 0);
 
-	return *convSuc == '\0';
+	return convSuc && *convSuc == '\0';
 }
 
 bool Text::fromString(const std::string &str, UInt32 &val) {
 	char* convSuc = nullptr;
 	val = (UInt32)strtoull(str.c_str(), &convSuc, 0);
 
-	return *convSuc == '\0';
+	return convSuc && *convSuc == '\0';
 }
 
 bool Text::fromString(const std::string &str, Int64 &val) {
 	char* convSuc = nullptr;
 	val = strtoll(str.c_str(), &convSuc, 0);
 
-	return *convSuc == '\0';
+	return convSuc && *convSuc == '\0';
 }
 
 bool Text::fromString(const std::string &str, UInt64 &val) {
 	char* convSuc = nullptr;
 	val = strtoull(str.c_str(), &convSuc, 0);
 
-	return *convSuc == '\0';
+	return convSuc && *convSuc == '\0';
 }
 
 bool Text::fromString(const std::string &str, Single &val) {
 	char* convSuc = nullptr;
 	val = (Single)strtod(str.c_str(), &convSuc);
 
-	return *convSuc == '\0';
+	return convSuc && *convSuc == '\0';
 }
 
 bool Text::fromString(const std::string &str, Double &val) {
 	char* convSuc = nullptr;
 	val = strtod(str.c_str(), &convSuc);
 
-	return *convSuc == '\0';
+	return convSuc && *convSuc == '\0';
 }
 
 std::string Text::toHex(Int32 val, unsigned short width, char fill, bool toupper) {
