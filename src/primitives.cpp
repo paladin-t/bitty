@@ -224,7 +224,7 @@ public:
 class CmdBlend : public Cmd {
 private:
 	Resources::Texture::Ptr _texture = nullptr;
-	SDL_BlendMode _mode = SDL_BLENDMODE_NONE;
+	SDL_BlendMode _mode = SDL_BLENDMODE_BLEND;
 
 public:
 	CmdBlend() {
