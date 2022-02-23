@@ -2053,7 +2053,7 @@ static bool TreeNodeBehavior(ImGuiID id, ImTextureID texture_id, ImTextureID ope
 	ImRect frame_bb;
 	frame_bb.Min.x = (flags & ImGuiTreeNodeFlags_SpanFullWidth) ? window->WorkRect.Min.x : window->DC.CursorPos.x;
 	frame_bb.Min.y = window->DC.CursorPos.y;
-	frame_bb.Max.x = window->WorkRect.Max.x;
+	frame_bb.Max.x = (flags & ImGuiTreeNodeFlags_SpanFullWidth) ? window->ClipRect.Max.x : window->WorkRect.Max.x;
 	frame_bb.Max.y = window->DC.CursorPos.y + frame_height;
 	if (display_frame)
 	{

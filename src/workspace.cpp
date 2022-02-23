@@ -1497,7 +1497,7 @@ void Workspace::assets(class Window* wnd, class Renderer* rnd, const class Proje
 				return ImGui::TreeNode(
 					theme()->sliceDirectory()->pointer(rnd), theme()->sliceDirectory_Open()->pointer(rnd),
 					dir,
-					ImGuiTreeNodeFlags_FramePadding, ImGuiButtonFlags_None,
+					ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanFullWidth, ImGuiButtonFlags_None,
 					theme()->style()->iconColor
 				);
 			},
@@ -1546,7 +1546,7 @@ void Workspace::assets(class Window* wnd, class Renderer* rnd, const class Proje
 
 					if (hierarchy.with(begin, end)) {
 						const std::string &file = entry.parts().back();
-						ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_FramePadding;
+						ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanFullWidth;
 						if (states->selected()) {
 							flags |= ImGuiTreeNodeFlags_Selected;
 							if (asset != infoAsset && asset != mainAsset)
