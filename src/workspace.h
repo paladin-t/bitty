@@ -342,17 +342,17 @@ public:
 	bool canSaveTo(const char* path) const;
 
 	/**
-	 * @brief Handles on project file opened.
+	 * @brief Handles on project file touched.
 	 */
-	virtual void openedFile(const char* path);
+	virtual void touchedFile(const char* path);
 	/**
-	 * @brief Handles on project directory opened.
+	 * @brief Handles on project directory touched.
 	 */
-	virtual void openedDirectory(const char* path);
+	virtual void touchedDirectory(const char* path);
 	/**
-	 * @brief Handles on example project opened.
+	 * @brief Handles on example project touched.
 	 */
-	virtual void openedExample(const char* path);
+	virtual void touchedExample(const char* path);
 
 	/**
 	 * @brief Loads workspace data.

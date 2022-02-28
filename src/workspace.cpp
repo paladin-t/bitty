@@ -512,15 +512,15 @@ bool Workspace::canSaveTo(const char* path) const {
 	return true;
 }
 
-void Workspace::openedFile(const char*) {
+void Workspace::touchedFile(const char*) {
 	// Do nothing.
 }
 
-void Workspace::openedDirectory(const char*) {
+void Workspace::touchedDirectory(const char*) {
 	// Do nothing.
 }
 
-void Workspace::openedExample(const char*) {
+void Workspace::touchedExample(const char*) {
 	// Do nothing.
 }
 

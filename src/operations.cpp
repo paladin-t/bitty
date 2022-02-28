@@ -532,7 +532,7 @@ promise::Defer Operations::fileOpenFile(class Renderer* rnd, Workspace* ws, cons
 		if ((prj->strategy() & Project::ANISOTROPIC_CANVAS) != Project::NONE)
 			canvasScaleMode = Texture::ANISOTROPIC;
 		ws->canvasScaleMode(canvasScaleMode);
-		ws->openedFile(path_.c_str());
+		ws->touchedFile(path_.c_str());
 
 		df.resolve(true);
 
@@ -657,7 +657,7 @@ promise::Defer Operations::fileOpenDirectory(class Renderer* rnd, Workspace* ws,
 		if ((prj->strategy() & Project::ANISOTROPIC_CANVAS) != Project::NONE)
 			canvasScaleMode = Texture::ANISOTROPIC;
 		ws->canvasScaleMode(canvasScaleMode);
-		ws->openedDirectory(path_.c_str());
+		ws->touchedDirectory(path_.c_str());
 
 		df.resolve(true);
 
@@ -720,7 +720,7 @@ promise::Defer Operations::fileOpenExample(class Renderer* rnd, Workspace* ws, c
 		if ((prj->strategy() & Project::ANISOTROPIC_CANVAS) != Project::NONE)
 			canvasScaleMode = Texture::ANISOTROPIC;
 		ws->canvasScaleMode(canvasScaleMode);
-		ws->openedExample(path_.c_str());
+		ws->touchedExample(path_.c_str());
 
 		df.resolve(true);
 	};
@@ -1043,7 +1043,8 @@ promise::Defer Operations::fileSaveAsset(class Renderer* rnd, Workspace* ws, con
 				return;
 			}
 
-			bool saveProject = prj->path().empty();
+			const std::string &path = prj->path();
+			bool saveProject = path.empty();
 			if (!saveProject) {
 				const Archive* archive = prj->archive(Stream::Accesses::READ);
 				const bool archiveFormatChanged = archive && archive->format() != prj->preference();
@@ -1058,7 +1059,7 @@ promise::Defer Operations::fileSaveAsset(class Renderer* rnd, Workspace* ws, con
 					saveProject = true;
 			}
 
-			auto next = [rnd, ws, project, index, saveProject] (promise::Defer df) -> void {
+			auto next = [rnd, ws, project, index, path, saveProject] (promise::Defer df) -> void {
 				LockGuard<RecursiveMutex>::UniquePtr acquired;
 				Project* prj = project->acquire(acquired);
 				if (!prj) {
@@ -1114,6 +1115,10 @@ promise::Defer Operations::fileSaveAsset(class Renderer* rnd, Workspace* ws, con
 							canvasScaleMode = Texture::ANISOTROPIC;
 						ws->canvasScaleMode(canvasScaleMode);
 					}
+					if (prj->archived())
+						ws->touchedFile(path.c_str());
+					else
+						ws->touchedDirectory(path.c_str());
 
 					df.resolve(true);
 				}
@@ -1247,6 +1252,7 @@ promise::Defer Operations::fileSaveFile(class Renderer* rnd, Workspace* ws, cons
 				if ((prj->strategy() & Project::ANISOTROPIC_CANVAS) != Project::NONE)
 					canvasScaleMode = Texture::ANISOTROPIC;
 				ws->canvasScaleMode(canvasScaleMode);
+				ws->touchedFile(path.c_str());
 
 				df.resolve(true);
 
@@ -1398,6 +1404,7 @@ promise::Defer Operations::fileSaveDirectory(class Renderer* rnd, Workspace* ws,
 				if ((prj->strategy() & Project::ANISOTROPIC_CANVAS) != Project::NONE)
 					canvasScaleMode = Texture::ANISOTROPIC;
 				ws->canvasScaleMode(canvasScaleMode);
+				ws->touchedDirectory(path.c_str());
 
 				df.resolve(true);
 
