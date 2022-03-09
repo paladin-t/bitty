@@ -681,6 +681,31 @@ void Theme::setColor(const std::string &key, ImGuiCol idx, const ImColor &col) {
 		styleDefault().builtin[idx] = (ImVec4)col;
 }
 
+void Theme::setColor(const std::string &key, const std::string &idx, const ImColor &col) {
+	const bool light = key == "light" || key == "all" || key == "default";
+
+	if (light) {
+		if (idx == "tab_text")
+			styleDefault().tabTextColor = ImGui::GetColorU32((ImVec4)col);
+		else if (idx == "tab_text_pending")
+			styleDefault().tabTextPendingColor = ImGui::GetColorU32((ImVec4)col);
+		else if (idx == "tab_pending")
+			styleDefault().tabPendingColor = ImGui::GetColorU32((ImVec4)col);
+		else if (idx == "tab_pending_hovered")
+			styleDefault().tabPendingHoveredColor = ImGui::GetColorU32((ImVec4)col);
+		else if (idx == "icon")
+			styleDefault().iconColor = ImGui::GetColorU32((ImVec4)col);
+		else if (idx == "icon_disabled")
+			styleDefault().iconDisabledColor = ImGui::GetColorU32((ImVec4)col);
+		else if (idx == "message")
+			styleDefault().messageColor = ImGui::GetColorU32((ImVec4)col);
+		else if (idx == "warning")
+			styleDefault().warningColor = ImGui::GetColorU32((ImVec4)col);
+		else if (idx == "error")
+			styleDefault().errorColor = ImGui::GetColorU32((ImVec4)col);
+	}
+}
+
 void Theme::fromFile(const char* path_) {
 	ImGuiIO &io = ImGui::GetIO();
 
@@ -717,8 +742,130 @@ void Theme::fromFile(const char* path_) {
 				if (!Jpath::get(jvtheme, col.r, 0) || !Jpath::get(jvtheme, col.g, 1) || !Jpath::get(jvtheme, col.b, 2) || !Jpath::get(jvtheme, col.a, 3))
 					continue;
 
-				if (theme == "window_mask_background")
+				if (theme == "text")
+					setColor(key, ImGuiCol_Text, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "text_disabled")
+					setColor(key, ImGuiCol_TextDisabled, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "window_background")
+					setColor(key, ImGuiCol_WindowBg, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "child_background")
+					setColor(key, ImGuiCol_ChildBg, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "popup_background")
+					setColor(key, ImGuiCol_PopupBg, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "border")
+					setColor(key, ImGuiCol_Border, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "border_shadow")
+					setColor(key, ImGuiCol_BorderShadow, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "frame_background")
+					setColor(key, ImGuiCol_FrameBg, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "frame_background_hovered")
+					setColor(key, ImGuiCol_FrameBgHovered, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "frame_background_active")
+					setColor(key, ImGuiCol_FrameBgActive, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "title_background")
+					setColor(key, ImGuiCol_TitleBg, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "title_background_active")
+					setColor(key, ImGuiCol_TitleBgActive, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "title_background_collapsed")
+					setColor(key, ImGuiCol_TitleBgCollapsed, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "menu_bar_background")
+					setColor(key, ImGuiCol_MenuBarBg, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "scrollbar_background")
+					setColor(key, ImGuiCol_ScrollbarBg, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "scrollbar_grab")
+					setColor(key, ImGuiCol_ScrollbarGrab, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "scrollbar_grab_hovered")
+					setColor(key, ImGuiCol_ScrollbarGrabHovered, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "scrollbar_grab_active")
+					setColor(key, ImGuiCol_ScrollbarGrabActive, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "check_mark")
+					setColor(key, ImGuiCol_CheckMark, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "slider_grab")
+					setColor(key, ImGuiCol_SliderGrab, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "slider_grab_active")
+					setColor(key, ImGuiCol_SliderGrabActive, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "button")
+					setColor(key, ImGuiCol_Button, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "button_hovered")
+					setColor(key, ImGuiCol_ButtonHovered, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "button_active")
+					setColor(key, ImGuiCol_ButtonActive, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "header")
+					setColor(key, ImGuiCol_Header, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "header_hovered")
+					setColor(key, ImGuiCol_HeaderHovered, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "header_active")
+					setColor(key, ImGuiCol_HeaderActive, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "separator")
+					setColor(key, ImGuiCol_Separator, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "separator_hovered")
+					setColor(key, ImGuiCol_SeparatorHovered, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "separator_active")
+					setColor(key, ImGuiCol_SeparatorActive, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "resize_grip")
+					setColor(key, ImGuiCol_ResizeGrip, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "resize_grip_hovered")
+					setColor(key, ImGuiCol_ResizeGripHovered, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "resize_grip_active")
+					setColor(key, ImGuiCol_ResizeGripActive, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "tab")
+					setColor(key, ImGuiCol_Tab, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "tab_hovered")
+					setColor(key, ImGuiCol_TabHovered, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "tab_active")
+					setColor(key, ImGuiCol_TabActive, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "tab_unfocused")
+					setColor(key, ImGuiCol_TabUnfocused, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "tab_unfocused_active")
+					setColor(key, ImGuiCol_TabUnfocusedActive, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "plot_lines")
+					setColor(key, ImGuiCol_PlotLines, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "plot_lines_hovered")
+					setColor(key, ImGuiCol_PlotLinesHovered, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "plot_histogram")
+					setColor(key, ImGuiCol_PlotHistogram, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "plot_histogram_hovered")
+					setColor(key, ImGuiCol_PlotHistogramHovered, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "table_header_background")
+					setColor(key, ImGuiCol_TableHeaderBg, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "table_border_strong")
+					setColor(key, ImGuiCol_TableBorderStrong, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "table_border_light")
+					setColor(key, ImGuiCol_TableBorderLight, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "table_row_background")
+					setColor(key, ImGuiCol_TableRowBg, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "table_row_background_alt")
+					setColor(key, ImGuiCol_TableRowBgAlt, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "text_selected_background")
+					setColor(key, ImGuiCol_TextSelectedBg, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "drag_drop_target")
+					setColor(key, ImGuiCol_DragDropTarget, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "nav_highlight")
+					setColor(key, ImGuiCol_NavHighlight, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "nav_windowing_highlight")
+					setColor(key, ImGuiCol_NavWindowingHighlight, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "nav_windowing_mask_background")
+					setColor(key, ImGuiCol_NavWindowingDimBg, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "window_mask_background")
 					setColor(key, ImGuiCol_ModalWindowDimBg, ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "tab_text")
+					setColor(key, "tab_text", ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "tab_text_pending")
+					setColor(key, "tab_text_pending", ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "tab_pending")
+					setColor(key, "tab_pending", ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "tab_pending_hovered")
+					setColor(key, "tab_pending_hovered", ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "icon")
+					setColor(key, "icon", ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "icon_disabled")
+					setColor(key, "icon_disabled", ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "message")
+					setColor(key, "message", ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "warning")
+					setColor(key, "warning", ImColor(col.r, col.g, col.b, col.a));
+				else if (theme == "error")
+					setColor(key, "error", ImColor(col.r, col.g, col.b, col.a));
 			}
 		}
 	}

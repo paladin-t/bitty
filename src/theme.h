@@ -440,6 +440,7 @@ public:
 
 protected:
 	virtual void setColor(const std::string &key, ImGuiCol idx, const ImColor &col);
+	virtual void setColor(const std::string &key, const std::string &idx, const ImColor &col);
 
 private:
 	void fromFile(const char* path);
