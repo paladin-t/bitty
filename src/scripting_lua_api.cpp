@@ -5162,6 +5162,24 @@ static void open_Vec2(lua_State* L) {
 		),
 		Vec2___index, Vec2___newindex
 	);
+
+	const Math::Vec2f ZERO(0, 0);
+	const Math::Vec2f ONE(1, 1);
+	const Math::Vec2f LEFT(-1, 0);
+	const Math::Vec2f RIGHT(1, 0);
+	const Math::Vec2f UP(0, -1);
+	const Math::Vec2f DOWN(0, 1);
+	getGlobal(L, "Vec2");
+	setTable(
+		L,
+		"Zero", &ZERO,
+		"One", &ONE,
+		"Left", &LEFT,
+		"Right", &RIGHT,
+		"Up", &UP,
+		"Down", &DOWN
+	);
+	pop(L);
 }
 
 static int Vec3_ctor(lua_State* L) {
@@ -5395,6 +5413,16 @@ static void open_Vec3(lua_State* L) {
 		),
 		Vec3___index, Vec3___newindex
 	);
+
+	const Math::Vec3f ZERO(0, 0, 0);
+	const Math::Vec3f ONE(1, 1, 1);
+	getGlobal(L, "Vec3");
+	setTable(
+		L,
+		"Zero", &ZERO,
+		"One", &ONE
+	);
+	pop(L);
 }
 
 static int Vec4_ctor(lua_State* L) {
@@ -5585,6 +5613,16 @@ static void open_Vec4(lua_State* L) {
 		),
 		Vec4___index, Vec4___newindex
 	);
+
+	const Math::Vec4f ZERO(0, 0, 0, 0);
+	const Math::Vec4f ONE(1, 1, 1, 1);
+	getGlobal(L, "Vec4");
+	setTable(
+		L,
+		"Zero", &ZERO,
+		"One", &ONE
+	);
+	pop(L);
 }
 
 static int Rect_ctor(lua_State* L) {

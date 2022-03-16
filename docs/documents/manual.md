@@ -938,6 +938,21 @@ Note that when open a file as `Stream.Append`, it always writes data at the end 
 
 #### Structures
 
+**Constants**
+
+* `Vec2.Zero`: equals to `Vec2.new(0, 0)`
+* `Vec2.One`: equals to `Vec2.new(1, 1)`
+* `Vec2.Left`: equals to `Vec2.new(-1, 0)`
+* `Vec2.Right`: equals to `Vec2.new(1, 0)`
+* `Vec2.Up`: equals to `Vec2.new(0, -1)`
+* `Vec2.Down`: equals to `Vec2.new(0, 1)`
+
+* `Vec3.Zero`: equals to `Vec3.new(0, 0, 0)`
+* `Vec3.One`: equals to `Vec3.new(1, 1, 1)`
+
+* `Vec4.Zero`: equals to `Vec4.new(0, 0, 0, 0)`
+* `Vec4.One`: equals to `Vec4.new(1, 1, 1, 1)`
+
 **Static Functions**
 
 * `Rect.byXYWH(x, y, w, h)`: constructs a rectangle object in real numbers by position and size
