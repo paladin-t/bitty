@@ -843,7 +843,7 @@ public:
 		_x = x;
 		_y = y;
 		_margin = margin;
-		if (scale) {
+		if (scale && *scale != 1) {
 			_scaled = true;
 			_scale = *scale;
 		}
