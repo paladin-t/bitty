@@ -294,14 +294,13 @@ template<template<typename T, typename A = std::allocator<T> > class Coll, typen
 
 	const lua_Unsigned size = len(L, idx);
 	for (int i = 1; i <= (int)size; ++i) { // 1-based.
-		lua_pushinteger(L, i);
-		get(L, -2, i);
+		get(L, idx, i);
 
 		Val val;
 		read(L, val, Index(-1));
 		ret.push_back(val);
 
-		pop(L, 2);
+		pop(L, 1);
 	}
 
 	return 1;
