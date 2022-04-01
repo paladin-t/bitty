@@ -590,6 +590,8 @@ void NetworkMongoose::doOpen(bool withudp, bool withtcp, bool withws, bool tocon
 			opt.user_data = this;
 			_conn = mg_connect_opt(_mgr, addr, networkEventHandler, opt);
 			fprintf(stdout, "Network (0x%p) opened for connecting: %s.\n", (Network*)this, addr);
+			if (withudp)
+				_ready = _conn ? READY : IDLE;
 		} else if (tobind) {
 			struct mg_bind_opts opt;
 			memset(&opt, 0, sizeof(decltype(opt)));
