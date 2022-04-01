@@ -861,6 +861,8 @@ bool NetworkMongoose::onSocket(struct mg_connection* nc, int ev, void* evData) {
 				} else {
 					_ready = IDLE;
 					fprintf(stdout, "Network (0x%p) incoming shutdown.\n", (Network*)this);
+
+					_conn = nullptr;
 				}
 			} else {
 				_ready = IDLE;
@@ -876,6 +878,8 @@ bool NetworkMongoose::onSocket(struct mg_connection* nc, int ev, void* evData) {
 					DisconnectedHandler &handler = const_cast<DisconnectedHandler &>(disconnectedCallback());
 					handler(&handler, addr.text);
 				}
+
+				_conn = nullptr;
 			}
 		}
 
