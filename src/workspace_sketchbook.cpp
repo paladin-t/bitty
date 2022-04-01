@@ -40,7 +40,7 @@
 #endif /* BITTY_TRIAL_ENABLED */
 
 #ifndef WORKSPACE_PREFERENCES_NAME
-#	define WORKSPACE_PREFERENCES_NAME "preferences"
+#	define WORKSPACE_PREFERENCES_NAME "sketchbook_preferences"
 #endif /* WORKSPACE_PREFERENCES_NAME */
 
 /* ===========================================================================} */

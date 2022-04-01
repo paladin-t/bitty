@@ -999,18 +999,18 @@ class Application* createApplication(class Workspace* workspace, int argc, const
 	// Initialize the SDL library.
 #if defined BITTY_OS_HTML
 	if (SDL_Init(SDL_INIT_EVERYTHING & ~SDL_INIT_HAPTIC) < 0)
-		fprintf(stderr, "Unable to open SDL: %s\n", SDL_GetError());
+		fprintf(stderr, "[SDL warning]: %s\n", SDL_GetError());
 	if (Mix_Init(MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID) < 0)
-		fprintf(stderr, "Unable to open SDL mixer: %s\n", SDL_GetError());
+		fprintf(stderr, "[SDL-Mixer warning]: %s\n", SDL_GetError());
 	if (Mix_OpenAudioDevice(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096, nullptr, SDL_AUDIO_ALLOW_ANY_CHANGE))
-		fprintf(stderr, "Unable to open audio: %s\n", SDL_GetError());
+		fprintf(stderr, "[SDL-Audio warning]: %s\n", SDL_GetError());
 #else /* BITTY_OS_HTML */
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-		fprintf(stderr, "Unable to open SDL: %s\n", SDL_GetError());
+		fprintf(stderr, "[SDL warning]: %s\n", SDL_GetError());
 	if (Mix_Init(MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID | MIX_INIT_OPUS) < 0)
-		fprintf(stderr, "Unable to open SDL mixer: %s\n", SDL_GetError());
+		fprintf(stderr, "[SDL-Mixer warning]: %s\n", SDL_GetError());
 	if (Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 512) < 0)
-		fprintf(stderr, "Unable to open audio: %s\n", SDL_GetError());
+		fprintf(stderr, "[SDL-Audio warning]: %s\n", SDL_GetError());
 #endif /* BITTY_OS_HTML */
 
 	// Create an application instance.
