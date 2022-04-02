@@ -9488,10 +9488,31 @@ static int Primitives_rumble(lua_State* L) {
 		impl->primitives()->rumble(idx, lowHz, hiHz, ms);
 	} else {
 		// `idx` is -1-based.
-		impl->primitives()->rumble(idx, lowHz, hiHz, ms); // Undocumented.
+		impl->primitives()->rumble(idx, lowHz, hiHz, ms); // Undocumented: controller rumble.
 	}
 
 	return 0;
+}
+
+static int Primitives_controller(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	const int n = getTop(L);
+	int idx = 1;
+	if (n >= 1)
+		read<>(L, idx);
+
+	--idx; // 1-based.
+	if (idx < 0 || idx >= impl->primitives()->input()->controllerCount())
+		return write(L, nullptr, nullptr, nullptr);
+
+	const char* name = nullptr;
+	const char* type = nullptr;
+	bool attached = false;
+	if (!impl->primitives()->input()->controllerAt(idx, &name, &type, &attached))
+		return write(L, nullptr, nullptr, nullptr);
+
+	return write(L, attached, name, type);
 }
 
 static int Primitives_key(lua_State* L) {
@@ -9601,6 +9622,7 @@ static void open_Primitives(lua_State* L) {
 			luaL_Reg{ "btn", Primitives_btn },
 			luaL_Reg{ "btnp", Primitives_btnp },
 			luaL_Reg{ "rumble", Primitives_rumble }, // Frame synchronized.
+			luaL_Reg{ "controller", Primitives_controller }, // Undocumented.
 			luaL_Reg{ "key", Primitives_key },
 			luaL_Reg{ "keyp", Primitives_keyp },
 			luaL_Reg{ "mouse", Primitives_mouse },

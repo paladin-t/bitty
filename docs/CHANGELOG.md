@@ -1,3 +1,17 @@
+### v1.1.7 Apr. 2, 2022
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added theme options to change the editor color
+* Added records of recent saved paths
+* Added vector constants
+* Fixed a control key handling bug with IME (Windows)
+* Fixed a resetting bug of blend mode
+* Fixed a potential crash bug when set SFX volume with an array
+* Fixed a potential crash bug when network connection error occurs
+* Improved the asset selection area
+* Upgraded Lua from v5.4.3 to v5.4.4
+
 ### v1.1.6 Jan. 7, 2022
 
 Enhanced modules, improved usability, fixed some bugs.

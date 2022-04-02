@@ -748,10 +748,16 @@ bool NetworkMongoose::onSocket(struct mg_connection* nc, int ev, void* evData) {
 					handler(&handler, addr.text);
 				}
 			} else {
+				if (_ready == FAILED)
+					break;
+
+				_conn = nullptr;
 				_ready = FAILED;
 				fprintf(stdout, "Network (0x%p) outcoming establishing error.\n", (Network*)this);
+#if !NETWORK_NONCONNECTIVE_CLOSING_ENABLED
 				if (!connective())
 					break;
+#endif /* NETWORK_NONCONNECTIVE_CLOSING_ENABLED */
 
 				NETWORK_STATE(_pollingConn, nullptr, nc, break)
 
@@ -861,18 +867,23 @@ bool NetworkMongoose::onSocket(struct mg_connection* nc, int ev, void* evData) {
 						handler(&handler, addr.text);
 					}
 				} else {
+					_conn = nullptr;
 					_ready = IDLE;
 					fprintf(stdout, "Network (0x%p) incoming shutdown.\n", (Network*)this);
-
-					_conn = nullptr;
 				}
 			} else {
+				if (!_wasBinded && !_conn)
+					break;
+
+				_conn = nullptr;
 				_ready = IDLE;
 				AddressName addr;
 				networkAddressToString(&nc->sa, addr);
 				fprintf(stdout, "Network (0x%p) outcoming disconnected: %s.\n", (Network*)this, addr.text);
+#if !NETWORK_NONCONNECTIVE_CLOSING_ENABLED
 				if (!connective())
 					break;
+#endif /* NETWORK_NONCONNECTIVE_CLOSING_ENABLED */
 
 				NETWORK_STATE(_pollingConn, nullptr, nc, break)
 
@@ -880,8 +891,6 @@ bool NetworkMongoose::onSocket(struct mg_connection* nc, int ev, void* evData) {
 					DisconnectedHandler &handler = const_cast<DisconnectedHandler &>(disconnectedCallback());
 					handler(&handler, addr.text);
 				}
-
-				_conn = nullptr;
 			}
 		}
 

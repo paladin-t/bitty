@@ -29,6 +29,10 @@
 #	define NETWORK_MESSAGE_MAX_SIZE (512 * 1024)
 #endif /* NETWORK_MESSAGE_MAX_SIZE */
 
+#ifndef NETWORK_NONCONNECTIVE_CLOSING_ENABLED
+#	define NETWORK_NONCONNECTIVE_CLOSING_ENABLED 0
+#endif /* NETWORK_NONCONNECTIVE_CLOSING_ENABLED */
+
 /* ===========================================================================} */
 
 /*
