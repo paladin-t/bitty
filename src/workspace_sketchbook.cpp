@@ -59,6 +59,7 @@ WorkspaceSketchbook::SketchbookSettings &WorkspaceSketchbook::SketchbookSettings
 	applicationWindowMaximized = other.applicationWindowMaximized;
 	applicationWindowSize = other.applicationWindowSize;
 	applicationPauseOnFocusLost = other.applicationPauseOnFocusLost;
+	applicationPauseOnEsc = other.applicationPauseOnEsc;
 
 	projectPreference = other.projectPreference;
 	projectIgnoreDotFiles = other.projectIgnoreDotFiles;
@@ -106,7 +107,8 @@ bool WorkspaceSketchbook::SketchbookSettings::operator != (const SketchbookSetti
 		applicationWindowFullscreen != other.applicationWindowFullscreen ||
 		applicationWindowMaximized != other.applicationWindowMaximized ||
 		applicationWindowSize != other.applicationWindowSize ||
-		applicationPauseOnFocusLost != other.applicationPauseOnFocusLost
+		applicationPauseOnFocusLost != other.applicationPauseOnFocusLost ||
+		applicationPauseOnEsc != other.applicationPauseOnEsc
 	) {
 		return true;
 	}
@@ -558,7 +560,7 @@ void WorkspaceSketchbook::shortcuts(class Window* wnd, class Renderer* rnd, cons
 	do {
 		if (!esc)
 			break;
-		if (!canvasFull())
+		if (!canvasFull() || !settings()->applicationPauseOnEsc)
 			break;
 
 		if (popupBox())

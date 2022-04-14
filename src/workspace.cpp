@@ -904,6 +904,7 @@ bool Workspace::load(class Window* wnd, class Renderer* rnd, const class Project
 	Jpath::get(doc, settings()->applicationWindowSize.x, "application", "window", "size", 0);
 	Jpath::get(doc, settings()->applicationWindowSize.y, "application", "window", "size", 1);
 	Jpath::get(doc, settings()->applicationPauseOnFocusLost, "application", "pause_on_focus_lost");
+	Jpath::get(doc, settings()->applicationPauseOnEsc, "application", "pause_on_esc");
 
 	Jpath::get(doc, settings()->bannerVisible, "banner", "visible");
 	Jpath::get(doc, settings()->assetsVisible, "assets", "visible");
@@ -1000,6 +1001,7 @@ bool Workspace::save(class Window* wnd, class Renderer*, const class Project*, c
 	Jpath::set(doc, doc, settings()->applicationWindowSize.x, "application", "window", "size", 0);
 	Jpath::set(doc, doc, settings()->applicationWindowSize.y, "application", "window", "size", 1);
 	Jpath::set(doc, doc, settings()->applicationPauseOnFocusLost, "application", "pause_on_focus_lost");
+	Jpath::set(doc, doc, settings()->applicationPauseOnEsc, "application", "pause_on_esc");
 
 	Jpath::set(doc, doc, settings()->bannerVisible, "banner", "visible");
 	Jpath::set(doc, doc, settings()->assetsVisible, "assets", "visible");

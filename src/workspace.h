@@ -145,6 +145,7 @@ public:
 		bool applicationWindowMaximized = false;
 		Math::Vec2i applicationWindowSize;
 		bool applicationPauseOnFocusLost = true;
+		bool applicationPauseOnEsc = true;
 
 		unsigned projectPreference = 0;
 		bool projectIgnoreDotFiles = true;
