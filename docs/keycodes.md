@@ -138,3 +138,5 @@ KeyCode = {
 	RGui = toKeycode(231)
 }
 ```
+
+Sidenote: These key codes follow the original SDL2's [keycodes](https://wiki.libsdl.org/SDLKeycodeLookup).
