@@ -317,6 +317,7 @@ bool Theme::open(class Renderer* rnd) {
 	windowPreferences_Editor_ClearOnStart("Clear on start");
 	windowPreferences_Editor_Console("Console:");
 	windowPreferences_Editor_IgnoreDotFiles("Ignore dot files");
+	windowPreferences_Editor_LoadLastProjectAtStartup("Load last project at startup");
 	windowPreferences_Editor_PackageFormat("Package format");
 	windowPreferences_Editor_Project("Project:");
 	windowPreferences_Editor_ShowWhiteSpaces("Show white spaces");

@@ -63,6 +63,7 @@ WorkspaceSketchbook::SketchbookSettings &WorkspaceSketchbook::SketchbookSettings
 
 	projectPreference = other.projectPreference;
 	projectIgnoreDotFiles = other.projectIgnoreDotFiles;
+	projectLoadLastProjectAtStartup = other.projectLoadLastProjectAtStartup;
 	projectAutoBackup = other.projectAutoBackup;
 
 	bannerVisible = other.bannerVisible;
@@ -115,6 +116,7 @@ bool WorkspaceSketchbook::SketchbookSettings::operator != (const SketchbookSetti
 
 	if (projectPreference != other.projectPreference ||
 		projectIgnoreDotFiles != other.projectIgnoreDotFiles ||
+		projectLoadLastProjectAtStartup != other.projectLoadLastProjectAtStartup ||
 		projectAutoBackup != other.projectAutoBackup
 	) {
 		return true;
@@ -222,7 +224,7 @@ bool WorkspaceSketchbook::open(class Window* wnd, class Renderer* rnd, const cla
 
 	Operations::fileRestore(rnd, this, project);
 
-	const std::string ready = theme()->generic_Ready() + '\n';
+	const std::string ready = _theme->generic_Ready() + '\n';
 	print(ready.c_str());
 
 	return true;
@@ -386,7 +388,7 @@ void WorkspaceSketchbook::focusLost(class Window* wnd, class Renderer* rnd, cons
 
 	exec->focusLost();
 
-	if (!canvasFull() || !settings()->applicationPauseOnFocusLost)
+	if (!canvasFull() || !_settings.applicationPauseOnFocusLost)
 		return;
 
 	if (popupBox())
@@ -560,7 +562,7 @@ void WorkspaceSketchbook::shortcuts(class Window* wnd, class Renderer* rnd, cons
 	do {
 		if (!esc)
 			break;
-		if (!canvasFull() || !settings()->applicationPauseOnEsc)
+		if (!canvasFull() || !_settings.applicationPauseOnEsc)
 			break;
 
 		if (popupBox())
@@ -1100,7 +1102,7 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 				Operations::projectRenameAsset(rnd, this, project, assetsSelectedIndex());
 			}
 			bool filtering = assetsFiltering();
-			if (ImGui::MenuItem(theme()->menuProject_FilterAssets(), WORKSPACE_MODIFIER_KEY_NAME "+E", &filtering)) {
+			if (ImGui::MenuItem(_theme->menuProject_FilterAssets(), WORKSPACE_MODIFIER_KEY_NAME "+E", &filtering)) {
 				assetsFiltering(filtering);
 				assetsFilteringInitialized(false);
 			}
@@ -1199,10 +1201,10 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 			}
 			ImGui::Separator();
 			if (ImGui::BeginMenu(_theme->menuWindow_Application())) {
-				if (ImGui::MenuItem(_theme->menuWindow_Application_Fullscreen(), nullptr, settings()->applicationWindowFullscreen)) {
+				if (ImGui::MenuItem(_theme->menuWindow_Application_Fullscreen(), nullptr, _settings.applicationWindowFullscreen)) {
 					toggleFullscreen(wnd);
 				}
-				if (ImGui::MenuItem(_theme->menuWindow_Application_Maximized(), nullptr, settings()->applicationWindowMaximized)) {
+				if (ImGui::MenuItem(_theme->menuWindow_Application_Maximized(), nullptr, _settings.applicationWindowMaximized)) {
 					toggleMaximized(wnd);
 				}
 
@@ -1285,11 +1287,14 @@ void WorkspaceSketchbook::showPreferences(class Window* wnd, class Renderer*, co
 			if (sets.projectIgnoreDotFiles != prj->ignoreDotFiles()) {
 				prj->ignoreDotFiles(sets.projectIgnoreDotFiles);
 			}
-			if (sets.projectAutoBackup != settings()->projectAutoBackup) {
-				settings()->projectAutoBackup = sets.projectAutoBackup;
+			if (sets.projectLoadLastProjectAtStartup != _settings.projectLoadLastProjectAtStartup) {
+				_settings.projectLoadLastProjectAtStartup = sets.projectLoadLastProjectAtStartup;
+			}
+			if (sets.projectAutoBackup != _settings.projectAutoBackup) {
+				_settings.projectAutoBackup = sets.projectAutoBackup;
 			}
 
-			if (sets.editorShowWhiteSpaces != settings()->editorShowWhiteSpaces) {
+			if (sets.editorShowWhiteSpaces != _settings.editorShowWhiteSpaces) {
 				prj->foreach(
 					[&] (Asset* &asset, Asset::List::Index) -> void {
 						Editable* editor =  asset->editor();
@@ -1301,10 +1306,10 @@ void WorkspaceSketchbook::showPreferences(class Window* wnd, class Renderer*, co
 
 			primitives->input()->config(sets.inputGamepads, INPUT_GAMEPAD_COUNT);
 
-			if (sets.applicationWindowFullscreen != settings()->applicationWindowFullscreen) {
+			if (sets.applicationWindowFullscreen != _settings.applicationWindowFullscreen) {
 				toggleFullscreen(wnd);
 			}
-			if (sets.applicationWindowMaximized != settings()->applicationWindowMaximized) {
+			if (sets.applicationWindowMaximized != _settings.applicationWindowMaximized) {
 				toggleMaximized(wnd);
 			}
 		} while (false);

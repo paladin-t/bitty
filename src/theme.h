@@ -247,6 +247,7 @@ public:
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_ClearOnStart)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_Console)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_IgnoreDotFiles)
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_LoadLastProjectAtStartup)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_PackageFormat)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_Project)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_ShowWhiteSpaces)

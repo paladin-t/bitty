@@ -911,6 +911,7 @@ bool Workspace::load(class Window* wnd, class Renderer* rnd, const class Project
 
 	Jpath::get(doc, settings()->projectPreference, "project", "preference");
 	Jpath::get(doc, settings()->projectIgnoreDotFiles, "project", "ignore_dot_files");
+	Jpath::get(doc, settings()->projectLoadLastProjectAtStartup, "project", "load_last_project_at_startup");
 	Jpath::get(doc, settings()->projectAutoBackup, "project", "auto_backup");
 
 	Jpath::get(doc, settings()->editorShowWhiteSpaces, "editor", "show_white_spaces");
@@ -1008,6 +1009,7 @@ bool Workspace::save(class Window* wnd, class Renderer*, const class Project*, c
 
 	Jpath::set(doc, doc, settings()->projectPreference, "project", "preference");
 	Jpath::set(doc, doc, settings()->projectIgnoreDotFiles, "project", "ignore_dot_files");
+	Jpath::set(doc, doc, settings()->projectLoadLastProjectAtStartup, "project", "load_last_project_at_startup");
 	Jpath::set(doc, doc, settings()->projectAutoBackup, "project", "auto_backup");
 
 	Jpath::set(doc, doc, settings()->editorShowWhiteSpaces, "editor", "show_white_spaces");
