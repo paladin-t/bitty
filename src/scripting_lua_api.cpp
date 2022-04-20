@@ -3051,6 +3051,25 @@ static void open_Color(lua_State* L) {
 
 /**< Date time. */
 
+static int DateTime_utc(lua_State* L) {
+	int sec = 0, mi = 0, hr = 0;
+	int mday = 0, mo = 0, yr = 0;
+	int wday = 0, yday = 0, isdst = 0;
+	const long long ticks = DateTime::utc(
+		&sec, &mi, &hr,
+		&mday, &mo, &yr,
+		&wday, &yday, &isdst
+	);
+
+	return write(
+		L,
+		sec, mi, hr,
+		mday, mo + 1, yr + 1900,
+		wday + 1, yday + 1, !!isdst,
+		ticks
+	);
+}
+
 static int DateTime_now(lua_State* L) {
 	int sec = 0, mi = 0, hr = 0;
 	int mday = 0, mo = 0, yr = 0;
@@ -3120,6 +3139,7 @@ static void open_DateTime(lua_State* L) {
 				"DateTime",
 				LUA_LIB(
 					array(
+						luaL_Reg{ "utc", DateTime_utc },
 						luaL_Reg{ "now", DateTime_now },
 						luaL_Reg{ "ticks", DateTime_ticks },
 						luaL_Reg{ "toMilliseconds", DateTime_toMilliseconds },
