@@ -592,7 +592,9 @@ Being the same as Lua list, `Bytes` index starts from 1. Implements a `Stream` p
 
 **Static Functions**
 
-* `DateTime.now()`: gets the current time
+* `DateTime.utc()`: gets the current UTC time
+	* returns `sec` (0-based), `min` (0-based), `hr` (0-based, since midnight), `mday` (1-based, day of the month), `mo` (1-based), `yr` (since C.E.), `wday` (1-based, days since Sun.), `yday` (1-based, days since 1, Jan.), `isdst` (daylight saving time flag, always 0 for UTC)
+* `DateTime.now()`: gets the current local time
 	* returns `sec` (0-based), `min` (0-based), `hr` (0-based, since midnight), `mday` (1-based, day of the month), `mo` (1-based), `yr` (since C.E.), `wday` (1-based, days since Sun.), `yday` (1-based, days since 1, Jan.), `isdst` (daylight saving time flag)
 * `DateTime.ticks()`: gets a high precision timestamp
 	* returns timestamp in nanoseconds
