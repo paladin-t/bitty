@@ -10358,8 +10358,13 @@ static int Project_getAssets(lua_State* L) {
 	}
 #endif /* BITTY_TRIAL_ENABLED */
 
+	const int n = getTop(L);
 	ProjectPtr* obj = nullptr;
-	read<>(L, obj);
+	const char* pattern = nullptr;
+	if (n >= 2)
+		read<>(L, obj, pattern);
+	else
+		read<>(L, obj);
 
 	if (!obj)
 		return write(L, nullptr);
@@ -10376,7 +10381,9 @@ static int Project_getAssets(lua_State* L) {
 	Text::Array entries;
 	prj->foreach(
 		[&] (Asset* &asset, Asset::List::Index) -> void {
-			entries.push_back(asset->entry().name());
+			const std::string name = asset->entry().name();
+			if (pattern == nullptr || *pattern == '\0' || Text::matchWildcard(name, pattern, true))
+				entries.push_back(name);
 		}
 	);
 
