@@ -46,6 +46,8 @@
   height: 15px;
   width: 15px;
   border-radius: 50px;
+  border-width: 1px;
+  border-style: solid;
   border-color: black;
   background-color: rgb(255, 255, 255);
   display: inline-block;
