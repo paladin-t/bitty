@@ -51,6 +51,7 @@ Project::Project() {
 
 	id(0);
 	title("...");
+	revision(0);
 	order(0);
 
 	const std::string ent = entry();
@@ -311,6 +312,7 @@ int Project::unload(void) {
 	description().clear();
 	author().clear();
 	version().clear();
+	revision(0);
 	genre().clear();
 	url().clear();
 	order(0);
@@ -344,6 +346,7 @@ bool Project::parse(void) {
 	description().clear();
 	author().clear();
 	version().clear();
+	revision(0);
 	genre().clear();
 	url().clear();
 	order(0);
@@ -367,6 +370,7 @@ bool Project::parse(void) {
 	Jpath::get(doc, description(), "description");
 	Jpath::get(doc, author(), "author");
 	Jpath::get(doc, version(), "version");
+	Jpath::get(doc, revision(), "revision");
 	Jpath::get(doc, genre(), "genre");
 	Jpath::get(doc, url(), "url");
 	Jpath::get(doc, order(), "order");
@@ -404,6 +408,8 @@ bool Project::serialize(void) {
 	Jpath::set(doc, doc, description(), "description");
 	Jpath::set(doc, doc, author(), "author");
 	Jpath::set(doc, doc, version(), "version");
+	if (revision() != 0)
+		Jpath::set(doc, doc, revision(), "revision");
 	Jpath::set(doc, doc, genre(), "genre");
 	Jpath::set(doc, doc, url(), "url");
 	if (order() != 0)

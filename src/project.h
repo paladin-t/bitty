@@ -78,6 +78,7 @@ public:
 	BITTY_PROPERTY(std::string, description)
 	BITTY_PROPERTY(std::string, author)
 	BITTY_PROPERTY(std::string, version)
+	BITTY_PROPERTY(unsigned, revision)
 	BITTY_PROPERTY(std::string, genre)
 	BITTY_PROPERTY(std::string, url)
 	BITTY_PROPERTY(unsigned, order)
