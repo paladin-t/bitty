@@ -1909,7 +1909,8 @@ Currently there is only one available strategy, change and try if it's needed:
 
 * `project:fullPath()`: gets the full path of the `Project`
 	* returns the full path of the `Project`, or `nil`
-* `project:getAssets()`: gets all asset names in the `Project`
+* `project:getAssets([pattern])`: gets all asset names in the `Project`
+	* `pattern`: lookup pattern, supports wildcards
 	* returns a list of asset entries, or `nil`
 * `project:load(path)`: loads this `Project` from the specific path; for user constructed `Project` only
 	* `path`: the specific path to load from
