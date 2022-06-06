@@ -54,6 +54,7 @@ protected:
 	Requirement _requirement;                               // By the Lua thread.
 	Dependency _dependency;                                 // By the Lua thread.
 
+	bool _debugRealNumberPrecisely = false;                 // By the Lua thread.
 	long long _timeout = SCRIPTING_LUA_TIMEOUT_NANOSECONDS; // By the Lua thread.
 	unsigned _frameRate = BITTY_ACTIVE_FRAME_RATE;          // By the Lua thread.
 
@@ -153,6 +154,9 @@ public:
 
 	virtual bool getVariable(const char* name, const char* &type, Variant* &var) const override;
 	virtual bool setVariable(const char* name, const Variant* var) const override;
+
+	virtual bool debugRealNumberPrecisely(void) const override;
+	virtual void debugRealNumberPrecisely(bool enabled) override;
 
 	virtual Invokable getInvokable(const char* name) const override;
 	virtual Variant invoke(Invokable func, int argc, const Variant* argv) override;

@@ -902,6 +902,14 @@ bool ScriptingLua::setVariable(const char* name_, const Variant* var) const {
 	return true;
 }
 
+bool ScriptingLua::debugRealNumberPrecisely(void) const {
+	return _debugRealNumberPrecisely;
+}
+
+void ScriptingLua::debugRealNumberPrecisely(bool enabled) {
+	_debugRealNumberPrecisely = enabled;
+}
+
 Executable::Invokable ScriptingLua::getInvokable(const char* name) const {
 	LockGuard<decltype(_lock)> guard(_lock);
 

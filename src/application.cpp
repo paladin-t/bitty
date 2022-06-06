@@ -307,6 +307,8 @@ public:
 		// Initialize the executable module.
 		const bool effectsEnabled = options.find(WORKSPACE_OPTION_RENDERER_EFFECTS_ENABLED_KEY) != options.end();
 		_executable->open(_workspace, _project, nullptr, _primitives, effectsEnabled);
+		if (options.find(WORKSPACE_OPTION_EXECUTABLE_DEBUG_REAL_NUMBER_PRECISELY_KEY) != options.end())
+			_executable->debugRealNumberPrecisely(true);
 		if (options.find(WORKSPACE_OPTION_EXECUTABLE_TIMEOUT_DISABLED_KEY) != options.end())
 			_executable->timeout(-1);
 #if defined BITTY_OS_HTML
@@ -905,6 +907,7 @@ private:
 			" [-" WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY "]"
 			" [-" WORKSPACE_OPTION_WINDOW_SIZE_KEY " MxN]"
 			" [-" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY " ]"
+			" [-" WORKSPACE_OPTION_WINDOW_ALWAYS_ON_TOP_ENABLED_KEY " ]"
 			" [-" WORKSPACE_OPTION_RENDERER_X2_KEY "]"
 			" [-" WORKSPACE_OPTION_RENDERER_X3_KEY "]"
 			" [-" WORKSPACE_OPTION_RENDERER_DRIVER_KEY " 1]"
@@ -912,24 +915,27 @@ private:
 			" [-" WORKSPACE_OPTION_RENDERER_EFFECTS_ENABLED_KEY "]"
 #endif /* BITTY_EFFECTS_ENABLED */
 			" [-" WORKSPACE_OPTION_PLUGIN_DISABLED_KEY "]"
+			" [-" WORKSPACE_OPTION_EXECUTABLE_DEBUG_REAL_NUMBER_PRECISELY_KEY "]"
 			" [-" WORKSPACE_OPTION_EXECUTABLE_TIMEOUT_DISABLED_KEY "]"
 			" [> log.txt]\n"
 		);
-		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_CWD_KEY             " \"PATH\" Specify the working directory.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_CWD_KEY                        " \"PATH\" Specify the working directory.\n");
 #if defined BITTY_OS_WIN
-		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_CONSOLE_ENABLED_KEY "        Enable console window.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_CONSOLE_ENABLED_KEY            "        Enable console window.\n");
 #endif /* BITTY_OS_WIN */
-		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY           "        Run with borderless window.\n");
-		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_SIZE_KEY                 " MxN    Specify window size.\n");
-		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY                 "        Disable high-DPI.\n");
-		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X2_KEY                 "       Set renderer scale to x2.\n");
-		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X3_KEY                 "       Set renderer scale to x3.\n");
-		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_DRIVER_KEY             " 1      Use software renderer.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY              "        Run with borderless window.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_SIZE_KEY                            " MxN    Specify window size.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY               "        Disable high-DPI.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_ALWAYS_ON_TOP_ENABLED_KEY           "        Keep window top most.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X2_KEY                            "       Set renderer scale to x2.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X3_KEY                            "       Set renderer scale to x3.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_DRIVER_KEY                        " 1      Use software renderer.\n");
 #if BITTY_EFFECTS_ENABLED
-		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_EFFECTS_ENABLED_KEY             "        Enable effects.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_EFFECTS_ENABLED_KEY               "        Enable effects.\n");
 #endif /* BITTY_EFFECTS_ENABLED */
-		fprintf(stdout, "  -" WORKSPACE_OPTION_PLUGIN_DISABLED_KEY             "        Disable plugins.\n");
-		fprintf(stdout, "  -" WORKSPACE_OPTION_EXECUTABLE_TIMEOUT_DISABLED_KEY "        Disable invoking timeout.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_PLUGIN_DISABLED_KEY                        "        Disable plugins.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_EXECUTABLE_DEBUG_REAL_NUMBER_PRECISELY_KEY "        Debug real number precisely.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_EXECUTABLE_TIMEOUT_DISABLED_KEY            "        Disable invoking timeout.\n");
 		fprintf(stdout, "\n");
 
 #	undef _BITTY_EXE

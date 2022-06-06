@@ -1618,11 +1618,13 @@ static int Raycaster_solve(lua_State* L) {
 
 	Math::Vec2f intersectionPos;
 	Math::Vec2i intersectionIndex;
+	Real intersectionDist = 0;
+	Raycaster::Directions intersectionDir = Raycaster::INVALID;
 	const int ret = obj->get()->solve(
 		*rayPos, *rayDir,
 		access,
-		intersectionPos,
-		intersectionIndex
+		intersectionPos, intersectionIndex,
+		intersectionDist, intersectionDir
 	);
 
 	if (!ret)
@@ -4879,15 +4881,18 @@ static int Vec2_ctor(lua_State* L) {
 }
 
 static int Vec2___tostring(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+	unsigned short precision = impl->debugRealNumberPrecisely() ? 16 : 6;
+
 	Math::Vec2f* obj = nullptr;
 	check<>(L, obj);
 
 	std::string str;
 
 	str += "Vec2[";
-	str += Text::toString(obj->x);
+	str += Text::toString(obj->x, precision);
 	str += ", ";
-	str += Text::toString(obj->y);
+	str += Text::toString(obj->y, precision);
 	str += "]";
 
 	return write(L, str);
@@ -5216,17 +5221,20 @@ static int Vec3_ctor(lua_State* L) {
 }
 
 static int Vec3___tostring(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+	unsigned short precision = impl->debugRealNumberPrecisely() ? 16 : 6;
+
 	Math::Vec3f* obj = nullptr;
 	check<>(L, obj);
 
 	std::string str;
 
 	str += "Vec3[";
-	str += Text::toString(obj->x);
+	str += Text::toString(obj->x, precision);
 	str += ", ";
-	str += Text::toString(obj->y);
+	str += Text::toString(obj->y, precision);
 	str += ", ";
-	str += Text::toString(obj->z);
+	str += Text::toString(obj->z, precision);
 	str += "]";
 
 	return write(L, str);
@@ -5459,19 +5467,22 @@ static int Vec4_ctor(lua_State* L) {
 }
 
 static int Vec4___tostring(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+	unsigned short precision = impl->debugRealNumberPrecisely() ? 16 : 6;
+
 	Math::Vec4f* obj = nullptr;
 	check<>(L, obj);
 
 	std::string str;
 
 	str += "Vec4[";
-	str += Text::toString(obj->x);
+	str += Text::toString(obj->x, precision);
 	str += ", ";
-	str += Text::toString(obj->y);
+	str += Text::toString(obj->y, precision);
 	str += ", ";
-	str += Text::toString(obj->z);
+	str += Text::toString(obj->z, precision);
 	str += ", ";
-	str += Text::toString(obj->w);
+	str += Text::toString(obj->w, precision);
 	str += "]";
 
 	return write(L, str);
@@ -5672,19 +5683,22 @@ static int Rect_byXYWH(lua_State* L) {
 }
 
 static int Rect___tostring(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+	unsigned short precision = impl->debugRealNumberPrecisely() ? 16 : 6;
+
 	Math::Rectf* obj = nullptr;
 	check<>(L, obj);
 
 	std::string str;
 
 	str += "Rect[";
-	str += Text::toString(obj->x0);
+	str += Text::toString(obj->x0, precision);
 	str += ", ";
-	str += Text::toString(obj->y0);
+	str += Text::toString(obj->y0, precision);
 	str += ", ";
-	str += Text::toString(obj->x1);
+	str += Text::toString(obj->x1, precision);
 	str += ", ";
-	str += Text::toString(obj->y1);
+	str += Text::toString(obj->y1, precision);
 	str += "]";
 
 	return write(L, str);
@@ -6091,15 +6105,18 @@ static int Rot_ctor(lua_State* L) {
 }
 
 static int Rot___tostring(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+	unsigned short precision = impl->debugRealNumberPrecisely() ? 16 : 6;
+
 	Math::Rotf* obj = nullptr;
 	check<>(L, obj);
 
 	std::string str;
 
 	str += "Rot[";
-	str += Text::toString(obj->s);
+	str += Text::toString(obj->s, precision);
 	str += ", ";
-	str += Text::toString(obj->c);
+	str += Text::toString(obj->c, precision);
 	str += "]";
 
 	return write(L, str);

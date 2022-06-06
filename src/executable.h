@@ -206,6 +206,9 @@ public:
 	virtual bool getVariable(const char* name, const char* &type /* nullable */, Variant* &var /* nullable */) const = 0;
 	virtual bool setVariable(const char* name, const Variant* var /* nullable */) const = 0;
 
+	virtual bool debugRealNumberPrecisely(void) const = 0;
+	virtual void debugRealNumberPrecisely(bool enabled) = 0;
+
 	virtual Invokable getInvokable(const char* name) const = 0;
 	virtual Variant invoke(Invokable func, int argc, const Variant* argv) = 0;
 	Variant invoke(Invokable func) {
