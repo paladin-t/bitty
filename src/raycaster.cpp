@@ -60,9 +60,15 @@ public:
 	virtual int solve(
 		const Math::Vec2f &rayPos, const Math::Vec2f &rayDir,
 		const AccessHandler &access,
-		Math::Vec2f &intersectionPos, Math::Vec2i &intersectionIndex
+		Math::Vec2f &intersectionPos, Math::Vec2i &intersectionIndex,
+		Real &intersectionDist, Directions &intersectionDir
 	) override {
 		// Prepare.
+		intersectionPos = Math::Vec2f();
+		intersectionIndex = Math::Vec2i();
+		intersectionDist = 0;
+		intersectionDir = INVALID;
+
 		if (_tileSize.x <= 0 || _tileSize.y <= 0)
 			return 0;
 		if (rayDir == Math::Vec2f(0, 0))
@@ -80,8 +86,7 @@ public:
 
 		// Calculate ray position, index and direction.
 		Math::Vec2f dir = rayDir;
-		Real len = dir.normalize();
-		len = std::min(len, (Real)RAYCASTER_MAX_LENGTH);
+		const Real len = std::min(dir.normalize(), (Real)RAYCASTER_MAX_LENGTH);
 		const int steps = (int)(len / std::min(_tileSize.x, _tileSize.y)) * 2;
 
 		const Math::Vec2f pos(
@@ -121,18 +126,24 @@ public:
 
 		// Perform DDA algorithm.
 		int hit = 0;
-		int side = 0;
+		Directions side = EAST;
 		Math::Vec2i stepped;
 		while (hit == 0 && (stepped.x + stepped.y < steps)) {
 			if (sideDst.x < sideDst.y) {
 				sideDst.x += deltaDst.x;
 				index.x += step.x;
-				side = 0;
+				if (step.x > 0)
+					side = EAST;
+				else
+					side = WEST;
 				++stepped.x;
 			} else {
 				sideDst.y += deltaDst.y;
 				index.y += step.y;
-				side = 1;
+				if (step.y > 0)
+					side = SOUTH;
+				else
+					side = NORTH;
 				++stepped.y;
 			}
 			const bool blk = block(Math::Vec2i(index.x, index.y));
@@ -143,23 +154,32 @@ public:
 		// Calculate collision position and index.
 		Real dist = 0.0f;
 		if (_tileSize.x == _tileSize.y) {
+			/* The later calculation equals to the following:
 			const Int tileSize = _tileSize.x;
-			if (side == 0)
+			if (side == EAST || side == WEST)
 				dist = (index.x - indexf.x + (1 - step.x) / 2) / dir.x;
 			else
 				dist = (index.y - indexf.y + (1 - step.y) / 2) / dir.y;
-			dist *= tileSize;
+			dist *= tileSize; */
+			if (side == EAST || side == WEST)
+				dist = sideDst.x - deltaDst.x;
+			else
+				dist = sideDst.y - deltaDst.y;
+			if (side == EAST || side == SOUTH) {
+				const Real EPSILON = 1e-12;
+				dist -= EPSILON; // Don't take count the edge in the east and south.
+			}
 			intersectionPos = pos + dir * dist;
-			if (dir.x > 0) // Correct it.
-				--intersectionPos.x;
-			if (dir.y > 0)
-				--intersectionPos.y;
 			intersectionIndex = index;
+			intersectionDist = dist;
+			intersectionDir = (Directions)side;
 		} else {
 			const Math::Vec2f centerPos((index.x + 0.5f) * _tileSize.x, (index.y + 0.5f) * _tileSize.y);
 			dist = (centerPos - pos).length();
 			intersectionPos = pos + dir * dist;
 			intersectionIndex = index;
+			intersectionDist = dist;
+			intersectionDir = (Directions)side;
 		}
 		if (dist >= len) {
 			dist = len;

@@ -28,6 +28,14 @@ class Raycaster : public virtual Object {
 public:
 	typedef std::shared_ptr<Raycaster> Ptr;
 
+	enum Directions {
+		EAST,
+		WEST,
+		SOUTH,
+		NORTH,
+		INVALID
+	};
+
 	typedef std::function<bool(const Math::Vec2i &)> BlockingHandler;
 	typedef std::function<int(const Math::Vec2i &)> EvaluationHandler;
 
@@ -49,7 +57,8 @@ public:
 	virtual int solve(
 		const Math::Vec2f &rayPos, const Math::Vec2f &rayDir,
 		const AccessHandler &access,
-		Math::Vec2f &intersectionPos, Math::Vec2i &intersectionIndex
+		Math::Vec2f &intersectionPos, Math::Vec2i &intersectionIndex,
+		Real &intersectionDist, Directions &intersectionDir
 	) = 0;
 
 	static Raycaster* create(void);
