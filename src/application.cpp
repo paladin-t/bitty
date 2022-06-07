@@ -507,7 +507,6 @@ private:
 #else /* BITTY_OS_WIN */
 		(void)wnd;
 
-		Platform::openInput();
 		io.ImeSetInputScreenPosFn = Platform::inputScreenPosition;
 #endif /* BITTY_OS_WIN */
 
@@ -519,7 +518,6 @@ private:
 #if defined BITTY_OS_WIN
 		(void)io;
 #else /* BITTY_OS_WIN */
-		Platform::closeInput();
 		io.ImeSetInputScreenPosFn = nullptr;
 #endif /* BITTY_OS_WIN */
 
