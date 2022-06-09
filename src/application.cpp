@@ -477,8 +477,10 @@ private:
 		};
 		io.GetClipboardTextFn = [] (void* userdata) -> const char* {
 			Context* data = (Context*)userdata;
-			if (data->clipboardTextData)
+			if (data->clipboardTextData) {
 				SDL_free(data->clipboardTextData);
+				data->clipboardTextData = nullptr;
+			}
 			data->clipboardTextData = SDL_GetClipboardText();
 
 			return data->clipboardTextData;

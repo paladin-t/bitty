@@ -437,6 +437,13 @@ unsigned Unicode::takeUtf8(const char* ch, int n) {
 ** Base64
 */
 
+#ifndef b64_free
+	// Use this function instead of `b64_realloc`, due to the behaviour
+	// underneath the `b64_realloc` (`realloc`) is implementation dependent in
+	// the C99/C++11 standards.
+#	define b64_free(ptr) free(ptr)
+#endif /* b64_free */
+
 bool Base64::toBytes(class Bytes* val, const std::string &str) {
 	size_t len = 0;
 	Byte* tmp = b64_decode_ex(str.c_str(), str.length(), &len);
@@ -444,8 +451,7 @@ bool Base64::toBytes(class Bytes* val, const std::string &str) {
 		return false;
 
 	val->writeBytes(tmp, len);
-	void* ret = b64_realloc(tmp, 0);
-	(void)ret;
+	b64_free((void*)tmp);
 
 	return true;
 }
@@ -458,8 +464,7 @@ bool Base64::fromBytes(std::string &val, const class Bytes* buf) {
 		return false;
 
 	val = tmp;
-	void* ret = b64_realloc(tmp, 0);
-	(void)ret;
+	b64_free((void*)tmp);
 
 	return true;
 }

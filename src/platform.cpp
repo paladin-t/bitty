@@ -34,7 +34,9 @@ bool Platform::ignore(const char* path) {
 }
 
 std::string Platform::writableDirectory(void) {
-	const std::string osstr = Unicode::toOs(SDL_GetPrefPath("bitty", "engine"));
+	const char* cstr = SDL_GetPrefPath("bitty", "engine");
+	const std::string osstr = Unicode::toOs(cstr);
+	SDL_free((void*)cstr);
 
 	return osstr;
 }
@@ -44,8 +46,10 @@ bool Platform::hasClipboardText(void) {
 }
 
 std::string Platform::clipboardText(void) {
-	const std::string txt = SDL_GetClipboardText();
+	const char* cstr = SDL_GetClipboardText();
+	const std::string txt = cstr;
 	const std::string osstr = Unicode::toOs(txt);
+	SDL_free((void*)cstr);
 
 	return osstr;
 }
