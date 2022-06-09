@@ -1908,6 +1908,10 @@ bool Workspace::canvas(class Window* wnd, class Renderer* rnd, const class Proje
 	ImGuiIO &io = ImGui::GetIO();
 	ImGuiStyle &style = ImGui::GetStyle();
 
+	const bool maximizedFull = *canvasState() == MAXIMIZED || canvasFull();
+	if (maximizedFull)
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+
 	VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2());
 	VariableGuard<decltype(style.ItemSpacing)> guardItemSpacing(&style.ItemSpacing, style.ItemSpacing, ImVec2());
 
@@ -2025,6 +2029,9 @@ bool Workspace::canvas(class Window* wnd, class Renderer* rnd, const class Proje
 	if (!opened) {
 		Operations::projectStop(rnd, this, project, exec, primitives);
 	}
+
+	if (maximizedFull)
+		ImGui::PopStyleVar();
 
 	return true;
 }
@@ -2721,8 +2728,6 @@ void Workspace::scene(class Window* wnd, class Renderer* rnd, const class Projec
 	// Prepare.
 	ImGuiStyle &style = ImGui::GetStyle();
 
-	if (canvasFull())
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
 	const float borderSize = style.WindowBorderSize;
 
 	const ImVec2 regMin = ImGui::GetWindowContentRegionMin();
@@ -2864,12 +2869,14 @@ void Workspace::scene(class Window* wnd, class Renderer* rnd, const class Projec
 	}
 
 	// Render the canvas image.
+	const bool maximizedFull = *canvasState() == MAXIMIZED || canvasFull();
+	const ImVec4 border = maximizedFull ? ImVec4(0, 0, 0, 0) : ImVec4(0, 0, 0, 0.5f);
 	ImGui::SetCursorPos(dstPos);
 	ImGui::Image(
 		canvasTexture()->pointer(rnd),
 		dstSize,
 		ImVec2(0, 0), ImVec2(1, 1),
-		ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 0.5f)
+		ImVec4(1, 1, 1, 1), border
 	);
 
 	if (*canvasState() == FRAME) {
@@ -2901,10 +2908,6 @@ void Workspace::scene(class Window* wnd, class Renderer* rnd, const class Projec
 
 		ImGui::Indicator("REC", dstPos + ImVec2(4, 4));
 	}
-
-	// Finish.
-	if (canvasFull())
-		ImGui::PopStyleVar();
 }
 
 void Workspace::document(class Window* wnd, class Renderer* rnd) {
