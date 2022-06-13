@@ -295,9 +295,16 @@ public:
 		if (!val || size == 0)
 			return false;
 
-		if (!_buffer)
-			_buffer = Bytes::create();
+		if (_music) {
+			Mix_FreeMusic(_music);
+			_music = nullptr;
+		}
+		if (_buffer) {
+			Bytes::destroy(_buffer);
+			_buffer = nullptr;
+		}
 
+		_buffer = Bytes::create();
 		_buffer->writeBytes(val, size);
 		_buffer->poke(0);
 
@@ -514,6 +521,15 @@ public:
 		if (!val)
 			return false;
 
+		if (_chunk) {
+			Mix_FreeChunk(_chunk);
+			_chunk = nullptr;
+		}
+		if (_bytes) {
+			Bytes::destroy(_bytes);
+			_bytes = nullptr;
+		}
+
 		_bytes = Bytes::create();
 		_bytes->writeBytes(val, size);
 		_bytes->poke(0);
@@ -679,6 +695,15 @@ public:
 	virtual bool fromBytes(const Byte* val, size_t size) override {
 		if (!val)
 			return false;
+
+		if (_music) {
+			Mix_FreeMusic(_music);
+			_music = nullptr;
+		}
+		if (_bytes) {
+			Bytes::destroy(_bytes);
+			_bytes = nullptr;
+		}
 
 		_bytes = Bytes::create();
 		_bytes->writeBytes(val, size);
