@@ -30,6 +30,9 @@
 #ifndef WORKSPACE_OPTION_APPLICATION_CONSOLE_ENABLED_KEY
 #	define WORKSPACE_OPTION_APPLICATION_CONSOLE_ENABLED_KEY "c"
 #endif /* WORKSPACE_OPTION_APPLICATION_CONSOLE_ENABLED_KEY */
+#ifndef WORKSPACE_OPTION_APPLICATION_FPS_KEY
+#	define WORKSPACE_OPTION_APPLICATION_FPS_KEY "a"
+#endif /* WORKSPACE_OPTION_APPLICATION_FPS_KEY */
 #ifndef WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY
 #	define WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY "b"
 #endif /* WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY */
@@ -318,7 +321,7 @@ public:
 	/**
 	 * @brief Opens the workspace for further operation.
 	 */
-	virtual bool open(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, const Text::Dictionary &options);
+	virtual bool open(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, unsigned fps, const Text::Dictionary &options);
 	/**
 	 * @brief Closes the workspace after all operations.
 	 */

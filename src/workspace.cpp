@@ -303,7 +303,7 @@ Workspace::~Workspace() {
 	consoleTextBox(nullptr);
 }
 
-bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, const Text::Dictionary &options) {
+bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, unsigned fps, const Text::Dictionary &options) {
 	// Prepare.
 	Platform::threadName("BITTY");
 
@@ -317,7 +317,7 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 	// Initialize properties.
 	busy(false);
 
-	activeFrameRate(BITTY_ACTIVE_FRAME_RATE);
+	activeFrameRate(fps);
 
 	currentState(Executable::READY);
 
@@ -429,7 +429,8 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 					rnd, this,
 					theme()->dialogPrompt_Writing().c_str()
 				);
-			}
+			},
+			fps
 		)
 	);
 

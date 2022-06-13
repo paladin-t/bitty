@@ -133,11 +133,8 @@ public:
 	virtual void* pointer(void) = 0;
 
 	virtual bool open(
-		Observer* observer,
-		const class Project* project,
-		const class Project* editing,
-		class Primitives* primitives /* nullable */,
-		bool effectsEnabled
+		Observer* observer, const class Project* project, const class Project* editing, class Primitives* primitives /* nullable */,
+		unsigned fps, bool effectsEnabled
 	) = 0;
 	virtual bool close(void) = 0;
 

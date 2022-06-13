@@ -80,14 +80,13 @@ void* ScriptingLua::pointer(void) {
 }
 
 bool ScriptingLua::open(
-	Observer* observer,
-	const class Project* project,
-	const class Project* editing,
-	class Primitives* primitives,
-	bool effectsEnabled
+	Observer* observer, const class Project* project, const class Project* editing, class Primitives* primitives,
+	unsigned fps, bool effectsEnabled
 ) {
-	if (!Scripting::open(observer, project, editing, primitives, effectsEnabled))
+	if (!Scripting::open(observer, project, editing, primitives, fps, effectsEnabled))
 		return false;
+
+	_frameRate = fps;
 
 	return true;
 }

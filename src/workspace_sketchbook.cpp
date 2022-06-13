@@ -166,7 +166,7 @@ WorkspaceSketchbook::~WorkspaceSketchbook() {
 	_theme = nullptr;
 }
 
-bool WorkspaceSketchbook::open(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, const Text::Dictionary &options) {
+bool WorkspaceSketchbook::open(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, unsigned fps, const Text::Dictionary &options) {
 	if (_opened)
 		return false;
 	_opened = true;
@@ -210,7 +210,7 @@ bool WorkspaceSketchbook::open(class Window* wnd, class Renderer* rnd, const cla
 		);
 	} while (false);
 
-	if (!Workspace::open(wnd, rnd, project, exec, primitives, options)) {
+	if (!Workspace::open(wnd, rnd, project, exec, primitives, fps, options)) {
 		endSplash(wnd, rnd);
 
 		return false;
@@ -799,7 +799,7 @@ void WorkspaceSketchbook::shortcuts(class Window* wnd, class Renderer* rnd, cons
 	if (f6 && !recorder()->recording())
 		recorder()->start(1);
 	if (f7 && !recorder()->recording())
-		recorder()->start(BITTY_ACTIVE_FRAME_RATE * 60); // 1 minute.
+		recorder()->start(activeFrameRate() * 60); // 1 minute.
 	if (f8 && recorder()->recording())
 		recorder()->stop();
 
@@ -1191,7 +1191,7 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 					recorder()->start(1);
 				}
 				if (ImGui::MenuItem(_theme->menuWindow_Screen_RecordCanvas(), "F7", nullptr, !recorder()->recording() && executing() && !paused())) {
-					recorder()->start(BITTY_ACTIVE_FRAME_RATE * 60); // 1 minute.
+					recorder()->start(activeFrameRate() * 60); // 1 minute.
 				}
 				if (ImGui::MenuItem(_theme->menuWindow_Screen_StopRecording(), "F8", nullptr, recorder()->recording() && executing() && !paused())) {
 					recorder()->stop();

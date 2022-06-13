@@ -269,6 +269,17 @@ public:
 		// Create the effects.
 		_effects = Effects::create();
 
+		// Initialize the FPS.
+		unsigned fps = _context.expectedFrameRate;
+		Text::Dictionary::const_iterator fpsOpt = options.find(WORKSPACE_OPTION_APPLICATION_FPS_KEY);
+		if (fpsOpt != options.end()) {
+			const std::string fpsStr = fpsOpt->second;
+			if (Text::fromString(fpsStr, fps) && fps >= 1)
+				_context.expectedFrameRate = fps;
+			else
+				fps = _context.expectedFrameRate;
+		}
+
 		// Initialize the icon.
 		if (Path::existsFile(APPLICATION_ICON_FILE)) {
 			File::Ptr file(File::create());
@@ -306,7 +317,7 @@ public:
 
 		// Initialize the executable module.
 		const bool effectsEnabled = options.find(WORKSPACE_OPTION_RENDERER_EFFECTS_ENABLED_KEY) != options.end();
-		_executable->open(_workspace, _project, nullptr, _primitives, effectsEnabled);
+		_executable->open(_workspace, _project, nullptr, _primitives, fps, effectsEnabled);
 		if (options.find(WORKSPACE_OPTION_EXECUTABLE_DEBUG_REAL_NUMBER_PRECISELY_KEY) != options.end())
 			_executable->debugRealNumberPrecisely(true);
 		if (options.find(WORKSPACE_OPTION_EXECUTABLE_TIMEOUT_DISABLED_KEY) != options.end())
@@ -317,7 +328,7 @@ public:
 
 		// Initialize the workspace.
 		_workspace->load(_window, _renderer, _project, _primitives);
-		_workspace->open(_window, _renderer, _project, _executable, _primitives, options);
+		_workspace->open(_window, _renderer, _project, _executable, _primitives, fps, options);
 
 		// Initialize the effects.
 		_effects->open(_window, _renderer, _workspace, effectsEnabled);
@@ -904,6 +915,7 @@ private:
 #if defined BITTY_OS_WIN
 			" [-" WORKSPACE_OPTION_APPLICATION_CONSOLE_ENABLED_KEY "]"
 #endif /* BITTY_OS_WIN */
+			" [-" WORKSPACE_OPTION_APPLICATION_FPS_KEY "]"
 			" [-" WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY "]"
 			" [-" WORKSPACE_OPTION_WINDOW_SIZE_KEY " MxN]"
 			" [-" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY " ]"
@@ -923,6 +935,7 @@ private:
 #if defined BITTY_OS_WIN
 		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_CONSOLE_ENABLED_KEY            "        Enable console window.\n");
 #endif /* BITTY_OS_WIN */
+		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_FPS_KEY                        " FPS    Specify running FPS\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY              "        Run with borderless window.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_SIZE_KEY                            " MxN    Specify window size.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY               "        Disable high-DPI.\n");

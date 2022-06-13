@@ -44,7 +44,7 @@ public:
 
 	virtual void update(class Window* wnd, class Renderer* rnd, class Texture* tex) = 0;
 
-	static Recorder* create(SaveHandler save);
+	static Recorder* create(SaveHandler save, unsigned fps);
 	static void destroy(Recorder* ptr);
 };
 

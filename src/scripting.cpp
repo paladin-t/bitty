@@ -27,12 +27,11 @@ unsigned Scripting::type(void) const {
 }
 
 bool Scripting::open(
-	Observer* obsvr,
-	const class Project* project,
-	const class Project* editing,
-	class Primitives* primitives,
-	bool effectsEnabled
+	Observer* obsvr, const class Project* project, const class Project* editing, class Primitives* primitives,
+	unsigned fps, bool effectsEnabled
 ) {
+	(void)fps;
+
 	if (_opened)
 		return false;
 	_opened = true;

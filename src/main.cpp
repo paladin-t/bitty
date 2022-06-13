@@ -32,6 +32,15 @@ EM_JS(
 		return !!Module.syncdone;
 	}
 );
+
+EM_JS(
+	bool, mainGetActiveFrameRate, (), {
+		if (typeof getActiveFrameRate != 'function')
+			return BITTY_ACTIVE_FRAME_RATE;
+
+		return getActiveFrameRate();
+	}
+);
 #endif /* BITTY_OS_HTML */
 
 static int entry(int argc, const char* argv[]) {
@@ -49,7 +58,7 @@ static int entry(int argc, const char* argv[]) {
 			updateApplication(app);
 		},
 		app,
-		BITTY_ACTIVE_FRAME_RATE, 1
+		mainGetActiveFrameRate(), 1
 	);
 	destroyApplication(app);
 #else /* BITTY_OS_HTML */

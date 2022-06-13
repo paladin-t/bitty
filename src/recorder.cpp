@@ -63,6 +63,7 @@ private:
 
 private:
 	SaveHandler _save = nullptr;
+	unsigned _fps = BITTY_ACTIVE_FRAME_RATE;
 	unsigned _frameSkipping = 0;
 
 	int _width = 0;
@@ -75,7 +76,7 @@ private:
 	int _footprint = 0;
 
 public:
-	RecorderImpl(SaveHandler save) : _save(save) {
+	RecorderImpl(SaveHandler save, unsigned fps) : _save(save), _fps(fps) {
 	}
 	virtual ~RecorderImpl() override {
 		clear();
@@ -272,7 +273,7 @@ private:
 			}
 
 			// Stream to GIF.
-			constexpr const short INTERVAL = std::max((short)((1.0f / BITTY_ACTIVE_FRAME_RATE) * 100 * (RECORDER_SKIP_FRAME_COUNT + 1)), (short)1);
+			const short INTERVAL = std::max((short)((1.0f / _fps) * 100 * (RECORDER_SKIP_FRAME_COUNT + 1)), (short)1);
 			for (Bytes::Ptr compressed : _frames) {
 				toImage(compressed, img); // Decompress and load a frame to an image object.
 
@@ -332,8 +333,8 @@ private:
 Recorder::~Recorder() {
 }
 
-Recorder* Recorder::create(SaveHandler save) {
-	RecorderImpl* result = new RecorderImpl(save);
+Recorder* Recorder::create(SaveHandler save, unsigned fps) {
+	RecorderImpl* result = new RecorderImpl(save, fps);
 
 	return result;
 }

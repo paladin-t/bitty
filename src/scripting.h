@@ -73,11 +73,8 @@ public:
 	virtual unsigned type(void) const override;
 
 	virtual bool open(
-		Observer* obsvr,
-		const class Project* project,
-		const class Project* editing,
-		class Primitives* primitives,
-		bool effectsEnabled
+		Observer* obsvr, const class Project* project, const class Project* editing, class Primitives* primitives,
+		unsigned fps, bool effectsEnabled
 	) override;
 	virtual bool close(void) override;
 

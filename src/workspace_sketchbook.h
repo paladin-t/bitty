@@ -44,7 +44,7 @@ public:
 	WorkspaceSketchbook();
 	virtual ~WorkspaceSketchbook() override;
 
-	virtual bool open(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, const Text::Dictionary &options) override;
+	virtual bool open(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, unsigned fps, const Text::Dictionary &options) override;
 	virtual bool close(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec) override;
 
 	virtual const Settings* settings(void) const override;
