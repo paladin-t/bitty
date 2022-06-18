@@ -517,6 +517,17 @@ public:
 		}
 	}
 
+	virtual bool toBytes(class Bytes* val) const override {
+		val->clear();
+
+		if (!_bytes)
+			return false;
+
+		_bytes->poke(0);
+		_bytes->readBytes(val);
+
+		return true;
+	}
 	virtual bool fromBytes(const Byte* val, size_t size, const AudioSpec &spec) override {
 		if (!val)
 			return false;
@@ -752,6 +763,17 @@ public:
 			_musicOccupation = 0;
 	}
 
+	virtual bool toBytes(class Bytes* val) const override {
+		val->clear();
+
+		if (!_bytes)
+			return false;
+
+		_bytes->poke(0);
+		_bytes->readBytes(val);
+
+		return true;
+	}
 	virtual bool fromBytes(const Byte* val, size_t size) override {
 		if (!val)
 			return false;

@@ -161,6 +161,10 @@ public:
 
 	virtual void clear(void) = 0;
 
+	/**
+	 * @param[out] val
+	 */
+	virtual bool toBytes(class Bytes* val) const = 0;
 	virtual bool fromBytes(const Byte* val, size_t size, const AudioSpec &spec) = 0;
 	virtual bool fromBytes(const class Bytes* val, const AudioSpec &spec) = 0;
 	virtual bool fromBytes(const Byte* val, size_t size) = 0;
@@ -199,6 +203,10 @@ public:
 
 	virtual void clear(void) = 0;
 
+	/**
+	 * @param[out] val
+	 */
+	virtual bool toBytes(class Bytes* val) const = 0;
 	virtual bool fromBytes(const Byte* val, size_t size) = 0;
 	virtual bool fromBytes(const class Bytes* val) = 0;
 
