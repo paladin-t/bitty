@@ -935,7 +935,7 @@ private:
 #if defined BITTY_OS_WIN
 		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_CONSOLE_ENABLED_KEY            "        Enable console window.\n");
 #endif /* BITTY_OS_WIN */
-		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_FPS_KEY                        " FPS    Specify running FPS\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_FPS_KEY                        " FPS    Specify running FPS.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY              "        Run with borderless window.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_SIZE_KEY                            " MxN    Specify window size.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY               "        Disable high-DPI.\n");
@@ -1021,14 +1021,14 @@ class Application* createApplication(class Workspace* workspace, int argc, const
 		fprintf(stderr, "[SDL warning]: %s\n", SDL_GetError());
 	if (Mix_Init(MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID) < 0)
 		fprintf(stderr, "[SDL-Mixer warning]: %s\n", SDL_GetError());
-	if (Mix_OpenAudioDevice(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096, nullptr, SDL_AUDIO_ALLOW_ANY_CHANGE))
+	if (Mix_OpenAudioDevice(AUDIO_TARGET_SAMPLE_RATE, AUDIO_TARGET_FORMAT, AUDIO_TARGET_CHANNEL_COUNT, AUDIO_TARGET_CHUNK_SIZE, nullptr, SDL_AUDIO_ALLOW_ANY_CHANGE))
 		fprintf(stderr, "[SDL-Audio warning]: %s\n", SDL_GetError());
 #else /* BITTY_OS_HTML */
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 		fprintf(stderr, "[SDL warning]: %s\n", SDL_GetError());
 	if (Mix_Init(MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID | MIX_INIT_OPUS) < 0)
 		fprintf(stderr, "[SDL-Mixer warning]: %s\n", SDL_GetError());
-	if (Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 512) < 0)
+	if (Mix_OpenAudio(AUDIO_TARGET_SAMPLE_RATE, AUDIO_TARGET_FORMAT, AUDIO_TARGET_CHANNEL_COUNT, AUDIO_TARGET_CHUNK_SIZE) < 0)
 		fprintf(stderr, "[SDL-Audio warning]: %s\n", SDL_GetError());
 #endif /* BITTY_OS_HTML */
 

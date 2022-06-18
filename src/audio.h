@@ -20,9 +20,58 @@
 ** Macros and constants
 */
 
+#if defined BITTY_OS_HTML
+#	ifndef AUDIO_TARGET_SAMPLE_RATE
+#		define AUDIO_TARGET_SAMPLE_RATE 44100
+#	endif /* AUDIO_TARGET_SAMPLE_RATE */
+#	ifndef AUDIO_TARGET_FORMAT
+#		define AUDIO_TARGET_FORMAT MIX_DEFAULT_FORMAT
+#	endif /* AUDIO_TARGET_FORMAT */
+#	ifndef AUDIO_TARGET_CHANNEL_COUNT
+#		define AUDIO_TARGET_CHANNEL_COUNT MIX_DEFAULT_CHANNELS
+#	endif /* AUDIO_TARGET_CHANNEL_COUNT */
+#	ifndef AUDIO_TARGET_CHUNK_SIZE
+#		define AUDIO_TARGET_CHUNK_SIZE 4096
+#	endif /* AUDIO_TARGET_CHUNK_SIZE */
+#else /* BITTY_OS_HTML */
+#	ifndef AUDIO_TARGET_SAMPLE_RATE
+#		define AUDIO_TARGET_SAMPLE_RATE 44100
+#	endif /* AUDIO_TARGET_SAMPLE_RATE */
+#	ifndef AUDIO_TARGET_FORMAT
+#		define AUDIO_TARGET_FORMAT AUDIO_S16SYS
+#	endif /* AUDIO_TARGET_FORMAT */
+#	ifndef AUDIO_TARGET_CHANNEL_COUNT
+#		define AUDIO_TARGET_CHANNEL_COUNT 2
+#	endif /* AUDIO_TARGET_CHANNEL_COUNT */
+#	ifndef AUDIO_TARGET_CHUNK_SIZE
+#		define AUDIO_TARGET_CHUNK_SIZE 512
+#	endif /* AUDIO_TARGET_CHUNK_SIZE */
+#endif /* BITTY_OS_HTML */
+
 #ifndef AUDIO_SFX_CHANNEL_COUNT
 #	define AUDIO_SFX_CHANNEL_COUNT 4
 #endif /* AUDIO_SFX_CHANNEL_COUNT */
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
+** Structures
+*/
+
+struct AudioSpec {
+	typedef void (* AudioHandler)(void*, UInt8*, int);
+
+	int freq = 0;
+	UInt16 format = 0;
+	UInt8 channels = 0;
+	UInt8 silence = 0;
+	UInt16 samples = 0;
+	UInt16 padding = 0;
+	UInt32 size = 0;
+	AudioHandler callback = nullptr;
+	void* userdata = nullptr;
+};
 
 /* ===========================================================================} */
 
@@ -112,6 +161,8 @@ public:
 
 	virtual void clear(void) = 0;
 
+	virtual bool fromBytes(const Byte* val, size_t size, const AudioSpec &spec) = 0;
+	virtual bool fromBytes(const class Bytes* val, const AudioSpec &spec) = 0;
 	virtual bool fromBytes(const Byte* val, size_t size) = 0;
 	virtual bool fromBytes(const class Bytes* val) = 0;
 

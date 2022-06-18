@@ -517,6 +517,66 @@ public:
 		}
 	}
 
+	virtual bool fromBytes(const Byte* val, size_t size, const AudioSpec &spec) override {
+		if (!val)
+			return false;
+
+		if (_chunk) {
+			Mix_FreeChunk(_chunk);
+			_chunk = nullptr;
+		}
+		if (_bytes) {
+			Bytes::destroy(_bytes);
+			_bytes = nullptr;
+		}
+
+		SDL_AudioSpec srcSpec;
+		memset(&srcSpec, 0, sizeof(SDL_AudioSpec));
+		srcSpec.freq = spec.freq;
+		srcSpec.format = (SDL_AudioFormat)spec.format;
+		srcSpec.channels = spec.channels;
+		srcSpec.silence = spec.silence;
+		srcSpec.samples = spec.samples;
+		srcSpec.padding = spec.padding;
+		srcSpec.size = spec.size;
+		srcSpec.callback = (SDL_AudioCallback)spec.callback;
+		srcSpec.userdata = spec.userdata;
+		SDL_AudioSpec dstSpec;
+		SDL_AudioCVT cvt;
+		memset(&dstSpec, 0, sizeof(SDL_AudioSpec));
+		memset(&cvt, 0, sizeof(SDL_AudioCVT));
+		dstSpec.freq = AUDIO_TARGET_SAMPLE_RATE;
+		dstSpec.format = (SDL_AudioFormat)AUDIO_TARGET_FORMAT;
+		dstSpec.channels = (Uint8)AUDIO_TARGET_CHANNEL_COUNT;
+		SDL_BuildAudioCVT(
+			&cvt,
+			spec.format, spec.channels, spec.freq,
+			dstSpec.format, dstSpec.channels, dstSpec.freq
+		);
+		cvt.len = (int)size;
+		cvt.buf = (Uint8*)SDL_malloc(cvt.len * cvt.len_mult);
+		memset(cvt.buf, 0, cvt.len * cvt.len_mult);
+		if (cvt.needed) {
+			SDL_memcpy(cvt.buf, val, size);
+			SDL_ConvertAudio(&cvt);
+		} else {
+			SDL_memcpy(cvt.buf, val, size);
+		}
+		_bytes = Bytes::create();
+		_bytes->writeBytes((Byte*)cvt.buf, (size_t)cvt.len_cvt);
+		_bytes->poke(0);
+		if (cvt.buf) {
+			SDL_free(cvt.buf);
+			cvt.buf = nullptr;
+		}
+
+		_chunk = Mix_QuickLoad_RAW((Uint8*)_bytes->pointer(), (Uint32)_bytes->count());
+
+		return true;
+	}
+	virtual bool fromBytes(const class Bytes* val, const AudioSpec &spec) override {
+		return fromBytes(val->pointer(), val->count(), spec);
+	}
 	virtual bool fromBytes(const Byte* val, size_t size) override {
 		if (!val)
 			return false;
