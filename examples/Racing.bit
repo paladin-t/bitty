@@ -416,7 +416,7 @@ Line = class({
 	end
 })
 
-data:text/lua;count=12703;path=main.lua;
+data:text/lua;count=12803;path=main.lua;
 --[[
 Example for the Bitty Engine
 
@@ -446,7 +446,8 @@ Constant.
 ]]
 
 local SEGMENT_LENGTH = 200
-local BORDER = 1000
+local TRACK_BORDER = 1000
+local RACER_BORDER = TRACK_BORDER + 160
 local CAMERA_FOCAL = 0.84
 
 local FUEL = 2000
@@ -687,22 +688,22 @@ local function generateCompetitors()
 		if #vehicles < 1 + COMPETITOR_MAX_COUNT then
 			if math.random() < 0.5 then
 				local com = Competitor.new(
-					redCar, 0, BORDER, 0,
+					redCar, 0, TRACK_BORDER, 0,
 					COMPETITOR_SPEED + 100 * (math.random() - 0.5),
 					FORWARD_SIGHT_DISTANCE, BACKWARD_SIGHT_DISTANCE
 				)
 				if racer:speed() < COMPETITOR_SPEED then
 					if racer.x == 0 then
-						com.x = math.random() < 0.5 and -BORDER * 0.8 or BORDER * 0.8
+						com.x = math.random() < 0.5 and -TRACK_BORDER * 0.8 or TRACK_BORDER * 0.8
 					else
 						com.x = clamp(
-							(racer.x - sign(racer.x) * BORDER) * (0.5 + math.random() * 0.25),
-							-BORDER, BORDER
+							(racer.x - sign(racer.x) * TRACK_BORDER) * (0.5 + math.random() * 0.25),
+							-TRACK_BORDER, TRACK_BORDER
 						)
 					end
 					com.z = racer.z + Z_OFFSET - 400
 				else
-					com.x = BORDER * (math.random() * 1.6 - 0.8)
+					com.x = TRACK_BORDER * (math.random() * 1.6 - 0.8)
 					com.z = racer.z + Z_OFFSET - 400 + FORWARD_SIGHT_DISTANCE
 				end
 
@@ -778,7 +779,7 @@ local function start(toGame)
 	if toGame then
 		front = nil
 
-		racer = Racer.new(greenCar, 6, Z_OFFSET, BORDER)
+		racer = Racer.new(greenCar, 6, RACER_BORDER, Z_OFFSET)
 		racer.fuel = FUEL
 		racer.curving = true
 		vehicles = { racer }
@@ -962,7 +963,7 @@ function update(delta)
 	end
 	tex(
 		background,
-		-halfMargin * (x / BORDER + 1), -100,
+		-halfMargin * (x / RACER_BORDER + 1), -100,
 		background.width, background.height
 	)
 
