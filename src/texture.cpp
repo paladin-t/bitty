@@ -42,23 +42,23 @@
 #endif /* TEXTURE_LOCK_SURFACE */
 
 #if SDL_VERSION_ATLEAST(2, 0, 12)
-static_assert((unsigned)Texture::NEAREST == (unsigned)SDL_ScaleModeNearest, "Value not match.");
-static_assert((unsigned)Texture::LINEAR == (unsigned)SDL_ScaleModeLinear, "Value not match.");
-static_assert((unsigned)Texture::ANISOTROPIC == (unsigned)SDL_ScaleModeBest, "Value not match.");
+static_assert((unsigned)Texture::NEAREST == (unsigned)SDL_ScaleModeNearest, "Value does not match.");
+static_assert((unsigned)Texture::LINEAR == (unsigned)SDL_ScaleModeLinear, "Value does not match.");
+static_assert((unsigned)Texture::ANISOTROPIC == (unsigned)SDL_ScaleModeBest, "Value does not match.");
 #endif /* SDL_VERSION_ATLEAST(2, 0, 12) */
 
-static_assert((unsigned)Texture::STATIC == (unsigned)SDL_TEXTUREACCESS_STATIC, "Value not match.");
-static_assert((unsigned)Texture::STREAMING == (unsigned)SDL_TEXTUREACCESS_STREAMING, "Value not match.");
-static_assert((unsigned)Texture::TARGET == (unsigned)SDL_TEXTUREACCESS_TARGET, "Value not match.");
+static_assert((unsigned)Texture::STATIC == (unsigned)SDL_TEXTUREACCESS_STATIC, "Value does not match.");
+static_assert((unsigned)Texture::STREAMING == (unsigned)SDL_TEXTUREACCESS_STREAMING, "Value does not match.");
+static_assert((unsigned)Texture::TARGET == (unsigned)SDL_TEXTUREACCESS_TARGET, "Value does not match.");
 
-static_assert((unsigned)Texture::NONE == (unsigned)SDL_BLENDMODE_NONE, "Value not match.");
-static_assert((unsigned)Texture::BLEND == (unsigned)SDL_BLENDMODE_BLEND, "Value not match.");
-static_assert((unsigned)Texture::ADD == (unsigned)SDL_BLENDMODE_ADD, "Value not match.");
-static_assert((unsigned)Texture::MOD == (unsigned)SDL_BLENDMODE_MOD, "Value not match.");
+static_assert((unsigned)Texture::NONE == (unsigned)SDL_BLENDMODE_NONE, "Value does not match.");
+static_assert((unsigned)Texture::BLEND == (unsigned)SDL_BLENDMODE_BLEND, "Value does not match.");
+static_assert((unsigned)Texture::ADD == (unsigned)SDL_BLENDMODE_ADD, "Value does not match.");
+static_assert((unsigned)Texture::MOD == (unsigned)SDL_BLENDMODE_MOD, "Value does not match.");
 #if SDL_VERSION_ATLEAST(2, 0, 12)
-static_assert((unsigned)Texture::MUL == (unsigned)SDL_BLENDMODE_MUL, "Value not match.");
+static_assert((unsigned)Texture::MUL == (unsigned)SDL_BLENDMODE_MUL, "Value does not match.");
 #endif /* SDL_VERSION_ATLEAST(2, 0, 12) */
-static_assert((unsigned)Texture::INVALID == (unsigned)SDL_BLENDMODE_INVALID, "Value not match.");
+static_assert((unsigned)Texture::INVALID == (unsigned)SDL_BLENDMODE_INVALID, "Value does not match.");
 
 /* ===========================================================================} */
 

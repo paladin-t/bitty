@@ -3051,6 +3051,98 @@ static void open_Color(lua_State* L) {
 	);
 }
 
+/**< Encoding. */
+
+static int Base64_encode(lua_State* L) {
+	Bytes::Ptr* bytes = nullptr;
+	read<>(L, bytes);
+
+	if (bytes) {
+		std::string ret;
+		if (Base64::fromBytes(ret, bytes->get()))
+			return write(L, ret);
+	}
+	
+	return write(L, nullptr);
+}
+
+static int Base64_decode(lua_State* L) {
+	const char* str = nullptr;
+	read<>(L, str);
+
+	if (str) {
+		Bytes::Ptr ret(Bytes::create());
+		if (Base64::toBytes(ret.get(), str))
+			return write(L, &ret);
+	}
+
+	return write(L, nullptr);
+}
+
+static void open_Base64(lua_State* L) {
+	req(
+		L,
+		array(
+			luaL_Reg{
+				"Base64",
+				LUA_LIB(
+					array(
+						luaL_Reg{ "encode", Base64_encode },
+						luaL_Reg{ "decode", Base64_decode },
+						luaL_Reg{ nullptr, nullptr }
+					)
+				)
+			},
+			luaL_Reg{ nullptr, nullptr }
+		)
+	);
+}
+
+static int Lz4_encode(lua_State* L) {
+	Bytes::Ptr* bytes = nullptr;
+	read<>(L, bytes);
+
+	if (bytes) {
+		Bytes::Ptr ret(Bytes::create());
+		if (Lz4::fromBytes(ret.get(), bytes->get()))
+			return write(L, &ret);
+	}
+	
+	return write(L, nullptr);
+}
+
+static int Lz4_decode(lua_State* L) {
+	Bytes::Ptr* bytes = nullptr;
+	read<>(L, bytes);
+
+	if (bytes) {
+		Bytes::Ptr ret(Bytes::create());
+		if (Lz4::toBytes(ret.get(), bytes->get()))
+			return write(L, &ret);
+	}
+
+	return write(L, nullptr);
+}
+
+static void open_Lz4(lua_State* L) {
+	req(
+		L,
+		array(
+			luaL_Reg{
+				"Lz4",
+				LUA_LIB(
+					array(
+						luaL_Reg{ "encode", Lz4_encode },
+						luaL_Reg{ "decode", Lz4_decode },
+						luaL_Reg{ nullptr, nullptr }
+					)
+				)
+			},
+			luaL_Reg{ nullptr, nullptr }
+		)
+	);
+}
+
 /**< Date time. */
 
 static int DateTime_utc(lua_State* L) {
@@ -3148,98 +3240,6 @@ static void open_DateTime(lua_State* L) {
 						luaL_Reg{ "fromMilliseconds", DateTime_fromMilliseconds },
 						luaL_Reg{ "toSeconds", DateTime_toSeconds },
 						luaL_Reg{ "fromSeconds", DateTime_fromSeconds },
-						luaL_Reg{ nullptr, nullptr }
-					)
-				)
-			},
-			luaL_Reg{ nullptr, nullptr }
-		)
-	);
-}
-
-/**< Encoding. */
-
-static int Base64_encode(lua_State* L) {
-	Bytes::Ptr* bytes = nullptr;
-	read<>(L, bytes);
-
-	if (bytes) {
-		std::string ret;
-		if (Base64::fromBytes(ret, bytes->get()))
-			return write(L, ret);
-	}
-	
-	return write(L, nullptr);
-}
-
-static int Base64_decode(lua_State* L) {
-	const char* str = nullptr;
-	read<>(L, str);
-
-	if (str) {
-		Bytes::Ptr ret(Bytes::create());
-		if (Base64::toBytes(ret.get(), str))
-			return write(L, &ret);
-	}
-
-	return write(L, nullptr);
-}
-
-static void open_Base64(lua_State* L) {
-	req(
-		L,
-		array(
-			luaL_Reg{
-				"Base64",
-				LUA_LIB(
-					array(
-						luaL_Reg{ "encode", Base64_encode },
-						luaL_Reg{ "decode", Base64_decode },
-						luaL_Reg{ nullptr, nullptr }
-					)
-				)
-			},
-			luaL_Reg{ nullptr, nullptr }
-		)
-	);
-}
-
-static int Lz4_encode(lua_State* L) {
-	Bytes::Ptr* bytes = nullptr;
-	read<>(L, bytes);
-
-	if (bytes) {
-		Bytes::Ptr ret(Bytes::create());
-		if (Lz4::fromBytes(ret.get(), bytes->get()))
-			return write(L, &ret);
-	}
-	
-	return write(L, nullptr);
-}
-
-static int Lz4_decode(lua_State* L) {
-	Bytes::Ptr* bytes = nullptr;
-	read<>(L, bytes);
-
-	if (bytes) {
-		Bytes::Ptr ret(Bytes::create());
-		if (Lz4::toBytes(ret.get(), bytes->get()))
-			return write(L, &ret);
-	}
-
-	return write(L, nullptr);
-}
-
-static void open_Lz4(lua_State* L) {
-	req(
-		L,
-		array(
-			luaL_Reg{
-				"Lz4",
-				LUA_LIB(
-					array(
-						luaL_Reg{ "encode", Lz4_encode },
-						luaL_Reg{ "decode", Lz4_decode },
 						luaL_Reg{ nullptr, nullptr }
 					)
 				)

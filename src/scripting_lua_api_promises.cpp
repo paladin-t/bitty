@@ -589,9 +589,12 @@ static int Platform_openFile_Promise(lua_State* L) {
 	const int n = getTop(L);
 	const char* title = "Open File";
 	const char* filter_ = nullptr;
-	std::string default_;
 	Text::Array filter{ "All files (*.*)", "*" };
-	if (n >= 3)
+	std::string default_;
+	bool multiselect = false;
+	if (n >= 4)
+		read<>(L, title, filter_, default_, multiselect);
+	else if (n == 3)
 		read<>(L, title, filter_, default_);
 	else if (n == 2)
 		read<>(L, title, filter_);
@@ -606,23 +609,35 @@ static int Platform_openFile_Promise(lua_State* L) {
 	Promise::Ptr promise = nullptr;
 	int result = Standard::Promise_ctor(L, promise, false);
 
-	Executable::PromiseHandler handler = [&] (Variant* ret) -> bool {
+	Executable::PromiseHandler handler = [title, default_, filter, multiselect] (Variant* ret) -> bool {
 		if (ret)
 			*ret = nullptr;
 
 		pfd::open_file open(
 			title,
 			default_,
-			filter
+			filter,
+			multiselect
 		);
 		if (open.result().empty() || open.result().front().empty())
 			return false;
 
-		std::string path = open.result().front();
-		Path::uniform(path);
+		if (multiselect) {
+			IList::Ptr ret_(List::create());
+			for (std::string path : open.result()) {
+				Path::uniform(path);
+				ret_->add(path);
+			}
 
-		if (ret)
-			*ret = path;
+			if (ret)
+				*ret = Object::Ptr(ret_);
+		} else {
+			std::string ret_ = open.result().front();
+			Path::uniform(ret_);
+
+			if (ret)
+				*ret = ret_;
+		}
 
 		return true;
 	};
@@ -674,15 +689,26 @@ static int Platform_openFile_Promise(lua_State* L) {
 	pfd::open_file open(
 		title,
 		default_,
-		filter
+		filter,
+		multiselect
 	);
 	if (open.result().empty() || open.result().front().empty())
 		return write(L, nullptr);
 
-	std::string path = open.result().front();
-	Path::uniform(path);
+	if (multiselect) {
+		Text::Array ret;
+		for (std::string path : open.result()) {
+			Path::uniform(path);
+			ret.push_back(path);
+		}
 
-	return write(L, path);
+		return write(L, ret);
+	} else {
+		std::string ret = open.result().front();
+		Path::uniform(ret);
+
+		return write(L, ret);
+	}
 #endif /* BITTY_MULTITHREAD_ENABLED */
 }
 
@@ -709,7 +735,7 @@ static int Platform_saveFile_Promise(lua_State* L) {
 	Promise::Ptr promise = nullptr;
 	int result = Standard::Promise_ctor(L, promise, false);
 
-	Executable::PromiseHandler handler = [&] (Variant* ret) -> bool {
+	Executable::PromiseHandler handler = [title, default_, filter] (Variant* ret) -> bool {
 		if (ret)
 			*ret = nullptr;
 
@@ -721,11 +747,11 @@ static int Platform_saveFile_Promise(lua_State* L) {
 		if (save.result().empty())
 			return false;
 
-		std::string path = save.result();
-		Path::uniform(path);
+		std::string ret_ = save.result();
+		Path::uniform(ret_);
 
 		if (ret)
-			*ret = path;
+			*ret = ret_;
 
 		return true;
 	};
@@ -782,10 +808,10 @@ static int Platform_saveFile_Promise(lua_State* L) {
 	if (save.result().empty())
 		return write(L, nullptr);
 
-	std::string path = save.result();
-	Path::uniform(path);
+	std::string ret = save.result();
+	Path::uniform(ret);
 
-	return write(L, path);
+	return write(L, ret);
 #endif /* BITTY_MULTITHREAD_ENABLED */
 }
 
@@ -806,7 +832,7 @@ static int Platform_selectDirectory_Promise(lua_State* L) {
 	Promise::Ptr promise = nullptr;
 	int result = Standard::Promise_ctor(L, promise, false);
 
-	Executable::PromiseHandler handler = [&] (Variant* ret) -> bool {
+	Executable::PromiseHandler handler = [title, default_] (Variant* ret) -> bool {
 		if (ret)
 			*ret = nullptr;
 
@@ -817,11 +843,11 @@ static int Platform_selectDirectory_Promise(lua_State* L) {
 		if (open.result().empty())
 			return false;
 
-		std::string path = open.result();
-		Path::uniform(path);
+		std::string ret_ = open.result();
+		Path::uniform(ret_);
 
 		if (ret)
-			*ret = path;
+			*ret = ret_;
 
 		return true;
 	};
@@ -877,10 +903,10 @@ static int Platform_selectDirectory_Promise(lua_State* L) {
 	if (open.result().empty())
 		return write(L, nullptr);
 
-	std::string path = open.result();
-	Path::uniform(path);
+	std::string ret = open.result();
+	Path::uniform(ret);
 
-	return write(L, path);
+	return write(L, ret);
 #endif /* BITTY_MULTITHREAD_ENABLED */
 }
 
@@ -888,9 +914,12 @@ static int Platform_openFile(lua_State* L) {
 	const int n = getTop(L);
 	const char* title = "Open File";
 	const char* filter_ = nullptr;
-	std::string default_;
 	Text::Array filter{ "All files (*.*)", "*" };
-	if (n >= 3)
+	std::string default_;
+	bool multiselect = false;
+	if (n >= 4)
+		read<>(L, title, filter_, default_, multiselect);
+	else if (n == 3)
 		read<>(L, title, filter_, default_);
 	else if (n == 2)
 		read<>(L, title, filter_);
@@ -904,15 +933,26 @@ static int Platform_openFile(lua_State* L) {
 	pfd::open_file open(
 		title,
 		default_,
-		filter
+		filter,
+		multiselect
 	);
 	if (open.result().empty() || open.result().front().empty())
 		return write(L, nullptr);
 
-	std::string path = open.result().front();
-	Path::uniform(path);
+	if (multiselect) {
+		Text::Array ret;
+		for (std::string path : open.result()) {
+			Path::uniform(path);
+			ret.push_back(path);
+		}
 
-	return write(L, path);
+		return write(L, ret);
+	} else {
+		std::string ret = open.result().front();
+		Path::uniform(ret);
+
+		return write(L, ret);
+	}
 }
 
 static int Platform_saveFile(lua_State* L) {
@@ -940,10 +980,10 @@ static int Platform_saveFile(lua_State* L) {
 	if (save.result().empty())
 		return write(L, nullptr);
 
-	std::string path = save.result();
-	Path::uniform(path);
+	std::string ret = save.result();
+	Path::uniform(ret);
 
-	return write(L, path);
+	return write(L, ret);
 }
 
 static int Platform_selectDirectory(lua_State* L) {
@@ -964,10 +1004,10 @@ static int Platform_selectDirectory(lua_State* L) {
 	if (open.result().empty())
 		return write(L, nullptr);
 
-	std::string path = open.result();
-	Path::uniform(path);
+	std::string ret = open.result();
+	Path::uniform(ret);
 
-	return write(L, path);
+	return write(L, ret);
 }
 
 static int Platform_notify(lua_State* L) {
