@@ -36,7 +36,7 @@ EM_JS(
 EM_JS(
 	bool, mainGetActiveFrameRate, (), {
 		if (typeof getActiveFrameRate != 'function')
-			return BITTY_ACTIVE_FRAME_RATE;
+			return 60;
 
 		return getActiveFrameRate();
 	}
