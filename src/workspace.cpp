@@ -330,6 +330,10 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 
 	effectCustomized(false);
 
+	popupPromiseType(NONE);
+	popupPromise(nullptr);
+	popupPromiseHandler(nullptr);
+
 	menuHeight(0.0f);
 	bannerHeight(0.0f);
 	bannerVisible(&settings()->bannerVisible);

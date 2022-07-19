@@ -541,24 +541,17 @@ public:
 			_bytes = nullptr;
 		}
 
-		SDL_AudioSpec srcSpec;
-		memset(&srcSpec, 0, sizeof(SDL_AudioSpec));
-		srcSpec.freq = spec.freq;
-		srcSpec.format = (SDL_AudioFormat)spec.format;
-		srcSpec.channels = spec.channels;
-		srcSpec.silence = spec.silence;
-		srcSpec.samples = spec.samples;
-		srcSpec.padding = spec.padding;
-		srcSpec.size = spec.size;
-		srcSpec.callback = (SDL_AudioCallback)spec.callback;
-		srcSpec.userdata = spec.userdata;
 		SDL_AudioSpec dstSpec;
 		SDL_AudioCVT cvt;
 		memset(&dstSpec, 0, sizeof(SDL_AudioSpec));
 		memset(&cvt, 0, sizeof(SDL_AudioCVT));
-		dstSpec.freq = AUDIO_TARGET_SAMPLE_RATE;
-		dstSpec.format = (SDL_AudioFormat)AUDIO_TARGET_FORMAT;
-		dstSpec.channels = (Uint8)AUDIO_TARGET_CHANNEL_COUNT;
+		int freq = 0;
+		Uint16 format = 0;
+		int channels = 0;
+		Mix_QuerySpec(&freq, &format, &channels);
+		dstSpec.freq = freq;
+		dstSpec.format = (SDL_AudioFormat)format;
+		dstSpec.channels = (Uint8)channels;
 		SDL_BuildAudioCVT(
 			&cvt,
 			spec.format, spec.channels, spec.freq,
