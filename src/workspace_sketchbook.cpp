@@ -576,6 +576,9 @@ void WorkspaceSketchbook::shortcuts(class Window* wnd, class Renderer* rnd, cons
 	if (!canUseShortcuts())
 		return;
 
+	bool prjPersisted = false;
+	projectStates(project, nullptr, &prjPersisted, nullptr, nullptr);
+
 	// Get key states.
 	const bool f1 = ImGui::IsKeyPressed(SDL_SCANCODE_F1);
 	const bool f3 = ImGui::IsKeyPressed(SDL_SCANCODE_F3);
@@ -784,10 +787,18 @@ void WorkspaceSketchbook::shortcuts(class Window* wnd, class Renderer* rnd, cons
 		Operations::projectAddAsset(rnd, this, project, assetsSelectedIndex());
 	if (a && modifier && io.KeyShift)
 		Operations::projectAddFile(rnd, this, project, assetsSelectedIndex());
-	if (toRun)
-		Operations::projectRun(rnd, this, project, exec, primitives);
-	if (toStop)
-		Operations::projectStop(rnd, this, project, exec, primitives);
+	if (r && modifier && io.KeyShift) {
+		if (prjPersisted) {
+			Operations::projectStop(rnd, this, project, exec, primitives);
+
+			Operations::projectReload(rnd, this, project, exec);
+		}
+	} else {
+		if (toRun)
+			Operations::projectRun(rnd, this, project, exec, primitives);
+		if (toStop)
+			Operations::projectStop(rnd, this, project, exec, primitives);
+	}
 
 	// Debug operations.
 	if (toResume)
@@ -1119,7 +1130,7 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 			}
 #endif /* BITTY_TRIAL_ENABLED */
 			ImGui::Separator();
-			if (ImGui::MenuItem(_theme->menuProject_Reload(), nullptr, nullptr, prjPersisted)) {
+			if (ImGui::MenuItem(_theme->menuProject_Reload(), WORKSPACE_MODIFIER_KEY_NAME "+Shift+R", nullptr, prjPersisted)) {
 				Operations::projectStop(rnd, this, project, exec, primitives);
 
 				Operations::projectReload(rnd, this, project, exec);
