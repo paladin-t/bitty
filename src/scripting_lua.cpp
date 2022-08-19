@@ -559,6 +559,8 @@ bool ScriptingLua::run(void) {
 	auto proc = [] (ScriptingLua* impl) -> void {
 		Platform::threadName("LUA");
 
+		Math::srand();
+
 		DateTime::sleep(SCRIPTING_LUA_WAIT_DURATION);
 
 		impl->_state = RUNNING;
