@@ -613,11 +613,14 @@ static int Platform_openFile_Promise(lua_State* L) {
 		if (ret)
 			*ret = nullptr;
 
+		pfd::opt options = pfd::opt::none;
+		if (multiselect)
+			options = options | pfd::opt::multiselect;
 		pfd::open_file open(
 			title,
 			default_,
 			filter,
-			multiselect
+			options
 		);
 		if (open.result().empty() || open.result().front().empty())
 			return false;
@@ -686,11 +689,14 @@ static int Platform_openFile_Promise(lua_State* L) {
 #else /* BITTY_MULTITHREAD_ENABLED */
 	(void)impl;
 
+	pfd::opt options = pfd::opt::none;
+	if (multiselect)
+		options = options | pfd::opt::multiselect;
 	pfd::open_file open(
 		title,
 		default_,
 		filter,
-		multiselect
+		options
 	);
 	if (open.result().empty() || open.result().front().empty())
 		return write(L, nullptr);
@@ -930,11 +936,14 @@ static int Platform_openFile(lua_State* L) {
 		filter = Text::split(filter_, ";");
 	Path::diversify(default_);
 
+	pfd::opt options = pfd::opt::none;
+	if (multiselect)
+		options = options | pfd::opt::multiselect;
 	pfd::open_file open(
 		title,
 		default_,
 		filter,
-		multiselect
+		options
 	);
 	if (open.result().empty() || open.result().front().empty())
 		return write(L, nullptr);
