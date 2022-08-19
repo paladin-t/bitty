@@ -1368,7 +1368,7 @@ Vehicle = class({
 	end
 })
 
-data:text/lua;count=1276;path=vehicles/competitor.lua;
+data:text/lua;count=1289;path=vehicles/competitor.lua;
 --[[
 Example for the Bitty Engine
 
@@ -1401,7 +1401,7 @@ Competitor = class({
 
 	drive = function (self, delta)
 		if not self._crashed then
-			self.z = self.z + self._speed -- Rectilinear motion.
+			self.z = self.z + self._speed * delta * 60 -- Rectilinear motion.
 		end
 	end,
 	update = function (self, delta, track, posX, posZ)
@@ -1425,7 +1425,7 @@ Competitor = class({
 	end
 }, Vehicle)
 
-data:text/lua;count=1797;path=vehicles/racer.lua;
+data:text/lua;count=1810;path=vehicles/racer.lua;
 --[[
 Example for the Bitty Engine
 
@@ -1487,7 +1487,7 @@ Racer = class({
 				end
 			end
 
-			self.z = self.z + self._speed -- Move forward.
+			self.z = self.z + self._speed * delta * 60 -- Move forward.
 			self:slowDown()
 		end
 	end,

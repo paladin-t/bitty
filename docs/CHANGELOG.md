@@ -1,3 +1,21 @@
+### v1.1.8 Aug. 20, 2022
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added auto loading last project at startup
+* Added a `DateTime.utc()` function to get current UTC time
+* Added a wildcard pattern parameter to the `project:getAssets(...)` method
+* Added a shortcut key to reload project (Ctrl+Shift+R)
+* Added an option to disable pause menu on ESC pressed
+* Added a launch option to specify a different frame rate
+* Added a launch option to enable high-precision real number debug
+* Fixed a calculation bug of the `Raycaster` algorithm
+* Fixed a border issue of maximized canvas
+* Fixed a few memory leaks
+* Fixed a potential crash issue
+* Improved the music visualizer
+* Improved speed calculation of the "Games/Racing" example
+
 ### v1.1.7 Apr. 2, 2022
 
 Enhanced modules, improved usability, fixed some bugs.

@@ -48,6 +48,7 @@
 * Ctrl+E: toggle assets filter
 * Ctrl+Shift+N: add asset
 * Ctrl+Shift+A: add file
+* Ctrl+Shift+R: reload project
 
 * F9: toggle breakpoint
 * F10: step

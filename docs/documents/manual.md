@@ -1224,10 +1224,11 @@ For both "string" and "json", the underneath data flow always end up with a zero
 * `Platform.execute(cmd)`: executes the specific system command; this function invokes native command on desktops, and JavaScript function in browser
 	* `cmd`: the command to execute
 
-* `Platform.openFile([title[, filter]])`: popups an open-file-dialog
+* `Platform.openFile([title[, filter[, multiselect]]])`: popups an open-file-dialog
 	* `title`: the title text
 	* `filter`: the file filter, eg. `"Text files (*.txt);*.txt;All files (*.*);*"`
-	* returns selected file path, or `nil` for canceled
+	* `multiselect`: `true` for multiselect, `false` for single file select
+	* returns selected file path or paths, or `nil` for canceled
 * `Platform.saveFile([title[, filter]])`: popups a save-file-dialog
 	* `title`: the title text
 	* `filter`: the file filter
@@ -1975,6 +1976,8 @@ Click "Project", "Export..." to select and export some assets to a "*.bit", "*.t
 [TOP](#reference-manual)
 
 # Building
+
+Note that building on Linux requires to open a "save file" dialog, which depends on one of the following commands: "zenity", "kdialog", "matedialog", "qarma".
 
 ## Building for Desktop
 
