@@ -59,6 +59,10 @@ public:
 		VOLUME,
 		PLAY_SFX,
 		PLAY_MUSIC,
+		PAUSE_SFX,
+		PAUSE_MUSIC,
+		RESUME_SFX,
+		RESUME_MUSIC,
 		STOP_SFX,
 		STOP_MUSIC,
 		RUMBLE,
@@ -1547,6 +1551,174 @@ public:
 	}
 };
 
+class CmdPauseSfx : public Cmd {
+private:
+	Resources::Sfx::Ptr _sfx = nullptr;
+	bool _transferred = false;
+
+public:
+	CmdPauseSfx() {
+		type = PAUSE_SFX;
+		dtor = [] (Cmd* cmd) -> void {
+			CmdPauseSfx* self = reinterpret_cast<CmdPauseSfx*>(cmd);
+			self->~CmdPauseSfx();
+		};
+	}
+	CmdPauseSfx(Resources::Sfx::Ptr sfx) {
+		type = PAUSE_SFX;
+		dtor = [] (Cmd* cmd) -> void {
+			CmdPauseSfx* self = reinterpret_cast<CmdPauseSfx*>(cmd);
+			self->~CmdPauseSfx();
+		};
+
+		_sfx = sfx;
+	}
+
+	void transfer(void) {
+		_transferred = true;
+	}
+	void run(const Project* project, Resources* res) {
+		if (_transferred)
+			return;
+
+		if (!res)
+			return;
+
+		Sfx::Ptr ptr = res->load(project, *_sfx);
+		if (!ptr)
+			return;
+
+		ptr->pause();
+	}
+};
+
+class CmdPauseMusic : public Cmd {
+private:
+	Resources::Music::Ptr _music = nullptr;
+	bool _transferred = false;
+
+public:
+	CmdPauseMusic() {
+		type = PAUSE_MUSIC;
+		dtor = [] (Cmd* cmd) -> void {
+			CmdPauseMusic* self = reinterpret_cast<CmdPauseMusic*>(cmd);
+			self->~CmdPauseMusic();
+		};
+	}
+	CmdPauseMusic(Resources::Music::Ptr mus) {
+		type = PAUSE_MUSIC;
+		dtor = [] (Cmd* cmd) -> void {
+			CmdPauseMusic* self = reinterpret_cast<CmdPauseMusic*>(cmd);
+			self->~CmdPauseMusic();
+		};
+
+		_music = mus;
+	}
+
+	void transfer(void) {
+		_transferred = true;
+	}
+	void run(const Project* project, Resources* res) {
+		if (_transferred)
+			return;
+
+		if (!res)
+			return;
+
+		Music::Ptr ptr = res->load(project, *_music);
+		if (!ptr)
+			return;
+
+		LockGuard<Mutex> guard(_music->lock);
+
+		ptr->pause();
+	}
+};
+
+class CmdResumeSfx : public Cmd {
+private:
+	Resources::Sfx::Ptr _sfx = nullptr;
+	bool _transferred = false;
+
+public:
+	CmdResumeSfx() {
+		type = RESUME_SFX;
+		dtor = [] (Cmd* cmd) -> void {
+			CmdResumeSfx* self = reinterpret_cast<CmdResumeSfx*>(cmd);
+			self->~CmdResumeSfx();
+		};
+	}
+	CmdResumeSfx(Resources::Sfx::Ptr sfx) {
+		type = RESUME_SFX;
+		dtor = [] (Cmd* cmd) -> void {
+			CmdResumeSfx* self = reinterpret_cast<CmdResumeSfx*>(cmd);
+			self->~CmdResumeSfx();
+		};
+
+		_sfx = sfx;
+	}
+
+	void transfer(void) {
+		_transferred = true;
+	}
+	void run(const Project* project, Resources* res) {
+		if (_transferred)
+			return;
+
+		if (!res)
+			return;
+
+		Sfx::Ptr ptr = res->load(project, *_sfx);
+		if (!ptr)
+			return;
+
+		ptr->resume();
+	}
+};
+
+class CmdResumeMusic : public Cmd {
+private:
+	Resources::Music::Ptr _music = nullptr;
+	bool _transferred = false;
+
+public:
+	CmdResumeMusic() {
+		type = RESUME_MUSIC;
+		dtor = [] (Cmd* cmd) -> void {
+			CmdResumeMusic* self = reinterpret_cast<CmdResumeMusic*>(cmd);
+			self->~CmdResumeMusic();
+		};
+	}
+	CmdResumeMusic(Resources::Music::Ptr mus) {
+		type = RESUME_MUSIC;
+		dtor = [] (Cmd* cmd) -> void {
+			CmdResumeMusic* self = reinterpret_cast<CmdResumeMusic*>(cmd);
+			self->~CmdResumeMusic();
+		};
+
+		_music = mus;
+	}
+
+	void transfer(void) {
+		_transferred = true;
+	}
+	void run(const Project* project, Resources* res) {
+		if (_transferred)
+			return;
+
+		if (!res)
+			return;
+
+		Music::Ptr ptr = res->load(project, *_music);
+		if (!ptr)
+			return;
+
+		LockGuard<Mutex> guard(_music->lock);
+
+		ptr->resume();
+	}
+};
+
 class CmdStopSfx : public Cmd {
 private:
 	Resources::Sfx::Ptr _sfx = nullptr;
@@ -1764,6 +1936,10 @@ public:
 	CmdVolume volume;
 	CmdPlaySfx playSfx;
 	CmdPlayMusic playMusic;
+	CmdPauseSfx pauseSfx;
+	CmdPauseMusic pauseMusic;
+	CmdResumeSfx resumeSfx;
+	CmdResumeMusic resumeMusic;
 	CmdStopSfx stopSfx;
 	CmdStopMusic stopMusic;
 	CmdRumble rumble;
@@ -1893,6 +2069,26 @@ public:
 		case Cmd::PLAY_MUSIC:
 			new (&playMusic) CmdPlayMusic();
 			playMusic = other.playMusic;
+
+			break;
+		case Cmd::PAUSE_SFX:
+			new (&pauseSfx) CmdPauseSfx();
+			pauseSfx = other.pauseSfx;
+
+			break;
+		case Cmd::PAUSE_MUSIC:
+			new (&pauseMusic) CmdPauseMusic();
+			pauseMusic = other.pauseMusic;
+
+			break;
+		case Cmd::RESUME_SFX:
+			new (&resumeSfx) CmdResumeSfx();
+			resumeSfx = other.resumeSfx;
+
+			break;
+		case Cmd::RESUME_MUSIC:
+			new (&resumeMusic) CmdResumeMusic();
+			resumeMusic = other.resumeMusic;
 
 			break;
 		case Cmd::STOP_SFX:
@@ -2055,6 +2251,26 @@ public:
 			playMusic = other.playMusic;
 
 			break;
+		case Cmd::PAUSE_SFX:
+			new (&pauseSfx) CmdPauseSfx();
+			pauseSfx = other.pauseSfx;
+
+			break;
+		case Cmd::PAUSE_MUSIC:
+			new (&pauseMusic) CmdPauseMusic();
+			pauseMusic = other.pauseMusic;
+
+			break;
+		case Cmd::RESUME_SFX:
+			new (&resumeSfx) CmdResumeSfx();
+			resumeSfx = other.resumeSfx;
+
+			break;
+		case Cmd::RESUME_MUSIC:
+			new (&resumeMusic) CmdResumeMusic();
+			resumeMusic = other.resumeMusic;
+
+			break;
 		case Cmd::STOP_SFX:
 			new (&stopSfx) CmdStopSfx();
 			stopSfx = other.stopSfx;
@@ -2101,6 +2317,22 @@ public:
 			break;
 		case Cmd::PLAY_MUSIC:
 			playMusic.transfer();
+
+			break;
+		case Cmd::PAUSE_SFX:
+			pauseSfx.transfer();
+
+			break;
+		case Cmd::PAUSE_MUSIC:
+			pauseMusic.transfer();
+
+			break;
+		case Cmd::RESUME_SFX:
+			resumeSfx.transfer();
+
+			break;
+		case Cmd::RESUME_MUSIC:
+			resumeMusic.transfer();
 
 			break;
 		case Cmd::STOP_SFX:
@@ -2213,6 +2445,22 @@ public:
 			break;
 		case Cmd::PLAY_MUSIC:
 			playMusic.run(project, res);
+
+			break;
+		case Cmd::PAUSE_SFX:
+			pauseSfx.run(project, res);
+
+			break;
+		case Cmd::PAUSE_MUSIC:
+			pauseMusic.run(project, res);
+
+			break;
+		case Cmd::RESUME_SFX:
+			resumeSfx.run(project, res);
+
+			break;
+		case Cmd::RESUME_MUSIC:
+			resumeMusic.run(project, res);
 
 			break;
 		case Cmd::STOP_SFX:
@@ -3034,6 +3282,42 @@ public:
 
 		CmdVariant var;
 		new (&var.playMusic) CmdPlayMusic(mus, loop, fadeInMs, pos);
+
+		commit(var, nullptr, true);
+	}
+	virtual void pause(Resources::Sfx::Ptr sfx) const override {
+		if (!sfx)
+			return;
+
+		CmdVariant var;
+		new (&var.pauseSfx) CmdPauseSfx(sfx);
+
+		commit(var, nullptr, true);
+	}
+	virtual void pause(Resources::Music::Ptr mus) const override {
+		if (!mus)
+			return;
+
+		CmdVariant var;
+		new (&var.pauseMusic) CmdPauseMusic(mus);
+
+		commit(var, nullptr, true);
+	}
+	virtual void resume(Resources::Sfx::Ptr sfx) const override {
+		if (!sfx)
+			return;
+
+		CmdVariant var;
+		new (&var.resumeSfx) CmdResumeSfx(sfx);
+
+		commit(var, nullptr, true);
+	}
+	virtual void resume(Resources::Music::Ptr mus) const override {
+		if (!mus)
+			return;
+
+		CmdVariant var;
+		new (&var.resumeMusic) CmdResumeMusic(mus);
 
 		commit(var, nullptr, true);
 	}

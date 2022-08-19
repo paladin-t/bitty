@@ -419,6 +419,13 @@ public:
 		return false;
 	}
 
+	virtual bool playing(void) const override {
+		const uintptr_t inuse = _sfxOccupation.get(_channel);
+		if (inuse != (uintptr_t)this)
+			return false;
+
+		return !!Mix_Playing(_channel);
+	}
 	virtual int play(bool loop, const int* fadeInMs, int channel) override {
 		int ch = channel;
 		if (ch < 0 || ch >= AUDIO_SFX_CHANNEL_COUNT)
@@ -664,6 +671,23 @@ public:
 
 		return _length;
 #endif /* BITTY_OS_HTML */
+	}
+
+	virtual double position(void) const override {
+#if defined BITTY_OS_HTML
+		return 0;
+#else /* BITTY_OS_HTML */
+		if (!_music)
+			return 0;
+
+		return Mix_GetMusicPosition(_music);
+#endif /* BITTY_OS_HTML */
+	}
+	virtual bool position(double pos) override {
+		if (!_music)
+			return false;
+
+		return Mix_SetMusicPosition(pos) == 0;
 	}
 
 	virtual bool playing(void) const override {

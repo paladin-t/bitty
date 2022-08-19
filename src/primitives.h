@@ -331,6 +331,22 @@ public:
 	 */
 	virtual void play(Resources::Music::Ptr mus, bool loop, const int* fadeInMs /* nullable */, const double* pos = nullptr) const = 0;
 	/**
+	 * @brief Pauses the specific SFX.
+	 */
+	virtual void pause(Resources::Sfx::Ptr sfx) const = 0;
+	/**
+	 * @brief Pauses the specific music.
+	 */
+	virtual void pause(Resources::Music::Ptr mus) const = 0;
+	/**
+	 * @brief Resumes the specific SFX.
+	 */
+	virtual void resume(Resources::Sfx::Ptr sfx) const = 0;
+	/**
+	 * @brief Resumes the specific music.
+	 */
+	virtual void resume(Resources::Music::Ptr mus) const = 0;
+	/**
 	 * @brief Stops the specific SFX.
 	 */
 	virtual void stop(Resources::Sfx::Ptr sfx, const int* fadeOutMs /* nullable */) const = 0;

@@ -531,9 +531,9 @@ private:
 				valid &= startsWith(ln, ARCHIVE_DATA_MEDIA_HEAD ":");
 				if (!valid) {
 					if (ln.empty())
-						fprintf(stderr, "Wrong archive media data.\n");
+						fprintf(stderr, "Wrong text archive media data.\n");
 					else
-						fprintf(stderr, "Wrong archive media data: \"%s\".\n", ln.c_str());
+						fprintf(stderr, "Wrong text archive media data: \"%s\".\n", ln.c_str());
 
 					break;
 				}
@@ -675,8 +675,14 @@ private:
 		}
 		File::destroy(file);
 
-		if (result)
+		if (result) {
 			_entries.push_back(ent);
+			_entries.sort(
+				[] (const Entry &left, const Entry &right) -> bool {
+					return left.path < right.path;
+				}
+			);
+		}
 
 		return result;
 	}

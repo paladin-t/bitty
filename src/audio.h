@@ -153,6 +153,7 @@ public:
 public:
 	BITTY_CLASS_TYPE('S', 'F', 'X', 'A')
 
+	virtual bool playing(void) const = 0;
 	virtual int play(bool loop, const int* fadeInMs /* nullable */, int channel = -1) = 0;
 	virtual bool paused(void) const = 0;
 	virtual void pause(void) = 0;
@@ -192,6 +193,9 @@ public:
 	BITTY_CLASS_TYPE('M', 'U', 'S', 'A')
 
 	virtual double length(void) const = 0;
+
+	virtual double position(void) const = 0;
+	virtual bool position(double pos) = 0;
 
 	virtual bool playing(void) const = 0;
 	virtual bool play(bool loop, const int* fadeInMs /* nullable */, const double* pos = nullptr) = 0;
