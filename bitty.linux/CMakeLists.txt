@@ -82,6 +82,38 @@ list(
   "../lib/b64/encode.c"
 )
 list(
+  APPEND BITTY_LIB_CHIPMUNK
+  "../lib/chipmunk2d/src/chipmunk.c"
+  "../lib/chipmunk2d/src/cpArbiter.c"
+  "../lib/chipmunk2d/src/cpArray.c"
+  "../lib/chipmunk2d/src/cpBBTree.c"
+  "../lib/chipmunk2d/src/cpBody.c"
+  "../lib/chipmunk2d/src/cpCollision.c"
+  "../lib/chipmunk2d/src/cpConstraint.c"
+  "../lib/chipmunk2d/src/cpDampedRotarySpring.c"
+  "../lib/chipmunk2d/src/cpDampedSpring.c"
+  "../lib/chipmunk2d/src/cpGearJoint.c"
+  "../lib/chipmunk2d/src/cpGrooveJoint.c"
+  "../lib/chipmunk2d/src/cpHashSet.c"
+  "../lib/chipmunk2d/src/cpPinJoint.c"
+  "../lib/chipmunk2d/src/cpPivotJoint.c"
+  "../lib/chipmunk2d/src/cpPolyShape.c"
+  "../lib/chipmunk2d/src/cpRatchetJoint.c"
+  "../lib/chipmunk2d/src/cpRobust.c"
+  "../lib/chipmunk2d/src/cpRotaryLimitJoint.c"
+  "../lib/chipmunk2d/src/cpShape.c"
+  "../lib/chipmunk2d/src/cpSimpleMotor.c"
+  "../lib/chipmunk2d/src/cpSlideJoint.c"
+  "../lib/chipmunk2d/src/cpSpace.c"
+  "../lib/chipmunk2d/src/cpSpaceComponent.c"
+  "../lib/chipmunk2d/src/cpSpaceDebug.c"
+  "../lib/chipmunk2d/src/cpSpaceHash.c"
+  "../lib/chipmunk2d/src/cpSpaceQuery.c"
+  "../lib/chipmunk2d/src/cpSpaceStep.c"
+  "../lib/chipmunk2d/src/cpSpatialIndex.c"
+  "../lib/chipmunk2d/src/cpSweep1D.c"
+)
+list(
   APPEND BITTY_LIB_GL3W
   "../lib/gl3w/GL/gl3w.c"
 )
@@ -299,6 +331,7 @@ list(
 add_executable(
   bitty
   ${BITTY_LIB_B64}
+  ${BITTY_LIB_CHIPMUNK}
   ${BITTY_LIB_GL3W}
   ${BITTY_LIB_IMGUI}
   ${BITTY_LIB_IMGUI_CODE_EDITOR}
@@ -324,6 +357,7 @@ add_executable(
 )
 list(
   APPEND BITTY_INC
+  "../lib/chipmunk2d/include"
   "../lib/imgui"
   "../lib/sdl/include"
   "../lib/sdl_mixer/include"

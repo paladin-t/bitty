@@ -98,7 +98,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BUILDING_LIBCURL;CURL_STATICLIB;USE_WINDOWS_SSPI;USE_SCHANNEL;USE_IPV6;BITTY_TRIAL_ENABLED=0;WIN32;DEBUG;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>lib/sdl/include;lib/sdl_mixer/include;lib/zlib;lib/curl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>lib/sdl/include;lib/sdl_mixer/include;lib/zlib;lib/curl/include;lib/chipmunk2d/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
     </ClCompile>
@@ -128,7 +128,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BUILDING_LIBCURL;CURL_STATICLIB;USE_WINDOWS_SSPI;USE_SCHANNEL;USE_IPV6;BITTY_TRIAL_ENABLED=0;DEBUG;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>lib/sdl/include;lib/sdl_mixer/include;lib/zlib;lib/curl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>lib/sdl/include;lib/sdl_mixer/include;lib/zlib;lib/curl/include;lib/chipmunk2d/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
     </ClCompile>
@@ -160,7 +160,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILDING_LIBCURL;CURL_STATICLIB;USE_WINDOWS_SSPI;USE_SCHANNEL;USE_IPV6;BITTY_TRIAL_ENABLED=0;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>lib/sdl/include;lib/sdl_mixer/include;lib/zlib;lib/curl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>lib/sdl/include;lib/sdl_mixer/include;lib/zlib;lib/curl/include;lib/chipmunk2d/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
     </ClCompile>
@@ -194,7 +194,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BUILDING_LIBCURL;CURL_STATICLIB;USE_WINDOWS_SSPI;USE_SCHANNEL;USE_IPV6;BITTY_TRIAL_ENABLED=0;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>lib/sdl/include;lib/sdl_mixer/include;lib/zlib;lib/curl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>lib/sdl/include;lib/sdl_mixer/include;lib/zlib;lib/curl/include;lib/chipmunk2d/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
     </ClCompile>
@@ -236,6 +236,338 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4018;4057;4100;4244</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4018;4057;4100;4244</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4018;4057;4100;4244</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\chipmunk.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpArbiter.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpArray.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpBBTree.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpBody.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpCollision.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpConstraint.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpDampedRotarySpring.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpDampedSpring.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpGearJoint.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpGrooveJoint.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpHashSet.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpHastySpace.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug|x64'">true</ExcludedFromBuild>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpMarch.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug|x64'">true</ExcludedFromBuild>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpPinJoint.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpPivotJoint.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpPolyline.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug|x64'">true</ExcludedFromBuild>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpPolyShape.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpRatchetJoint.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpRobust.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpRotaryLimitJoint.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpShape.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpSimpleMotor.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpSlideJoint.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpSpace.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpSpaceComponent.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpSpaceDebug.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpSpaceHash.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpSpaceQuery.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpSpaceStep.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpSpatialIndex.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\chipmunk2d\src\cpSweep1D.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\curl\lib\altsvc.c">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/curl/lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -1982,6 +2314,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClCompile Include="src\promise.cpp" />
     <ClCompile Include="src\randomizer.cpp" />
     <ClCompile Include="src\raycaster.cpp" />
+    <ClCompile Include="src\scripting_lua_api_physics.cpp" />
     <ClCompile Include="src\scripting_lua_api_promises.cpp" />
     <ClCompile Include="src\walker.cpp" />
     <ClCompile Include="src\web.cpp" />
@@ -2121,6 +2454,37 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\b64\b64.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\chipmunk.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\chipmunk_ffi.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\chipmunk_private.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\chipmunk_structs.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\chipmunk_types.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\chipmunk_unsafe.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpArbiter.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpBB.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpBody.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpConstraint.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpDampedRotarySpring.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpDampedSpring.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpGearJoint.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpGrooveJoint.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpHastySpace.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpMarch.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpPinJoint.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpPivotJoint.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpPolyline.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpPolyShape.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpRatchetJoint.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpRobust.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpRotaryLimitJoint.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpShape.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpSimpleMotor.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpSlideJoint.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpSpace.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpSpatialIndex.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpTransform.h" />
+    <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpVect.h" />
+    <ClInclude Include="lib\chipmunk2d\src\prime.h" />
     <ClInclude Include="lib\curl\include\curl\curl.h" />
     <ClInclude Include="lib\curl\include\curl\curlver.h" />
     <ClInclude Include="lib\curl\include\curl\easy.h" />
@@ -2551,6 +2915,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClInclude Include="src\randomizer.h" />
     <ClInclude Include="src\raycaster.h" />
     <ClInclude Include="src\resource\inline_toast.h" />
+    <ClInclude Include="src\scripting_lua_api_physics.h" />
     <ClInclude Include="src\scripting_lua_api_promises.h" />
     <ClInclude Include="src\walker.h" />
     <ClInclude Include="src\web.h" />

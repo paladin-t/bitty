@@ -21,6 +21,7 @@
 #include "recorder.h"
 #include "renderer.h"
 #include "scripting_lua_api.h"
+#include "scripting_lua_api_physics.h"
 #include "scripting_lua_api_promises.h"
 #include "theme_sketchbook.h"
 #include "widgets_sketchbook.h"
@@ -367,6 +368,11 @@ void WorkspaceSketchbook::require(Executable* exec) {
 			Lua::Engine::open(exec);
 		}
 		Lua::Application::open(exec);
+
+		// Physics.
+		if (exec->primitives()) {
+			Lua::Engine::physics(exec);
+		}
 
 		// Promise.
 		Lua::Standard::promise(exec);
