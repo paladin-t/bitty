@@ -252,7 +252,7 @@ Board = class({
 	end
 })
 
-data:text/lua;count=617;path=class.lua;
+data:text/lua;count=747;path=class.lua;
 --[[
 Example for the Bitty Engine
 
@@ -270,7 +270,7 @@ function class(kls, base)
 	kls.new = function (...)
 		local obj = { }
 		setmetatable(obj, kls)
-		if obj.ctor then
+		if obj.ctor then -- `ctor` is short for "constructor", where you can initialize your instance.
 			obj:ctor(...)
 		end
 
@@ -286,6 +286,10 @@ end
 
 -- Determines whether an object is instance of a specific class.
 function is(obj, kls)
+	if kls == nil then
+		error('Invalid class.')
+	end
+
 	repeat
 		if obj == kls then
 			return true
