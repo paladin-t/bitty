@@ -40,7 +40,7 @@ static int documentSameLineIfPossible(float /* scale */, bool sameLine, const ch
 	const float spacingW = -1.0f;
 	ImGui::SameLine(posX, spacingW);
 	const float curX = ImGui::GetCursorPosX();
-	float wndR = ImGui::GetContentRegionAvail().x;
+	float wndR = ImGui::GetContentRegionMax().x;
 	if (ImGui::TableGetColumnCount() > 1)
 		wndR = endX;
 	wndR -= 5.0f; // Move to right a bit.

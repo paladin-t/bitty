@@ -51,6 +51,7 @@ static constexpr const char* const EDITOR_CODE_MODULES[] = {
 	"Palette", "Texture", "Sprite", "Map",
 	"Sfx", "Music",
 	"Font",
+	"Physics",
 	// Application.
 	"Application",
 	"Canvas",

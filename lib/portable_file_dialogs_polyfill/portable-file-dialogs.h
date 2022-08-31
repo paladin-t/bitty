@@ -14,6 +14,8 @@ enum class opt : unsigned char {
 	force_overwrite = 0x2,
 	force_path      = 0x4
 };
+inline opt operator | (opt a, opt b) { return opt(uint8_t(a) | uint8_t(b)); }
+inline bool operator & (opt a, opt b) { return bool(uint8_t(a) & uint8_t(b)); }
 
 enum class icon {
 	info = 0,
