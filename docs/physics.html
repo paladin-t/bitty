@@ -74,7 +74,7 @@
           parse: function (markdown) {
             return markdown
               .replaceAll('![](imgs/logo.png)', '')
-              .replace('[Manual](manual) | **Physics** | [Operations](operations) | [Others](others)', '')
+              .replace('[Manual](manual) | [**Physics**](https://paladin-t.github.io/bitty/physics.html) | [Operations](operations) | [Others](others)', '')
               .replaceAll('![](imgs/', '![](documents/imgs/');
           },
           preprocess: function (html) {

@@ -8,7 +8,7 @@
 | Graphics API | YES | YES | YES |
 | Input API | YES | YES | YES |
 | Audio API | YES | YES | YES |
-<!-- | Physics API | YES | YES | YES | -->
+| Physics API | YES | YES | YES |
 | Libraries: Algorithms, `Archive`, `Bytes`, `Color`, `DateTime`, Encoding, `File`, Filesystem, `Image`, `Json`, Math, `Network`, `Platform`, `Web` | YES | YES | YES |
 | Application interfaces: `Application`, `Canvas`, `Project`, `Debug` | YES | YES | YES |
 | Saving project | YES | | YES |
