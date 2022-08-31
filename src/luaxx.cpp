@@ -993,6 +993,12 @@ void upvalueJoin(lua_State* L, int fidx0, int n0, int fidx1, int n1) {
 	lua_upvaluejoin(L, fidx0, n0, fidx1, n1);
 }
 
+void lib(lua_State* L, const luaL_Reg* functions, int size) {
+	lua_createtable(L, 0, size > 0 ? size - 1 : 0);
+	if (functions)
+		luaL_setfuncs(L, functions, 0);
+}
+
 void reg(lua_State* L, const char* name, lua_CFunction function) {
 	lua_register(L, name, function);
 }
@@ -1032,10 +1038,42 @@ bool def(lua_State* L, const char* name, lua_CFunction ctor, const luaL_Reg* met
 	return result;
 }
 
-void lib(lua_State* L, const luaL_Reg* functions, int size) {
-	lua_createtable(L, 0, size > 0 ? size - 1 : 0);
-	if (functions)
-		luaL_setfuncs(L, functions, 0);
+bool pack(lua_State* L, const char* name, const char* module) {
+	return pack(L, name, module, module);
+}
+
+bool pack(lua_State* L, const char* name, const char* newModule, const char* module) {
+	// Prepare.
+	if (!name || !module || !newModule)
+		return false;
+
+	// Ensure the global table is valid.
+	lua_getglobal(L, name);
+	if (!lua_istable(L, -1)) {
+		lua_pop(L, 1);
+
+		lua_newtable(L);
+		lua_pushvalue(L, -1);
+		lua_setglobal(L, name);
+	}
+
+	// Put the module in the package.
+	if (lua_getglobal(L, module) != LUA_TTABLE) {
+		pop(L, 2);
+
+		return false;
+	}
+	lua_setfield(L, -2, newModule);
+
+	// Pop the global table.
+	pop(L);
+
+	// Remove the module.
+	write(L, nullptr);
+	setGlobal(L, module);
+
+	// Finish.
+	return true;
 }
 
 int __index(lua_State* L, const char* field) {

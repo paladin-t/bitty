@@ -1435,6 +1435,7 @@ static int Pathfinder___newindex(lua_State* L) {
 	if (strcmp(field, "diagonalCost") == 0) {
 		float val = 1.414f;
 		read<3>(L, val);
+
 		obj->get()->diagonalCost(val);
 	}
 
@@ -2092,6 +2093,7 @@ static int Archive___newindex(lua_State* L) {
 	if (strcmp(field, "password") == 0) { // Undocumented.
 		const char* val = nullptr;
 		read<3>(L, val);
+
 		obj->get()->password(val);
 	}
 
@@ -3005,18 +3007,22 @@ static int Color___newindex(lua_State* L) {
 	if (strcmp(field, "r") == 0) {
 		Byte val = 255;
 		read<3>(L, val);
+
 		obj->r = val;
 	} else if (strcmp(field, "g") == 0) {
 		Byte val = 255;
 		read<3>(L, val);
+
 		obj->g = val;
 	} else if (strcmp(field, "b") == 0) {
 		Byte val = 255;
 		read<3>(L, val);
+
 		obj->b = val;
 	} else if (strcmp(field, "a") == 0) {
 		Byte val = 255;
 		read<3>(L, val);
+
 		obj->a = val;
 	}
 
@@ -5146,10 +5152,12 @@ static int Vec2___newindex(lua_State* L) {
 	if (strcmp(field, "x") == 0) {
 		Math::Vec2f::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->x = val;
 	} else if (strcmp(field, "y") == 0) {
 		Math::Vec2f::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->y = val;
 	}
 
@@ -5400,14 +5408,17 @@ static int Vec3___newindex(lua_State* L) {
 	if (strcmp(field, "x") == 0) {
 		Math::Vec3f::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->x = val;
 	} else if (strcmp(field, "y") == 0) {
 		Math::Vec3f::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->y = val;
 	} else if (strcmp(field, "z") == 0) {
 		Math::Vec3f::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->z = val;
 	}
 
@@ -5602,18 +5613,22 @@ static int Vec4___newindex(lua_State* L) {
 	if (strcmp(field, "x") == 0) {
 		Math::Vec4f::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->x = val;
 	} else if (strcmp(field, "y") == 0) {
 		Math::Vec4f::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->y = val;
 	} else if (strcmp(field, "z") == 0) {
 		Math::Vec4f::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->z = val;
 	} else if (strcmp(field, "w") == 0) {
 		Math::Vec4f::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->w = val;
 	}
 
@@ -5828,18 +5843,22 @@ static int Rect___newindex(lua_State* L) {
 	if (strcmp(field, "x0") == 0) {
 		Math::Rectf::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->x0 = val;
 	} else if (strcmp(field, "y0") == 0) {
 		Math::Rectf::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->y0 = val;
 	} else if (strcmp(field, "x1") == 0) {
 		Math::Rectf::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->x1 = val;
 	} else if (strcmp(field, "y1") == 0) {
 		Math::Rectf::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->y1 = val;
 	}
 
@@ -6044,18 +6063,22 @@ static int Recti___newindex(lua_State* L) {
 	if (strcmp(field, "x0") == 0) {
 		Math::Recti::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->x0 = val;
 	} else if (strcmp(field, "y0") == 0) {
 		Math::Recti::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->y0 = val;
 	} else if (strcmp(field, "x1") == 0) {
 		Math::Recti::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->x1 = val;
 	} else if (strcmp(field, "y1") == 0) {
 		Math::Recti::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->y1 = val;
 	}
 
@@ -6232,14 +6255,17 @@ static int Rot___newindex(lua_State* L) {
 	if (strcmp(field, "s") == 0) {
 		Math::Rotf::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->s = val;
 	} else if (strcmp(field, "c") == 0) {
 		Math::Rotf::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->c = val;
 	} else if (strcmp(field, "angle") == 0) {
 		Math::Rotf::ValueType val = 0;
 		read<3>(L, val);
+
 		obj->angle(val);
 	}
 
@@ -7584,7 +7610,11 @@ static int Resources_load(lua_State* L) {
 	if (n >= 2) {
 		if (isTable(L, 2)) {
 			std::string y;
+			if (n > 2)
+				push(L, 2);
 			getTable(L, "__name", y); // Asset type as table name.
+			if (n > 2)
+				pop(L);
 			type = Resources_namedTypeOf(y);
 		} else if (isString(L, 2)) {
 			Placeholder _1;

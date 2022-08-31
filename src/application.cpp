@@ -23,6 +23,11 @@
 #include "scripting.h"
 #include "window.h"
 #include "workspace.h"
+#if defined BITTY_OS_MAC || defined BITTY_OS_IOS
+	extern const char* cpVersionString;
+#else /* Platform macro. */
+#	include "../lib/chipmunk2d/include/chipmunk/chipmunk.h"
+#endif /* Platform macro. */
 #include "../lib/curl/include/curl/curl.h"
 #include "../lib/imgui_sdl/imgui_sdl.h"
 #include "../lib/mongoose/mongoose.h"
@@ -961,6 +966,7 @@ private:
 		fprintf(stdout, "      SDL v%d.%d.%d\n", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
 		fprintf(stdout, "SDL mixer v%d.%d.%d\n", SDL_MIXER_MAJOR_VERSION, SDL_MIXER_MINOR_VERSION, SDL_MIXER_PATCHLEVEL);
 		fprintf(stdout, "    ImGui v" IMGUI_VERSION "\n");
+		fprintf(stdout, " Chipmunk v%s\n", cpVersionString);
 #if !defined BITTY_OS_HTML
 		fprintf(stdout, " Mongoose v" MG_VERSION "\n");
 		fprintf(stdout, "     cURL v" LIBCURL_VERSION "\n");

@@ -239,11 +239,18 @@ template<int Idx = 1, typename Car, typename ...Cdr> void check(lua_State* L, Ca
 template<template<typename T, typename A = std::allocator<T> > class Coll, typename Val> void check(lua_State* L, Coll<Val, std::allocator<Val> > &ret, Index idx = Index(1)) {
 	ret.clear();
 
-	const size_t size = len(L, idx);
-	for (size_t i = 1; i <= size; ++i) { // 1-based.
+	if (!isArray(L, idx))
+		return;
+
+	const lua_Unsigned size = len(L, idx);
+	for (int i = 1; i <= (int)size; ++i) { // 1-based.
+		get(L, idx, i);
+
 		Val val;
-		check(L, val);
+		check(L, val, Index(-1));
 		ret.push_back(val);
+
+		pop(L, 1);
 	}
 }
 
@@ -535,6 +542,11 @@ template<typename ...Val> constexpr std::array<typename std::decay<typename std:
 	return std::array<typename std::decay<typename std::common_type<Val...>::type>::type, sizeof...(Val)>{ std::forward<Val>(vals)... };
 }
 
+void lib(lua_State* L, const luaL_Reg* functions, int size);
+template<size_t Size> void lib(lua_State* L, const std::array<luaL_Reg, Size> &functions) {
+	lib(L, functions.empty() ? nullptr : functions.data(), Size);
+}
+
 void reg(lua_State* L, const char* name, lua_CFunction function);
 void reg(lua_State* L, const luaL_Reg* functions);
 template<size_t Size> void reg(lua_State* L, const std::array<luaL_Reg, Size> &functions) {
@@ -572,10 +584,8 @@ template<size_t MetaSize, size_t MethodSize, typename ...Fields> bool def(lua_St
 	return def(L, name, ctor, meta.empty() ? nullptr : meta.data(), methods.empty() ? nullptr : methods.data(), index, newindex, fields...);
 }
 
-void lib(lua_State* L, const luaL_Reg* functions, int size);
-template<size_t Size> void lib(lua_State* L, const std::array<luaL_Reg, Size> &functions) {
-	lib(L, functions.empty() ? nullptr : functions.data(), Size);
-}
+bool pack(lua_State* L, const char* name, const char* module);
+bool pack(lua_State* L, const char* name, const char* newModule, const char* module);
 
 template<typename Class> int __gc(lua_State* L) {
 	Class* ptr = nullptr;

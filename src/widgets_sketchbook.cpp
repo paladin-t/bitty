@@ -15,6 +15,7 @@
 #include "theme.h"
 #include "widgets_sketchbook.h"
 #include "window.h"
+#include "../lib/chipmunk2d/include/chipmunk/chipmunk.h"
 #include "../lib/curl/include/curl/curl.h"
 #include "../lib/lua/src/lua.hpp"
 #include "../lib/mongoose/mongoose.h"
@@ -264,6 +265,7 @@ AboutPopupBox::AboutPopupBox(
 	_specs += "        SDL v" + Text::toString(SDL_MAJOR_VERSION) + "." + Text::toString(SDL_MINOR_VERSION) + "." + Text::toString(SDL_PATCHLEVEL) + "\n";
 	_specs += "  SDL mixer v" + Text::toString(SDL_MIXER_MAJOR_VERSION) + "." + Text::toString(SDL_MIXER_MINOR_VERSION) + "." + Text::toString(SDL_MIXER_PATCHLEVEL) + "\n";
 	_specs += "      ImGui v" IMGUI_VERSION "\n";
+	_specs += "   Chipmunk v" + std::string(cpVersionString) +  "\n";
 #if !defined BITTY_OS_HTML
 	_specs += "   Mongoose v" MG_VERSION "\n";
 	_specs += "       cURL v" LIBCURL_VERSION "\n";
