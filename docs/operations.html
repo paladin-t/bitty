@@ -37,6 +37,7 @@
       <p align="left">
         [
           <a href="manual.html">Manual</a> |
+          <a href="physics.html">Physics</a> |
           <a href="operations.html"><b>Operations</b></a> |
           <a href="keycodes.html">Keycodes</a> |
           <a href="formats.html">Formats</a>
@@ -73,7 +74,7 @@
           parse: function (markdown) {
             return markdown
               .replaceAll('![](imgs/logo.png)', '')
-              .replace('[Manual](manual) | **Operations** | [Others](others)', '')
+              .replace('[Manual](manual) | [Physics](physics) | **Operations** | [Others](others)', '')
               .replaceAll('![](imgs/', '![](documents/imgs/');
           },
           preprocess: function (html) {

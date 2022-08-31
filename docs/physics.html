@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Bitty Engine is an itty bitty game engine, with built-in editors, programmable in Lua.">
   <meta name="twitter:card" content="Bitty Engine is an itty bitty game engine, with built-in editors, programmable in Lua.">
-  <meta name="og:title" property="og:title" content="Keycodes | Bitty Engine">
+  <meta name="og:title" property="og:title" content="Physics | Bitty Engine">
   <meta name="og:description" property="og:description" content="Bitty Engine is an itty bitty game engine, with built-in editors, programmable in Lua.">
-  <title>Keycodes | Bitty Engine</title>
+  <title>Physics | Bitty Engine</title>
   <link rel="shortcut icon" href="favicon.ico" />
   <link rel="apple-touch-icon" href="icon.png" />
   <link rel="stylesheet" type="text/css" href="style.css">
@@ -37,9 +37,9 @@
       <p align="left">
         [
           <a href="manual.html">Manual</a> |
-          <a href="physics.html">Physics</a> |
+          <a href="physics.html"><b>Physics</b></a> |
           <a href="operations.html">Operations</a> |
-          <a href="keycodes.html"><b>Keycodes</b></a> |
+          <a href="keycodes.html">Keycodes</a> |
           <a href="formats.html">Formats</a>
         ]
       </p>
@@ -65,14 +65,17 @@
   <script src="prism-lua.js"></script>
   <script type="text/javascript">
     (function () {
-      var url = 'keycodes.md';
-      var ref = 'keycodes';
+      var url = 'documents/physics.md';
+      var ref = 'documents/physics';
 
       try {
         Article.read(url, ref, {
           content: 'article-content',
           parse: function (markdown) {
-            return markdown;
+            return markdown
+              .replaceAll('![](imgs/logo.png)', '')
+              .replace('[Manual](manual) | **Physics** | [Operations](operations) | [Others](others)', '')
+              .replaceAll('![](imgs/', '![](documents/imgs/');
           },
           preprocess: function (html) {
             return html

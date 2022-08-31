@@ -37,6 +37,7 @@
       <p align="left">
         [
           <a href="manual.html"><b>Manual</b></a> |
+          <a href="physics.html">Physics</a> |
           <a href="operations.html">Operations</a> |
           <a href="keycodes.html">Keycodes</a> |
           <a href="formats.html">Formats</a>
@@ -73,7 +74,8 @@
           parse: function (markdown) {
             return markdown
               .replaceAll('![](imgs/logo.png)', '')
-              .replace('[**Manual**](https://paladin-t.github.io/bitty/manual.html) | [Operations](operations) | [Others](others)', '')
+              .replace('[**Manual**](https://paladin-t.github.io/bitty/manual.html) | [Physics](physics) | [Operations](operations) | [Others](others)', '')
+              .replace('[Physics](physics)', '[Physics](physics.html)')
               .replaceAll('![](imgs/', '![](documents/imgs/');
           },
           preprocess: function (html) {

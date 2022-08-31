@@ -2,7 +2,7 @@
 
 ## Reference Manual
 
-[**Manual**](https://paladin-t.github.io/bitty/manual.html) | [Operations](operations) | [Others](others)
+[**Manual**](https://paladin-t.github.io/bitty/manual.html) | [Physics](physics) | [Operations](operations) | [Others](others)
 
 ## Table of Content
 
@@ -75,6 +75,7 @@
 		* [Camera](#camera)
 		* [Clip](#clip)
 		* [Blend](#blend)
+	* [Physics](#physics)
 	* [Application](#application)
 		* [Canvas](#canvas)
 		* [Project](#project)
@@ -1788,6 +1789,12 @@ Seealso the "Mouse" example under the "Primitives" category.
 * `blend(mode)`: sets the blend state with the specific mode
 	* `mode`: the blend mode to set; refer to the blend modes of `Canvas`
 * `blend()`: resets the blend state to alpha blend
+
+[TOP](#reference-manual)
+
+## Physics
+
+Due to space limitation in the page, read [Physics](physics) for details.
 
 [TOP](#reference-manual)
 

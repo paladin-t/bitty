@@ -1,3 +1,13 @@
+### v1.2 Sep. 1, 2022
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added a 2D physics module (beta)
+* Added examples to the "Physics" category
+* Fixed a random seeding issue under multi-threading environment
+* Fixed a crash bug of the `Resources.load(...)` function when argument is invalid
+* Fixed a newline issue of content text in the document viewer
+
 ### v1.1.8 Aug. 20, 2022
 
 Enhanced modules, improved usability, fixed some bugs.

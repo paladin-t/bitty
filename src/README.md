@@ -14,6 +14,7 @@ main                       _|                                              |
 luaxx                      __ Lua     __ Executable                       _|
 scripting_lua              _|          |                                   |
 scripting_lua_api          _|          |                                   |
+scripting_lua_api_physics  _|          |                                   |
 scripting_lua_api_promises _|          |                                   |
 scripting_lua_dbg          _|          |                                   |
 plugin                     ____________|                                   |

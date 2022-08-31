@@ -2,7 +2,7 @@
 
 ## Operations
 
-[Manual](manual) | **Operations** | [Others](others)
+[Manual](manual) | [Physics](physics) | **Operations** | [Others](others)
 
 ## Table of Content
 
