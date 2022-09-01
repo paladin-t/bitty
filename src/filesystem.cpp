@@ -314,6 +314,21 @@ void Path::split(const std::string &full, std::string* self, std::string* ext, s
 	}
 }
 
+size_t Path::countFile(const char* path) {
+	FILE* file = fopen(path, "rb");
+	if (!file)
+		return 0;
+
+	const long curPos = ftell(file);
+	fseek(file, 0L, SEEK_END);
+	const long len = ftell(file);
+	fseek(file, curPos, SEEK_SET);
+
+	fclose(file);
+
+	return len >= 0 ? (size_t)len : 0;
+}
+
 bool Path::existsFile(const char* path) {
 	if (!path || !(*path))
 		return false;

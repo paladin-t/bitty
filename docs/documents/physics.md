@@ -46,7 +46,7 @@ This module is a **Beta** feature. There may be unrevealed bugs, and the final A
 
 Bitty Engine is integrated with the [Chipmunk2D](https://chipmunk-physics.net/) physics library to offer 2D dynamics simulation in Lua. The knowledges of the concepts and programming interfaces in Chipmunk2D are widely applicable to programming it in Bitty Engine.
 
-Reading the [official documentations](https://chipmunk-physics.net/documentation.php) would be helpful to understand and master this module, although the original Chipmunk2D is written in C. I.e. the Lua operations in Bitty Engine `Physics.Shape.new(Physics.Shape.Circle, ...)`, `Physics.Body.new(...)`, `body.position = ...`, `space:addBody(...)` are equivalent to the C version `cpCircleShapeNew(...)`, `cpBodyNew(...)`, `cpBodySetPosition(...)`, `cpSpaceAddBody(...)` in Chipmunk2D.
+Reading the [official documentations](https://chipmunk-physics.net/documentation.php) would be helpful to understand and master this module, although the original Chipmunk2D is written in C. You'll find that almost every interface has its counterpart, i.e. the Lua operations in Bitty Engine `Physics.Shape.new(Physics.Shape.Circle, ...)`, `Physics.Body.new(...)`, `body.position = ...`, `space:addBody(...)` are equivalent to the C version `cpCircleShapeNew(...)`, `cpBodyNew(...)`, `cpBodySetPosition(...)`, `cpSpaceAddBody(...)` in Chipmunk2D.
 
 ## Why Physics
 
