@@ -654,6 +654,7 @@ bool fromCheckpoint(const Project* project, const char* name, Checkpoint &checkp
 			(const char*)bytes->pointer(), (char*)cache->pointer(),
 			(int)bytes->count(), (int)cache->count()
 		);
+		(void)n;
 		assert(n == (int)checkpoint.originalSize);
 		result = asset->reload(Asset::EDITING, cache.get(), nullptr, false);
 

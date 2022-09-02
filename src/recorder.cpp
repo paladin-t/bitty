@@ -323,6 +323,7 @@ private:
 			(const char*)compressed->pointer(), (char*)_cache->pointer() + headerSize,
 			(int)compressed->count(), (int)_cache->count() - headerSize
 		);
+		(void)n;
 		assert(n && n == (int)(_cache->count() - headerSize)); (void)n;
 
 		img->fromBytes(_cache.get());

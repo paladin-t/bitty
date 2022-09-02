@@ -55,6 +55,11 @@ LUA_READ_ALIAS(Math::Rectf, Rect)
 LUA_WRITE_ALIAS(Math::Rectf, Rect)
 LUA_WRITE_ALIAS_CONST(Math::Rectf, Rect)
 
+LUA_CHECK_ALIAS(Math::Rotf, Rot)
+// LUA_READ_ALIAS(Math::Rotf, Rot)
+LUA_WRITE_ALIAS(Math::Rotf, Rot)
+LUA_WRITE_ALIAS_CONST(Math::Rotf, Rot)
+
 }
 
 namespace Lua { // Engine.
@@ -1448,8 +1453,16 @@ static int Transform_ctorScale(lua_State* L) {
 }
 
 static int Transform_ctorRotate(lua_State* L) {
-	cpFloat radians;
-	check<>(L, radians);
+	cpFloat radians = 0;
+	Math::Rotf* rot = nullptr;
+	if (isNumber(L)) {
+		check<>(L, radians);
+	} else {
+		check<>(L, rot);
+
+		if (rot)
+			radians = rot->angle();
+	}
 
 	const cpTransform val = cpTransformRotate(radians);
 	Transform::Ptr obj(
