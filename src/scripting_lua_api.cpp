@@ -7022,13 +7022,15 @@ static int Platform_execute(lua_State* L) {
 	const char* cmd = nullptr;
 	read<>(L, cmd);
 
-	if (cmd &&*cmd) {
+	if (cmd && *cmd) {
 		const std::string osstr = Unicode::toOs(cmd);
 
-		Platform::execute(osstr.c_str());
+		const std::string ret = Platform::execute(osstr.c_str());
+
+		return write(L, ret);
 	}
 
-	return 0;
+	return write(L, nullptr);
 }
 
 static const char* Platform_os(lua_State*) {

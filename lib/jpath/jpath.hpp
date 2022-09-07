@@ -37,6 +37,38 @@
 
 namespace Jpath {
 
+enum Types {
+	INVALID = 0,
+	NIL = 1 << 0,
+	BOOLEAN = 1 << 1,
+	INT = 1 << 2,
+	REAL = 1 << 3,
+	NUMBER = INT | REAL,
+	STRING = 1 << 4,
+	ARRAY = 1 << 5,
+	OBJECT = 1 << 6
+};
+
+inline Types getType(const rapidjson::Value &obj) {
+	if (obj.IsNull())
+		return NIL;
+	if (obj.IsBool())
+		return BOOLEAN;
+	if (obj.IsNumber())
+		return NUMBER;
+	if (obj.IsInt() || obj.IsUint() || obj.IsInt64() || obj.IsUint64())
+		return INT;
+	if (obj.IsDouble())
+		return REAL;
+	if (obj.IsString())
+		return STRING;
+	if (obj.IsArray())
+		return ARRAY;
+	if (obj.IsObject())
+		return OBJECT;
+
+	return INVALID;
+}
 inline bool getValue(const rapidjson::Value &obj, bool &ret) {
 	if (!obj.IsBool())
 		return false;
@@ -283,6 +315,15 @@ template<typename Car, typename ...Cdr> bool write(rapidjson::Document &doc, rap
 	return true;
 }
 
+template<typename ...Path> Types typeOf(const rapidjson::Value &obj, Path ...path) {
+	const rapidjson::Value* tmp = nullptr;
+	if (!read(obj, tmp, path ...))
+		return INVALID;
+	if (!tmp)
+		return INVALID;
+
+	return getType(*tmp);
+}
 template<typename ...Path> bool has(const rapidjson::Value &obj, Path ...path) {
 	const rapidjson::Value* tmp = nullptr;
 	if (!read(obj, tmp, path ...))

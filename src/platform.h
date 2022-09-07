@@ -79,7 +79,7 @@ public:
 
 	static void threadName(const char* threadName);
 
-	static void execute(const char* cmd);
+	static std::string execute(const char* cmd);
 
 	static void redirectIoToConsole(void);
 

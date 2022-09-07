@@ -271,13 +271,34 @@ void Platform::threadName(const char*) {
 }
 
 EM_JS(
-	void, platformHtmlExecute, (const char* cmd), {
-		eval(UTF8ToString(cmd));
+	const char*, platformHtmlExecute, (const char* cmd), {
+		var ret = eval(UTF8ToString(cmd));
+		if (ret == undefined) {
+			ret = 'undefined';
+		} else if (ret == null) {
+			ret = 'null';
+		} else {
+			ret = toString(ret)
+		}
+		var lengthBytes = lengthBytesUTF8(ret) + 1;
+		var stringOnWasmHeap = _malloc(lengthBytes);
+		stringToUTF8(ret, stringOnWasmHeap, lengthBytes + 1);
+
+		return stringOnWasmHeap;
+	}
+);
+EM_JS(
+	void, platformHtmlFree, (void* ptr), {
+		_free(ptr);
 	}
 );
 
-void Platform::execute(const char* cmd) {
-	platformHtmlExecute(cmd);
+std::string Platform::execute(const char* cmd) {
+	const char* ret_ = platformHtmlExecute(cmd);
+	const std::string ret = ret_ ? ret_ : "";
+	platformHtmlFree((void*)ret_);
+
+	return ret;
 }
 
 void Platform::redirectIoToConsole(void) {

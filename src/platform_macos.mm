@@ -9,6 +9,7 @@
 */
 
 #import "platform.h"
+#import "text.h"
 #import <SDL.h>
 #import <AppKit/AppKit.h>
 #import <CoreFoundation/CoreFoundation.h>
@@ -300,8 +301,11 @@ void Platform::threadName(const char* threadName) {
 	pthread_setname_np(threadName);
 }
 
-void Platform::execute(const char* cmd) {
-	system(cmd);
+std::string Platform::execute(const char* cmd) {
+	const int ret_ = system(cmd);
+	const std::string ret = Text::toString(ret_);
+
+	return ret;
 }
 
 void Platform::redirectIoToConsole(void) {

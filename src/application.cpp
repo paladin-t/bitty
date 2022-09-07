@@ -23,11 +23,11 @@
 #include "scripting.h"
 #include "window.h"
 #include "workspace.h"
-#if defined BITTY_OS_MAC || defined BITTY_OS_IOS
+#if defined BITTY_OS_APPLE
 	extern const char* cpVersionString;
-#else /* Platform macro. */
+#else /* BITTY_OS_APPLE */
 #	include "../lib/chipmunk2d/include/chipmunk/chipmunk.h"
-#endif /* Platform macro. */
+#endif /* BITTY_OS_APPLE */
 #include "../lib/curl/include/curl/curl.h"
 #include "../lib/imgui_sdl/imgui_sdl.h"
 #include "../lib/mongoose/mongoose.h"
