@@ -16,10 +16,10 @@
 #include "widgets_sketchbook.h"
 #include "window.h"
 #include "../lib/chipmunk2d/include/chipmunk/chipmunk.h"
-#include "../lib/curl/include/curl/curl.h"
 #include "../lib/lua/src/lua.hpp"
 #include "../lib/mongoose/mongoose.h"
 #include "../lib/zlib/zlib.h"
+#include <curl/curl.h>
 #include <SDL.h>
 #include <SDL_mixer.h>
 

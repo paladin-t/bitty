@@ -13,7 +13,7 @@
 
 #include "web.h"
 #if BITTY_WEB_ENABLED
-#	include "../lib/curl/include/curl/curl.h"
+#	include <curl/curl.h>
 #endif /* BITTY_WEB_ENABLED */
 #if BITTY_MULTITHREAD_ENABLED
 #	include <thread>

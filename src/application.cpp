@@ -28,11 +28,11 @@
 #else /* BITTY_OS_APPLE */
 #	include "../lib/chipmunk2d/include/chipmunk/chipmunk.h"
 #endif /* BITTY_OS_APPLE */
-#include "../lib/curl/include/curl/curl.h"
 #include "../lib/imgui_sdl/imgui_sdl.h"
 #include "../lib/mongoose/mongoose.h"
 #include "../lib/sdl_gfx/SDL2_gfxPrimitives.h"
 #include "../lib/zlib/zlib.h"
+#include <curl/curl.h>
 #include <SDL_mixer.h>
 #if defined BITTY_OS_WIN
 #	include <SDL_syswm.h>
