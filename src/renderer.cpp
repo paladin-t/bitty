@@ -161,6 +161,26 @@ public:
 		if (!pointer())
 			return;
 
+#if defined BITTY_OS_APPLE
+		int w = 0, h = 0;
+		SDL_GetRendererOutputSize(_renderer, &w, &h);
+		if (x < 0) {
+			width += x;
+			x = 0;
+		}
+		if (y < 0) {
+			height += y;
+			y = 0;
+		}
+		width = std::min(width, w - x);
+		height = std::min(height, h - y);
+		if (width <= 0 || height <= 0) {
+			SDL_RenderSetClipRect(_renderer, nullptr);
+
+			return;
+		}
+#endif /* BITTY_OS_APPLE */
+
 		const SDL_Rect rect{ x, y, width, height };
 		SDL_RenderSetClipRect(_renderer, &rect);
 	}
