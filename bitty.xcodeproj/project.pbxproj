@@ -71,7 +71,7 @@
 		038E740825820E5200A94374 /* scripting_lua_api_promises.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 038E735E25820E3B00A94374 /* scripting_lua_api_promises.cpp */; settings = {COMPILER_FLAGS = "-Wno-unused-function"; }; };
 		038E740925820E5200A94374 /* either.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 038E736025820E3C00A94374 /* either.cpp */; };
 		038E740A25820E5200A94374 /* audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 038E736125820E3C00A94374 /* audio.cpp */; };
-		038E740D25820E5200A94374 /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 038E736525820E3D00A94374 /* image.cpp */; };
+		038E740D25820E5200A94374 /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 038E736525820E3D00A94374 /* image.cpp */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		038E740E25820E5200A94374 /* network.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 038E736625820E3D00A94374 /* network.cpp */; };
 		038E740F25820E5200A94374 /* asset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 038E736725820E3D00A94374 /* asset.cpp */; };
 		038E741025820E5200A94374 /* editor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 038E736825820E3D00A94374 /* editor.cpp */; };
