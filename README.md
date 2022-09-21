@@ -56,6 +56,8 @@ Bitty Engine offers a set of orthogonal features that makes game development com
 	* Mouse and touch
 * Audio API
 	* Supports MP3, OGG, WAV, FLAC, etc.
+* Physics API
+	* `Space`, `Shape`, `Body`, `Arbiter`, etc.
 * Libraries
 	* Algorithms, `Archive`, `Bytes`, `Color`, `DateTime`, Encoding, `File`, Filesystem, `Image`, `Json`, Math, `Network`, `Platform`, `Web`
 * Application interfaces
