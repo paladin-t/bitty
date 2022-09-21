@@ -1150,7 +1150,7 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 
 				Plugin* plugin = nullptr;
 				if (ImGui::PluginMenu(project, plugins(), PLUGIN_MENU_PROJECT_NAME, plugin)) {
-					Operations::pluginRunMenuItem(rnd, this, project, plugin);
+					Operations::pluginRunMenuItem(rnd, this, project, plugin, "");
 				}
 			}
 
@@ -1188,7 +1188,7 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 			if (ImGui::BeginMenu(_theme->menuPlugins())) {
 				Plugin* plugin = nullptr;
 				if (ImGui::PluginMenu(project, plugins(), PLUGIN_MENU_PLUGIN_NAME, plugin)) {
-					Operations::pluginRunMenuItem(rnd, this, project, plugin);
+					Operations::pluginRunMenuItem(rnd, this, project, plugin, "");
 				}
 
 				ImGui::EndMenu();
@@ -1270,7 +1270,7 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 
 				Plugin* plugin = nullptr;
 				if (ImGui::PluginMenu(project, plugins(), PLUGIN_MENU_HELP_NAME, plugin)) {
-					Operations::pluginRunMenuItem(rnd, this, project, plugin);
+					Operations::pluginRunMenuItem(rnd, this, project, plugin, "");
 				}
 			}
 

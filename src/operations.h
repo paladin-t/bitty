@@ -83,7 +83,7 @@ public:
 	static void debugDisableBreakpoints(Workspace* ws, const class Project* project, Executable* exec, const char* src /* nullable */);
 	static void debugClearBreakpoints(Workspace* ws, const class Project* project, Executable* exec, const char* src /* nullable */);
 
-	static promise::Defer pluginRunMenuItem(class Renderer* rnd, Workspace* ws, const class Project* project, Plugin* plugin);
+	static promise::Defer pluginRunMenuItem(class Renderer* rnd, Workspace* ws, const class Project* project, Plugin* plugin, const std::string &args);
 };
 
 /* ===========================================================================} */

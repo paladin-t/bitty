@@ -228,7 +228,7 @@ bool Plugin::is(Usages usage_) const {
 	return ((unsigned)usage() & (unsigned)usage_) != (unsigned)Usages::NONE;
 }
 
-Variant Plugin::run(Functions function) {
+Variant Plugin::run(Functions function, const std::string &args) {
 	if (function == Functions::NONE)
 		return nullptr;
 
@@ -269,7 +269,11 @@ Variant Plugin::run(Functions function) {
 	default: // Do nothing.
 		break;
 	}
-	Variant result = _executable->invoke(func);
+	Variant result = nullptr;
+	if (args.empty())
+		result = _executable->invoke(func);
+	else
+		result = _executable->invoke(func, args);
 	func = nullptr;
 	const bool pending = _executable->pending();
 	if (!pending)

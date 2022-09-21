@@ -3649,14 +3649,15 @@ void Operations::debugClearBreakpoints(Workspace*, const class Project* project,
 	);
 }
 
-promise::Defer Operations::pluginRunMenuItem(class Renderer*, Workspace* ws, const class Project*, Plugin* plugin) {
+promise::Defer Operations::pluginRunMenuItem(class Renderer*, Workspace* ws, const class Project*, Plugin* plugin, const std::string &args) {
 	return promise::newPromise(
 		[&] (promise::Defer df) -> void {
+			const std::string args_ = args;
 			ImGui::WaitingPopupBox::TimeoutHandler timeout(
-				[ws, df, plugin] (void) -> void {
+				[ws, df, plugin, args_] (void) -> void {
 					OPERATIONS_AUTO_CLOSE_POPUP(ws)
 
-					plugin->run(Plugin::Functions::MENU);
+					plugin->run(Plugin::Functions::MENU, args_);
 
 					df.resolve(true);
 				},

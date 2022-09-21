@@ -106,7 +106,7 @@ public:
 
 	bool is(Usages usage) const;
 
-	Variant run(Functions function);
+	Variant run(Functions function, const std::string &args);
 
 	void update(double delta);
 
