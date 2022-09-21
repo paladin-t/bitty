@@ -431,8 +431,8 @@ public:
 
 		if (empty())
 			_cursor = 0;
-		else if (_cursor >= _collection.size())
-			_cursor = _collection.size() - 1;
+		else if (_cursor > _collection.size())
+			_cursor = _collection.size();
 
 		return this;
 	}
