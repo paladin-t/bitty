@@ -23,7 +23,7 @@
 
 #ifndef PRIMITIVE_CLIP
 #	define PRIMITIVE_CLIP(P, C) \
-		ProcedureGuard<Primitives> __CLIP##__LINE__( \
+		ProcedureGuard<Primitives> BITTY_UNIQUE_NAME(__CLIP__)( \
 			P, \
 			[&] (void) -> Primitives* { \
 				P->clip(C.xMin(), C.yMin(), C.width(), C.height()); \

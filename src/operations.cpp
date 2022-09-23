@@ -109,7 +109,7 @@ static constexpr const char OPERATIONS_ASSET_DEFAULT_CODE[] =
 
 #ifndef OPERATIONS_AUTO_CLOSE_POPUP
 #	define OPERATIONS_AUTO_CLOSE_POPUP(W) \
-		ProcedureGuard<void> __CLOSE##__LINE__( \
+		ProcedureGuard<void> BITTY_UNIQUE_NAME(__CLOSE__)( \
 			std::bind( \
 				[] (Workspace* ws) -> void* { \
 					ImGui::PopupBox::Ptr popup = ws->popupBox(); \

@@ -23,8 +23,8 @@
 
 #ifndef WEB_STATE
 #	define WEB_STATE(P, I, W, O) \
-	VariableGuard<decltype(P)> __PROC##__LINE__(&(P), (I), (W)); \
-	if (!(__PROC##__LINE__).changed()) { \
+	VariableGuard<decltype(P)> __PROC__(&(P), (I), (W)); \
+	if (!(__PROC__).changed()) { \
 		O; \
 	}
 #endif /* WEB_STATE */

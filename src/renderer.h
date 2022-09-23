@@ -22,7 +22,7 @@
 
 #ifndef BITTY_RENDER_TARGET
 #	define BITTY_RENDER_TARGET(RND, TEX) \
-	ProcedureGuard<class Texture> __TARGET##__LINE__( \
+	ProcedureGuard<class Texture> BITTY_UNIQUE_NAME(__TARGET__)( \
 		std::bind( \
 			[&] (class Renderer* rnd) -> class Texture* { \
 				class Texture* result = rnd->target(); \
@@ -42,7 +42,7 @@
 
 #ifndef BITTY_RENDER_SCALE
 #	define BITTY_RENDER_SCALE(RND, SCL) \
-	ProcedureGuard<int> __SCALE##__LINE__( \
+	ProcedureGuard<int> BITTY_UNIQUE_NAME(__SCALE__)( \
 		std::bind( \
 			[&] (class Renderer* rnd) -> int* { \
 				int* result = (int*)(uintptr_t)rnd->scale(); \

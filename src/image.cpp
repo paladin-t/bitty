@@ -26,7 +26,7 @@
 
 #ifndef IMAGE_LOCK_SURFACE
 #	define IMAGE_LOCK_SURFACE(SUR) \
-	ProcedureGuard<bool> __LOCK##__LINE__( \
+	ProcedureGuard<bool> BITTY_UNIQUE_NAME(__LOCK__)( \
 		std::bind( \
 			[&] (SDL_Surface* surface) -> bool* { \
 				bool* result = (bool*)(uintptr_t)(SDL_MUSTLOCK(SUR) ? 0x1 : 0x0); \

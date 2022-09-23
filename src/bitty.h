@@ -377,6 +377,12 @@
 #	endif /* BITTY_CP_VC */
 #endif /* BITTY_STRICMP */
 
+#ifndef BITTY_UNIQUE_NAME
+#	define BITTY_CONCAT_INNER(A, B) A##B
+#	define BITTY_CONCAT(A, B) BITTY_CONCAT_INNER(A, B)
+#	define BITTY_UNIQUE_NAME(BASE) BITTY_CONCAT(BASE, __LINE__)
+#endif /* BITTY_UNIQUE_NAME */
+
 /* ===========================================================================} */
 
 /*
