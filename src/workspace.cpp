@@ -3505,7 +3505,7 @@ void Workspace::beginSplash(class Window* wnd, class Renderer* rnd, const class 
 #endif /* BITTY_SPLASH_ENABLED */
 }
 
-void Workspace::endSplash(class Window* wnd, class Renderer* rnd) {
+void Workspace::endSplash(class Window* wnd, class Renderer* rnd, const Text::Dictionary &options) {
 #if BITTY_SPLASH_ENABLED
 	if (splashCustomized()) {
 		if (splashBitty()) {
@@ -3524,9 +3524,13 @@ void Workspace::endSplash(class Window* wnd, class Renderer* rnd) {
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 		};
 
+		const bool bootSound = options.find(WORKSPACE_OPTION_APPLICATION_BOOT_SOUND_DISABLED_KEY) == options.end();
+
 		Sfx::Ptr sfx(Sfx::create());
-		sfx->fromBytes(RES_SOUND_SPLASH, BITTY_COUNTOF(RES_SOUND_SPLASH));
-		sfx->play(false, nullptr, -1);
+		if (bootSound) {
+			sfx->fromBytes(RES_SOUND_SPLASH, BITTY_COUNTOF(RES_SOUND_SPLASH));
+			sfx->play(false, nullptr, -1);
+		}
 
 		for (int i = 0; i < BITTY_COUNTOF(INDICES); ++i) {
 			const long long begin = DateTime::ticks();
@@ -3553,6 +3557,7 @@ void Workspace::endSplash(class Window* wnd, class Renderer* rnd) {
 	}
 #else /* BITTY_SPLASH_ENABLED */
 	(void)wnd;
+	(void)options;
 
 	const Color color(0x00, 0x00, 0x00, 0x00);
 	rnd->clear(&color);

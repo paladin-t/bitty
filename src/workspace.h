@@ -33,6 +33,9 @@
 #ifndef WORKSPACE_OPTION_APPLICATION_FPS_KEY
 #	define WORKSPACE_OPTION_APPLICATION_FPS_KEY "a"
 #endif /* WORKSPACE_OPTION_APPLICATION_FPS_KEY */
+#ifndef WORKSPACE_OPTION_APPLICATION_BOOT_SOUND_DISABLED_KEY
+#	define WORKSPACE_OPTION_APPLICATION_BOOT_SOUND_DISABLED_KEY "x"
+#endif /* WORKSPACE_OPTION_APPLICATION_BOOT_SOUND_DISABLED_KEY */
 #ifndef WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY
 #	define WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY "b"
 #endif /* WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY */
@@ -588,7 +591,7 @@ protected:
 	void resolveAssetRef(class Window* wnd, class Renderer* rnd, const class Project* project, const char* asset);
 
 	void beginSplash(class Window* wnd, class Renderer* rnd, const class Project* project);
-	void endSplash(class Window* wnd, class Renderer* rnd);
+	void endSplash(class Window* wnd, class Renderer* rnd, const Text::Dictionary &options);
 };
 
 /* ===========================================================================} */

@@ -921,6 +921,7 @@ private:
 			" [-" WORKSPACE_OPTION_APPLICATION_CONSOLE_ENABLED_KEY "]"
 #endif /* BITTY_OS_WIN */
 			" [-" WORKSPACE_OPTION_APPLICATION_FPS_KEY "]"
+			" [-" WORKSPACE_OPTION_APPLICATION_BOOT_SOUND_DISABLED_KEY "]"
 			" [-" WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY "]"
 			" [-" WORKSPACE_OPTION_WINDOW_SIZE_KEY " MxN]"
 			" [-" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY " ]"
@@ -941,6 +942,7 @@ private:
 		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_CONSOLE_ENABLED_KEY            "        Enable console window.\n");
 #endif /* BITTY_OS_WIN */
 		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_FPS_KEY                        " FPS    Specify running FPS.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_BOOT_SOUND_DISABLED_KEY        "        Disable boot sound.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY              "        Run with borderless window.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_SIZE_KEY                            " MxN    Specify window size.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY               "        Disable high-DPI.\n");

@@ -211,7 +211,7 @@ bool WorkspaceSketchbook::open(class Window* wnd, class Renderer* rnd, const cla
 	} while (false);
 
 	if (!Workspace::open(wnd, rnd, project, exec, primitives, fps, options)) {
-		endSplash(wnd, rnd);
+		endSplash(wnd, rnd, options);
 
 		return false;
 	}
@@ -220,7 +220,7 @@ bool WorkspaceSketchbook::open(class Window* wnd, class Renderer* rnd, const cla
 
 	loadProject(wnd, rnd, project, exec, primitives, options);
 
-	endSplash(wnd, rnd);
+	endSplash(wnd, rnd, options);
 
 	Operations::fileRestore(rnd, this, project);
 
