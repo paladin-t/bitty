@@ -3231,6 +3231,15 @@ static int DateTime_fromSeconds(lua_State* L) {
 	return write(L, ret);
 }
 
+static int DateTime_sleep(lua_State* L) {
+	int t = 0;
+	read<>(L, t);
+
+	DateTime::sleep(t);
+
+	return 0;
+}
+
 static void open_DateTime(lua_State* L) {
 	req(
 		L,
@@ -3246,6 +3255,7 @@ static void open_DateTime(lua_State* L) {
 						luaL_Reg{ "fromMilliseconds", DateTime_fromMilliseconds },
 						luaL_Reg{ "toSeconds", DateTime_toSeconds },
 						luaL_Reg{ "fromSeconds", DateTime_fromSeconds },
+						luaL_Reg{ "sleep", DateTime_sleep },
 						luaL_Reg{ nullptr, nullptr }
 					)
 				)
