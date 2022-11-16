@@ -161,15 +161,15 @@ Lua is 1-based for list accessing, Bitty Engine follows the same convention for 
 
 This document uses a meta method form to describe operators. Eg. `foo:__len()` denotes `#foo`, `foo:__add(bar)` denotes `foo + bar`, `foo:__unm()` denotes `-foo`, etc. Just write the symbol form `#`, `+`, `-`, etc. in your calculation.
 
-Additionally, this is not true syntax, but for description convenience in this document, optional parameter is described between square brackets `[optional]`; default value is appended after an equal sign `foo = 42`; variadic list is described as `...`.
+Additionally, this is not about the syntax, but for description convenience in this document, optional parameter is described between square brackets `[optional]`; default value is appended after an equal sign `foo = 42`; variadic list is described as `...`.
 
 ### Memory Management
 
-Lua uses GC to free unused memory automatically, thus you don't have to do that manually most of the time. However resources loaded by `Resources.load(...)` are not, consider unload them properly. See [Resources](#resources) for details.
+Lua uses GC to free unused memory automatically, thus you don't have to do so manually most of the time. However resources loaded by `Resources.load(...)` are not, consider unloading them properly. See [Resources](#resources) for details.
 
 ### Standard Libraries
 
-The ready to use modules, `package`, `coroutine`, `math`, `table`, `string`, `utf8`, `debug` are reserved from the original.
+The ready to use modules, `package`, `coroutine`, `math`, `table`, `string`, `utf8`, `debug` are reserved from the original language.
 
 The trivial modules, `io`, `os` are removed. Bitty Engine offers alternatives.
 
@@ -188,7 +188,7 @@ Bitty Engine offers some handy built-in functions, some are reserved from the or
 	* `default`: the default content
 	* returns inputted string, or `nil` for canceled
 
-* `exit()`: exits the current execution
+* `exit()`: exits execution of the current program
 
 [TOP](#reference-manual)
 
@@ -228,7 +228,7 @@ function rendererReset()
 end
 ```
 
-Generally `setup` is used to initial game variables, states, `update` is where gameplay logic and rendering goes, and `quit` is for persisting necessary data on disk. All these six entries are optional.
+Generally `setup` is used to initial game variables, states, `update` is where gameplay logic and rendering goes, and `quit` is for persisting necessary data on disk. All these entries above are optional.
 
 Bitty Engine uses a timeout mechanism to avoid unexpected infinite loops, it raises an error when any invoking to the entries takes more than 10 seconds by default. The timeout value can be changed by [Debug.setTimeout(...)](#debug).
 
@@ -409,7 +409,7 @@ This module performs a smooth walking algorithm on 2D grids.
 
 ### Archive
 
-This module offers manipulations for a ZIP package.
+This module offers manipulations of ZIP package.
 
 **Constructors**
 
@@ -456,7 +456,7 @@ This module offers manipulations for a ZIP package.
 
 ### Bytes
 
-Being the same as Lua list, `Bytes` index starts from 1. Implements a `Stream` protocol as memory buffer.
+Being the same as Lua list, a `Bytes`' index starts from 1. Implements a `Stream` protocol as memory buffer.
 
 **Constructors**
 
@@ -562,7 +562,7 @@ Being the same as Lua list, `Bytes` index starts from 1. Implements a `Stream` p
 	* `g`: the green component, with range of values from 0 to 255
 	* `b`: the blue component, with range of values from 0 to 255
 	* `a`: the alpha component, with range of values from 0 to 255
-* `Color.new()`: constructs a color object as white
+* `Color.new()`: constructs a color object in white
 
 **Operators**
 
@@ -638,7 +638,7 @@ Being the same as Lua list, `Bytes` index starts from 1. Implements a `Stream` p
 
 ### File
 
-Being the same as Lua list, `File` index starts from 1. Implements a `Stream` protocol as file on disk.
+Being the same as Lua list, a `File`'s index starts from 1. Implements a `Stream` protocol as file on disk.
 
 **Constructors**
 
@@ -1520,7 +1520,7 @@ Can be loaded by `Resources.load(...)`.
 
 ## Primitives
 
-The coordinate definition in Bitty Engine is:
+The coordinate definition in Bitty Engine is as follow:
 
 ![](imgs/coordinate.png)
 
