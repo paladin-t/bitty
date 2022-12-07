@@ -32,7 +32,9 @@
 #include "../lib/mongoose/mongoose.h"
 #include "../lib/sdl_gfx/SDL2_gfxPrimitives.h"
 #include "../lib/zlib/zlib.h"
-#include <curl/curl.h>
+#if !defined BITTY_OS_HTML
+#	include <curl/curl.h>
+#endif /* BITTY_OS_HTML */
 #include <SDL_mixer.h>
 #if defined BITTY_OS_WIN
 #	include <SDL_syswm.h>

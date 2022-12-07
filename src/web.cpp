@@ -9,8 +9,11 @@
 */
 
 #include "web.h"
-#include "web_curl.h"
-#include "web_html.h"
+#if defined BITTY_OS_HTML
+#	include "web_html.h"
+#else /* BITTY_OS_HTML */
+#	include "web_curl.h"
+#endif /* BITTY_OS_HTML */
 #include "web_mongoose.h"
 
 /*

@@ -19,7 +19,9 @@
 #include "../lib/lua/src/lua.hpp"
 #include "../lib/mongoose/mongoose.h"
 #include "../lib/zlib/zlib.h"
-#include <curl/curl.h>
+#if !defined BITTY_OS_HTML
+#	include <curl/curl.h>
+#endif /* BITTY_OS_HTML */
 #include <SDL.h>
 #include <SDL_mixer.h>
 

@@ -13,7 +13,9 @@
 
 #include "web.h"
 #if BITTY_WEB_ENABLED
-#	include <curl/curl.h>
+#	if !defined BITTY_OS_HTML
+#		include <curl/curl.h>
+#	endif /* BITTY_OS_HTML */
 #endif /* BITTY_WEB_ENABLED */
 #if BITTY_MULTITHREAD_ENABLED
 #	include <thread>
