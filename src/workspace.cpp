@@ -40,9 +40,11 @@
 ** Macros and constants
 */
 
-#ifndef WORKSPACE_SPLASH_FILE
-#	define WORKSPACE_SPLASH_FILE "../splash.png"
-#endif /* WORKSPACE_SPLASH_FILE */
+#if !defined BITTY_OS_HTML
+#	ifndef WORKSPACE_SPLASH_FILE
+#		define WORKSPACE_SPLASH_FILE "../splash.png"
+#	endif /* WORKSPACE_SPLASH_FILE */
+#endif /* BITTY_OS_HTML */
 
 #if !defined IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 #	error "IMGUI_DISABLE_OBSOLETE_FUNCTIONS not defined."
@@ -60,10 +62,41 @@ static_assert(sizeof(ImDrawIdx) == sizeof(unsigned int), "Wrong ImDrawIdx size."
 #if defined BITTY_OS_HTML
 EM_JS(
 	bool, workspaceGetPlayButtonEnabled, (), {
-		if (typeof getPlayButtonEnabled != 'function')
+		if (typeof getPlayButtonEnabled != 'function') {
 			return true;
+		}
 
 		return getPlayButtonEnabled();
+	}
+);
+EM_JS(
+	bool, workspaceHasSplashImage, (), {
+		if (typeof getSplashImage != 'function') {
+			return false;
+		}
+
+		return true;
+	}
+);
+EM_JS(
+	const char*, workspaceGetSplashImage, (), {
+		var ret = '';
+		if (typeof getSplashImage == 'function') {
+			ret = getSplashImage();
+		}
+		if (ret == null) {
+			ret = '';
+		}
+		var lengthBytes = lengthBytesUTF8(ret) + 1;
+		var stringOnWasmHeap = _malloc(lengthBytes);
+		stringToUTF8(ret, stringOnWasmHeap, lengthBytes + 1);
+
+		return stringOnWasmHeap;
+	}
+);
+EM_JS(
+	void, workspaceGetSplashFree, (void* ptr), {
+		_free(ptr);
 	}
 );
 #endif /* BITTY_OS_HTML */
@@ -74,6 +107,9 @@ static void workspaceSleep(int ms) {
 	emscripten_sleep((unsigned)ms);
 }
 #else /* BITTY_OS_HTML */
+static bool workspaceHasSplashImage(void) {
+	return Path::existsFile(WORKSPACE_SPLASH_FILE);
+}
 static void workspaceSleep(int ms) {
 	DateTime::sleep(ms);
 }
@@ -89,6 +125,16 @@ static void workspaceCreateSplash(Window*, Renderer* rnd, Workspace* ws) {
 		ws->splashEngine(nullptr);
 	}
 
+#if defined BITTY_OS_HTML
+	const char* img = workspaceGetSplashImage();
+	if (img) {
+		Bytes::Ptr bytes(Bytes::create());
+		if (Base64::toBytes(bytes.get(), img)) {
+			ws->splashBitty(ws->theme()->createTexture(rnd, bytes->pointer(), bytes->count()));
+		}
+		workspaceGetSplashFree((void*)img);
+	}
+#else /* BITTY_OS_HTML */
 	File::Ptr file(File::create());
 	if (file->open(WORKSPACE_SPLASH_FILE, Stream::READ)) {
 		Bytes::Ptr bytes(Bytes::create());
@@ -97,6 +143,7 @@ static void workspaceCreateSplash(Window*, Renderer* rnd, Workspace* ws) {
 
 		ws->splashBitty(ws->theme()->createTexture(rnd, bytes->pointer(), bytes->count()));
 	}
+#endif /* BITTY_OS_HTML */
 }
 static void workspaceCreateSplash(Window*, Renderer* rnd, Workspace* ws, int index) {
 	constexpr const Byte* const IMAGES[] = {
@@ -3485,7 +3532,7 @@ void Workspace::resolveAssetRef(class Window* /* wnd */, class Renderer* rnd, co
 
 void Workspace::beginSplash(class Window* wnd, class Renderer* rnd, const class Project* project) {
 #if BITTY_SPLASH_ENABLED
-	if (Path::existsFile(WORKSPACE_SPLASH_FILE)) {
+	if (workspaceHasSplashImage()) {
 		splashCustomized(true);
 
 		workspaceCreateSplash(wnd, rnd, this);
