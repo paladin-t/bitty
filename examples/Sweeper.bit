@@ -465,7 +465,7 @@ KeyCode = {
 	RGui = toKeycode(231)
 }
 
-data:text/lua;count=10164;path=main.lua;
+data:text/lua;count=10291;path=main.lua;
 --[[
 Example for the Bitty Engine
 
@@ -640,11 +640,19 @@ local function checkBlocks()
 	play(winSfx)
 end
 
+local function invalid(val)
+	return (val == nil) or (val.x ~= val.x or val.y ~= val.y)
+end
+
 -- Tries to sweep all the linked safe blocks from a specific index.
 local function sweepBlocks(idx)
+	if invalid(idx) then
+		return
+	end
+
 	local blk = getBlock(idx)
 	if blk == nil then
-		return false
+		return
 	end
 	if blk.swept then
 		return
@@ -756,7 +764,7 @@ end
 
 -- Sweeps a block at a specific index, and exams neighbours.
 local function sweepBlock(idx)
-	if idx == nil then
+	if invalid(idx) then
 		return
 	end
 
@@ -792,7 +800,7 @@ end
 
 -- Flags/unflags a block at a specific index.
 local function flagBlock(idx)
-	if idx == nil then
+	if invalid(idx) then
 		return
 	end
 

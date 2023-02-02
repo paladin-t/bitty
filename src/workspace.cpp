@@ -2027,13 +2027,13 @@ bool Workspace::canvas(class Window* wnd, class Renderer* rnd, const class Proje
 		ImVec2 wndSize;
 		ImVec2 wndMinSize;
 		if (cvsSize.x > 0) {
-			wndSize.x = cvsSize.x * times + style.WindowBorderSize * 4 + 1;
+			wndSize.x = cvsSize.x * times + style.WindowBorderSize * 4;
 			wndMinSize = ImVec2(
 				cvsSize.x * 0.5f,
 				cvsSize.x * 0.5f / canvasRatio + ImGui::TitleBarHeight()
 			);
 		} else {
-			wndSize.x = BITTY_CANVAS_DEFAULT_WIDTH * times + style.WindowBorderSize * 4 + 1;
+			wndSize.x = BITTY_CANVAS_DEFAULT_WIDTH * times + style.WindowBorderSize * 4;
 			wndMinSize = ImVec2(
 				BITTY_CANVAS_DEFAULT_WIDTH * 0.5f,
 				BITTY_CANVAS_DEFAULT_WIDTH * 0.5f / canvasRatio + ImGui::TitleBarHeight()
@@ -2836,12 +2836,11 @@ void Workspace::scene(class Window* wnd, class Renderer* rnd, const class Projec
 	bool verticalPadded = false;
 	if (*canvasFixRatio()) {
 		const float srcRatio = (float)srcSize.x / (float)srcSize.y;
-		const float dstRatio = dstSize.x / dstSize.y;
+		const float dstRatio = (dstSize.x - borderSize * 2) / (dstSize.y - borderSize * 2);
 		if (srcRatio < dstRatio) {
 			const float w = dstSize.x;
-			dstSize.x = dstSize.y * srcRatio;
-			dstSize.x -= borderSize * 2;
 			dstSize.y -= borderSize * 2;
+			dstSize.x = dstSize.y * srcRatio;
 			dstPos.x += (w - dstSize.x) * 0.5f;
 			if (*canvasState() == MAXIMIZED)
 				dstPos.y += borderSize;
@@ -2849,9 +2848,8 @@ void Workspace::scene(class Window* wnd, class Renderer* rnd, const class Projec
 			horizontalPadded = true;
 		} else if (srcRatio > dstRatio) {
 			const float h = dstSize.y;
-			dstSize.y = dstSize.x / srcRatio;
 			dstSize.x -= borderSize * 2;
-			dstSize.y -= borderSize * 2;
+			dstSize.y = dstSize.x / srcRatio;
 			dstPos.x += borderSize;
 			dstPos.y += (h - dstSize.y) * 0.5f;
 
