@@ -13,7 +13,7 @@ data:text/lua;count=747;path=class.lua;
 --[[
 Example for the Bitty Engine
 
-Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
+Copyright (C) 2020 - 2023 Tony Wang, all rights reserved
 
 Homepage: https://paladin-t.github.io/bitty/
 ]]
@@ -61,7 +61,7 @@ data:text/lua;count=758;path=main.lua;
 --[[
 Example for the Bitty Engine
 
-Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
+Copyright (C) 2020 - 2023 Tony Wang, all rights reserved
 
 Homepage: https://paladin-t.github.io/bitty/
 ]]

@@ -611,6 +611,8 @@ Being the same as Lua list, a `Bytes`' index starts from 1. Implements a `Stream
 * `DateTime.fromSeconds(sec)`: converts seconds to nanoseconds
 	* `sec`: seconds
 	* returns nanoseconds
+* `DateTime.sleep(ms)`: sleeps for the specific milliseconds
+	* `ms`: milliseconds
 
 ### Encoding
 
