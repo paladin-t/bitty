@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2023 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -45,6 +45,9 @@
 #ifndef WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY
 #	define WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY "d"
 #endif /* WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY */
+#ifndef WORKSPACE_OPTION_WINDOW_VSYNC_ENABLED_KEY
+#	define WORKSPACE_OPTION_WINDOW_VSYNC_ENABLED_KEY "v"
+#endif /* WORKSPACE_OPTION_WINDOW_VSYNC_ENABLED_KEY */
 #ifndef WORKSPACE_OPTION_WINDOW_ALWAYS_ON_TOP_ENABLED_KEY
 #	define WORKSPACE_OPTION_WINDOW_ALWAYS_ON_TOP_ENABLED_KEY "m"
 #endif /* WORKSPACE_OPTION_WINDOW_ALWAYS_ON_TOP_ENABLED_KEY */

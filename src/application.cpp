@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2022 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2023 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -66,6 +66,18 @@
 ** Utilities
 */
 
+#if defined BITTY_OS_HTML
+EM_JS(
+	bool, applicationGetVsyncEnabled, (), {
+		if (typeof getVsyncEnabled != 'function') {
+			return true;
+		}
+
+		return getVsyncEnabled();
+	}
+);
+#endif /* BITTY_OS_HTML */
+
 static void applicationParseArgs(int argc, const char* argv[], Text::Dictionary &options) {
 	if (argc == 0 || !argv)
 		return;
@@ -98,7 +110,6 @@ static void applicationParseArgs(int argc, const char* argv[], Text::Dictionary 
 		++i;
 	}
 }
-
 static void applicationLoadArgs(const char* path, Text::Dictionary &options) {
 	File::Ptr file(File::create());
 	if (!file->open(path, Stream::READ))
@@ -210,6 +221,12 @@ public:
 		else if (options.find(WORKSPACE_OPTION_RENDERER_X3_KEY) != options.end())
 			scale = 3;
 		const bool highDpi = options.find(WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY) == options.end();
+#if defined BITTY_OS_HTML
+		const bool vsync = options.find(WORKSPACE_OPTION_WINDOW_VSYNC_ENABLED_KEY) != options.end() ||
+			applicationGetVsyncEnabled();
+#else /* BITTY_OS_HTML */
+		const bool vsync = options.find(WORKSPACE_OPTION_WINDOW_VSYNC_ENABLED_KEY) != options.end();
+#endif /* BITTY_OS_HTML */
 #if BITTY_EFFECTS_ENABLED
 		const bool opengl = true;
 #	if defined BITTY_OS_WIN
@@ -238,6 +255,8 @@ public:
 #else /* BITTY_EFFECTS_ENABLED */
 		const bool opengl = false;
 #endif /* BITTY_EFFECTS_ENABLED */
+		if (vsync)
+			SDL_SetHintWithPriority(SDL_HINT_RENDER_VSYNC, "1", SDL_HINT_OVERRIDE);
 		const bool alwaysOnTop = options.find(WORKSPACE_OPTION_WINDOW_ALWAYS_ON_TOP_ENABLED_KEY) != options.end();
 		_window = Window::create();
 		_window->open(
@@ -927,6 +946,7 @@ private:
 			" [-" WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY "]"
 			" [-" WORKSPACE_OPTION_WINDOW_SIZE_KEY " MxN]"
 			" [-" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY " ]"
+			" [-" WORKSPACE_OPTION_WINDOW_VSYNC_ENABLED_KEY " ]"
 			" [-" WORKSPACE_OPTION_WINDOW_ALWAYS_ON_TOP_ENABLED_KEY " ]"
 			" [-" WORKSPACE_OPTION_RENDERER_X2_KEY "]"
 			" [-" WORKSPACE_OPTION_RENDERER_X3_KEY "]"
@@ -948,6 +968,7 @@ private:
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY              "        Run with borderless window.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_SIZE_KEY                            " MxN    Specify window size.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY               "        Disable high-DPI.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_VSYNC_ENABLED_KEY                   "        Enable vsync.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_ALWAYS_ON_TOP_ENABLED_KEY           "        Keep window top most.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X2_KEY                            "       Set renderer scale to x2.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X3_KEY                            "       Set renderer scale to x3.\n");
