@@ -39,6 +39,9 @@
 #if defined BITTY_OS_WIN
 #	include <SDL_syswm.h>
 #endif /* BITTY_OS_WIN */
+#if defined BITTY_OS_HTML
+#	include <emscripten.h>
+#endif /* BITTY_OS_HTML */
 
 /*
 ** {===========================================================================

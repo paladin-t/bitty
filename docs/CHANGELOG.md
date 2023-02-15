@@ -1,3 +1,16 @@
+### v1.2.1 Feb. 15, 2023
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added a `DateTime.sleep(...)` function
+* Added a vsync option
+* Added an option to customize the splash image for HTML build
+* Added an option to disable the boot sound
+* Added a "position" option to the `Application.setOption(...)` function
+* Added a "display_index" option to the `Application.setOption(...)` function
+* Fixed a cursor location issue of the `bytes:resize(...)` function
+* Fixed a canvas scaling issue under edit mode
+
 ### v1.2 Sep. 1, 2022
 
 Enhanced modules, improved usability, fixed some bugs.

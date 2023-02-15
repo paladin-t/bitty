@@ -720,7 +720,8 @@ When objects in the physics module sleep, they sleep as a group of all objects t
 	* `translate`: `Vec2`
 * `Physics.Transform.newScale(scaleX, scaleY)`: constructs a transform object
 * `Physics.Transform.newScale(scale)`: constructs a transform object
-* `Physics.Transform.newRotate(radians)`: constructs a transform object
+* `Physics.Transform.newRotate(rot)`: constructs a transform object
+	* `rot`: rotation in radians or `Rot`
 * `Physics.Transform.newRigid(translate, radians)`: constructs a transform object
 	* `translate`: `Vec2`
 * `Physics.Transform.newRigidInverse(trans)`: constructs a transform object

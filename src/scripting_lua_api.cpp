@@ -9838,6 +9838,36 @@ static int Application_setOption(lua_State* L) {
 			nullptr,
 			true
 		);
+	} else if (key == "position") {
+		int x = 0, y = 0;
+		read<2>(L, x, y);
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				Window* wnd = impl->primitives()->window();
+				const bool fullscreen = wnd->fullscreen();
+				if (fullscreen)
+					wnd->fullscreen(false);
+				const bool maximized = wnd->maximized();
+				if (maximized)
+					wnd->restore();
+				wnd->position(Math::Vec2i(x, y));
+			},
+			nullptr,
+			true
+		);
+	} else if (key == "display_index") {
+		int idx = 0;
+		read<2>(L, idx);
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				Window* wnd = impl->primitives()->window();
+				wnd->displayIndex(idx);
+			},
+			nullptr,
+			true
+		);
 	} else {
 		error(L, "Invalid option.");
 	}

@@ -611,6 +611,8 @@ Being the same as Lua list, a `Bytes`' index starts from 1. Implements a `Stream
 * `DateTime.fromSeconds(sec)`: converts seconds to nanoseconds
 	* `sec`: seconds
 	* returns nanoseconds
+* `DateTime.sleep(ms)`: sleeps for the specific milliseconds
+	* `ms`: milliseconds
 
 ### Encoding
 
@@ -1814,6 +1816,8 @@ Available options:
 | "maximum_size" | Integers, `width`, `height` | Sets the maximum size of the application window |
 | "bordered" | Boolean, `bordered` | Sets whether the application window is bordered |
 | "resizable" | Boolean, `resizable` | Sets whether the application window is resizable |
+| "position" | Integers, `x`, `y` | Sets the position of the application window |
+| "display_index" | Integers, `index` | Sets the index where the application window will be displayed on that device |
 
 * `Application.setCursor(img[, x, y])`: sets the mouse cursor
 	* `img`: the specific `Image` to set, `nil` to reset
