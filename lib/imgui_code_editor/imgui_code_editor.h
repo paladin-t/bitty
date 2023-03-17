@@ -240,6 +240,7 @@ public:
 
 	int GetTotalLines(void) const;
 	int GetColumnsAt(int aLine) const;
+	int GetTotalTokens(void) const;
 
 	void SetCursorPosition(const Coordinates &aPosition);
 	Coordinates GetCursorPosition(void) const;
@@ -292,6 +293,7 @@ public:
 	void SelectWordUnderMouse(void);
 	void SelectAll(void);
 	bool HasSelection(void) const;
+	void ClearSelection(void);
 	void GetSelection(Coordinates &aStart, Coordinates &aEnd);
 	std::string GetSelectionText(const char* aNewline = "\n") const;
 	int GetSelectionLines(void) const;

@@ -946,8 +946,8 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 
 	PushAllowKeyboardFocus(true);
 
-	const bool shift = io.KeyShift;
 	const bool ctrl = io.KeyCtrl;
+	const bool shift = io.KeyShift;
 	const bool alt = io.KeyAlt;
 
 	CursorScreenPos = GetCursorScreenPos();
@@ -994,11 +994,11 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 			MoveLeft(1, shift, ctrl);
 		else if (!alt && IsKeyPressed(GetKeyIndex(ImGuiKey_RightArrow)))
 			MoveRight(1, shift, ctrl);
-		else if (!alt && IsKeyPressed(GetKeyIndex(ImGuiKey_PageUp)))
-			MoveUp(GetPageSize() - 4, shift);
-		else if (!alt && IsKeyPressed(GetKeyIndex(ImGuiKey_PageDown)))
-			MoveDown(GetPageSize() - 4, shift);
-		else if (!alt && ctrl && IsKeyPressed(GetKeyIndex(ImGuiKey_Home)))
+		else if (!ctrl && !alt && IsKeyPressed(GetKeyIndex(ImGuiKey_PageUp)))
+			MoveUp(GetPageSize() - 2, shift);
+		else if (!ctrl && !alt && IsKeyPressed(GetKeyIndex(ImGuiKey_PageDown)))
+			MoveDown(GetPageSize() - 2, shift);
+		else if (ctrl && !alt && IsKeyPressed(GetKeyIndex(ImGuiKey_Home)))
 			MoveTop(shift);
 		else if (ctrl && !alt && IsKeyPressed(GetKeyIndex(ImGuiKey_End)))
 			MoveBottom(shift);
@@ -1016,22 +1016,22 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 			} else if (IsKeyPressed(GetKeyIndex(ImGuiKey_Tab))) {
 				if (HasSelection() && GetSelectionLines() > 1) {
 					if (IsShortcutsEnabled(ShortcutType::IndentUnindent)) {
-						if (!ctrl && !alt && !shift) // Indent multi-lines.
+						if (!ctrl && !shift && !alt) // Indent multi-lines.
 							Indent();
-						else if (!ctrl && !alt && shift) // Unindent multi-lines.
+						else if (!ctrl && shift && !alt) // Unindent multi-lines.
 							Unindent();
-						else if (ctrl && !alt && shift) // Unindent multi-lines.
+						else if (ctrl && shift && !alt) // Unindent multi-lines.
 							Unindent();
 					}
 				} else {
-					if (!ctrl && !alt && !shift) {
+					if (!ctrl && !shift && !alt) {
 						unsigned int c = '\t'; // Insert tab.
 						io.AddInputCharacter((ImWchar)c);
-					} else if (!ctrl && !alt && shift) {
+					} else if (!ctrl && shift && !alt) {
 						Char cc = GetCharUnderCursor();
 						if (cc == '\t' || cc == ' ')
 							BackSpace(); // Unindent single line.
-					} else if (ctrl && !alt && shift) {
+					} else if (ctrl && shift && !alt) {
 						Char cc = GetCharUnderCursor();
 						if (cc == '\t' || cc == ' ')
 							BackSpace(); // Unindent single line.
@@ -1485,6 +1485,29 @@ int CodeEditor::GetColumnsAt(int aLine) const {
 	return (int)l.Glyphs.size();
 }
 
+int CodeEditor::GetTotalTokens(void) const {
+	int result = 0;
+	ImU32 index = 0;
+	for (const Line &l : CodeLines) {
+		for (const Glyph &g : l.Glyphs) {
+			if (g.ColorIndex == (ImU32)PaletteIndex::Space || g.ColorIndex == (ImU32)PaletteIndex::Default)
+				continue;
+
+			if (result == 0) {
+				result = 1;
+				index = g.ColorIndex;
+			} else {
+				if (index != g.ColorIndex) {
+					++result;
+					index = g.ColorIndex;
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
 void CodeEditor::SetCursorPosition(const Coordinates &aPosition) {
 	if (State.CursorPosition != aPosition) {
 		State.CursorPosition = aPosition;
@@ -1833,8 +1856,8 @@ void CodeEditor::SetSelection(const Coordinates &aStart, const Coordinates &aEnd
 
 	if (aWordMode) {
 		State.SelectionStart = FindWordStart(State.SelectionStart);
-		if (!IsOnWordBoundary(State.SelectionEnd))
-			State.SelectionEnd = FindWordEnd(FindWordStart(State.SelectionEnd));
+		//if (!IsOnWordBoundary(State.SelectionEnd))
+		State.SelectionEnd = FindWordEnd(FindWordStart(State.SelectionEnd));
 	}
 }
 
@@ -1855,6 +1878,10 @@ void CodeEditor::SelectAll(void) {
 
 bool CodeEditor::HasSelection(void) const {
 	return State.SelectionEnd > State.SelectionStart;
+}
+
+void CodeEditor::ClearSelection(void) {
+	State.SelectionEnd = State.SelectionStart;
 }
 
 void CodeEditor::GetSelection(Coordinates &aStart, Coordinates &aEnd) {
@@ -3041,11 +3068,18 @@ CodeEditor::Coordinates CodeEditor::FindWordStart(const Coordinates &aFrom) cons
 		return at;
 
 	PaletteIndex cstart = (PaletteIndex)line.Glyphs[at.Column].ColorIndex;
-	while (at.Column > 0) {
-		if (cstart != (PaletteIndex)line.Glyphs[at.Column - 1].ColorIndex)
-			break;
+	if (at.Column > 0) {
+		while (at.Column > 0) {
+			const Glyph &g = line.Glyphs[at.Column - 1];
+			if (g.Character == ' ' || g.Character == '\t')
+				break;
+			if (cstart != (PaletteIndex)g.ColorIndex)
+				break;
 
-		--at.Column;
+			--at.Column;
+		}
+		if (cstart == PaletteIndex::String)
+			++at.Column;
 	}
 
 	return at;
@@ -3062,11 +3096,18 @@ CodeEditor::Coordinates CodeEditor::FindWordEnd(const Coordinates &aFrom) const 
 		return at;
 
 	PaletteIndex cstart = (PaletteIndex)line.Glyphs[at.Column].ColorIndex;
-	while (at.Column < (int)line.Glyphs.size()) {
-		if (cstart != (PaletteIndex)line.Glyphs[at.Column].ColorIndex)
-			break;
+	if (at.Column < (int)line.Glyphs.size()) {
+		while (at.Column < (int)line.Glyphs.size()) {
+			const Glyph &g = line.Glyphs[at.Column];
+			if (g.Character == ' ' || g.Character == '\t')
+				break;
+			if (cstart != (PaletteIndex)g.ColorIndex)
+				break;
 
-		++at.Column;
+			++at.Column;
+		}
+		if (cstart == PaletteIndex::String)
+			--at.Column;
 	}
 
 	return at;
