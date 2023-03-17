@@ -140,10 +140,8 @@ template<class T> struct Right {
  */
 template<class L, class R> class Either {
 private:
-	union {
-		L _left;
-		R _right;
-	};
+	L _left;
+	R _right;
 
 	bool _isLeft = false;
 
