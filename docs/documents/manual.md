@@ -1447,7 +1447,7 @@ Can be loaded by `Resources.load(...)`.
 	* `size`: the size as number
 	* `permeation`: indicates how to blur glyph edges with the alpha channel, with range of values from 0 to 255
 
-`Font` is constructed like regular object and managed by GC, do not need to unload it manually.
+`Font` is constructed like regular object and managed by GC, do not need to unload it manually. The `permeation` parameter indicates how to handle font transparency, zero means using values from a font file, while non-zero means a specified threshold for whether a pixel shall pass (non-transparent) or be blocked (transparent).
 
 ### Texture Asset
 
