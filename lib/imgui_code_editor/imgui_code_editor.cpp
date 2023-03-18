@@ -2206,7 +2206,7 @@ const CodeEditor::Palette &CodeEditor::GetDarkPalette(void) {
 		0xff4aa657, // Comment (single line).
 		0xff4aa657, // Comment (multi line).
 		0x90909090, // Space.
-		0xff2C2C2C, // Background.
+		0xff2c2c2c, // Background.
 		0xffe0e0e0, // Cursor.
 		0x80a06020, // Selection.
 		0x804d00ff, // ErrorMarker.
@@ -3071,7 +3071,7 @@ CodeEditor::Coordinates CodeEditor::FindWordStart(const Coordinates &aFrom) cons
 	if (at.Column > 0) {
 		while (at.Column > 0) {
 			const Glyph &g = line.Glyphs[at.Column - 1];
-			if (g.Character == ' ' || g.Character == '\t')
+			if (cstart != PaletteIndex::String && (g.Character == ' ' || g.Character == '\t'))
 				break;
 			if (cstart != (PaletteIndex)g.ColorIndex)
 				break;
@@ -3099,7 +3099,7 @@ CodeEditor::Coordinates CodeEditor::FindWordEnd(const Coordinates &aFrom) const 
 	if (at.Column < (int)line.Glyphs.size()) {
 		while (at.Column < (int)line.Glyphs.size()) {
 			const Glyph &g = line.Glyphs[at.Column];
-			if (g.Character == ' ' || g.Character == '\t')
+			if (cstart != PaletteIndex::String && (g.Character == ' ' || g.Character == '\t'))
 				break;
 			if (cstart != (PaletteIndex)g.ColorIndex)
 				break;

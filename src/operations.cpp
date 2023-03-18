@@ -532,6 +532,7 @@ promise::Defer Operations::fileOpenFile(class Renderer* rnd, Workspace* ws, cons
 		if ((prj->strategy() & Project::ANISOTROPIC_CANVAS) != Project::NONE)
 			canvasScaleMode = Texture::ANISOTROPIC;
 		ws->canvasScaleMode(canvasScaleMode);
+		ws->canvasValidation(Math::Vec2i(0, 0));
 		ws->touchedFile(path_.c_str());
 
 		df.resolve(true);
@@ -657,6 +658,7 @@ promise::Defer Operations::fileOpenDirectory(class Renderer* rnd, Workspace* ws,
 		if ((prj->strategy() & Project::ANISOTROPIC_CANVAS) != Project::NONE)
 			canvasScaleMode = Texture::ANISOTROPIC;
 		ws->canvasScaleMode(canvasScaleMode);
+		ws->canvasValidation(Math::Vec2i(0, 0));
 		ws->touchedDirectory(path_.c_str());
 
 		df.resolve(true);
@@ -720,6 +722,7 @@ promise::Defer Operations::fileOpenExample(class Renderer* rnd, Workspace* ws, c
 		if ((prj->strategy() & Project::ANISOTROPIC_CANVAS) != Project::NONE)
 			canvasScaleMode = Texture::ANISOTROPIC;
 		ws->canvasScaleMode(canvasScaleMode);
+		ws->canvasValidation(Math::Vec2i(0, 0));
 		ws->touchedExample(path_.c_str());
 
 		df.resolve(true);
