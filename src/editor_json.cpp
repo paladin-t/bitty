@@ -312,6 +312,8 @@ public:
 
 			return Variant(true);
 		case FIND: {
+				_tools.initialized = false;
+
 				_tools.jumping = -1;
 
 				_tools.finding = true;
@@ -353,6 +355,8 @@ public:
 
 			return Variant(true);
 		case GOTO: {
+				_tools.initialized = false;
+
 				_tools.finding = false;
 
 				const Coordinates coord = GetCursorPosition();
