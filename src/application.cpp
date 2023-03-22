@@ -29,6 +29,7 @@
 #	include "../lib/chipmunk2d/include/chipmunk/chipmunk.h"
 #endif /* BITTY_OS_APPLE */
 #include "../lib/imgui_sdl/imgui_sdl.h"
+#include "../lib/jpath/jpath.hpp"
 #include "../lib/mongoose/mongoose.h"
 #include "../lib/sdl_gfx/SDL2_gfxPrimitives.h"
 #include "../lib/zlib/zlib.h"
@@ -230,6 +231,44 @@ public:
 #else /* BITTY_OS_HTML */
 		const bool vsync = options.find(WORKSPACE_OPTION_WINDOW_VSYNC_ENABLED_KEY) != options.end();
 #endif /* BITTY_OS_HTML */
+		bool fullscreen = false;
+		bool maximized = false;
+		int moditorIndex = 0;
+		int wndX = -1;
+		int wndY = -1;
+		int wndWidth = WINDOW_MIN_WIDTH * 3;
+		int wndHeight = WINDOW_MIN_HEIGHT * 3;
+#if BITTY_DISPLAY_AUTO_SIZE_ENABLED
+		const int minWndWidth = WINDOW_MIN_WIDTH;
+		const int minWndHeight = WINDOW_MIN_HEIGHT;
+#else /* BITTY_DISPLAY_AUTO_SIZE_ENABLED*/
+		const int minWndWidth = WINDOW_MIN_WIDTH * scale;
+		const int minWndHeight = WINDOW_MIN_HEIGHT * scale;
+#endif /* BITTY_DISPLAY_AUTO_SIZE_ENABLED */
+#if !defined BITTY_OS_HTML
+		const std::string pref = Path::writableDirectory();
+		const std::string fn = std::string(WORKSPACE_PREFERENCES_NAME) + std::string("." BITTY_JSON_EXT);
+		const std::string path = Path::combine(pref.c_str(), fn.c_str());
+		rapidjson::Document doc;
+		File::Ptr file(File::create());
+		if (file->open(path.c_str(), Stream::READ)) {
+			std::string buf;
+			file->readString(buf);
+			file->close();
+			if (!Json::fromString(doc, buf.c_str()))
+				doc.SetNull();
+		}
+		file = nullptr;
+		Jpath::get(doc, moditorIndex, "application", "window", "display_index");
+		Jpath::get(doc, fullscreen, "application", "window", "fullscreen");
+		Jpath::get(doc, maximized, "application", "window", "maximized");
+		if (!Jpath::get(doc, wndX, "application", "window", "position", 0))
+			wndX = -1;
+		if (!Jpath::get(doc, wndY, "application", "window", "position", 1))
+			wndY = -1;
+		Jpath::get(doc, wndWidth, "application", "window", "size", 0);
+		Jpath::get(doc, wndHeight, "application", "window", "size", 1);
+#endif /* BITTY_OS_HTML */
 #if BITTY_EFFECTS_ENABLED
 		const bool opengl = true;
 #	if defined BITTY_OS_WIN
@@ -264,11 +303,18 @@ public:
 		_window = Window::create();
 		_window->open(
 			BITTY_TITLE " v" BITTY_VERSION_STRING,
-			0, WINDOW_DEFAULT_WIDTH, WINDOW_DEFAULT_HEIGHT,
-			WINDOW_MIN_WIDTH * scale, WINDOW_MIN_HEIGHT * scale, borderless,
+			moditorIndex,
+			wndX, wndY,
+			wndWidth, wndHeight,
+			minWndWidth, minWndHeight,
+			borderless,
 			highDpi, opengl,
 			alwaysOnTop
 		);
+		if (fullscreen)
+			_window->fullscreen(true);
+		else if (maximized)
+			_window->maximize();
 
 		int driver = 0;
 		Text::Dictionary::const_iterator drvOpt = options.find(WORKSPACE_OPTION_RENDERER_DRIVER_KEY);
@@ -311,11 +357,11 @@ public:
 
 		// Initialize the icon.
 		if (Path::existsFile(APPLICATION_ICON_FILE)) {
-			File::Ptr file(File::create());
-			if (file->open(APPLICATION_ICON_FILE, Stream::READ)) {
+			File::Ptr file_(File::create());
+			if (file_->open(APPLICATION_ICON_FILE, Stream::READ)) {
 				Bytes::Ptr bytes(Bytes::create());
-				file->readBytes(bytes.get());
-				file->close();
+				file_->readBytes(bytes.get());
+				file_->close();
 
 				Image::Ptr img(Image::create(nullptr));
 				if (img->fromBytes(bytes.get())) {
@@ -622,7 +668,11 @@ private:
 					reset = true;
 
 					break;
-				case SDL_WINDOWEVENT_MOVED:
+				case SDL_WINDOWEVENT_MOVED: {
+						const int x = evt.window.data1, y = evt.window.data2;
+						_workspace->moved(_window, _renderer, Math::Vec2i(x, y));
+					}
+
 					break;
 				case SDL_WINDOWEVENT_MAXIMIZED:
 					fprintf(stdout, "SDL: SDL_WINDOWEVENT_MAXIMIZED.\n");

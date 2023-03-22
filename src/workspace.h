@@ -126,6 +126,8 @@ constexpr const ImGuiWindowFlags WORKSPACE_WND_FLAGS_FLOAT =
 	ImGuiWindowFlags_NoSavedSettings |
 	ImGuiWindowFlags_NoNav;
 
+extern const char* WORKSPACE_PREFERENCES_NAME;
+
 /* ===========================================================================} */
 
 /*
@@ -155,6 +157,7 @@ public:
 		int applicationWindowDisplayIndex = 0;
 		bool applicationWindowFullscreen = false;
 		bool applicationWindowMaximized = false;
+		Math::Vec2i applicationWindowPosition;
 		Math::Vec2i applicationWindowSize;
 		bool applicationPauseOnFocusLost = true;
 		bool applicationPauseOnEsc = true;
@@ -464,15 +467,19 @@ public:
 	 */
 	virtual void renderTargetsReset(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 	/**
-	 * @brief Callback when the application window resized.
+	 * @brief Callback when the application window has been moved.
+	 */
+	virtual void moved(Window* wnd, Renderer* rnd, const Math::Vec2i &wndPos);
+	/**
+	 * @brief Callback when the application window has been resized.
 	 */
 	virtual void resized(class Window* wnd, class Renderer* rnd, const class Project* project, const Math::Vec2i &size);
 	/**
-	 * @brief Callback when the application window maximized.
+	 * @brief Callback when the application window has been maximized.
 	 */
 	virtual void maximized(class Window* wnd, class Renderer* rnd);
 	/**
-	 * @brief Callback when the application window restored.
+	 * @brief Callback when the application window has been restored.
 	 */
 	virtual void restored(class Window* wnd, class Renderer* rnd);
 	/**

@@ -39,9 +39,12 @@
 #	pragma message("Trial enabled.")
 #endif /* BITTY_TRIAL_ENABLED */
 
-#ifndef WORKSPACE_PREFERENCES_NAME
-#	define WORKSPACE_PREFERENCES_NAME "sketchbook_preferences"
-#endif /* WORKSPACE_PREFERENCES_NAME */
+struct AutoRun {
+	AutoRun() {
+		WORKSPACE_PREFERENCES_NAME = "sketchbook_preferences";
+	}
+};
+static AutoRun AUTORUN;
 
 /* ===========================================================================} */
 
@@ -57,6 +60,7 @@ WorkspaceSketchbook::SketchbookSettings &WorkspaceSketchbook::SketchbookSettings
 	applicationWindowDisplayIndex = other.applicationWindowDisplayIndex;
 	applicationWindowFullscreen = other.applicationWindowFullscreen;
 	applicationWindowMaximized = other.applicationWindowMaximized;
+	applicationWindowPosition = other.applicationWindowPosition;
 	applicationWindowSize = other.applicationWindowSize;
 	applicationPauseOnFocusLost = other.applicationPauseOnFocusLost;
 	applicationPauseOnEsc = other.applicationPauseOnEsc;
@@ -107,6 +111,7 @@ bool WorkspaceSketchbook::SketchbookSettings::operator != (const SketchbookSetti
 	if (applicationWindowDisplayIndex != other.applicationWindowDisplayIndex ||
 		applicationWindowFullscreen != other.applicationWindowFullscreen ||
 		applicationWindowMaximized != other.applicationWindowMaximized ||
+		applicationWindowPosition != other.applicationWindowPosition ||
 		applicationWindowSize != other.applicationWindowSize ||
 		applicationPauseOnFocusLost != other.applicationPauseOnFocusLost ||
 		applicationPauseOnEsc != other.applicationPauseOnEsc
@@ -270,7 +275,8 @@ class Theme* WorkspaceSketchbook::theme(void) const {
 
 bool WorkspaceSketchbook::load(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives) {
 	const std::string pref = Path::writableDirectory();
-	const std::string path = Path::combine(pref.c_str(), WORKSPACE_PREFERENCES_NAME "." BITTY_JSON_EXT);
+	const std::string fn = std::string(WORKSPACE_PREFERENCES_NAME) + std::string("." BITTY_JSON_EXT);
+	const std::string path = Path::combine(pref.c_str(), fn.c_str());
 
 	rapidjson::Document doc;
 	File::Ptr file(File::create());
@@ -296,7 +302,8 @@ bool WorkspaceSketchbook::save(class Window* wnd, class Renderer* rnd, const cla
 		return false;
 
 	const std::string pref = Path::writableDirectory();
-	const std::string path = Path::combine(pref.c_str(), WORKSPACE_PREFERENCES_NAME "." BITTY_JSON_EXT);
+	const std::string fn = std::string(WORKSPACE_PREFERENCES_NAME) + std::string("." BITTY_JSON_EXT);
+	const std::string path = Path::combine(pref.c_str(), fn.c_str());
 	File::Ptr file(File::create());
 	if (file->open(path.c_str(), Stream::WRITE)) {
 		std::string buf;

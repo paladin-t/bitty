@@ -38,8 +38,11 @@ public:
 
 	virtual bool open(
 		const char* title,
-		int displayIndex, int width, int height,
-		int minWidth, int minHeight, bool borderless,
+		int displayIndex,
+		int x, int y,
+		int width, int height,
+		int minWidth, int minHeight,
+		bool borderless,
 		bool highDpi, bool opengl,
 		bool alwaysOnTop
 	) override {
@@ -65,9 +68,22 @@ public:
 		if (alwaysOnTop)
 			flags |= SDL_WINDOW_ALWAYS_ON_TOP;
 #endif /* BITTY_OS_HTML */
+		displayIndex = Math::clamp(displayIndex, 0, SDL_GetNumVideoDisplays() - 1);
+		if (x == -1 && y == -1) {
+			x = SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex);
+			y = SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex);
+		} else {
+			SDL_Rect bounds;
+			if (SDL_GetDisplayUsableBounds(displayIndex, &bounds) == 0) {
+				width = Math::clamp(width, 0, bounds.w);
+				height = Math::clamp(height, 0, bounds.h);
+				x = Math::clamp(x, bounds.x, bounds.x + bounds.w - 1 - width);
+				y = Math::clamp(y, bounds.y, bounds.y + bounds.h - 1 - height);
+			}
+		}
 		_window = SDL_CreateWindow(
 			title,
-			SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex),
+			x, y,
 			width, height,
 			flags
 		);

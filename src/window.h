@@ -65,8 +65,11 @@ public:
 	 */
 	virtual bool open(
 		const char* title,
-		int displayIndex, int width, int height,
-		int minWidth, int minHeight, bool borderless,
+		int displayIndex,
+		int x, int y,
+		int width, int height,
+		int minWidth, int minHeight,
+		bool borderless,
 		bool highDpi, bool opengl,
 		bool alwaysOnTop
 	) = 0;

@@ -52,6 +52,8 @@
 
 static_assert(sizeof(ImDrawIdx) == sizeof(unsigned int), "Wrong ImDrawIdx size.");
 
+const char* WORKSPACE_PREFERENCES_NAME = "preferences";
+
 /* ===========================================================================} */
 
 /*
@@ -297,6 +299,8 @@ static void workspaceWaitSplash(Window* wnd, Renderer* rnd, Workspace* ws, const
 
 Workspace::Settings::Settings() {
 	static_assert(INPUT_GAMEPAD_COUNT >= 2, "Wrong size.");
+
+	applicationWindowPosition = Math::Vec2i(-1, -1);
 
 	inputGamepads[0].buttons[Input::LEFT] = Input::Button(Input::KEYBOARD, 0, SDL_SCANCODE_A);
 	inputGamepads[0].buttons[Input::RIGHT] = Input::Button(Input::KEYBOARD, 0, SDL_SCANCODE_D);
@@ -847,6 +851,11 @@ void Workspace::renderTargetsReset(class Window* /* wnd */, class Renderer* /* r
 	// Do nothing.
 }
 
+void Workspace::moved(Window* wnd, Renderer* /* rnd */, const Math::Vec2i &wndPos) {
+	if (!wnd->maximized() && !wnd->fullscreen())
+		settings()->applicationWindowPosition = wndPos;
+}
+
 void Workspace::resized(class Window* wnd, class Renderer* rnd, const class Project* project, const Math::Vec2i &size) {
 	if (!wnd->maximized() && !wnd->fullscreen())
 		settings()->applicationWindowSize = size;
@@ -953,6 +962,8 @@ bool Workspace::load(class Window* wnd, class Renderer* rnd, const class Project
 	Jpath::get(doc, settings()->applicationWindowDisplayIndex, "application", "window", "display_index");
 	Jpath::get(doc, settings()->applicationWindowFullscreen, "application", "window", "fullscreen");
 	Jpath::get(doc, settings()->applicationWindowMaximized, "application", "window", "maximized");
+	Jpath::get(doc, settings()->applicationWindowPosition.x, "application", "window", "position", 0);
+	Jpath::get(doc, settings()->applicationWindowPosition.y, "application", "window", "position", 1);
 	Jpath::get(doc, settings()->applicationWindowSize.x, "application", "window", "size", 0);
 	Jpath::get(doc, settings()->applicationWindowSize.y, "application", "window", "size", 1);
 	Jpath::get(doc, settings()->applicationPauseOnFocusLost, "application", "pause_on_focus_lost");
@@ -1029,11 +1040,11 @@ bool Workspace::load(class Window* wnd, class Renderer* rnd, const class Project
 		)
 	);
 #endif /* BITTY_OS_HTML */
-	wnd->displayIndex(settings()->applicationWindowDisplayIndex);
-	if (settings()->applicationWindowFullscreen)
-		wnd->fullscreen(true);
-	else if (settings()->applicationWindowMaximized)
-		wnd->maximize();
+	//wnd->displayIndex(settings()->applicationWindowDisplayIndex);
+	//if (settings()->applicationWindowFullscreen)
+	//	wnd->fullscreen(true);
+	//else if (settings()->applicationWindowMaximized)
+	//	wnd->maximize();
 
 	if (prj) {
 		prj->preference(settings()->projectPreference);
@@ -1051,6 +1062,8 @@ bool Workspace::save(class Window* wnd, class Renderer*, const class Project*, c
 	Jpath::set(doc, doc, settings()->applicationWindowDisplayIndex, "application", "window", "display_index");
 	Jpath::set(doc, doc, settings()->applicationWindowFullscreen, "application", "window", "fullscreen");
 	Jpath::set(doc, doc, settings()->applicationWindowMaximized, "application", "window", "maximized");
+	Jpath::set(doc, doc, settings()->applicationWindowPosition.x, "application", "window", "position", 0);
+	Jpath::set(doc, doc, settings()->applicationWindowPosition.y, "application", "window", "position", 1);
 	Jpath::set(doc, doc, settings()->applicationWindowSize.x, "application", "window", "size", 0);
 	Jpath::set(doc, doc, settings()->applicationWindowSize.y, "application", "window", "size", 1);
 	Jpath::set(doc, doc, settings()->applicationPauseOnFocusLost, "application", "pause_on_focus_lost");

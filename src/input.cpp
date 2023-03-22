@@ -724,7 +724,7 @@ public:
 			wnd->ContentRegionRect.GetWidth(),
 			wnd->ContentRegionRect.GetHeight() + wnd->TitleBarHeight()
 		);
-		const int scale_ = rnd->scale() / wnd_->scale();;
+		const int scale_ = rnd->scale() / wnd_->scale();
 
 		const float dpadRadius = 60.0f * scale;
 		const float btnRadius = 30.0f * scale;
