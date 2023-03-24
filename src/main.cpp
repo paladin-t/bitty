@@ -50,6 +50,7 @@ static int entry(int argc, const char* argv[]) {
 		constexpr const int STEP = 10;
 		emscripten_sleep(STEP);
 	}
+	WORKSPACE_PREFERENCES_NAME = "sketchbook_preferences";
 	Application* app = createApplication(new WorkspaceSketchbook(), argc, argv);
 	emscripten_cancel_main_loop();
 	emscripten_set_main_loop_arg(
@@ -62,6 +63,7 @@ static int entry(int argc, const char* argv[]) {
 	);
 	destroyApplication(app);
 #else /* BITTY_OS_HTML */
+	WORKSPACE_PREFERENCES_NAME = "sketchbook_preferences";
 	Application* app = createApplication(new WorkspaceSketchbook(), argc, argv);
 	while (updateApplication(app)) { /* Do nothing. */ }
 	destroyApplication(app);

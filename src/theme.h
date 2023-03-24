@@ -443,8 +443,10 @@ protected:
 	virtual void setColor(const std::string &key, ImGuiCol idx, const ImColor &col);
 	virtual void setColor(const std::string &key, const std::string &idx, const ImColor &col);
 
+	virtual void setImage(class Renderer* rnd, class Texture* &tex, const std::string &path);
+
 private:
-	void fromFile(const char* path);
+	void fromFile(class Renderer* rnd, const char* path);
 };
 
 /* ===========================================================================} */

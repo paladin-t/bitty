@@ -236,8 +236,8 @@ public:
 		int moditorIndex = 0;
 		int wndX = -1;
 		int wndY = -1;
-		int wndWidth = WINDOW_MIN_WIDTH * 3;
-		int wndHeight = WINDOW_MIN_HEIGHT * 3;
+		int wndWidth = WINDOW_DEFAULT_WIDTH;
+		int wndHeight = WINDOW_DEFAULT_HEIGHT;
 #if BITTY_DISPLAY_AUTO_SIZE_ENABLED
 		const int minWndWidth = WINDOW_MIN_WIDTH;
 		const int minWndHeight = WINDOW_MIN_HEIGHT;
@@ -259,15 +259,20 @@ public:
 				doc.SetNull();
 		}
 		file = nullptr;
-		Jpath::get(doc, moditorIndex, "application", "window", "display_index");
-		Jpath::get(doc, fullscreen, "application", "window", "fullscreen");
-		Jpath::get(doc, maximized, "application", "window", "maximized");
+		if (!Jpath::get(doc, moditorIndex, "application", "window", "display_index"))
+			moditorIndex = 0;
+		if (!Jpath::get(doc, fullscreen, "application", "window", "fullscreen"))
+			fullscreen = false;
+		if (!Jpath::get(doc, maximized, "application", "window", "maximized"))
+			maximized = false;
 		if (!Jpath::get(doc, wndX, "application", "window", "position", 0))
 			wndX = -1;
 		if (!Jpath::get(doc, wndY, "application", "window", "position", 1))
 			wndY = -1;
-		Jpath::get(doc, wndWidth, "application", "window", "size", 0);
-		Jpath::get(doc, wndHeight, "application", "window", "size", 1);
+		if (!Jpath::get(doc, wndWidth, "application", "window", "size", 0))
+			wndWidth = WINDOW_DEFAULT_WIDTH;
+		if (!Jpath::get(doc, wndHeight, "application", "window", "size", 1))
+			wndHeight = WINDOW_DEFAULT_HEIGHT;
 #endif /* BITTY_OS_HTML */
 #if BITTY_EFFECTS_ENABLED
 		const bool opengl = true;

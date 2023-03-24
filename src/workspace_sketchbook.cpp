@@ -39,13 +39,6 @@
 #	pragma message("Trial enabled.")
 #endif /* BITTY_TRIAL_ENABLED */
 
-struct AutoRun {
-	AutoRun() {
-		WORKSPACE_PREFERENCES_NAME = "sketchbook_preferences";
-	}
-};
-static AutoRun AUTORUN;
-
 /* ===========================================================================} */
 
 /*

@@ -580,7 +580,7 @@ bool Theme::load(class Renderer* rnd) {
 	ImGuiIO &io = ImGui::GetIO();
 
 	// Load theme config.
-	fromFile(THEME_CONFIG_DIR THEME_CONFIG_DEFAULT_NAME "." BITTY_JSON_EXT);
+	fromFile(rnd, THEME_CONFIG_DIR THEME_CONFIG_DEFAULT_NAME "." BITTY_JSON_EXT);
 
 	DirectoryInfo::Ptr dirInfo = DirectoryInfo::make(THEME_CONFIG_DIR);
 	FileInfos::Ptr fileInfos = dirInfo->getFiles("*." BITTY_JSON_EXT, false);
@@ -589,7 +589,7 @@ bool Theme::load(class Renderer* rnd) {
 		if (fileInfo->fileName() == THEME_CONFIG_DEFAULT_NAME)
 			continue;
 
-		fromFile(fileInfo->fullPath().c_str());
+		fromFile(rnd, fileInfo->fullPath().c_str());
 	}
 
 	// Load the builtin fonts.
@@ -707,7 +707,24 @@ void Theme::setColor(const std::string &key, const std::string &idx, const ImCol
 	}
 }
 
-void Theme::fromFile(const char* path_) {
+void Theme::setImage(class Renderer* rnd, class Texture* &tex, const std::string &path) {
+	destroyTexture(rnd, tex);
+
+	if (path.empty())
+		return;
+
+	Bytes::Ptr bytes(Bytes::create());
+	File::Ptr file(File::create());
+	if (file->open(path.c_str(), Stream::READ)) {
+		file->readBytes(bytes.get());
+		file->close();
+	}
+	file.reset();
+
+	tex = createTexture(rnd, bytes->pointer(), bytes->count());
+}
+
+void Theme::fromFile(class Renderer* rnd, const char* path_) {
 	ImGuiIO &io = ImGui::GetIO();
 
 	const std::string cfgPath = path_;
@@ -965,6 +982,29 @@ void Theme::fromFile(const char* path_) {
 				io.Fonts->Clear();
 				io.Fonts->AddFontDefault();
 			}
+		}
+	}
+
+	const rapidjson::Value* images = nullptr;
+	Jpath::get(doc, images, "images");
+	if (images && images->IsObject()) {
+		for (rapidjson::Value::ConstMemberIterator itimg = images->MemberBegin(); itimg != images->MemberEnd(); ++itimg) {
+			const rapidjson::Value &jkimg = itimg->name;
+			const rapidjson::Value &jvimg = itimg->value;
+
+			if (!jkimg.IsString() || !(jvimg.IsString() || jvimg.IsNull()))
+				continue;
+
+			const std::string key = jkimg.GetString();
+			const std::string val = jvimg.IsString() ? jvimg.GetString() : "";
+			if (key == "pad_portrait_top")
+				setImage(rnd, imagePadPortraitTop(), val);
+			else if (key == "pad_portrait_bottom")
+				setImage(rnd, imagePadPortraitBottom(), val);
+			else if (key == "pad_portrait_left")
+				setImage(rnd, imagePadLandscapeLeft(), val);
+			else if (key == "pad_portrait_right")
+				setImage(rnd, imagePadLandscapeRight(), val);
 		}
 	}
 }
