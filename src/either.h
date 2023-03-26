@@ -97,7 +97,7 @@ public:
 		return !empty();
 	}
 
-	operator bool (void) const {
+	explicit operator bool (void) const {
 		return _hasValue;
 	}
 
@@ -126,12 +126,38 @@ template<class T> struct Left {
 
 	Left(const T &val) : value(val) {
 	}
+	Left(const Left<T> &other) : value(other.val) {
+	}
+
+	Left<T> &operator = (const T &val) {
+		value = val;
+
+		return *this;
+	}
+	Left<T> &operator = (const Left<T> &other) {
+		value = other.value;
+
+		return *this;
+	}
 };
 
 template<class T> struct Right {
 	T value;
 
 	Right(const T &val) : value(val) {
+	}
+	Right(const Right<T> &other) : value(other.val) {
+	}
+
+	Right<T> &operator = (const T &val) {
+		value = val;
+
+		return *this;
+	}
+	Right<T> &operator = (const Right<T> &other) {
+		value = other.value;
+
+		return *this;
 	}
 };
 
@@ -152,15 +178,11 @@ public:
 	}
 	Either(const Either<L, R> &either) : _isLeft(either._isLeft) {
 		if (_isLeft)
-			new (&_left) L(either._left);
+			_left = either._left;
 		else
-			new (&_right) R(either._right);
+			_right = either._right;
 	}
 	~Either() {
-		if (_isLeft)
-			_left.~L();
-		else
-			_right.~R();
 	}
 
 	Either<L, R> &operator = (const Left<L> &left) {
@@ -172,6 +194,15 @@ public:
 	Either<L, R> &operator = (const Right<R> &right) {
 		_right = right.value;
 		_isLeft = false;
+
+		return *this;
+	}
+	Either<L, R> &operator = (const Either<L, R> &other) {
+		if (other._isLeft)
+			_left = other._left;
+		else
+			_right = other._right;
+		_isLeft = other._isLeft;
 
 		return *this;
 	}

@@ -316,10 +316,12 @@ public:
 			highDpi, opengl,
 			alwaysOnTop
 		);
+#if !defined BITTY_OS_MAC
 		if (fullscreen)
 			_window->fullscreen(true);
 		else if (maximized)
 			_window->maximize();
+#endif /* BITTY_OS_MAC */
 
 		int driver = 0;
 		Text::Dictionary::const_iterator drvOpt = options.find(WORKSPACE_OPTION_RENDERER_DRIVER_KEY);

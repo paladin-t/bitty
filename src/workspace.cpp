@@ -962,8 +962,10 @@ bool Workspace::load(class Window* wnd, class Renderer* rnd, const class Project
 	Jpath::get(doc, settings()->applicationWindowDisplayIndex, "application", "window", "display_index");
 	Jpath::get(doc, settings()->applicationWindowFullscreen, "application", "window", "fullscreen");
 	Jpath::get(doc, settings()->applicationWindowMaximized, "application", "window", "maximized");
-	Jpath::get(doc, settings()->applicationWindowPosition.x, "application", "window", "position", 0);
-	Jpath::get(doc, settings()->applicationWindowPosition.y, "application", "window", "position", 1);
+	if (!Jpath::get(doc, settings()->applicationWindowPosition.x, "application", "window", "position", 0))
+		settings()->applicationWindowPosition.x = -1;
+	if (!Jpath::get(doc, settings()->applicationWindowPosition.y, "application", "window", "position", 1))
+		settings()->applicationWindowPosition.y = -1;
 	Jpath::get(doc, settings()->applicationWindowSize.x, "application", "window", "size", 0);
 	Jpath::get(doc, settings()->applicationWindowSize.y, "application", "window", "size", 1);
 	Jpath::get(doc, settings()->applicationPauseOnFocusLost, "application", "pause_on_focus_lost");
@@ -1040,11 +1042,15 @@ bool Workspace::load(class Window* wnd, class Renderer* rnd, const class Project
 		)
 	);
 #endif /* BITTY_OS_HTML */
-	//wnd->displayIndex(settings()->applicationWindowDisplayIndex);
-	//if (settings()->applicationWindowFullscreen)
-	//	wnd->fullscreen(true);
-	//else if (settings()->applicationWindowMaximized)
-	//	wnd->maximize();
+#if defined BITTY_OS_MAC
+	wnd->displayIndex(settings()->applicationWindowDisplayIndex);
+	if (settings()->applicationWindowFullscreen)
+		wnd->fullscreen(true);
+	else if (settings()->applicationWindowMaximized)
+		wnd->maximize();
+	else
+		wnd->position(settings()->applicationWindowPosition);
+#endif /* BITTY_OS_MAC */
 
 	if (prj) {
 		prj->preference(settings()->projectPreference);
