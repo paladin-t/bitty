@@ -1033,8 +1033,10 @@ bool Workspace::load(class Window* wnd, class Renderer* rnd, const class Project
 	if (settings()->applicationWindowSize == Math::Vec2i(0, 0))
 		settings()->applicationWindowSize = size;
 #if !defined BITTY_OS_HTML
-	if (size != settings()->applicationWindowSize)
-		wnd->size(settings()->applicationWindowSize);
+	if (!settings()->applicationWindowFullscreen && !settings()->applicationWindowMaximized) {
+		if (size != settings()->applicationWindowSize)
+			wnd->size(settings()->applicationWindowSize);
+	}
 	resizeApplication(
 		Math::Vec2i(
 			settings()->applicationWindowSize.x / rnd->scale(),
