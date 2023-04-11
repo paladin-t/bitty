@@ -165,7 +165,15 @@ public:
 
 		if (_palettedBits) {
 			if (_pixels && stretch) {
-				return false;
+				const bool blank = _blank;
+				Byte* tmp = (Byte*)malloc(width * height * sizeof(Byte));
+				stbir_resize_uint8(_pixels, _width, _height, 0, tmp, width, height, 0, _channels);
+				clear();
+				_blank = blank;
+				_pixels = tmp;
+				_width = width;
+				_height = height;
+				_channels = 1;
 			} else if (_pixels && !stretch) {
 				const bool blank = _blank;
 				Byte* tmp = (Byte*)malloc(width * height * sizeof(Byte));
