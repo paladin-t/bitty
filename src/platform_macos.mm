@@ -29,7 +29,7 @@ static NSString* platformTrimPath(NSString* originalPath) {
 	NSString* prefixToRemove = @"file://";
 	if ([originalPath hasPrefix: prefixToRemove])
 		originalPath = [originalPath substringFromIndex: [prefixToRemove length]];
-	originalPath = [originalPath stringByReplacingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+	originalPath = [originalPath stringByRemovingPercentEncoding]; // originalPath = [originalPath stringByReplacingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
 
 	return originalPath;
 }

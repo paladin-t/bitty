@@ -875,7 +875,7 @@ Note that when open a file as `Stream.Append`, it always writes data at the end 
 
 **Methods**
 
-* `image:resize(width, height, stretch = true)`: resizes the `Image` with the specific size; cannot stretch paletted image
+* `image:resize(width, height, stretch = true)`: resizes the `Image` with the specific size
 	* `width`: the width
 	* `height`: the height
 	* `stretch`: `true` to stretch the `Image`, otherwise to clip
