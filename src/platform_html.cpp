@@ -301,6 +301,10 @@ std::string Platform::execute(const char* cmd) {
 	return ret;
 }
 
+bool Platform::checkProgram(const char* /* prog */) {
+	return false;
+}
+
 void Platform::redirectIoToConsole(void) {
 	// Do nothing.
 }

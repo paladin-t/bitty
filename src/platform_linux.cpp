@@ -20,6 +20,7 @@ namespace filesystem = std::experimental::filesystem;
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include "../lib/portable_file_dialogs/portable-file-dialogs.h"
 
 /*
 ** {===========================================================================
@@ -416,6 +417,19 @@ std::string Platform::execute(const char* cmd) {
 	const std::string ret = Text::toString(ret_);
 
 	return ret;
+}
+
+bool Platform::checkProgram(const char* prog) {
+	if (prog == nullptr)
+		return false;
+
+	const std::string program = prog;
+	int exitCode = -1;
+	pfd::internal::executor async;
+	async.start_process({ "/bin/sh", "-c", "which " + program });
+	async.result(&exitCode);
+
+	return exitCode == 0;
 }
 
 void Platform::redirectIoToConsole(void) {

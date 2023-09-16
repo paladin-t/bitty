@@ -81,6 +81,8 @@ public:
 
 	static std::string execute(const char* cmd);
 
+	static bool checkProgram(const char* prog);
+
 	static void redirectIoToConsole(void);
 
 	static void idle(void);
