@@ -373,6 +373,8 @@ list(
 target_compile_definitions(bitty PRIVATE ${BITTY_DEF})
 
 # Flags.
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNDEBUG")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-format-security -Wno-unused-result")
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
