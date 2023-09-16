@@ -1,3 +1,19 @@
+### v1.2.2 Sep. 17, 2023
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added a application position restoration feature after re-launching
+* Added config to specify (or disable) canvas padding for exported package
+* Added a file dialog requirement note for Linux
+* Fixed a potential crash bug when compiled with some version of GCC
+* Fixed a potential crash bug with the physics examples on Linux
+* Fixed a widget focusing issue when start to search or jump in a text-based editor
+* Fixed an invisible issue of the "Hello Physics" example on Linux and MacOS
+* Improved button status of the rotating and flipping tools
+* Improved selection behaviour when double-click on a token
+* Improved canvas re-positioning behaviour after switching to another project
+* Updated the `Image` module to support stretching paletted objects
+
 ### v1.2.1 Feb. 15, 2023
 
 Enhanced modules, improved usability, fixed some bugs.
