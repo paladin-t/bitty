@@ -62,6 +62,7 @@ private:
 	long _timeout = WEB_FETCH_TIMEOUT_SECONDS;
 	long _connTimeout = WEB_FETCH_CONNECTION_TIMEOUT_SECONDS;
 	DataTypes _responseHint = STRING;
+	bool _allowInsecureConnectionForHttps = false;
 
 	/**< Connection. */
 

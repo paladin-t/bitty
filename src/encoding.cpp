@@ -269,6 +269,9 @@ std::string Unicode::toOs(const std::string &str) {
 }
 
 std::string Unicode::fromWide(const wchar_t* str) {
+	if (!str || !(*str))
+		return std::string();
+
 #if ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_WINAPI
 	std::string result;
 	char strb[16];
@@ -282,11 +285,11 @@ std::string Unicode::fromWide(const wchar_t* str) {
 #elif ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_CUSTOM
 	std::wstring src = str;
 	const int l = (int)(src.length() * 4);
-	char* strp = new char(l);
+	char* strp = new char [l];
 	memset(strp, 0, l);
 	encodingStrToUtf8(strp, l, src.c_str(), nullptr);
 	std::string result = strp;
-	delete strp;
+	delete [] strp;
 
 	return result;
 #elif ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_CODECVT
@@ -302,6 +305,9 @@ std::string Unicode::fromWide(const std::wstring &str) {
 }
 
 std::wstring Unicode::toWide(const char* str) {
+	if (!str || !(*str))
+		return std::wstring();
+
 #if ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_WINAPI
 	std::wstring result;
 	wchar_t wstr[16];
@@ -315,11 +321,11 @@ std::wstring Unicode::toWide(const char* str) {
 #elif ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_CUSTOM
 	std::string src = str;
 	const int l = (int)(src.length() * 4);
-	wchar_t* strp = new wchar_t(l);
+	wchar_t* strp = new wchar_t [l];
 	memset(strp, 0, l);
 	encodingStrFromUtf8(strp, l, src.c_str(), nullptr, nullptr);
 	std::wstring result = strp;
-	delete strp;
+	delete [] strp;
 
 	return result;
 #elif ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_CODECVT

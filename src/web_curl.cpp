@@ -100,8 +100,13 @@ void FetchCurl::url(const char* url) {
 	curl_easy_setopt(_curl, CURLOPT_URL, url);
 
 	if (Text::startsWith(url, "https://", true)) {
-		curl_easy_setopt(_curl, CURLOPT_SSL_VERIFYPEER, 0L);
-		curl_easy_setopt(_curl, CURLOPT_SSL_VERIFYHOST, 0L);
+		if (_allowInsecureConnectionForHttps) {
+			curl_easy_setopt(_curl, CURLOPT_SSL_VERIFYPEER, 0L);
+			curl_easy_setopt(_curl, CURLOPT_SSL_VERIFYHOST, 0L);
+		} else {
+			curl_easy_setopt(_curl, CURLOPT_SSL_VERIFYPEER, 1L);
+			curl_easy_setopt(_curl, CURLOPT_SSL_VERIFYHOST, 1L);
+		}
 	}
 }
 
@@ -151,6 +156,11 @@ void FetchCurl::options(const Variant &options) {
 				y = JSON;
 		}
 		dataType(y);
+	}
+
+	bool allowInsecureConn = false;
+	if (Jpath::get(doc, allowInsecureConn, "allow_insecure_connection_for_https")) {
+		_allowInsecureConnectionForHttps = allowInsecureConn;
 	}
 }
 
