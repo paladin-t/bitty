@@ -51,6 +51,8 @@ public:
 	virtual Settings* settings(void) override;
 	virtual class Theme* theme(void) const override;
 
+	virtual bool prefer2XScaleForBigDisplay(void) const override;
+
 	virtual bool load(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives) override;
 	virtual bool save(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives) override;
 

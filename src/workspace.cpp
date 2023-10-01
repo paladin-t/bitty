@@ -546,6 +546,10 @@ bool Workspace::close(class Window* /* wnd */, class Renderer* /* rnd */, const 
 	return true;
 }
 
+bool Workspace::prefer2XScaleForBigDisplay(void) const {
+	return false;
+}
+
 bool Workspace::canUseShortcuts(void) const {
 	if (canvasFull())
 		return false;

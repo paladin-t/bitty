@@ -266,6 +266,10 @@ class Theme* WorkspaceSketchbook::theme(void) const {
 	return _theme;
 }
 
+bool WorkspaceSketchbook::prefer2XScaleForBigDisplay(void) const {
+	return true;
+}
+
 bool WorkspaceSketchbook::load(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives) {
 	const std::string pref = Path::writableDirectory();
 	const std::string fn = std::string(WORKSPACE_PREFERENCES_NAME) + std::string("." BITTY_JSON_EXT);

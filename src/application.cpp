@@ -220,10 +220,21 @@ public:
 		// Initialize the window and renderer.
 		const bool borderless = options.find(WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY) != options.end();
 		int scale = 1;
-		if (options.find(WORKSPACE_OPTION_RENDERER_X2_KEY) != options.end())
+		if (_workspace->prefer2XScaleForBigDisplay()) {
+			SDL_Rect bound;
+			if (SDL_GetDisplayUsableBounds(0, &bound) == 0) {
+				if (bound.w >= 1920 && bound.h >= 1080) // Defaults to 2x scale for big display.
+					scale = 2;
+			}
+		}
+		if (options.find(WORKSPACE_OPTION_RENDERER_X1_KEY) != options.end())
+			scale = 1;
+		else if (options.find(WORKSPACE_OPTION_RENDERER_X2_KEY) != options.end())
 			scale = 2;
 		else if (options.find(WORKSPACE_OPTION_RENDERER_X3_KEY) != options.end())
 			scale = 3;
+		else if (options.find(WORKSPACE_OPTION_RENDERER_X4_KEY) != options.end())
+			scale = 4;
 		const bool highDpi = options.find(WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY) == options.end();
 #if defined BITTY_OS_HTML
 		const bool vsync = options.find(WORKSPACE_OPTION_WINDOW_VSYNC_ENABLED_KEY) != options.end() ||
@@ -1008,6 +1019,7 @@ private:
 			" [-" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY " ]"
 			" [-" WORKSPACE_OPTION_WINDOW_VSYNC_ENABLED_KEY " ]"
 			" [-" WORKSPACE_OPTION_WINDOW_ALWAYS_ON_TOP_ENABLED_KEY " ]"
+			" [-" WORKSPACE_OPTION_RENDERER_X1_KEY "]"
 			" [-" WORKSPACE_OPTION_RENDERER_X2_KEY "]"
 			" [-" WORKSPACE_OPTION_RENDERER_X3_KEY "]"
 			" [-" WORKSPACE_OPTION_RENDERER_DRIVER_KEY " 1]"
@@ -1030,6 +1042,7 @@ private:
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY               "        Disable high-DPI.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_VSYNC_ENABLED_KEY                   "        Enable vsync.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_ALWAYS_ON_TOP_ENABLED_KEY           "        Keep window top most.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X1_KEY                            "       Set renderer scale to x1.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X2_KEY                            "       Set renderer scale to x2.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X3_KEY                            "       Set renderer scale to x3.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_DRIVER_KEY                        " 1      Use software renderer.\n");
