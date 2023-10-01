@@ -39,10 +39,17 @@ static int documentSameLineIfPossible(float /* scale */, bool sameLine, const ch
 	const float posX = 0.0f;
 	const float spacingW = -1.0f;
 	ImGui::SameLine(posX, spacingW);
+	const float scrollX = ImGui::GetScrollX();
 	const float curX = ImGui::GetCursorPosX();
 	float wndR = ImGui::GetContentRegionMax().x;
-	if (ImGui::TableGetColumnCount() > 1)
+	const int n = ImGui::TableGetColumnCount();
+	if (n > 1) {
 		wndR = endX;
+		if (ImGui::TableGetColumnIndex() == n - 1)
+			wndR += scrollX;
+	} else {
+		wndR += scrollX;
+	}
 	wndR -= 5.0f; // Move to right a bit.
 	if (curX + width > wndR) {
 		ImGui::NewLine();
@@ -149,6 +156,8 @@ private:
 	ScaleStack _scaleStack;
 
 	CodeHeight::Array _codeHeights;
+	int _listItemCount = 0;
+	Text::Array _listItemIndeces;
 	TableColumn::Array _tableColumns;
 	int _tableCount = 0;
 	int _tableRowIndex = 0;
@@ -205,6 +214,11 @@ public:
 
 			nullptr
 		};
+
+		for (int i = 0; i < 16; ++i) {
+			const std::string str = Text::toString(i + 1) + ".";
+			_listItemIndeces.push_back(str);
+		}
 	}
 	virtual ~DocumentImpl() override {
 		hide();
@@ -381,10 +395,10 @@ public:
 		ImGui::SetNextWindowSizeConstraints(ImVec2(320.0f, 240.0f), ImVec2(1e10, 1e10));
 		ImGui::SetNextWindowSize(ImVec2(600.0f * sc, 400.0f  *sc), ImGuiCond_Appearing);
 		if (ImGui::Begin(_title.empty() ? theme->windowDocument().c_str() : _title.c_str(), nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoNav)) {
-			ImGui::BeginChild("Content", ImVec2(0.0f, ImGui::GetContentRegionAvail().y - ImGui::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_NoNav);
-
-			document(wnd, rnd, theme);
-
+			ImGui::BeginChild("@Content", ImVec2(0.0f, ImGui::GetContentRegionAvail().y - ImGui::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_NoNav);
+			{
+				document(wnd, rnd, theme);
+			}
 			ImGui::EndChild();
 
 			if (ImGui::Button(theme->generic_Close().c_str()) || documentEscape()) {
@@ -398,6 +412,8 @@ public:
 
 	void document(class Window* wnd, class Renderer* rnd, const class Theme* theme) {
 		// Prepare.
+		ImGuiStyle &style = ImGui::GetStyle();
+
 		const float scale = ImGui::GetIO().FontGlobalScale;
 
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.5f, 0.5f, 0.5f, 0.62f));
@@ -419,6 +435,8 @@ public:
 		ImGui::BeginChild("@Doc/Ctt", ImVec2(width, 0), false, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoNav);
 		{
 			// Render the content.
+			VariableGuard<decltype(style.ChildBorderSize)> guardChildBorderSize(&style.ChildBorderSize, style.ChildBorderSize, 1);
+
 			Context context(wnd, rnd, this, theme, scale);
 			md_parse(
 				(const MD_CHAR*)_content.c_str(), (MD_SIZE)_content.length(),
@@ -461,6 +479,8 @@ public:
 			ImGui::SameLine();
 			ImGui::BeginChild("@Doc/ToC", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_NoNav);
 			{
+				VariableGuard<decltype(style.ChildBorderSize)> guardChildBorderSize(&style.ChildBorderSize, style.ChildBorderSize, 1);
+
 				Context context(wnd, rnd, this, theme, scale);
 				md_parse(
 					(const MD_CHAR*)_tableOfContent.c_str(), (MD_SIZE)_tableOfContent.length(),
@@ -509,22 +529,59 @@ private:
 	}
 
 	int enterBlock(MD_BLOCKTYPE type, void* detail, Context* context) {
+		MD_BLOCKTYPE y = _blockStack.empty() ? MD_BLOCK_DOC : _blockStack.top();
+
 		_blockStack.push(type);
 
 		switch (type) {
+		case MD_BLOCK_DOC:
+			_scaleStack.push(1.0f);
+
+			ImGui::SetWindowFontScale(1.0f);
+
+			break;
 		case MD_BLOCK_UL:
 			if (++context->indent > 1)
 				ImGui::Indent();
 
 			break;
 		case MD_BLOCK_OL:
+			assert(_listItemCount == 0 && "Wrong data.");
+
+			if (++context->indent > 1)
+				ImGui::Indent();
+
 			break;
-		case MD_BLOCK_LI:
-			_scaleStack.push(1.0f);
+		case MD_BLOCK_LI: {
+				if (y == MD_BLOCK_OL) {
+					assert(_listItemCount <= (int)_listItemIndeces.size() && "Wrong data.");
 
-			ImGui::SetWindowFontScale(1.0f);
+					ImFont* font = (ImFont*)context->theme->fontBlock_Bold();
+					ImGui::PushFont(font);
+					{
+						ImGui::SetWindowFontScale(0.5f);
 
-			ImGui::Bullet();
+						ImGui::AlignTextToFramePadding();
+
+						const std::string &idx = _listItemIndeces[_listItemCount++];
+						ImGui::TextUnformatted(idx.c_str(), idx.c_str() + idx.length());
+						ImGui::SameLine();
+
+						_scaleStack.push(1.0f);
+
+						ImGui::SetWindowFontScale(1.0f);
+					}
+					ImGui::PopFont();
+				} else {
+					_scaleStack.push(1.0f);
+
+					ImGui::SetWindowFontScale(1.0f);
+
+					ImGui::AlignTextToFramePadding();
+
+					ImGui::Bullet();
+				}
+			}
 
 			break;
 		case MD_BLOCK_H: {
@@ -593,7 +650,7 @@ private:
 
 			if (_tableCount) {
 				ImGui::TableSetColumnIndex(_tableColumnIndex);
-				_tableColumns[context->tableSeed].setBorder(_tableColumnIndex, ImGui::GetCursorPos().x);
+				_tableColumns[context->tableSeed].setBorder(_tableColumnIndex, ImGui::GetCursorPosX());
 				++_tableColumnIndex;
 			}
 
@@ -601,7 +658,7 @@ private:
 		case MD_BLOCK_TD:
 			if (_tableCount) {
 				ImGui::TableSetColumnIndex(_tableColumnIndex);
-				_tableColumns[context->tableSeed].setBorder(_tableColumnIndex, ImGui::GetCursorPos().x);
+				_tableColumns[context->tableSeed].setBorder(_tableColumnIndex, ImGui::GetCursorPosX());
 				++_tableColumnIndex;
 			}
 
@@ -622,12 +679,23 @@ private:
 		_blockStack.pop();
 
 		switch (type) {
+		case MD_BLOCK_DOC:
+			ImGui::SetWindowFontScale(1.0f);
+
+			_scaleStack.pop();
+
+			break;
 		case MD_BLOCK_UL:
 			if (--context->indent > 0)
 				ImGui::Unindent();
 
 			break;
 		case MD_BLOCK_OL:
+			if (--context->indent > 0)
+				ImGui::Unindent();
+
+			_listItemCount = 0;
+
 			break;
 		case MD_BLOCK_LI:
 			ImGui::SetWindowFontScale(1.0f);
