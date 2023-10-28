@@ -986,6 +986,7 @@ bool Workspace::load(class Window* wnd, class Renderer* rnd, const class Project
 	Jpath::get(doc, settings()->editorShowWhiteSpaces, "editor", "show_white_spaces");
 	Jpath::get(doc, settings()->editorCaseSensitive, "editor", "case_sensitive");
 	Jpath::get(doc, settings()->editorMatchWholeWord, "editor", "match_whole_word");
+	Jpath::get(doc, settings()->editorGlobalSearch, "editor", "global_search");
 
 	Jpath::get(doc, settings()->canvasState, "canvas", "state");
 	Jpath::get(doc, settings()->canvasFixRatio, "canvas", "fix_ratio");
@@ -1092,6 +1093,7 @@ bool Workspace::save(class Window* wnd, class Renderer*, const class Project*, c
 	Jpath::set(doc, doc, settings()->editorShowWhiteSpaces, "editor", "show_white_spaces");
 	Jpath::set(doc, doc, settings()->editorCaseSensitive, "editor", "case_sensitive");
 	Jpath::set(doc, doc, settings()->editorMatchWholeWord, "editor", "match_whole_word");
+	Jpath::set(doc, doc, settings()->editorGlobalSearch, "editor", "global_search");
 
 	Jpath::set(doc, doc, settings()->canvasState, "canvas", "state");
 	Jpath::set(doc, doc, settings()->canvasFixRatio, "canvas", "fix_ratio");

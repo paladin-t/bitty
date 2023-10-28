@@ -373,6 +373,7 @@ bool Theme::open(class Renderer* rnd) {
 	tooltipEditing_CaseSensitive("Case-sensitive");
 	tooltipEditing_DeleteAnimation("Delete animation");
 	tooltipEditing_DeleteFrame("Delete frame");
+	tooltipEditing_GlobalSearch("Global search");
 	tooltipEditing_InsertFrame("Insert frame");
 	tooltipEditing_MatchWholeWords("Match whole words");
 	tooltipEditing_RenameAnimation("Rename animation");
@@ -458,6 +459,7 @@ bool Theme::open(class Renderer* rnd) {
 	sliceNext(createTexture(rnd, RES_SLICE_NEXT, BITTY_COUNTOF(RES_SLICE_NEXT)));
 
 	sliceCaseSensitive(createTexture(rnd, RES_SLICE_CASE_SENSITIVE, BITTY_COUNTOF(RES_SLICE_CASE_SENSITIVE)));
+	sliceGlobal(createTexture(rnd, RES_SLICE_GLOBAL, BITTY_COUNTOF(RES_SLICE_GLOBAL)));
 	sliceWholeWord(createTexture(rnd, RES_SLICE_WHOLE_WORD, BITTY_COUNTOF(RES_SLICE_WHOLE_WORD)));
 
 	slicePlus(createTexture(rnd, RES_SLICE_PLUS, BITTY_COUNTOF(RES_SLICE_PLUS)));
@@ -547,6 +549,7 @@ bool Theme::close(class Renderer* rnd) {
 	destroyTexture(rnd, sliceNext());
 
 	destroyTexture(rnd, sliceCaseSensitive());
+	destroyTexture(rnd, sliceGlobal());
 	destroyTexture(rnd, sliceWholeWord());
 
 	destroyTexture(rnd, slicePlus());

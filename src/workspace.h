@@ -180,6 +180,7 @@ public:
 		bool editorShowWhiteSpaces = true;
 		bool editorCaseSensitive = false;
 		bool editorMatchWholeWord = false;
+		bool editorGlobalSearch = false;
 
 		unsigned canvasState = POPUP;
 		bool canvasFixRatio = true;

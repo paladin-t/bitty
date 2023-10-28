@@ -177,6 +177,7 @@ public:
 		Identifiers PreprocIds;
 		std::string CommentStart, CommentEnd;
 		Char CommentException = '\0';
+		std::string SimpleCommentHead;
 
 		TokenizeCallback Tokenize;
 
@@ -297,6 +298,7 @@ public:
 	void GetSelection(Coordinates &aStart, Coordinates &aEnd);
 	std::string GetSelectionText(const char* aNewline = "\n") const;
 	int GetSelectionLines(void) const;
+	int GetCommentLines(void) const;
 
 	void Copy(void);
 	void Cut(void);
@@ -304,6 +306,10 @@ public:
 	void Delete(void);
 	void Indent(bool aByKey = true);
 	void Unindent(bool aByKey = true);
+	void Comment(void);
+	void Uncomment(void);
+	void MoveLineUp(void);
+	void MoveLineDown(void);
 
 	void ClearUndoRedoStack(void);
 	bool CanUndo(void) const;
@@ -328,7 +334,11 @@ protected:
 		Add,
 		Remove,
 		Indent,
-		Unindent
+		Unindent,
+		Comment,
+		Uncomment,
+		MoveLineUp,
+		MoveLineDown
 	};
 
 	struct UndoRecord {

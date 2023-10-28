@@ -303,6 +303,7 @@ public:
 	BITTY_PROPERTY_READONLY(std::string, tooltipEditing_CaseSensitive)
 	BITTY_PROPERTY_READONLY(std::string, tooltipEditing_DeleteAnimation)
 	BITTY_PROPERTY_READONLY(std::string, tooltipEditing_DeleteFrame)
+	BITTY_PROPERTY_READONLY(std::string, tooltipEditing_GlobalSearch)
 	BITTY_PROPERTY_READONLY(std::string, tooltipEditing_InsertFrame)
 	BITTY_PROPERTY_READONLY(std::string, tooltipEditing_MatchWholeWords)
 	BITTY_PROPERTY_READONLY(std::string, tooltipEditing_RenameAnimation)
@@ -388,6 +389,7 @@ public:
 	BITTY_PROPERTY_PTR(class Texture, sliceNext)
 
 	BITTY_PROPERTY_PTR(class Texture, sliceCaseSensitive)
+	BITTY_PROPERTY_PTR(class Texture, sliceGlobal)
 	BITTY_PROPERTY_PTR(class Texture, sliceWholeWord)
 
 	BITTY_PROPERTY_PTR(class Texture, slicePlus)

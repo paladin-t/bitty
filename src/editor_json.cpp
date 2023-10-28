@@ -30,6 +30,7 @@ private:
 	Json::Ptr _object = nullptr;
 	Editing::Data::Checkpoint _checkpoint;
 
+	bool _acquireFocus = false;
 	struct {
 		std::string text;
 		bool filled = false;
@@ -284,11 +285,22 @@ public:
 			}
 
 			return Variant(true);
+		case FOCUS:
+			_acquireFocus = true;
+
+			return Variant(true);
 		case SELECT_ALL:
 			if (_tools.focused)
 				return Variant(false);
 
 			SelectAll();
+
+			return Variant(true);
+		case SELECT_WORD:
+			if (_tools.focused)
+				return Variant(false);
+
+			SelectWordUnderCursor();
 
 			return Variant(true);
 		case INDENT: {
@@ -309,6 +321,20 @@ public:
 
 				Unindent(byKey);
 			}
+
+			return Variant(true);
+		case MOVE_UP:
+			if (_tools.focused)
+				return Variant(false);
+
+			MoveLineUp();
+
+			return Variant(true);
+		case MOVE_DOWN:
+			if (_tools.focused)
+				return Variant(false);
+
+			MoveLineDown();
 
 			return Variant(true);
 		case FIND: {
@@ -442,6 +468,13 @@ public:
 				SetSelection(begin, end);
 			}
 			toolBarHeight += ImGui::GetCursorPosY() - y;
+		}
+
+		if (_acquireFocus) {
+			if (!ws->popupBox()) {
+				_acquireFocus = false;
+				ImGui::SetNextWindowFocus();
+			}
 		}
 
 		ImFont* fontCode = ws->theme()->fontCode();

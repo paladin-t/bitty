@@ -69,6 +69,7 @@ WorkspaceSketchbook::SketchbookSettings &WorkspaceSketchbook::SketchbookSettings
 	editorShowWhiteSpaces = other.editorShowWhiteSpaces;
 	editorCaseSensitive = other.editorCaseSensitive;
 	editorMatchWholeWord = other.editorMatchWholeWord;
+	editorGlobalSearch = other.editorGlobalSearch;
 
 	canvasState = other.canvasState;
 	canvasFixRatio = other.canvasFixRatio;
@@ -127,7 +128,8 @@ bool WorkspaceSketchbook::SketchbookSettings::operator != (const SketchbookSetti
 
 	if (editorShowWhiteSpaces != other.editorShowWhiteSpaces ||
 		editorCaseSensitive != other.editorCaseSensitive ||
-		editorMatchWholeWord != other.editorMatchWholeWord
+		editorMatchWholeWord != other.editorMatchWholeWord ||
+		editorGlobalSearch != other.editorGlobalSearch
 	) {
 		return true;
 	}
@@ -584,30 +586,36 @@ void WorkspaceSketchbook::shortcuts(class Window* wnd, class Renderer* rnd, cons
 	projectStates(project, nullptr, &prjPersisted, nullptr, nullptr);
 
 	// Get key states.
-	const bool f1 = ImGui::IsKeyPressed(SDL_SCANCODE_F1);
-	const bool f3 = ImGui::IsKeyPressed(SDL_SCANCODE_F3);
-	const bool f5 = ImGui::IsKeyPressed(SDL_SCANCODE_F5);
-	const bool f6 = ImGui::IsKeyPressed(SDL_SCANCODE_F6);
-	const bool f7 = ImGui::IsKeyPressed(SDL_SCANCODE_F7);
-	const bool f8 = ImGui::IsKeyPressed(SDL_SCANCODE_F8);
-	const bool f9 = ImGui::IsKeyPressed(SDL_SCANCODE_F9);
-	const bool a = ImGui::IsKeyPressed(SDL_SCANCODE_A);
-	const bool c = ImGui::IsKeyPressed(SDL_SCANCODE_C);
-	const bool e = ImGui::IsKeyPressed(SDL_SCANCODE_E);
-	const bool f = ImGui::IsKeyPressed(SDL_SCANCODE_F);
-	const bool g = ImGui::IsKeyPressed(SDL_SCANCODE_G);
-	const bool n = ImGui::IsKeyPressed(SDL_SCANCODE_N);
-	const bool o = ImGui::IsKeyPressed(SDL_SCANCODE_O);
-	const bool r = ImGui::IsKeyPressed(SDL_SCANCODE_R);
-	const bool s = ImGui::IsKeyPressed(SDL_SCANCODE_S);
-	const bool v = ImGui::IsKeyPressed(SDL_SCANCODE_V);
-	const bool w = ImGui::IsKeyPressed(SDL_SCANCODE_W);
-	const bool x = ImGui::IsKeyPressed(SDL_SCANCODE_X);
-	const bool y = ImGui::IsKeyPressed(SDL_SCANCODE_Y);
-	const bool z = ImGui::IsKeyPressed(SDL_SCANCODE_Z);
-	const bool tab = ImGui::IsKeyPressed(SDL_SCANCODE_TAB);
-	const bool period = ImGui::IsKeyPressed(SDL_SCANCODE_PERIOD);
-	const bool del = ImGui::IsKeyPressed(SDL_SCANCODE_DELETE);
+	const bool f1       = ImGui::IsKeyPressed(SDL_SCANCODE_F1);
+	const bool f3       = ImGui::IsKeyPressed(SDL_SCANCODE_F3);
+	const bool f5       = ImGui::IsKeyPressed(SDL_SCANCODE_F5);
+	const bool f6       = ImGui::IsKeyPressed(SDL_SCANCODE_F6);
+	const bool f7       = ImGui::IsKeyPressed(SDL_SCANCODE_F7);
+	const bool f8       = ImGui::IsKeyPressed(SDL_SCANCODE_F8);
+	const bool f9       = ImGui::IsKeyPressed(SDL_SCANCODE_F9);
+	const bool a        = ImGui::IsKeyPressed(SDL_SCANCODE_A);
+	const bool c        = ImGui::IsKeyPressed(SDL_SCANCODE_C);
+	const bool e        = ImGui::IsKeyPressed(SDL_SCANCODE_E);
+	const bool f        = ImGui::IsKeyPressed(SDL_SCANCODE_F);
+	const bool g        = ImGui::IsKeyPressed(SDL_SCANCODE_G);
+	const bool n        = ImGui::IsKeyPressed(SDL_SCANCODE_N);
+	const bool o        = ImGui::IsKeyPressed(SDL_SCANCODE_O);
+	const bool q        = ImGui::IsKeyPressed(SDL_SCANCODE_Q);
+	const bool r        = ImGui::IsKeyPressed(SDL_SCANCODE_R);
+	const bool s        = ImGui::IsKeyPressed(SDL_SCANCODE_S);
+	const bool v        = ImGui::IsKeyPressed(SDL_SCANCODE_V);
+	const bool w        = ImGui::IsKeyPressed(SDL_SCANCODE_W);
+	const bool x        = ImGui::IsKeyPressed(SDL_SCANCODE_X);
+	const bool y        = ImGui::IsKeyPressed(SDL_SCANCODE_Y);
+	const bool z        = ImGui::IsKeyPressed(SDL_SCANCODE_Z);
+	const bool tab      = ImGui::IsKeyPressed(SDL_SCANCODE_TAB);
+	const bool period   = ImGui::IsKeyPressed(SDL_SCANCODE_PERIOD);
+	const bool slash    = ImGui::IsKeyPressed(SDL_SCANCODE_SLASH);
+	const bool del      = ImGui::IsKeyPressed(SDL_SCANCODE_DELETE);
+	const bool up       = ImGui::IsKeyPressed(SDL_SCANCODE_UP);
+	const bool down     = ImGui::IsKeyPressed(SDL_SCANCODE_DOWN);
+	const bool pgup     = ImGui::IsKeyPressed(SDL_SCANCODE_PAGEUP);
+	const bool pgdown   = ImGui::IsKeyPressed(SDL_SCANCODE_PAGEDOWN);
 #if WORKSPACE_MODIFIER_KEY == WORKSPACE_MODIFIER_KEY_CTRL
 	const bool modifier = io.KeyCtrl;
 #elif WORKSPACE_MODIFIER_KEY == WORKSPACE_MODIFIER_KEY_CMD
@@ -640,13 +648,11 @@ void WorkspaceSketchbook::shortcuts(class Window* wnd, class Renderer* rnd, cons
 		Operations::projectStop(rnd, this, project, exec, primitives);
 
 		Operations::fileNew(rnd, this, project, exec);
-	}
-	if (o && modifier && !io.KeyShift) {
+	} else if (o && modifier && !io.KeyShift) {
 		Operations::projectStop(rnd, this, project, exec, primitives);
 
 		Operations::fileOpenFile(rnd, this, project, exec);
-	}
-	if (o && modifier && io.KeyShift) {
+	} else if (o && modifier && io.KeyShift) {
 		Operations::projectStop(rnd, this, project, exec, primitives);
 
 		Operations::fileOpenDirectory(rnd, this, project, exec);
@@ -654,8 +660,7 @@ void WorkspaceSketchbook::shortcuts(class Window* wnd, class Renderer* rnd, cons
 #if !BITTY_TRIAL_ENABLED
 	if (s && modifier) {
 		Operations::fileSaveAsset(rnd, this, project, assetsEditingIndex());
-	}
-	if (s && modifier && io.KeyShift) {
+	} else if (s && modifier && io.KeyShift) {
 		do {
 			LockGuard<RecursiveMutex>::UniquePtr acquired;
 			Project* prj = project->acquire(acquired);
@@ -680,118 +685,199 @@ void WorkspaceSketchbook::shortcuts(class Window* wnd, class Renderer* rnd, cons
 				editor->undo(asset);
 			}
 		);
-	}
-	if (y && modifier) {
+	} else if (y && modifier) {
 		withEditingAsset(
 			project,
 			[] (Asset* asset, Editable* editor) -> void {
 				editor->redo(asset);
 			}
 		);
-	}
-	if (c && modifier && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
+	} else if (c && modifier && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
 		withEditingAsset(
 			project,
 			[] (Asset*, Editable* editor) -> void {
 				editor->copy();
 			}
 		);
-	}
-	if (x && modifier && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
+	} else if (x && modifier && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
 		withEditingAsset(
 			project,
 			[] (Asset*, Editable* editor) -> void {
 				editor->cut();
 			}
 		);
-	}
-	if (v && modifier && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
+	} else if (v && modifier && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
 		withEditingAsset(
 			project,
 			[] (Asset*, Editable* editor) -> void {
 				editor->paste();
 			}
 		);
-	}
-	if (del && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
+	} else if (del && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
 		withEditingAsset(
 			project,
 			[] (Asset*, Editable* editor) -> void {
 				editor->del();
 			}
 		);
-	}
-	if (a && modifier && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
+	} else if (a && modifier && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
 		withEditingAsset(
 			project,
 			[] (Asset*, Editable* editor) -> void {
 				editor->post(Editable::SELECT_ALL);
 			}
 		);
-	}
-	if (tab && !io.KeyCtrl && !io.KeyShift && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
+	} else if (q && modifier && !io.KeyShift && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
+		withEditingAsset(
+			project,
+			[] (Asset*, Editable* editor) -> void {
+				editor->post(Editable::SELECT_WORD);
+			}
+		);
+	} else if (tab && !io.KeyCtrl && !io.KeyShift && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
 		withEditingAsset(
 			project,
 			[] (Asset*, Editable* editor) -> void {
 				editor->post(Editable::INDENT, true);
 			}
 		);
-	}
-	if (tab && io.KeyShift && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
+	} else if (tab && io.KeyShift && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
 		withEditingAsset(
 			project,
 			[] (Asset*, Editable* editor) -> void {
 				editor->post(Editable::UNINDENT, true);
 			}
 		);
-	}
-	if (f && modifier && !canvasFocused() && !consoleFocused()) {
+	} else if (slash && modifier && !io.KeyShift && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
+		withEditingAsset(
+			project,
+			[] (Asset*, Editable* editor) -> void {
+				editor->post(Editable::TOGGLE_COMMENT);
+			}
+		);
+	} else if (up && !modifier && !io.KeyShift && io.KeyAlt && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
+		withEditingAsset(
+			project,
+			[] (Asset*, Editable* editor) -> void {
+				editor->post(Editable::MOVE_UP);
+			}
+		);
+	} else if (down && !modifier && !io.KeyShift && io.KeyAlt && !assetsFocused() && !canvasFocused() && !consoleFocused()) {
+		withEditingAsset(
+			project,
+			[] (Asset*, Editable* editor) -> void {
+				editor->post(Editable::MOVE_DOWN);
+			}
+		);
+	} else if (f && modifier && !canvasFocused() && !consoleFocused()) {
 		withEditingAsset(
 			project,
 			[] (Asset*, Editable* editor) -> void {
 				editor->post(Editable::FIND);
 			}
 		);
-	}
-	if (f3 && !io.KeyShift && !canvasFocused() && !consoleFocused()) {
+	} else if (f3 && !io.KeyShift && !canvasFocused() && !consoleFocused()) {
 		withEditingAsset(
 			project,
 			[] (Asset*, Editable* editor) -> void {
 				editor->post(Editable::FIND_NEXT);
 			}
 		);
-	}
-	if (f3 && io.KeyShift && !canvasFocused() && !consoleFocused()) {
+	} else if (f3 && io.KeyShift && !canvasFocused() && !consoleFocused()) {
 		withEditingAsset(
 			project,
 			[] (Asset*, Editable* editor) -> void {
 				editor->post(Editable::FIND_PREVIOUS);
 			}
 		);
-	}
-	if (g && modifier && !canvasFocused() && !consoleFocused()) {
+	} else if (g && modifier && !canvasFocused() && !consoleFocused()) {
 		withEditingAsset(
 			project,
 			[] (Asset*, Editable* editor) -> void {
 				editor->post(Editable::GOTO);
 			}
 		);
-	}
-	if (tab && io.KeyCtrl && !io.KeyShift)
+	} else if (pgup && modifier && !io.KeyShift) {
+		do {
+			LockGuard<RecursiveMutex>::UniquePtr acquired;
+			Project* prj = project->acquire(acquired);
+			if (!prj)
+				break;
+
+			Asset::List::Index index = assetsEditingIndex();
+			if (index == -1)
+				index = 0;
+			Asset* asset = prj->get(index);
+			if (!asset)
+				break;
+
+			prj->foreach(
+				[&] (Asset* &asset_, Asset::List::Index index_) -> void {
+					if (asset == asset_)
+						index = index_;
+				}
+			);
+			if (--index < 0)
+				index = prj->count() - 1;
+			asset = prj->get(index);
+			if (!asset)
+				break;
+
+			Asset::States* states = asset->states();
+			const Asset::States::Activity activity = states->activity();
+			if (activity == Asset::States::CLOSED)
+				states->activate(Asset::States::INSPECTABLE);
+
+			states->focus();
+		} while (false);
+	} else if (pgdown && modifier && !io.KeyShift) {
+		do {
+			LockGuard<RecursiveMutex>::UniquePtr acquired;
+			Project* prj = project->acquire(acquired);
+			if (!prj)
+				break;
+
+			Asset::List::Index index = assetsEditingIndex();
+			if (index == -1)
+				index = 0;
+			Asset* asset = prj->get(index);
+			if (!asset)
+				break;
+
+			prj->foreach(
+				[&] (Asset* &asset_, Asset::List::Index index_) -> void {
+					if (asset == asset_)
+						index = index_;
+				}
+			);
+			if (++index >= prj->count())
+				index = 0;
+			asset = prj->get(index);
+			if (!asset)
+				break;
+
+			Asset::States* states = asset->states();
+			const Asset::States::Activity activity = states->activity();
+			if (activity == Asset::States::CLOSED)
+				states->activate(Asset::States::INSPECTABLE);
+
+			states->focus();
+		} while (false);
+	} else if (tab && io.KeyCtrl && !io.KeyShift) {
 		Operations::editSwitchAsset(rnd, this, project);
-	if (w && io.KeyCtrl)
+	} else if (w && io.KeyCtrl) {
 		editingClosing(true);
+	}
 
 	// Project operations.
 	if (e && modifier) {
 		assetsFiltering(!assetsFiltering());
 		assetsFilteringInitialized(false);
-	}
-	if (n && modifier && io.KeyShift)
+	} else if (n && modifier && io.KeyShift) {
 		Operations::projectAddAsset(rnd, this, project, assetsSelectedIndex());
-	if (a && modifier && io.KeyShift)
+	} else if (a && modifier && io.KeyShift) {
 		Operations::projectAddFile(rnd, this, project, assetsSelectedIndex());
-	if (r && modifier && io.KeyShift) {
+	} else if (r && modifier && io.KeyShift) {
 		if (prjPersisted) {
 			Operations::projectStop(rnd, this, project, exec, primitives);
 
@@ -807,15 +893,15 @@ void WorkspaceSketchbook::shortcuts(class Window* wnd, class Renderer* rnd, cons
 	// Debug operations.
 	if (toResume)
 		Operations::debugContinue(this, project, exec);
-	if (f9)
+	else if (f9)
 		Operations::debugToggleBreakpoint(this, project, exec);
 
 	// Window operations.
 	if (f6 && !recorder()->recording())
 		recorder()->start(1);
-	if (f7 && !recorder()->recording())
+	else if (f7 && !recorder()->recording())
 		recorder()->start(activeFrameRate() * 60); // 1 minute.
-	if (f8 && recorder()->recording())
+	else if (f8 && recorder()->recording())
 		recorder()->stop();
 
 	// Help operations.

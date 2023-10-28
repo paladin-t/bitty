@@ -13,6 +13,7 @@
 #include "editor_code.h"
 #include "encoding.h"
 #include "platform.h"
+#include "project.h"
 #include "theme.h"
 #include "workspace.h"
 #include "../lib/imgui_code_editor/imgui_code_editor.h"
@@ -31,6 +32,7 @@ private:
 	Code::Ptr _object = nullptr;
 	Editing::Data::Checkpoint _checkpoint;
 
+	bool _acquireFocus = false;
 	int _breaking = -1;
 	struct {
 		std::string text;
@@ -57,9 +59,7 @@ private:
 
 		int jumping = -1;
 
-		bool finding = false;
 		Editing::Tools::Marker marker;
-		std::string word;
 		int direction = 0;
 
 		void clear(void) {
@@ -67,10 +67,83 @@ private:
 			focused = false;
 
 			jumping = -1;
-
-			finding = false;
 		}
 	} _tools;
+
+	static struct Shared {
+		bool finding = false;
+		Editing::Tools::Marker marker;
+		mutable std::string* wordPtr = nullptr;
+		mutable Editing::Tools::TextPages* cachePtr = nullptr;
+		mutable Text::Array* cacheStr = nullptr;
+
+		Shared() {
+		}
+		~Shared() {
+			clear();
+		}
+
+		const std::string &word(void) const {
+			if (wordPtr == nullptr)
+				wordPtr = new std::string();
+
+			return *wordPtr;
+		}
+		std::string &word(void) {
+			if (wordPtr == nullptr)
+				wordPtr = new std::string();
+
+			return *wordPtr;
+		}
+
+		const Editing::Tools::TextPages &cache(Text::Array** strs) const {
+			if (strs)
+				*strs = nullptr;
+
+			if (cachePtr == nullptr)
+				cachePtr = new Editing::Tools::TextPages();
+
+			if (cacheStr == nullptr)
+				cacheStr = new Text::Array();
+
+			if (strs)
+				*strs = cacheStr;
+
+			return *cachePtr;
+		}
+		Editing::Tools::TextPages &cache(Text::Array** strs) {
+			if (strs)
+				*strs = nullptr;
+
+			if (cachePtr == nullptr)
+				cachePtr = new Editing::Tools::TextPages();
+
+			if (cacheStr == nullptr)
+				cacheStr = new Text::Array();
+
+			if (strs)
+				*strs = cacheStr;
+
+			return *cachePtr;
+		}
+
+		void clear(void) {
+			finding = false;
+			marker.clear();
+			if (wordPtr) {
+				delete wordPtr;
+				wordPtr = nullptr;
+			}
+			if (cachePtr) {
+				delete cachePtr;
+				cachePtr = nullptr;
+			}
+			if (cacheStr) {
+				delete cacheStr;
+				cacheStr = nullptr;
+			}
+		}
+	} _shared;
 
 public:
 	EditorCodeImpl() {
@@ -91,6 +164,16 @@ public:
 
 	virtual unsigned type(void) const override {
 		return TYPE();
+	}
+
+	void initialize(int refCount_) {
+		(void)refCount_;
+
+		// Do nothing.
+	}
+	void dispose(int refCount_) {
+		if (refCount_ == 0)
+			_shared.clear();
 	}
 
 	virtual void open(const class Project* project, const char* name, Object::Ptr obj, const char* /* ref */) override {
@@ -302,11 +385,22 @@ public:
 			}
 
 			return Variant(true);
+		case FOCUS:
+			_acquireFocus = true;
+
+			return Variant(true);
 		case SELECT_ALL:
 			if (_tools.focused)
 				return Variant(false);
 
 			SelectAll();
+
+			return Variant(true);
+		case SELECT_WORD:
+			if (_tools.focused)
+				return Variant(false);
+
+			SelectWordUnderCursor();
 
 			return Variant(true);
 		case INDENT: {
@@ -329,19 +423,50 @@ public:
 			}
 
 			return Variant(true);
+		case TOGGLE_COMMENT:
+			if (_tools.focused)
+				return Variant(false);
+
+			if (HasSelection()) {
+				if (GetCommentLines() == GetSelectionLines())
+					Uncomment();
+				else
+					Comment();
+			} else {
+				if (GetCommentLines() > 0)
+					Uncomment();
+				else
+					Comment();
+			}
+
+			return Variant(true);
+		case MOVE_UP:
+			if (_tools.focused)
+				return Variant(false);
+
+			MoveLineUp();
+
+			return Variant(true);
+		case MOVE_DOWN:
+			if (_tools.focused)
+				return Variant(false);
+
+			MoveLineDown();
+
+			return Variant(true);
 		case FIND: {
 				_tools.initialized = false;
 
 				_tools.jumping = -1;
 
-				_tools.finding = true;
+				_shared.finding = true;
 
 				Coordinates begin, end;
 				GetSelection(begin, end);
 				if (begin == end)
-					_tools.word = GetWordUnderCursor(&begin, &end);
+					_shared.word() = GetWordUnderCursor(&begin, &end);
 				else
-					_tools.word = GetSelectionText();
+					_shared.word() = GetSelectionText();
 				SetSelection(begin, end);
 
 				_tools.direction = 0;
@@ -351,10 +476,10 @@ public:
 		case FIND_NEXT:
 			_tools.jumping = -1;
 
-			if (_tools.word.empty()) {
-				_tools.finding = true;
+			if (_shared.word().empty()) {
+				_shared.finding = true;
 
-				_tools.word = GetWordUnderCursor();
+				_shared.word() = GetWordUnderCursor();
 			}
 
 			_tools.direction = 1;
@@ -363,10 +488,10 @@ public:
 		case FIND_PREVIOUS:
 			_tools.jumping = -1;
 
-			if (_tools.word.empty()) {
-				_tools.finding = true;
+			if (_shared.word().empty()) {
+				_shared.finding = true;
 
-				_tools.word = GetWordUnderCursor();
+				_shared.word() = GetWordUnderCursor();
 			}
 
 			_tools.direction = -1;
@@ -375,7 +500,7 @@ public:
 		case GOTO: {
 				_tools.initialized = false;
 
-				_tools.finding = false;
+				_shared.finding = false;
 
 				const Coordinates coord = GetCursorPosition();
 				_tools.jumping = coord.Line;
@@ -482,12 +607,60 @@ public:
 			}
 			toolBarHeight += ImGui::GetCursorPosY() - posY;
 		}
-		if (_tools.finding || _tools.direction != 0) {
+		if (_shared.finding || _tools.direction != 0) {
 			Coordinates srcBegin, srcEnd;
 			GetSelection(srcBegin, srcEnd);
+
+			int index = -1;
+			Text::Array* strings = nullptr;
+			Editing::Tools::TextPages &cache = _shared.cache(&strings);
+			strings->clear();
+			cache.clear();
+			do {
+				LockGuard<RecursiveMutex>::UniquePtr acquired;
+				Project* prj = project->acquire(acquired);
+				if (!prj)
+					break;
+
+				for (int i = 0; i < prj->count(); ++i) {
+					Asset* asset = prj->get(Asset::List::Index(i, false));
+					if (!asset)
+						break;
+
+					if (asset->type() != Code::TYPE()) {
+						strings->push_back("");
+						cache.push_back(nullptr);
+
+						continue;
+					}
+
+					if (_name == asset->entry().name())
+						index = i;
+
+					const bool readyForEditing = asset->readyFor(Asset::EDITING);
+					if (!readyForEditing)
+						asset->prepare(Asset::EDITING, true);
+					Object::Ptr obj = asset->object(Asset::EDITING);
+					if (!readyForEditing)
+						asset->finish(Asset::EDITING, true);
+
+					if (!obj)
+						break;
+					Code::Ptr code = Object::as<Code::Ptr>(obj);
+					if (!code)
+						break;
+
+					size_t len = 0;
+					const char* txt = code->text(&len);
+					std::string str;
+					str.assign(txt, len);
+					strings->push_back(txt);
+					cache.push_back(&strings->back());
+				}
+			} while (false);
 			_tools.marker = Editing::Tools::Marker(
-				Editing::Tools::Marker::Coordinates(srcBegin.Line, srcBegin.Column),
-				Editing::Tools::Marker::Coordinates(srcEnd.Line, srcEnd.Column)
+				Editing::Tools::Marker::Coordinates(index, srcBegin.Line, srcBegin.Column),
+				Editing::Tools::Marker::Coordinates(index, srcEnd.Line, srcEnd.Column)
 			);
 
 			const float y = ImGui::GetCursorPosY();
@@ -496,28 +669,65 @@ public:
 				&_tools.marker,
 				width,
 				&_tools.initialized, &_tools.focused,
-				text(nullptr), &_tools.word,
-				Editing::Tools::Marker::Coordinates(GetTotalLines(), GetColumnsAt(GetTotalLines())),
+				&cache, &_shared.word(),
+				Editing::Tools::Marker::Coordinates(index, GetTotalLines(), GetColumnsAt(GetTotalLines())),
 				&_tools.direction,
-				&ws->settings()->editorCaseSensitive, &ws->settings()->editorMatchWholeWord,
-				_tools.finding,
+				&ws->settings()->editorCaseSensitive, &ws->settings()->editorMatchWholeWord, &ws->settings()->editorGlobalSearch,
+				_shared.finding,
 				[&] (const Editing::Tools::Marker::Coordinates &pos, Editing::Tools::Marker &src) -> std::string {
 					Coordinates srcBegin, srcEnd;
 					const std::string result = GetWordAt(Coordinates(pos.line, pos.column), &srcBegin, &srcEnd);
-					src.begin = Editing::Tools::Marker::Coordinates(srcBegin.Line, srcBegin.Column);
-					src.end = Editing::Tools::Marker::Coordinates(srcEnd.Line, srcEnd.Column);
+					src.begin = Editing::Tools::Marker::Coordinates(index, srcBegin.Line, srcBegin.Column);
+					src.end = Editing::Tools::Marker::Coordinates(index, srcEnd.Line, srcEnd.Column);
 
 					return result;
 				}
 			);
 			if (stepped && !_tools.marker.empty()) {
-				const Coordinates begin(_tools.marker.begin.line, _tools.marker.begin.column);
-				const Coordinates end(_tools.marker.end.line, _tools.marker.end.column);
+				if (_tools.marker.begin.index == index) {
+					const Coordinates begin(_tools.marker.begin.line, _tools.marker.begin.column);
+					const Coordinates end(_tools.marker.end.line, _tools.marker.end.column);
 
-				SetCursorPosition(begin);
-				SetSelection(begin, end);
+					SetCursorPosition(begin);
+					SetSelection(begin, end);
+				} else {
+					const int index_ = _tools.marker.begin.index;
+					do {
+						LockGuard<RecursiveMutex>::UniquePtr acquired;
+						Project* prj = project->acquire(acquired);
+						if (!prj)
+							break;
+
+						Asset* asset = prj->get(Asset::List::Index(index_, false));
+						if (!asset)
+							break;
+
+						asset->prepare(Asset::EDITING, false);
+
+						Asset::States* states = asset->states();
+						states->activate(Asset::States::INSPECTABLE);
+						states->focus();
+
+						EditorCodeImpl* editor = (EditorCodeImpl*)asset->editor();
+						if (!editor)
+							break;
+
+						const Coordinates begin(_tools.marker.begin.line, _tools.marker.begin.column);
+						const Coordinates end(_tools.marker.end.line, _tools.marker.end.column);
+
+						editor->SetCursorPosition(begin);
+						editor->SetSelection(begin, end);
+					} while (false);
+				}
 			}
 			toolBarHeight += ImGui::GetCursorPosY() - y;
+		}
+
+		if (_acquireFocus) {
+			if (!ws->popupBox()) {
+				_acquireFocus = false;
+				ImGui::SetNextWindowFocus();
+			}
 		}
 
 		ImFont* fontCode = ws->theme()->fontCode();
@@ -771,6 +981,7 @@ private:
 
 		langDef.CommentStart = "--[[";
 		langDef.CommentEnd = "]]";
+		langDef.SimpleCommentHead = "--";
 
 		langDef.CaseSensitive = true;
 
@@ -780,14 +991,20 @@ private:
 	}
 };
 
+EditorCodeImpl::Shared EditorCodeImpl::_shared;
+
+int EditorCode::refCount = 0;
+
 EditorCode* EditorCode::create(void) {
 	EditorCodeImpl* result = new EditorCodeImpl();
+	result->initialize(refCount++);
 
 	return result;
 }
 
 void EditorCode::destroy(EditorCode* ptr) {
 	EditorCodeImpl* impl = static_cast<EditorCodeImpl*>(ptr);
+	impl->dispose(--refCount);
 	delete impl;
 }
 

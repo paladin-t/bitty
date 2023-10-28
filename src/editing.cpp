@@ -224,29 +224,46 @@ Marker::Coordinates::Coordinates() {
 Marker::Coordinates::Coordinates(int ln, int col) : line(ln), column(col) {
 }
 
+Marker::Coordinates::Coordinates(int idx, int ln, int col) : index(idx), line(ln), column(col) {
+}
+
 bool Marker::Coordinates::operator == (const Coordinates &other) const {
-	return line == other.line && column == other.column;
+	return compare(other) == 0;
 }
 
 bool Marker::Coordinates::operator < (const Coordinates &other) const {
-	if (line != other.line)
-		return line < other.line;
-
-	return column < other.column;
+	return compare(other) < 0;
 }
 
 bool Marker::Coordinates::operator > (const Coordinates &other) const {
-	if (line != other.line)
-		return line > other.line;
+	return compare(other) > 0;
+}
 
-	return column > other.column;
+int Marker::Coordinates::compare(const Coordinates &other) const {
+	if (index < other.index)
+		return -1;
+	else if (index > other.index)
+		return 1;
+
+	if (line < other.line)
+		return -1;
+	else if (line > other.line)
+		return 1;
+
+	if (column < other.column)
+		return -1;
+	else if (column > other.column)
+		return 1;
+
+	return 0;
 }
 
 bool Marker::Coordinates::empty(void) const {
-	return line == -1 && column == -1;
+	return index == -1 && line == -1 && column == -1;
 }
 
 void Marker::Coordinates::clear(void) {
+	index = -1;
 	line = -1;
 	column = -1;
 }
@@ -555,6 +572,307 @@ bool find(
 			}
 		}
 	}
+
+	return result;
+}
+
+bool find(
+	Renderer* rnd,
+	Workspace* ws,
+	Marker* cursor,
+	float width,
+	bool* initialized, bool* focused,
+	const TextPages* textPages, std::string* what,
+	const Marker::Coordinates &max,
+	int* direction,
+	bool* caseSensitive, bool* wholeWord, bool* globalSearch,
+	bool visible,
+	TextWordGetter getWord
+) {
+	typedef std::function<void(int &)> FindViewHandler;
+
+	auto findOne = [] (
+		Renderer* rnd,
+		Workspace* ws,
+		Marker* cursor,
+		bool* focused,
+		const TextPages* textPages, std::string* what,
+		const Marker::Coordinates &max,
+		int* direction,
+		bool* caseSensitive, bool* wholeWord, bool* globalSearch,
+		FindViewHandler findView,
+		TextWordGetter getWord
+	) -> bool {
+		(void)rnd;
+		(void)ws;
+
+		bool result = false;
+
+		if (focused)
+			*focused = false;
+
+		if (!cursor || !what)
+			return result;
+
+		int step = 0;
+		if (direction) {
+			step = *direction;
+			*direction = 0;
+		}
+
+		findView(step);
+
+		auto at = [textPages, caseSensitive] (int page, std::string &cache) -> const std::string* {
+			const std::string* txt = (*textPages)[page];
+			if (!txt)
+				return nullptr;
+
+			if (!caseSensitive || !*caseSensitive) {
+				cache = *txt;
+				Text::toLowerCase(cache);
+				txt = &cache;
+			}
+
+			return txt;
+		};
+		auto fill = [] (Marker* cursor, const Marker::Coordinates &nbegin, const Marker::Coordinates &nend, TextWordGetter getWord) -> bool {
+			if (getWord) {
+				Marker src;
+				getWord(nbegin, src);
+				if ((src.begin == nbegin && src.end == nend) || (src.begin == nend && src.end == nbegin)) {
+					cursor->begin = nbegin;
+					cursor->end = nend;
+
+					return true;
+				}
+			} else {
+				cursor->begin = nbegin;
+				cursor->end = nend;
+
+				return true;
+			}
+
+			return false;
+		};
+
+		if (step && what->empty())
+			step = 0;
+		if (step == 1) { // Forward.
+			std::string pat = *what;
+			if (!caseSensitive || !*caseSensitive) {
+				Text::toLowerCase(pat);
+			}
+			const std::wstring widepat = Unicode::toWide(what->c_str());
+			int page = cursor->begin.index;
+			std::string tmp;
+			const std::string* text = at(page, tmp);
+			int lnoff = 0, coloff = 0;
+			const char* mat = editingTextFindForward(text->c_str(), pat.c_str(), cursor->max().line, cursor->max().column, &lnoff, &coloff);
+			if (mat) { // Found.
+				Marker::Coordinates nbegin(page, cursor->begin.line + lnoff, coloff);
+				Marker::Coordinates nend(page, cursor->begin.line + lnoff, coloff + (int)widepat.length());
+				if (lnoff == 0) {
+					nbegin.column += cursor->max().column;
+					nend.column += cursor->max().column;
+				}
+
+				result = fill(cursor, nbegin, nend, wholeWord && *wholeWord ? getWord : nullptr);
+			} else { // Not found.
+				// Open next page for global search.
+				if (*globalSearch && textPages->size() > 1) {
+					if (++page >= (int)textPages->size())
+						page = 0;
+					text = at(page, tmp);
+					while (text == nullptr) {
+						if (++page >= (int)textPages->size())
+							page = 0;
+						text = at(page, tmp);
+					}
+				}
+
+				// Find again from the beginning.
+			_forwardAgain:
+				mat = editingTextFindForward(text->c_str(), pat.c_str(), 0, 0, &lnoff, &coloff);
+				if (mat) { // Found.
+					const Marker::Coordinates nbegin(page, lnoff, coloff);
+					const Marker::Coordinates nend(page, lnoff, coloff + (int)widepat.length());
+
+					result = fill(cursor, nbegin, nend, wholeWord && *wholeWord ? getWord : nullptr);
+				} else { // Not found.
+					if (page != cursor->begin.index) {
+						page = cursor->begin.index;
+						text = at(page, tmp);
+
+						goto _forwardAgain;
+					}
+				}
+			}
+		} else if (step == -1) { // Backward.
+			Marker::Coordinates pos = cursor->min();
+			std::string pat = *what;
+			if (!caseSensitive || !*caseSensitive) {
+				Text::toLowerCase(pat);
+			}
+			std::wstring widepat = Unicode::toWide(what->c_str());
+			int page = cursor->begin.index;
+			std::string tmp;
+			const std::string* text = at(page, tmp);
+			int lnoff = 0, coloff = 0;
+			const char* mat = editingTextFindBackward(text->c_str(), pat.c_str(), pos.line, pos.column, &lnoff, &coloff);
+			if (mat) { // Found.
+				const Marker::Coordinates nbegin(page, lnoff, coloff);
+				const Marker::Coordinates nend(page, lnoff, coloff + (int)widepat.length());
+
+				result = fill(cursor, nbegin, nend, wholeWord && *wholeWord ? getWord : nullptr);
+			} else if (!max.empty()) { // Not found.
+				// Open previous page for global search.
+				if (*globalSearch && textPages->size() > 1) {
+					if (--page < 0)
+						page = (int)textPages->size() - 1;
+					text = at(page, tmp);
+					while (text == nullptr) {
+						if (--page < 0)
+							page = (int)textPages->size() - 1;;
+						text = at(page, tmp);
+					}
+				}
+
+				// Find again from the end.
+				pos = max;
+			_backwardAgain:
+				mat = editingTextFindBackward(text->c_str(), pat.c_str(), pos.line, pos.column, &lnoff, &coloff);
+				if (mat) { // Found.
+					const Marker::Coordinates nbegin(page, lnoff, coloff);
+					const Marker::Coordinates nend(page, lnoff, coloff + (int)widepat.length());
+
+					result = fill(cursor, nbegin, nend, wholeWord && *wholeWord ? getWord : nullptr);
+				} else { // Not found.
+					if (page != cursor->begin.index) {
+						page = cursor->begin.index;
+						text = at(page, tmp);
+
+						goto _backwardAgain;
+					}
+				}
+			}
+		} else /* if (step == 0) */ { // Error.
+			// Do nothing.
+		}
+
+		return result;
+	};
+
+	ImGuiIO &io = ImGui::GetIO();
+	ImGuiStyle &style = ImGui::GetStyle();
+
+	auto findView = [&] (int &step) -> void {
+		if (!visible)
+			return;
+
+		const ImVec2 buttonSize(13 * io.FontGlobalScale, 13 * io.FontGlobalScale);
+
+		const float x = ImGui::GetCursorPosX();
+		ImGui::Dummy(ImVec2(8, 0));
+		ImGui::SameLine();
+		ImGui::AlignTextToFramePadding();
+		ImGui::TextUnformatted(ws->theme()->dialogItem_Find());
+
+		ImGui::PushID("@Fnd");
+		do {
+			ImGui::SameLine();
+			if (!*initialized) {
+				ImGui::SetKeyboardFocusHere();
+				*initialized = true;
+			}
+			ImGui::SetNextItemWidth(width - (ImGui::GetCursorPosX() - x) - (buttonSize.x + style.FramePadding.x * 2) * 4);
+			char buf[256]; // Fixed size.
+			const size_t n = std::min(BITTY_COUNTOF(buf) - 1, what->length());
+			if (n > 0)
+				memcpy(buf, what->c_str(), n);
+			buf[n] = '\0';
+			const ImGuiInputTextFlags flags = ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackAlways | ImGuiInputTextFlags_AllowTabInput;
+			const bool edited = ImGui::InputText(
+				"", buf, sizeof(buf),
+				flags,
+				[] (ImGuiInputTextCallbackData* data) -> int {
+					std::string* what = (std::string*)data->UserData;
+					what->assign(data->Buf, data->BufTextLen);
+
+					return 0;
+				},
+				what
+			);
+			if (ImGui::GetActiveID() == ImGui::GetID("")) {
+				if (focused)
+					*focused = true;
+			}
+			if (!edited)
+				break;
+
+			step = 1;
+
+			*what = buf;
+		} while (false);
+		ImGui::PopID();
+
+		ImGui::SameLine();
+		if (ImGui::ImageButton(ws->theme()->sliceCaseSensitive()->pointer(rnd), buttonSize, ImGui::ColorConvertU32ToFloat4(ws->theme()->style()->iconColor), caseSensitive ? *caseSensitive : false)) {
+			if (caseSensitive)
+				*caseSensitive = !*caseSensitive;
+		}
+		if (ImGui::IsItemHovered()) {
+			VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
+
+			ImGui::SetTooltip(ws->theme()->tooltipEditing_CaseSensitive());
+		}
+
+		ImGui::SameLine();
+		if (ImGui::ImageButton(ws->theme()->sliceWholeWord()->pointer(rnd), buttonSize, ImGui::ColorConvertU32ToFloat4(ws->theme()->style()->iconColor), wholeWord ? *wholeWord : false)) {
+			if (wholeWord)
+				*wholeWord = !*wholeWord;
+		}
+		if (ImGui::IsItemHovered()) {
+			VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
+
+			ImGui::SetTooltip(ws->theme()->tooltipEditing_MatchWholeWords());
+		}
+
+		ImGui::SameLine();
+		if (ImGui::ImageButton(ws->theme()->sliceGlobal()->pointer(rnd), buttonSize, ImGui::ColorConvertU32ToFloat4(ws->theme()->style()->iconColor), globalSearch ? *globalSearch : false)) {
+			if (globalSearch)
+				*globalSearch = !*globalSearch;
+		}
+		if (ImGui::IsItemHovered()) {
+			VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
+
+			ImGui::SetTooltip(ws->theme()->tooltipEditing_GlobalSearch());
+		}
+
+		ImGui::SameLine();
+		if (ImGui::ImageButton(ws->theme()->slicePrevious()->pointer(rnd), buttonSize, ImGui::ColorConvertU32ToFloat4(ws->theme()->style()->iconColor))) {
+			if (!what->empty())
+				step = -1;
+		}
+
+		ImGui::SameLine();
+		if (ImGui::ImageButton(ws->theme()->sliceNext()->pointer(rnd), buttonSize, ImGui::ColorConvertU32ToFloat4(ws->theme()->style()->iconColor))) {
+			if (!what->empty())
+				step = 1;
+		}
+	};
+
+	const bool result = findOne(
+		rnd,
+		ws,
+		cursor,
+		focused,
+		textPages, what,
+		max,
+		direction,
+		caseSensitive, wholeWord, globalSearch,
+		findView,
+		getWord
+	);
 
 	return result;
 }

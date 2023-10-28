@@ -10,6 +10,7 @@
 
 #include "platform.h"
 #include "text.h"
+#include "../lib/portable_file_dialogs/portable-file-dialogs.h"
 #include <SDL.h>
 #include <dirent.h>
 #include <experimental/filesystem>
@@ -20,7 +21,6 @@ namespace filesystem = std::experimental::filesystem;
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include "../lib/portable_file_dialogs/portable-file-dialogs.h"
 
 /*
 ** {===========================================================================

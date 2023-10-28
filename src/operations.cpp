@@ -3371,6 +3371,13 @@ void Operations::projectStop(class Renderer* rnd, Workspace* ws, const class Pro
 				editor->post(Editable::SET_PROGRAM_POINTER, (Variant::Int)-1);
 			}
 		);
+
+		ws->withEditingAsset(
+			project,
+			[&] (Asset*, Editable* editor) -> void {
+				editor->post(Editable::FOCUS);
+			}
+		);
 	} while (false);
 
 	ws->debugStopping() = false;

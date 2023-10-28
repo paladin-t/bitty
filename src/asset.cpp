@@ -583,6 +583,9 @@ bool Asset::finish(Usages usage, bool shallow) {
 
 		editor(edit);
 
+		if (editor())
+			editor()->post(Editable::FOCUS);
+
 		if (unique(object(EDITING)))
 			object(EDITING, nullptr);
 	} while (false);

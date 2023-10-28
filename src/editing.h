@@ -59,15 +59,19 @@ namespace Tools {
 
 struct Marker {
 	struct Coordinates {
+		int index = 0;
 		int line = -1;
 		int column = -1;
 
 		Coordinates();
 		Coordinates(int ln, int col);
+		Coordinates(int idx, int ln, int col);
 
 		bool operator == (const Coordinates &other) const;
 		bool operator < (const Coordinates &other) const;
 		bool operator > (const Coordinates &other) const;
+
+		int compare(const Coordinates &other) const;
 
 		bool empty(void) const;
 		void clear(void);

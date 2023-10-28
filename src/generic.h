@@ -201,6 +201,16 @@ public:
 
 			return Index(_index++, _second);
 		}
+		Index &operator -- (void) {
+			--_index;
+
+			return *this;
+		}
+		Index operator -- (int _) {
+			(void)_;
+
+			return Index(_index--, _second);
+		}
 
 		operator int (void) const {
 			return _index;

@@ -87,6 +87,9 @@ static constexpr const char* const EDITOR_CODE_PRIMITIVES[] = {
 */
 
 class EditorCode : public Editable, public virtual Object {
+private:
+	static int refCount;
+
 public:
 	BITTY_CLASS_TYPE('C', 'O', 'D', 'E')
 

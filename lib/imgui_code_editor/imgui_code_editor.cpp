@@ -192,6 +192,7 @@ CodeEditor::LanguageDefinition CodeEditor::LanguageDefinition::AngelScript(void)
 
 		langDef.CommentStart = "/*";
 		langDef.CommentEnd = "*/";
+		langDef.SimpleCommentHead = "//";
 
 		langDef.CaseSensitive = true;
 
@@ -238,6 +239,7 @@ CodeEditor::LanguageDefinition CodeEditor::LanguageDefinition::C(void) {
 
 		langDef.CommentStart = "/*";
 		langDef.CommentEnd = "*/";
+		langDef.SimpleCommentHead = "//";
 
 		langDef.CaseSensitive = true;
 
@@ -287,6 +289,7 @@ CodeEditor::LanguageDefinition CodeEditor::LanguageDefinition::CPlusPlus(void) {
 
 		langDef.CommentStart = "/*";
 		langDef.CommentEnd = "*/";
+		langDef.SimpleCommentHead = "//";
 
 		langDef.CaseSensitive = true;
 
@@ -333,6 +336,7 @@ CodeEditor::LanguageDefinition CodeEditor::LanguageDefinition::GLSL(void) {
 
 		langDef.CommentStart = "/*";
 		langDef.CommentEnd = "*/";
+		langDef.SimpleCommentHead = "//";
 
 		langDef.CaseSensitive = true;
 
@@ -402,6 +406,7 @@ CodeEditor::LanguageDefinition CodeEditor::LanguageDefinition::HLSL(void) {
 
 		langDef.CommentStart = "/*";
 		langDef.CommentEnd = "*/";
+		langDef.SimpleCommentHead = "//";
 
 		langDef.CaseSensitive = true;
 
@@ -471,6 +476,7 @@ CodeEditor::LanguageDefinition CodeEditor::LanguageDefinition::Lua(void) {
 
 		langDef.CommentStart = "--[[";
 		langDef.CommentEnd = "]]";
+		langDef.SimpleCommentHead = "--";
 
 		langDef.CaseSensitive = true;
 
@@ -668,6 +674,100 @@ void CodeEditor::UndoRecord::Undo(CodeEditor* aEditor) {
 			}
 
 			break;
+		case UndoType::Comment: {
+				assert(End.Line - Start.Line + 1 == (int)Content.length());
+
+				for (int i = Start.Line; i <= End.Line; ++i) {
+					Line &line = aEditor->CodeLines[i];
+					const char op = Content[i - Start.Line];
+					if (op == 0) {
+						// Do nothing.
+					} else if (op == 1 || op == 2) {
+						bool match = true;
+						if (line.Glyphs.size() >= aEditor->LangDef.SimpleCommentHead.size()) {
+							for (int j = 0; j < (int)aEditor->LangDef.SimpleCommentHead.length(); ++j) {
+								Char cch = aEditor->LangDef.SimpleCommentHead[j];
+								const Glyph &g = line.Glyphs[j];
+								if (cch != g.Character) {
+									match = false;
+
+									break;
+								}
+							}
+						} else {
+							match = false;
+						}
+						if (match) {
+							int n = 0;
+							for (int j = 0; j < (int)aEditor->LangDef.SimpleCommentHead.length(); ++j)
+								line.Glyphs.erase(line.Glyphs.begin());
+							++n;
+
+							if (!line.Glyphs.empty() && op == 2) {
+								const Glyph &g_ = *line.Glyphs.begin();
+								if (g_.Character == ' ') {
+									line.Glyphs.erase(line.Glyphs.begin());
+									++n;
+								}
+							}
+						}
+
+						Coordinates pos(i, 0);
+						aEditor->OnChanged(pos, pos, -1);
+					} else {
+						assert(false);
+					}
+				}
+
+				aEditor->Colorize(Start.Line, End.Line - Start.Line + 1);
+			}
+
+			break;
+		case UndoType::Uncomment: {
+				assert(End.Line - Start.Line + 1 == (int)Content.length());
+
+				for (int i = Start.Line; i <= End.Line; ++i) {
+					Line &line = aEditor->CodeLines[i];
+					char op = Content[i - Start.Line];
+					if (op == 0) {
+						// Do nothing.
+					} else if (op == 1 || op == 2) {
+						if (op == 2)
+							line.Glyphs.insert(line.Glyphs.begin(), Glyph(' ', PaletteIndex::Default));
+						for (int j = (int)aEditor->LangDef.SimpleCommentHead.length() - 1; j >= 0; --j)
+							line.Glyphs.insert(line.Glyphs.begin(), Glyph(aEditor->LangDef.SimpleCommentHead[j], PaletteIndex::Comment));
+
+						Coordinates pos(i, 0);
+						aEditor->OnChanged(pos, pos, -1);
+					} else {
+						assert(false);
+					}
+				}
+
+				aEditor->Colorize(Start.Line, End.Line - Start.Line + 1);
+			}
+
+			break;
+		case UndoType::MoveLineUp: {
+				for (int i = End.Line - 1; i >= Start.Line - 1; --i) {
+					std::swap(aEditor->CodeLines[i], aEditor->CodeLines[i + 1]);
+				}
+				Coordinates pos(Start.Line - 1, 0);
+				Coordinates pos_(End.Line - 1 + 1, 0);
+				aEditor->OnChanged(pos, pos_, -1);
+			}
+
+			break;
+		case UndoType::MoveLineDown: {
+				for (int i = Start.Line + 1; i <= End.Line + 1; ++i) {
+					std::swap(aEditor->CodeLines[i], aEditor->CodeLines[i - 1]);
+				}
+				Coordinates pos(Start.Line + 1 - 1, 0);
+				Coordinates pos_(End.Line + 1, 0);
+				aEditor->OnChanged(pos, pos_, -1);
+			}
+
+			break;
 		}
 	}
 
@@ -755,6 +855,100 @@ void CodeEditor::UndoRecord::Redo(CodeEditor* aEditor) {
 						assert(false);
 					}
 				}
+			}
+
+			break;
+		case UndoType::Comment: {
+				assert(End.Line - Start.Line + 1 == (int)Content.length());
+
+				for (int i = Start.Line; i <= End.Line; ++i) {
+					Line &line = aEditor->CodeLines[i];
+					char op = Content[i - Start.Line];
+					if (op == 0) {
+						// Do nothing.
+					} else if (op == 1 || op == 2) {
+						if (op == 2)
+							line.Glyphs.insert(line.Glyphs.begin(), Glyph(' ', PaletteIndex::Default));
+						for (int j = (int)aEditor->LangDef.SimpleCommentHead.length() - 1; j >= 0; --j)
+							line.Glyphs.insert(line.Glyphs.begin(), Glyph(aEditor->LangDef.SimpleCommentHead[j], PaletteIndex::Comment));
+
+						Coordinates pos(i, 0);
+						aEditor->OnChanged(pos, pos, -1);
+					} else {
+						assert(false);
+					}
+				}
+
+				aEditor->Colorize(Start.Line, End.Line - Start.Line + 1);
+			}
+
+			break;
+		case UndoType::Uncomment: {
+				assert(End.Line - Start.Line + 1 == (int)Content.length());
+
+				for (int i = Start.Line; i <= End.Line; ++i) {
+					Line &line = aEditor->CodeLines[i];
+					const char op = Content[i - Start.Line];
+					if (op == 0) {
+						// Do nothing.
+					} else if (op == 1 || op == 2) {
+						bool match = true;
+						if (line.Glyphs.size() >= aEditor->LangDef.SimpleCommentHead.size()) {
+							for (int j = 0; j < (int)aEditor->LangDef.SimpleCommentHead.length(); ++j) {
+								Char cch = aEditor->LangDef.SimpleCommentHead[j];
+								const Glyph &g = line.Glyphs[j];
+								if (cch != g.Character) {
+									match = false;
+
+									break;
+								}
+							}
+						} else {
+							match = false;
+						}
+						if (match) {
+							int n = 0;
+							for (int j = 0; j < (int)aEditor->LangDef.SimpleCommentHead.length(); ++j)
+								line.Glyphs.erase(line.Glyphs.begin());
+							++n;
+
+							if (!line.Glyphs.empty() && op == 2) {
+								const Glyph &g_ = *line.Glyphs.begin();
+								if (g_.Character == ' ') {
+									line.Glyphs.erase(line.Glyphs.begin());
+									++n;
+								}
+							}
+						}
+
+						Coordinates pos(i, 0);
+						aEditor->OnChanged(pos, pos, -1);
+					} else {
+						assert(false);
+					}
+				}
+
+				aEditor->Colorize(Start.Line, End.Line - Start.Line + 1);
+			}
+
+			break;
+		case UndoType::MoveLineUp: {
+				for (int i = Start.Line; i <= End.Line; ++i) {
+					std::swap(aEditor->CodeLines[i], aEditor->CodeLines[i - 1]);
+				}
+				Coordinates pos(Start.Line - 1, 0);
+				Coordinates pos_(End.Line, 0);
+				aEditor->OnChanged(pos, pos_, -1);
+			}
+
+			break;
+		case UndoType::MoveLineDown: {
+				for (int i = End.Line; i >= Start.Line; --i) {
+					std::swap(aEditor->CodeLines[i], aEditor->CodeLines[i + 1]);
+				}
+				Coordinates pos(Start.Line, 0);
+				Coordinates pos_(End.Line + 1, 0);
+				aEditor->OnChanged(pos, pos_, -1);
 			}
 
 			break;
@@ -1900,6 +2094,35 @@ int CodeEditor::GetSelectionLines(void) const {
 	return std::abs(State.SelectionEnd.Line - State.SelectionStart.Line) + 1;
 }
 
+int CodeEditor::GetCommentLines(void) const {
+	int commentedLines = 0;
+	for (int i = State.SelectionStart.Line; i <= State.SelectionEnd.Line; ++i) {
+		const Line &line = CodeLines[i];
+		if (line.Glyphs.empty())
+			continue;
+
+		bool match = true;
+		if (line.Glyphs.size() >= LangDef.SimpleCommentHead.size()) {
+			for (int j = 0; j < (int)LangDef.SimpleCommentHead.length(); ++j) {
+				Char cch = LangDef.SimpleCommentHead[j];
+				const Glyph &g = line.Glyphs[j];
+				if (cch != g.Character) {
+					match = false;
+
+					break;
+				}
+			}
+		} else {
+			match = false;
+		}
+		if (match) {
+			++commentedLines;
+		}
+	}
+
+	return commentedLines;
+}
+
 void CodeEditor::Copy(void) {
 	if (HasSelection()) {
 		SetClipboardText(GetSelectionText().c_str());
@@ -2133,6 +2356,193 @@ void CodeEditor::Unindent(bool aByKey) {
 	}
 }
 
+void CodeEditor::Comment(void) {
+	if (IsReadOnly())
+		return;
+
+	if (LangDef.SimpleCommentHead.empty())
+		return;
+
+	UndoRecord u;
+	u.Type = UndoType::Comment;
+	u.Before = State;
+
+	u.Start = State.SelectionStart;
+	u.End = State.SelectionEnd;
+
+	for (int i = u.Start.Line; i <= u.End.Line; ++i) {
+		Line &line = CodeLines[i];
+		if (line.Glyphs.empty()) {
+			for (int j = (int)LangDef.SimpleCommentHead.length() - 1; j >= 0; --j)
+				line.Glyphs.insert(line.Glyphs.begin(), Glyph(LangDef.SimpleCommentHead[j], PaletteIndex::Comment));
+			u.Content.push_back(1);
+		} else {
+			line.Glyphs.insert(line.Glyphs.begin(), Glyph(' ', PaletteIndex::Default));
+			for (int j = (int)LangDef.SimpleCommentHead.length() - 1; j >= 0; --j)
+				line.Glyphs.insert(line.Glyphs.begin(), Glyph(LangDef.SimpleCommentHead[j], PaletteIndex::Comment));
+			u.Content.push_back(2);
+		}
+
+		Coordinates pos(i, 0);
+		OnChanged(pos, pos, 0);
+	}
+
+	State.SelectionEnd.Column = (int)CodeLines[State.SelectionEnd.Line].Glyphs.size();
+
+	Colorize(State.SelectionStart.Line, State.SelectionEnd.Line - State.SelectionStart.Line + 1);
+
+	u.After = State;
+	AddUndo(u);
+
+	OnModified();
+}
+
+void CodeEditor::Uncomment(void) {
+	if (IsReadOnly())
+		return;
+
+	if (LangDef.SimpleCommentHead.empty())
+		return;
+
+	UndoRecord u;
+	u.Type = UndoType::Uncomment;
+	u.Before = State;
+
+	u.Start = State.SelectionStart;
+	u.End = State.SelectionEnd;
+
+	int affectedLines = 0;
+	for (int i = u.Start.Line; i <= u.End.Line; ++i) {
+		Line &line = CodeLines[i];
+		if (line.Glyphs.empty()) {
+			u.Content.push_back(0);
+
+			continue;
+		}
+
+		bool match = true;
+		if (line.Glyphs.size() >= LangDef.SimpleCommentHead.size()) {
+			for (int j = 0; j < (int)LangDef.SimpleCommentHead.length(); ++j) {
+				Char cch = LangDef.SimpleCommentHead[j];
+				const Glyph &g = line.Glyphs[j];
+				if (cch != g.Character) {
+					match = false;
+
+					break;
+				}
+			}
+		} else {
+			match = false;
+		}
+		if (match) {
+			int n = 0;
+			for (int j = 0; j < (int)LangDef.SimpleCommentHead.length(); ++j)
+				line.Glyphs.erase(line.Glyphs.begin());
+			++n;
+
+			if (!line.Glyphs.empty()) {
+				const Glyph &g_ = *line.Glyphs.begin();
+				if (g_.Character == ' ') {
+					line.Glyphs.erase(line.Glyphs.begin());
+					++n;
+				}
+			}
+
+			u.Content.push_back((char)n);
+			++affectedLines;
+
+			Coordinates pos(i, 0);
+			OnChanged(pos, pos, 0);
+		} else {
+			u.Content.push_back(0);
+		}
+	}
+	if (affectedLines > 0) {
+		const Line &line = CodeLines[State.SelectionEnd.Line];
+		if ((int)line.Glyphs.size() < State.SelectionEnd.Column)
+			State.SelectionEnd.Column = (int)line.Glyphs.size();
+	}
+
+	Colorize(State.SelectionStart.Line, State.SelectionEnd.Line - State.SelectionStart.Line + 1);
+
+	u.After = State;
+	if (affectedLines > 0) {
+		AddUndo(u);
+
+		OnModified();
+	}
+}
+
+void CodeEditor::MoveLineUp(void) {
+	if (IsReadOnly())
+		return;
+
+	if (State.SelectionStart.Line == 0)
+		return;
+
+	UndoRecord u;
+	u.Type = UndoType::MoveLineUp;
+	u.Before = State;
+
+	u.Start = State.SelectionStart;
+	u.End = State.SelectionEnd;
+
+	for (int i = u.Start.Line; i <= u.End.Line; ++i) {
+		std::swap(CodeLines[i], CodeLines[i - 1]);
+	}
+	Coordinates pos(u.Start.Line - 1, 0);
+	Coordinates pos_(u.End.Line, 0);
+	OnChanged(pos, pos_, 0);
+
+	u.Content.push_back(0);
+
+	--State.SelectionStart.Line;
+	--State.SelectionEnd.Line;
+	--State.CursorPosition.Line;
+
+	Colorize(State.SelectionStart.Line - 1, State.SelectionEnd.Line - State.SelectionStart.Line + 2);
+
+	u.After = State;
+	AddUndo(u);
+
+	OnModified();
+}
+
+void CodeEditor::MoveLineDown(void) {
+	if (IsReadOnly())
+		return;
+
+	if (State.SelectionEnd.Line >= (int)CodeLines.size() - 1)
+		return;
+
+	UndoRecord u;
+	u.Type = UndoType::MoveLineDown;
+	u.Before = State;
+
+	u.Start = State.SelectionStart;
+	u.End = State.SelectionEnd;
+
+	for (int i = u.End.Line; i >= u.Start.Line; --i) {
+		std::swap(CodeLines[i], CodeLines[i + 1]);
+	}
+	Coordinates pos(u.Start.Line, 0);
+	Coordinates pos_(u.End.Line + 1, 0);
+	OnChanged(pos, pos_, 0);
+
+	u.Content.push_back(0);
+
+	++State.SelectionStart.Line;
+	++State.SelectionEnd.Line;
+	++State.CursorPosition.Line;
+
+	Colorize(State.SelectionStart.Line, State.SelectionEnd.Line - State.SelectionStart.Line + 2);
+
+	u.After = State;
+	AddUndo(u);
+
+	OnModified();
+}
+
 void CodeEditor::ClearUndoRedoStack(void) {
 	UndoBuf.clear();
 	UndoIndex = 0;
@@ -2192,7 +2602,7 @@ void CodeEditor::Redo(int aSteps) {
 }
 
 const CodeEditor::Palette &CodeEditor::GetDarkPalette(void) {
-	static Palette p = {
+	static const Palette plt = {
 		0xffffffff, // None.
 		0xffd69c56, // Keyword.
 		0xffa8ceb5, // Number.
@@ -2204,7 +2614,7 @@ const CodeEditor::Palette &CodeEditor::GetDarkPalette(void) {
 		0xffb0c94e, // Known identifier.
 		0xffc040a0, // Preproc identifier.
 		0xff4aa657, // Comment (single line).
-		0xff4aa657, // Comment (multi line).
+		0xff4aa657, // Comment (multi-line).
 		0x90909090, // Space.
 		0xff2c2c2c, // Background.
 		0xffe0e0e0, // Cursor.
@@ -2221,11 +2631,11 @@ const CodeEditor::Palette &CodeEditor::GetDarkPalette(void) {
 		0xfffa955f  // Line edited reverted.
 	};
 
-	return p;
+	return plt;
 }
 
 const CodeEditor::Palette &CodeEditor::GetLightPalette(void) {
-	static Palette p = {
+	static const Palette plt = {
 		0xff000000, // None.
 		0xffff0c06, // Keyword.
 		0xff008000, // Number.
@@ -2237,7 +2647,7 @@ const CodeEditor::Palette &CodeEditor::GetLightPalette(void) {
 		0xff606010, // Known identifier.
 		0xffc040a0, // Preproc identifier.
 		0xff205020, // Comment (single line).
-		0xff405020, // Comment (multi line).
+		0xff405020, // Comment (multi-line).
 		0xffaf912b, // Space.
 		0xffffffff, // Background.
 		0xff000000, // Cursor.
@@ -2254,11 +2664,11 @@ const CodeEditor::Palette &CodeEditor::GetLightPalette(void) {
 		0xfffa955f  // Line edited reverted.
 	};
 
-	return p;
+	return plt;
 }
 
 const CodeEditor::Palette &CodeEditor::GetRetroBluePalette(void) {
-	static Palette p = {
+	static const Palette plt = {
 		0xff00ffff, // None.
 		0xffffff00, // Keyword.
 		0xff00ff00, // Number.
@@ -2270,7 +2680,7 @@ const CodeEditor::Palette &CodeEditor::GetRetroBluePalette(void) {
 		0xffffffff, // Known identifier.
 		0xffff00ff, // Preproc identifier.
 		0xffb0b0b0, // Comment (single line).
-		0xffa0a0a0, // Comment (multi line).
+		0xffa0a0a0, // Comment (multi-line).
 		0x90909090, // Space.
 		0xff753929, // Background.
 		0xff0080ff, // Cursor.
@@ -2287,7 +2697,7 @@ const CodeEditor::Palette &CodeEditor::GetRetroBluePalette(void) {
 		0xfffa955f  // Line edited reverted.
 	};
 
-	return p;
+	return plt;
 }
 
 void CodeEditor::RenderText(int &aOffset, const ImVec2 &aPosition, ImU32 aPalette, ImU32 aColor, const char* aText, int aWidth) {

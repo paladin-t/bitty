@@ -216,7 +216,7 @@ public:
 		};
 
 		for (int i = 0; i < 16; ++i) {
-			const std::string str = Text::toString(i + 1) + ".";
+			const std::string str = " " + Text::toString(i + 1) + ".";
 			_listItemIndeces.push_back(str);
 		}
 	}
@@ -417,7 +417,7 @@ public:
 		const float scale = ImGui::GetIO().FontGlobalScale;
 
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.5f, 0.5f, 0.5f, 0.62f));
-		ImGui::PushStyleColor(ImGuiCol_BorderShadow, ImVec4(0, 0, 0, 0));
+		ImGui::PushStyleColor(ImGuiCol_BorderShadow, ImVec4(1, 1, 1, 0));
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 2.0f * scale));
 
@@ -714,6 +714,8 @@ private:
 
 			break;
 		case MD_BLOCK_CODE:
+			ImGui::SameLine();
+
 			if (_codeHeights[context->codeSeed - 1].bottom == 0) {
 				_codeHeights[context->codeSeed - 1].bottom = ImGui::GetCursorPosY() - _codeHeights[context->codeSeed - 1].top;
 			}
