@@ -1791,6 +1791,7 @@ void Workspace::editing(class Window* wnd, class Renderer* rnd, const class Proj
 
 							Editable* editor = asset->editor();
 
+							bool toGainFocus = false;
 							if (lastEditing != index) {
 								switched = true;
 
@@ -1811,6 +1812,8 @@ void Workspace::editing(class Window* wnd, class Renderer* rnd, const class Proj
 
 								if (editor)
 									editor->gainFocus(rnd, project);
+								else
+									toGainFocus = true;
 							}
 
 							if (!editor) {
@@ -1834,6 +1837,9 @@ void Workspace::editing(class Window* wnd, class Renderer* rnd, const class Proj
 										editor->readonly(true);
 
 									fillAssetEditorSettings(editor);
+
+									if (toGainFocus)
+										editor->gainFocus(rnd, project);
 								}
 							}
 							if (editor) {

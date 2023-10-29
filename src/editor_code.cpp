@@ -31,6 +31,7 @@ private:
 	std::string _name;
 	Code::Ptr _object = nullptr;
 	Editing::Data::Checkpoint _checkpoint;
+	int _index = -1;
 
 	bool _acquireFocus = false;
 	int _breaking = -1;
@@ -611,38 +612,39 @@ public:
 			Coordinates srcBegin, srcEnd;
 			GetSelection(srcBegin, srcEnd);
 
-			int index = -1;
 			Text::Array* strings = nullptr;
 			Editing::Tools::TextPages &cache = _shared.cache(&strings);
-			strings->clear();
-			cache.clear();
 			do {
 				LockGuard<RecursiveMutex>::UniquePtr acquired;
 				Project* prj = project->acquire(acquired);
 				if (!prj)
 					break;
 
-				for (int i = 0; i < prj->count(); ++i) {
-					Asset* asset = prj->get(Asset::List::Index(i, false));
-					if (!asset)
+				Asset* asset = prj->get(Asset::List::Index(_index, false));
+				if (!asset)
+					break;
+
+				if (asset->type() != Code::TYPE())
+					break;
+
+				const bool readyForEditing = asset->readyFor(Asset::EDITING);
+				if (readyForEditing) {
+					EditorCodeImpl* editor = (EditorCodeImpl*)asset->editor();
+					if (!editor)
 						break;
 
-					if (asset->type() != Code::TYPE()) {
-						strings->push_back("");
-						cache.push_back(nullptr);
-
-						continue;
+					size_t len = 0;
+					const char* txt = editor->text(&len);
+					std::string str;
+					str.assign(txt, len);
+					if (_index < (int)strings->size() && _index < (int)cache.size()) {
+						(*strings)[_index] = txt;
+						cache[_index] = &strings->back();
 					}
-
-					if (_name == asset->entry().name())
-						index = i;
-
-					const bool readyForEditing = asset->readyFor(Asset::EDITING);
-					if (!readyForEditing)
-						asset->prepare(Asset::EDITING, true);
+				} else {
+					asset->prepare(Asset::EDITING, true);
 					Object::Ptr obj = asset->object(Asset::EDITING);
-					if (!readyForEditing)
-						asset->finish(Asset::EDITING, true);
+					asset->finish(Asset::EDITING, true);
 
 					if (!obj)
 						break;
@@ -654,13 +656,15 @@ public:
 					const char* txt = code->text(&len);
 					std::string str;
 					str.assign(txt, len);
-					strings->push_back(txt);
-					cache.push_back(&strings->back());
+					if (_index < (int)strings->size() && _index < (int)cache.size()) {
+						(*strings)[_index] = txt;
+						cache[_index] = &strings->back();
+					}
 				}
 			} while (false);
 			_tools.marker = Editing::Tools::Marker(
-				Editing::Tools::Marker::Coordinates(index, srcBegin.Line, srcBegin.Column),
-				Editing::Tools::Marker::Coordinates(index, srcEnd.Line, srcEnd.Column)
+				Editing::Tools::Marker::Coordinates(_index, srcBegin.Line, srcBegin.Column),
+				Editing::Tools::Marker::Coordinates(_index, srcEnd.Line, srcEnd.Column)
 			);
 
 			const float y = ImGui::GetCursorPosY();
@@ -670,21 +674,21 @@ public:
 				width,
 				&_tools.initialized, &_tools.focused,
 				&cache, &_shared.word(),
-				Editing::Tools::Marker::Coordinates(index, GetTotalLines(), GetColumnsAt(GetTotalLines())),
+				Editing::Tools::Marker::Coordinates(_index, GetTotalLines(), GetColumnsAt(GetTotalLines())),
 				&_tools.direction,
 				&ws->settings()->editorCaseSensitive, &ws->settings()->editorMatchWholeWord, &ws->settings()->editorGlobalSearch,
 				_shared.finding,
 				[&] (const Editing::Tools::Marker::Coordinates &pos, Editing::Tools::Marker &src) -> std::string {
 					Coordinates srcBegin, srcEnd;
 					const std::string result = GetWordAt(Coordinates(pos.line, pos.column), &srcBegin, &srcEnd);
-					src.begin = Editing::Tools::Marker::Coordinates(index, srcBegin.Line, srcBegin.Column);
-					src.end = Editing::Tools::Marker::Coordinates(index, srcEnd.Line, srcEnd.Column);
+					src.begin = Editing::Tools::Marker::Coordinates(_index, srcBegin.Line, srcBegin.Column);
+					src.end = Editing::Tools::Marker::Coordinates(_index, srcEnd.Line, srcEnd.Column);
 
 					return result;
 				}
 			);
 			if (stepped && !_tools.marker.empty()) {
-				if (_tools.marker.begin.index == index) {
+				if (_tools.marker.begin.index == _index) {
 					const Coordinates begin(_tools.marker.begin.line, _tools.marker.begin.column);
 					const Coordinates end(_tools.marker.end.line, _tools.marker.end.column);
 
@@ -768,10 +772,68 @@ public:
 	}
 
 	virtual void lostFocus(class Renderer* /* rnd */, const class Project* /* project */) override {
-		// Do nothing.
+		_index = -1;
+		Text::Array* strings = nullptr;
+		Editing::Tools::TextPages &cache = _shared.cache(&strings);
+		strings->clear();
+		cache.clear();
 	}
-	virtual void gainFocus(class Renderer* /* rnd */, const class Project* /* project */) override {
-		// Do nothing.
+	virtual void gainFocus(class Renderer* /* rnd */, const class Project* project) override {
+		Text::Array* strings = nullptr;
+		Editing::Tools::TextPages &cache = _shared.cache(&strings);
+		do {
+			LockGuard<RecursiveMutex>::UniquePtr acquired;
+			Project* prj = project->acquire(acquired);
+			if (!prj)
+				break;
+
+			for (int i = 0; i < prj->count(); ++i) {
+				Asset* asset = prj->get(Asset::List::Index(i, false));
+				if (!asset)
+					break;
+
+				if (asset->type() != Code::TYPE()) {
+					strings->push_back("");
+					cache.push_back(nullptr);
+
+					continue;
+				}
+
+				if (_name == asset->entry().name())
+					_index = i;
+
+				const bool readyForEditing = asset->readyFor(Asset::EDITING);
+				if (readyForEditing) {
+					EditorCodeImpl* editor = (EditorCodeImpl*)asset->editor();
+					if (!editor)
+						break;
+
+					size_t len = 0;
+					const char* txt = editor->text(&len);
+					std::string str;
+					str.assign(txt, len);
+					strings->push_back(txt);
+					cache.push_back(&strings->back());
+				} else {
+					asset->prepare(Asset::EDITING, true);
+					Object::Ptr obj = asset->object(Asset::EDITING);
+					asset->finish(Asset::EDITING, true);
+
+					if (!obj)
+						break;
+					Code::Ptr code = Object::as<Code::Ptr>(obj);
+					if (!code)
+						break;
+
+					size_t len = 0;
+					const char* txt = code->text(&len);
+					std::string str;
+					str.assign(txt, len);
+					strings->push_back(txt);
+					cache.push_back(&strings->back());
+				}
+			}
+		} while (false);
 	}
 
 private:
