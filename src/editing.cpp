@@ -845,7 +845,7 @@ bool find(
 		if (ImGui::IsItemHovered()) {
 			VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
 
-			ImGui::SetTooltip(ws->theme()->tooltipEditing_GlobalSearch());
+			ImGui::SetTooltip(ws->theme()->tooltipEditing_GlobalSearchForCode());
 		}
 
 		ImGui::SameLine();

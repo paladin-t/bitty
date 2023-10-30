@@ -373,7 +373,7 @@ bool Theme::open(class Renderer* rnd) {
 	tooltipEditing_CaseSensitive("Case-sensitive");
 	tooltipEditing_DeleteAnimation("Delete animation");
 	tooltipEditing_DeleteFrame("Delete frame");
-	tooltipEditing_GlobalSearch("Global search");
+	tooltipEditing_GlobalSearchForCode("Global search (for code)");
 	tooltipEditing_InsertFrame("Insert frame");
 	tooltipEditing_MatchWholeWords("Match whole words");
 	tooltipEditing_RenameAnimation("Rename animation");

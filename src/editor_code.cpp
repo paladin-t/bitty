@@ -72,11 +72,22 @@ private:
 	} _tools;
 
 	static struct Shared {
+		struct Cache {
+			typedef std::vector<Cache> Array;
+
+			std::string text;
+			bool valid = false;
+
+			Cache() {
+			}
+			Cache(const std::string &txt, bool valid_) : text(txt), valid(valid_) {
+			}
+		};
+
 		bool finding = false;
 		Editing::Tools::Marker marker;
 		mutable std::string* wordPtr = nullptr;
-		mutable Editing::Tools::TextPages* cachePtr = nullptr;
-		mutable Text::Array* cacheStr = nullptr;
+		mutable Cache::Array* cacheStr = nullptr;
 
 		Shared() {
 		}
@@ -97,35 +108,17 @@ private:
 			return *wordPtr;
 		}
 
-		const Editing::Tools::TextPages &cache(Text::Array** strs) const {
-			if (strs)
-				*strs = nullptr;
-
-			if (cachePtr == nullptr)
-				cachePtr = new Editing::Tools::TextPages();
-
+		const Cache::Array &cache(void) const {
 			if (cacheStr == nullptr)
-				cacheStr = new Text::Array();
+				cacheStr = new Cache::Array();
 
-			if (strs)
-				*strs = cacheStr;
-
-			return *cachePtr;
+			return *cacheStr;
 		}
-		Editing::Tools::TextPages &cache(Text::Array** strs) {
-			if (strs)
-				*strs = nullptr;
-
-			if (cachePtr == nullptr)
-				cachePtr = new Editing::Tools::TextPages();
-
+		Cache::Array &cache(void) {
 			if (cacheStr == nullptr)
-				cacheStr = new Text::Array();
+				cacheStr = new Cache::Array();
 
-			if (strs)
-				*strs = cacheStr;
-
-			return *cachePtr;
+			return *cacheStr;
 		}
 
 		void clear(void) {
@@ -134,10 +127,6 @@ private:
 			if (wordPtr) {
 				delete wordPtr;
 				wordPtr = nullptr;
-			}
-			if (cachePtr) {
-				delete cachePtr;
-				cachePtr = nullptr;
 			}
 			if (cacheStr) {
 				delete cacheStr;
@@ -612,8 +601,8 @@ public:
 			Coordinates srcBegin, srcEnd;
 			GetSelection(srcBegin, srcEnd);
 
-			Text::Array* strings = nullptr;
-			Editing::Tools::TextPages &cache = _shared.cache(&strings);
+			Shared::Cache::Array &strings = _shared.cache();
+			Editing::Tools::TextPages cache;
 			do {
 				LockGuard<RecursiveMutex>::UniquePtr acquired;
 				Project* prj = project->acquire(acquired);
@@ -637,10 +626,8 @@ public:
 					const char* txt = editor->text(&len);
 					std::string str;
 					str.assign(txt, len);
-					if (_index < (int)strings->size() && _index < (int)cache.size()) {
-						(*strings)[_index] = txt;
-						cache[_index] = &strings->back();
-					}
+					if (_index < (int)strings.size())
+						strings[_index] = Shared::Cache(txt, true);
 				} else {
 					asset->prepare(Asset::EDITING, true);
 					Object::Ptr obj = asset->object(Asset::EDITING);
@@ -656,12 +643,16 @@ public:
 					const char* txt = code->text(&len);
 					std::string str;
 					str.assign(txt, len);
-					if (_index < (int)strings->size() && _index < (int)cache.size()) {
-						(*strings)[_index] = txt;
-						cache[_index] = &strings->back();
-					}
+					if (_index < (int)strings.size())
+						strings[_index] = Shared::Cache(txt, true);
 				}
 			} while (false);
+			for (Shared::Cache &str : strings) {
+				if (str.valid)
+					cache.push_back(&str.text);
+				else
+					cache.push_back(nullptr);
+			}
 			_tools.marker = Editing::Tools::Marker(
 				Editing::Tools::Marker::Coordinates(_index, srcBegin.Line, srcBegin.Column),
 				Editing::Tools::Marker::Coordinates(_index, srcEnd.Line, srcEnd.Column)
@@ -773,14 +764,11 @@ public:
 
 	virtual void lostFocus(class Renderer* /* rnd */, const class Project* /* project */) override {
 		_index = -1;
-		Text::Array* strings = nullptr;
-		Editing::Tools::TextPages &cache = _shared.cache(&strings);
-		strings->clear();
-		cache.clear();
+		Shared::Cache::Array &strings = _shared.cache();
+		strings.clear();
 	}
 	virtual void gainFocus(class Renderer* /* rnd */, const class Project* project) override {
-		Text::Array* strings = nullptr;
-		Editing::Tools::TextPages &cache = _shared.cache(&strings);
+		Shared::Cache::Array &strings = _shared.cache();
 		do {
 			LockGuard<RecursiveMutex>::UniquePtr acquired;
 			Project* prj = project->acquire(acquired);
@@ -793,8 +781,7 @@ public:
 					break;
 
 				if (asset->type() != Code::TYPE()) {
-					strings->push_back("");
-					cache.push_back(nullptr);
+					strings.push_back(Shared::Cache("", false));
 
 					continue;
 				}
@@ -812,8 +799,7 @@ public:
 					const char* txt = editor->text(&len);
 					std::string str;
 					str.assign(txt, len);
-					strings->push_back(txt);
-					cache.push_back(&strings->back());
+					strings.push_back(Shared::Cache(txt, true));
 				} else {
 					asset->prepare(Asset::EDITING, true);
 					Object::Ptr obj = asset->object(Asset::EDITING);
@@ -829,8 +815,7 @@ public:
 					const char* txt = code->text(&len);
 					std::string str;
 					str.assign(txt, len);
-					strings->push_back(txt);
-					cache.push_back(&strings->back());
+					strings.push_back(Shared::Cache(txt, true));
 				}
 			}
 		} while (false);
