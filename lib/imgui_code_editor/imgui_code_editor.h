@@ -200,7 +200,7 @@ public:
 
 	typedef std::function<void(bool)> Colorized;
 	typedef std::function<void(void)> Modified;
-	typedef std::function<void(int)> HeadClicked;
+	typedef std::function<void(int, bool)> HeadClicked;
 
 	CodeEditor();
 	virtual ~CodeEditor();
@@ -246,6 +246,9 @@ public:
 	void SetCursorPosition(const Coordinates &aPosition);
 	Coordinates GetCursorPosition(void) const;
 	void EnsureCursorVisible(bool aForceAbove = false);
+
+	void SetIndentWithTab(bool aValue);
+	bool GetIndentWithTab(void) const;
 
 	void SetTabSize(int aValue);
 	int GetTabSize(void) const;
@@ -298,6 +301,7 @@ public:
 	void GetSelection(Coordinates &aStart, Coordinates &aEnd);
 	std::string GetSelectionText(const char* aNewline = "\n") const;
 	int GetSelectionLines(void) const;
+	int GetNonEmptySelectionLines(void) const;
 	int GetCommentLines(void) const;
 
 	void Copy(void);
@@ -396,7 +400,7 @@ protected:
 	bool OnKeyPressed(ImGuiKey aKey);
 	void OnColorized(bool aMultilineComment) const;
 	void OnModified(void) const;
-	void OnHeadClicked(int aLine) const;
+	void OnHeadClicked(int aLine, bool aDoubleClicked) const;
 
 	Lines CodeLines;
 	float LineSpacing;
@@ -412,6 +416,7 @@ protected:
 	const ImFont* Font;
 	ImVector<ImWchar> InputBuffer;
 	ImVec2 CharAdv;
+	bool IndentWithTab = false;
 	int TabSize;
 	int TextStart;
 	float HeadSize = 0;

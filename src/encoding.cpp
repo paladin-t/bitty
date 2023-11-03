@@ -377,7 +377,7 @@ int Unicode::expectUtf8(const char* ch) {
 #define _TRANS(__m, __cp, __g) do { __cp &= ((__g[(unsigned char)c] & __m) != 0); } while (0)
 #define _TAIL(__ch, __c, __r, __cp, __g) do { _COPY(__ch, __c, __r, __cp); _TRANS(0x70, __cp, __g); } while (0)
 
-	static const unsigned char range[] = {
+	static constexpr const unsigned char RANGE[] = {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -405,17 +405,17 @@ int Unicode::expectUtf8(const char* ch) {
 		return 1;
 	}
 
-	type = range[(unsigned char)c];
+	type = RANGE[(unsigned char)c];
 	codepoint = (0xff >> type) & (unsigned char)c;
 
 	switch (type) {
-	case 2: _TAIL(ch, c, result, codepoint, range); return result;
-	case 3: _TAIL(ch, c, result, codepoint, range); _TAIL(ch, c, result, codepoint, range); return result;
-	case 4: _COPY(ch, c, result, codepoint); _TRANS(0x50, codepoint, range); _TAIL(ch, c, result, codepoint, range); return result;
-	case 5: _COPY(ch, c, result, codepoint); _TRANS(0x10, codepoint, range); _TAIL(ch, c, result, codepoint, range); _TAIL(ch, c, result, codepoint, range); return result;
-	case 6: _TAIL(ch, c, result, codepoint, range); _TAIL(ch, c, result, codepoint, range); _TAIL(ch, c, result, codepoint, range); return result;
-	case 10: _COPY(ch, c, result, codepoint); _TRANS(0x20, codepoint, range); _TAIL(ch, c, result, codepoint, range); return result;
-	case 11: _COPY(ch, c, result, codepoint); _TRANS(0x60, codepoint, range); _TAIL(ch, c, result, codepoint, range); _TAIL(ch, c, result, codepoint, range); return result;
+	case 2: _TAIL(ch, c, result, codepoint, RANGE); return result;
+	case 3: _TAIL(ch, c, result, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); return result;
+	case 4: _COPY(ch, c, result, codepoint); _TRANS(0x50, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); return result;
+	case 5: _COPY(ch, c, result, codepoint); _TRANS(0x10, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); return result;
+	case 6: _TAIL(ch, c, result, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); return result;
+	case 10: _COPY(ch, c, result, codepoint); _TRANS(0x20, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); return result;
+	case 11: _COPY(ch, c, result, codepoint); _TRANS(0x60, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); return result;
 	default: return 0;
 	}
 

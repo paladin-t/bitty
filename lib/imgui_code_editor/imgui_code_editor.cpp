@@ -1,4 +1,3 @@
-#define NOMINMAX
 #include "imgui_code_editor.h"
 #include "../imgui/imgui_internal.h"
 #include <algorithm>
@@ -24,7 +23,7 @@ static int ImTextExpectUtf8Char(const char* ch) {
 #define _TRANS(__m, __cp, __g) do { __cp &= ((__g[(unsigned char)c] & __m) != 0); } while(0)
 #define _TAIL(__ch, __c, __r, __cp, __g) do { _COPY(__ch, __c, __r, __cp); _TRANS(0x70, __cp, __g); } while(0)
 
-	static const unsigned char range[] = {
+	static constexpr const unsigned char RANGE[] = {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -52,17 +51,17 @@ static int ImTextExpectUtf8Char(const char* ch) {
 		return 1;
 	}
 
-	type = range[(unsigned char)c];
+	type = RANGE[(unsigned char)c];
 	codepoint = (0xff >> type) & (unsigned char)c;
 
 	switch (type) {
-	case 2: _TAIL(ch, c, result, codepoint, range); return result;
-	case 3: _TAIL(ch, c, result, codepoint, range); _TAIL(ch, c, result, codepoint, range); return result;
-	case 4: _COPY(ch, c, result, codepoint); _TRANS(0x50, codepoint, range); _TAIL(ch, c, result, codepoint, range); return result;
-	case 5: _COPY(ch, c, result, codepoint); _TRANS(0x10, codepoint, range); _TAIL(ch, c, result, codepoint, range); _TAIL(ch, c, result, codepoint, range); return result;
-	case 6: _TAIL(ch, c, result, codepoint, range); _TAIL(ch, c, result, codepoint, range); _TAIL(ch, c, result, codepoint, range); return result;
-	case 10: _COPY(ch, c, result, codepoint); _TRANS(0x20, codepoint, range); _TAIL(ch, c, result, codepoint, range); return result;
-	case 11: _COPY(ch, c, result, codepoint); _TRANS(0x60, codepoint, range); _TAIL(ch, c, result, codepoint, range); _TAIL(ch, c, result, codepoint, range); return result;
+	case 2: _TAIL(ch, c, result, codepoint, RANGE); return result;
+	case 3: _TAIL(ch, c, result, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); return result;
+	case 4: _COPY(ch, c, result, codepoint); _TRANS(0x50, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); return result;
+	case 5: _COPY(ch, c, result, codepoint); _TRANS(0x10, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); return result;
+	case 6: _TAIL(ch, c, result, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); return result;
+	case 10: _COPY(ch, c, result, codepoint); _TRANS(0x20, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); return result;
+	case 11: _COPY(ch, c, result, codepoint); _TRANS(0x60, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); _TAIL(ch, c, result, codepoint, RANGE); return result;
 	default: return 0;
 	}
 
@@ -564,7 +563,7 @@ bool CodeEditor::UndoRecord::Similar(const UndoRecord* o) const {
 		return ch >= '0' && ch <= '9';
 	};
 	auto isblank = [] (char ch) {
-		return ch >= ' ' && ch <= '\t';
+		return ch == ' ' || ch == '\t';
 	};
 	if ((Content.length() == 1 && isalpha(*Content.begin())) &&
 		(o->Content.length() == 1 && isalpha(*o->Content.begin()))) {
@@ -623,52 +622,32 @@ void CodeEditor::UndoRecord::Undo(CodeEditor* aEditor) {
 
 			break;
 		case UndoType::Indent: {
-				assert(End.Line - Start.Line + 1 == (int)Content.length());
-
 				for (int i = Start.Line; i <= End.Line; ++i) {
 					Line &line = aEditor->CodeLines[i];
-					const char op = Content[i - Start.Line];
-					if (op == 0) {
-						// Do nothing.
-					} else if (op == std::numeric_limits<char>::max()) {
-						const Glyph &g = *line.Glyphs.begin();
-						if (g.Character == '\t') {
-							line.Glyphs.erase(line.Glyphs.begin());
-						} else {
-							assert(false);
-						}
+					for (int j = 0; j < (int)Content.size(); ++j) {
+						if (line.Glyphs.empty())
+							break;
 
-						Coordinates pos(i, 0);
-						aEditor->OnChanged(pos, pos, -1);
-					} else {
-						assert(false);
+						line.Glyphs.erase(line.Glyphs.begin());
 					}
+
+					Coordinates pos(i, 0);
+					aEditor->OnChanged(pos, pos, -1);
 				}
 			}
 
 			break;
 		case UndoType::Unindent: {
-				assert(End.Line - Start.Line + 1 == (int)Content.length());
+				if (Content.front() == '\0')
+					break;
 
 				for (int i = Start.Line; i <= End.Line; ++i) {
 					Line &line = aEditor->CodeLines[i];
-					char op = Content[i - Start.Line];
-					if (op == 0) {
-						// Do nothing.
-					} else if (op == std::numeric_limits<char>::max()) {
-						line.Glyphs.insert(line.Glyphs.begin(), Glyph('\t', PaletteIndex::Default));
+					for (int j = 0; j < (int)Content.size(); ++j) {
+						line.Glyphs.insert(line.Glyphs.begin(), Glyph(Content[j], PaletteIndex::Default));
 
 						Coordinates pos(i, 0);
 						aEditor->OnChanged(pos, pos, -1);
-					} else if (op > 0) {
-						while (op--) {
-							line.Glyphs.insert(line.Glyphs.begin(), Glyph(' ', PaletteIndex::Default));
-						}
-
-						Coordinates pos(i, 0);
-						aEditor->OnChanged(pos, pos, -1);
-					} else {
-						assert(false);
 					}
 				}
 			}
@@ -802,58 +781,33 @@ void CodeEditor::UndoRecord::Redo(CodeEditor* aEditor) {
 
 			break;
 		case UndoType::Indent: {
-				assert(End.Line - Start.Line + 1 == (int)Content.length());
-
 				for (int i = Start.Line; i <= End.Line; ++i) {
 					Line &line = aEditor->CodeLines[i];
-					const char op = Content[i - Start.Line];
-					if (op == 0) {
-						// Do nothing.
-					} else if (op == std::numeric_limits<char>::max()) {
-						line.Glyphs.insert(line.Glyphs.begin(), Glyph('\t', PaletteIndex::Default));
+					for (int j = 0; j < (int)Content.size(); ++j) {
+						line.Glyphs.insert(line.Glyphs.begin(), Glyph(Content[j], PaletteIndex::Default));
 
 						Coordinates pos(i, 0);
 						aEditor->OnChanged(pos, pos, 1);
-					} else {
-						assert(false);
 					}
 				}
 			}
 
 			break;
 		case UndoType::Unindent: {
-				assert(End.Line - Start.Line + 1 == (int)Content.length());
+				if (Content.front() == '\0')
+					break;
 
 				for (int i = Start.Line; i <= End.Line; ++i) {
 					Line &line = aEditor->CodeLines[i];
-					char op = Content[i - Start.Line];
-					if (op == 0) {
-						// Do nothing.
-					} else if (op == std::numeric_limits<char>::max()) {
-						const Glyph &g = *line.Glyphs.begin();
-						if (g.Character == '\t') {
-							line.Glyphs.erase(line.Glyphs.begin());
-						} else {
-							assert(false);
-						}
+					for (int j = 0; j < (int)Content.size(); ++j) {
+						if (line.Glyphs.empty())
+							break;
 
-						Coordinates pos(i, 0);
-						aEditor->OnChanged(pos, pos, 1);
-					} else if (op > 0) {
-						while (op--) {
-							const Glyph &g = *line.Glyphs.begin();
-							if (g.Character == ' ') {
-								line.Glyphs.erase(line.Glyphs.begin());
-							} else {
-								assert(false);
-							}
-						}
-
-						Coordinates pos(i, 0);
-						aEditor->OnChanged(pos, pos, 1);
-					} else {
-						assert(false);
+						line.Glyphs.erase(line.Glyphs.begin());
 					}
+
+					Coordinates pos(i, 0);
+					aEditor->OnChanged(pos, pos, 1);
 				}
 			}
 
@@ -1245,41 +1199,19 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				if (c != 0) {
 					if (c == '\r')
 						c = '\n';
-					EnterCharacter(c);
+					if (c == '\t') {
+						if (IndentWithTab) {
+							EnterCharacter(c);
+						} else {
+							for (int n = 0; n < TabSize; ++n)
+								EnterCharacter(' ');
+						}
+					} else {
+						EnterCharacter(c);
+					}
 				}
 				str += n;
 			}
-		}
-	}
-
-	if (IsWindowHovered()) {
-		if (!shift && !alt) {
-			if (IsMouseClicked(0)) {
-				State.CursorPosition = InteractiveStart = InteractiveEnd = SanitizeCoordinates(ScreenPosToCoordinates(GetMousePos()));
-				if (ctrl)
-					WordSelectionMode = true;
-				SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
-			}
-			if (IsMouseDoubleClicked(0) && !ctrl) {
-				State.CursorPosition = InteractiveStart = InteractiveEnd = SanitizeCoordinates(ScreenPosToCoordinates(GetMousePos()));
-				WordSelectionMode = true;
-				SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
-				State.CursorPosition = State.SelectionEnd;
-			} else if (IsMouseDragging(0) && IsMouseDown(0)) {
-				io.WantCaptureMouse = true;
-				State.CursorPosition = InteractiveEnd = SanitizeCoordinates(ScreenPosToCoordinates(GetMousePos()));
-				SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
-			}
-		} else if (shift) {
-			if (IsMouseClicked(0)) {
-				io.WantCaptureMouse = true;
-				State.CursorPosition = InteractiveEnd = SanitizeCoordinates(ScreenPosToCoordinates(GetMousePos()));
-				SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
-			}
-		}
-
-		if (!IsMouseDown(0)) {
-			WordSelectionMode = false;
 		}
 	}
 
@@ -1296,6 +1228,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 	const float scrollX = GetScrollX();
 	const float scrollY = GetScrollY();
 
+	int dblClkLineNo = -1;
 	int lineNo = (int)floor(scrollY / CharAdv.y);
 	const int lineMax = std::max(0, std::min((int)CodeLines.size() - 1, lineNo + (int)ceil((scrollY + contentSize.y) / CharAdv.y)));
 	if (!CodeLines.empty()) {
@@ -1329,12 +1262,16 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 
 			const ImVec2 start(lineStartScreenPos.x + scrollX, lineStartScreenPos.y);
 
-			if (IsHeadClickEnabled() && IsEditorFocused()) {
+			if (dblClkLineNo == -1 && IsHeadClickEnabled() && IsEditorFocused()) {
 				const ImVec2 end(lineStartScreenPos.x + CharAdv.x * std::min((TextStart - 1), 3), lineStartScreenPos.y + CharAdv.y);
 				if (IsMouseHoveringRect(start, end)) {
 					SetMouseCursor(ImGuiMouseCursor_Hand);
-					if (IsMouseClicked(0))
-						OnHeadClicked(lineNo);
+					if (IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+						dblClkLineNo = lineNo;
+						OnHeadClicked(lineNo, true);
+					} else if (IsMouseClicked(ImGuiMouseButton_Left)) {
+						OnHeadClicked(lineNo, false);
+					}
 				}
 			}
 
@@ -1435,7 +1372,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				if (!IsReadOnly() && !HasSelection()) {
 					const ImVec2 end(start.x + contentSize.x + scrollX, start.y + CharAdv.y);
 					drawList->AddRectFilled(start, end, Plt[(int)(focused ? PaletteIndex::CurrentLineFill : PaletteIndex::CurrentLineFillInactive)]);
-					drawList->AddRect(start, end, Plt[(int)PaletteIndex::CurrentLineEdge], 1.0f);
+					drawList->AddRect(start, end, Plt[(int)PaletteIndex::CurrentLineEdge]);
 				}
 
 				int cx = TextDistanceToLineStart(State.CursorPosition);
@@ -1518,6 +1455,39 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 					}
 				}
 			}
+		}
+	}
+
+	if (IsWindowHovered()) {
+		if (!shift && !alt) {
+			if (IsMouseClicked(ImGuiMouseButton_Left)) {
+				State.CursorPosition = InteractiveStart = InteractiveEnd = SanitizeCoordinates(ScreenPosToCoordinates(GetMousePos()));
+				if (ctrl)
+					WordSelectionMode = true;
+				SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
+			}
+			if (IsMouseDoubleClicked(ImGuiMouseButton_Left) && !ctrl) {
+				if (dblClkLineNo == -1) {
+					State.CursorPosition = InteractiveStart = InteractiveEnd = SanitizeCoordinates(ScreenPosToCoordinates(GetMousePos()));
+					WordSelectionMode = true;
+					SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
+					State.CursorPosition = State.SelectionEnd;
+				}
+			} else if (IsMouseDragging(ImGuiMouseButton_Left) && IsMouseDown(ImGuiMouseButton_Left)) {
+				io.WantCaptureMouse = true;
+				State.CursorPosition = InteractiveEnd = SanitizeCoordinates(ScreenPosToCoordinates(GetMousePos()));
+				SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
+			}
+		} else if (shift) {
+			if (IsMouseClicked(ImGuiMouseButton_Left)) {
+				io.WantCaptureMouse = true;
+				State.CursorPosition = InteractiveEnd = SanitizeCoordinates(ScreenPosToCoordinates(GetMousePos()));
+				SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
+			}
+		}
+
+		if (!IsMouseDown(ImGuiMouseButton_Left)) {
+			WordSelectionMode = false;
 		}
 	}
 
@@ -1743,6 +1713,14 @@ void CodeEditor::EnsureCursorVisible(bool aForceAbove) {
 		SetScrollX(std::max(0.0f, (len + TextStart - 4) * CharAdv.x));
 	else if (len + TextStart > right - 4)
 		SetScrollX(std::max(0.0f, (len + TextStart + 4) * CharAdv.x - width));
+}
+
+void CodeEditor::SetIndentWithTab(bool aValue) {
+	IndentWithTab = aValue;
+}
+
+bool CodeEditor::GetIndentWithTab(void) const {
+	return IndentWithTab;
 }
 
 void CodeEditor::SetTabSize(int aValue) {
@@ -1974,12 +1952,28 @@ void CodeEditor::CodeEditor::MoveBottom(bool aSelect) {
 
 void CodeEditor::MoveHome(bool aSelect) {
 	Coordinates oldPos = State.CursorPosition;
+	int to = 0;
+	if (oldPos.Line < (int)CodeLines.size()) {
+		int head = 0;
+		const Line &line = CodeLines[oldPos.Line];
+		for (int i = 0; i < (int)line.Glyphs.size(); ++i) {
+			const Glyph &g = line.Glyphs[i];
+			if (g.Character == ' ' || g.Character == '\t')
+				head = i + 1;
+			else
+				break;
+		}
+		if (head != 0) {
+			if (oldPos.Column != head)
+				to = head;
+		}
+	}
 	if (HasSelection()) {
 		Coordinates selStart, selEnd;
 		GetSelection(selStart, selEnd);
-		SetCursorPosition(Coordinates(selStart.Line, 0));
+		SetCursorPosition(Coordinates(selStart.Line, to));
 	} else {
-		SetCursorPosition(Coordinates(State.CursorPosition.Line, 0));
+		SetCursorPosition(Coordinates(State.CursorPosition.Line, to));
 	}
 
 	if (State.CursorPosition != oldPos && aSelect) {
@@ -2092,6 +2086,21 @@ int CodeEditor::GetSelectionLines(void) const {
 		return 0;
 
 	return std::abs(State.SelectionEnd.Line - State.SelectionStart.Line) + 1;
+}
+
+int CodeEditor::GetNonEmptySelectionLines(void) const {
+	if (!HasSelection())
+		return 0;
+
+	int result = 0;
+	const int start = std::min(State.SelectionStart.Line, State.SelectionEnd.Line);
+	const int end = std::max(State.SelectionStart.Line, State.SelectionEnd.Line);
+	for (int i = start; i <= end; ++i) {
+		if (!CodeLines[i].Glyphs.empty())
+			++result;
+	}
+
+	return result;
 }
 
 int CodeEditor::GetCommentLines(void) const {
@@ -2263,12 +2272,22 @@ void CodeEditor::Indent(bool aByKey) {
 		for (int i = u.Start.Line; i <= u.End.Line; ++i) {
 			Line &line = CodeLines[i];
 			if (line.Glyphs.empty()) {
-				u.Content.push_back(0);
+				if (i == u.Start.Line)
+					u.Content.push_back(0);
 
 				continue;
 			}
-			line.Glyphs.insert(line.Glyphs.begin(), Glyph('\t', PaletteIndex::Default));
-			u.Content.push_back(std::numeric_limits<char>::max());
+			if (IndentWithTab) {
+				line.Glyphs.insert(line.Glyphs.begin(), Glyph('\t', PaletteIndex::Default));
+				if (i == u.Start.Line)
+					u.Content.push_back('\t');
+			} else {
+				for (int n = 0; n < TabSize; ++n) {
+					line.Glyphs.insert(line.Glyphs.begin(), Glyph(' ', PaletteIndex::Default));
+					if (i == u.Start.Line)
+						u.Content.push_back(' ');
+				}
+			}
 
 			Coordinates pos(i, 0);
 			OnChanged(pos, pos, 0);
@@ -2281,8 +2300,14 @@ void CodeEditor::Indent(bool aByKey) {
 
 		OnModified();
 	} else {
-		if (!aByKey)
-			EnterCharacter('\t');
+		if (!aByKey) {
+			if (IndentWithTab) {
+				EnterCharacter('\t');
+			} else {
+				for (int n = 0; n < TabSize; ++n)
+					EnterCharacter(' ');
+			}
+		}
 	}
 }
 
@@ -2302,7 +2327,8 @@ void CodeEditor::Unindent(bool aByKey) {
 		for (int i = u.Start.Line; i <= u.End.Line; ++i) {
 			Line &line = CodeLines[i];
 			if (line.Glyphs.empty()) {
-				u.Content.push_back(0);
+				if (i == u.Start.Line)
+					u.Content.push_back(0);
 
 				continue;
 			}
@@ -2310,7 +2336,8 @@ void CodeEditor::Unindent(bool aByKey) {
 			const Glyph &g = *line.Glyphs.begin();
 			if (g.Character == '\t') {
 				line.Glyphs.erase(line.Glyphs.begin());
-				u.Content.push_back(std::numeric_limits<char>::max());
+				if (i == u.Start.Line)
+					u.Content.push_back('\t');
 				++affectedLines;
 
 				Coordinates pos(i, 0);
@@ -2320,19 +2347,23 @@ void CodeEditor::Unindent(bool aByKey) {
 				for (int j = 0; j < TabSize; ++j, ++k) {
 					if (line.Glyphs.empty())
 						break;
+
 					const Glyph &h = *line.Glyphs.begin();
 					if (h.Character != ' ')
 						break;
+
 					line.Glyphs.erase(line.Glyphs.begin());
+					if (i == u.Start.Line)
+						u.Content.push_back(' ');
 				}
-				u.Content.push_back((char)k);
 				if (k)
 					++affectedLines;
 
 				Coordinates pos(i, 0);
 				OnChanged(pos, pos, 0);
 			} else {
-				u.Content.push_back(0);
+				if (i == u.Start.Line)
+					u.Content.push_back(0);
 			}
 		}
 		if (affectedLines > 0) {
@@ -2703,12 +2734,20 @@ const CodeEditor::Palette &CodeEditor::GetRetroBluePalette(void) {
 void CodeEditor::RenderText(int &aOffset, const ImVec2 &aPosition, ImU32 aPalette, ImU32 aColor, const char* aText, int aWidth) {
 	ImDrawList* drawList = GetWindowDrawList();
 
-	if (aPalette != (ImU32)PaletteIndex::MultiLineComment && (*aText == '\t' || *aText == ' ')) {
+	bool procSpaces =
+		(aPalette == (ImU32)PaletteIndex::Default) ||
+		(aPalette == (ImU32)PaletteIndex::String) ||
+		(aPalette != (ImU32)PaletteIndex::MultiLineComment && (*aText == '\t' || *aText == ' '));
+	if (procSpaces) {
 		ImVec2 step = aPosition;
 		while (*aText) {
 			const float size = GetFontSize();
 			if (*aText == '\t') {
-				const int num = TabSize - aOffset % TabSize;
+				int num = 0;
+				if (aPalette == (ImU32)PaletteIndex::String)
+					num = TabSize;
+				else
+					num = TabSize - aOffset % TabSize;
 				const float x1 = step.x + 1;
 				const float x2 = step.x + CharAdv.x * num - 2;
 				const float y = step.y + size * 0.5f;
@@ -3422,21 +3461,32 @@ void CodeEditor::EnterCharacter(Char aChar) {
 			}
 		}
 		// Automatic indent for the new line.
-		const int spacec = indent % TabSize;
-		const int tabs = indent / TabSize;
-		for (int i = 0; i < spacec; ++i) {
-			newLine.Glyphs.insert(newLine.Glyphs.begin(), Glyph(' ', PaletteIndex::Default));
-			++State.CursorPosition.Column;
-		}
-		for (int i = 0; i < tabs; ++i) {
-			newLine.Glyphs.insert(newLine.Glyphs.begin(), Glyph('\t', PaletteIndex::Default));
-			++State.CursorPosition.Column;
-		}
-		for (int i = 0; i < tabs; ++i) {
-			ImTextAppendUtf8ToStdStr(u.Content, '\t');
-		}
-		for (int i = 0; i < spacec; ++i) {
-			ImTextAppendUtf8ToStdStr(u.Content, ' ');
+		if (IndentWithTab) {
+			const int spacec = indent % TabSize;
+			const int tabs = indent / TabSize;
+			for (int i = 0; i < spacec; ++i) {
+				newLine.Glyphs.insert(newLine.Glyphs.begin(), Glyph(' ', PaletteIndex::Default));
+				++State.CursorPosition.Column;
+			}
+			for (int i = 0; i < tabs; ++i) {
+				newLine.Glyphs.insert(newLine.Glyphs.begin(), Glyph('\t', PaletteIndex::Default));
+				++State.CursorPosition.Column;
+			}
+			for (int i = 0; i < tabs; ++i) {
+				ImTextAppendUtf8ToStdStr(u.Content, '\t');
+			}
+			for (int i = 0; i < spacec; ++i) {
+				ImTextAppendUtf8ToStdStr(u.Content, ' ');
+			}
+		} else {
+			const int spacec = indent;
+			for (int i = 0; i < spacec; ++i) {
+				newLine.Glyphs.insert(newLine.Glyphs.begin(), Glyph(' ', PaletteIndex::Default));
+				++State.CursorPosition.Column;
+			}
+			for (int i = 0; i < spacec; ++i) {
+				ImTextAppendUtf8ToStdStr(u.Content, ' ');
+			}
 		}
 
 		OnChanged(coord, Coordinates(coord.Line + 1, 0), 0);
@@ -3595,11 +3645,11 @@ void CodeEditor::OnModified(void) const {
 	ModifiedHandler();
 }
 
-void CodeEditor::OnHeadClicked(int aLine) const {
+void CodeEditor::OnHeadClicked(int aLine, bool aDoubleClicked) const {
 	if (HeadClickedHandler == nullptr)
 		return;
 
-	HeadClickedHandler(aLine);
+	HeadClickedHandler(aLine, aDoubleClicked);
 }
 
 }
