@@ -1159,8 +1159,10 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 
 		if (!IsReadOnly()) {
 			if (IsKeyPressed(GetKeyIndex(ImGuiKey_Enter)) || OnKeyPressed(ImGuiKey_Enter)) {
-				unsigned int c = '\n'; // Insert new line.
-				io.AddInputCharacter((ImWchar)c);
+				if (!alt) {
+					unsigned int c = '\n'; // Insert new line.
+					io.AddInputCharacter((ImWchar)c);
+				}
 			} else if (IsKeyPressed(GetKeyIndex(ImGuiKey_Tab))) {
 				if (HasSelection() && GetSelectionLines() > 1) {
 					if (IsShortcutsEnabled(ShortcutType::IndentUnindent)) {
@@ -1218,6 +1220,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 	ColorizeInternal();
 
 	static std::string buffer; // Shared.
+	static std::list<Glyph> glyphs; // Shared.
 	ImVec2 contentSize = GetWindowContentRegionMax();
 	ImDrawList* drawList = GetWindowDrawList();
 	int appendIndex = 0;
@@ -1236,7 +1239,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 			ImVec2 lineStartScreenPos = ImVec2(cursorScreenPos.x, cursorScreenPos.y + lineNo * CharAdv.y);
 			ImVec2 textScreenPos = ImVec2(lineStartScreenPos.x + CharAdv.x * TextStart, lineStartScreenPos.y);
 
-			const Line &line = CodeLines[lineNo];
+			Line &line = CodeLines[lineNo];
 			longest = std::max(TextStart + TextDistanceToLineStart(Coordinates(lineNo, (int)line.Glyphs.size())), longest);
 			int columnNo = 0;
 			const Coordinates lineStartCoord(lineNo, 0);
@@ -1405,7 +1408,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 
 			int width = 0;
 			int offset = 0;
-			for (const Glyph &glyph : line.Glyphs) {
+			for (Glyph &glyph : line.Glyphs) {
 				unsigned color = glyph.MultiLineComment ? (ImU32)PaletteIndex::MultiLineComment : glyph.ColorIndex;
 
 				const bool sameColor = color == prevColor ||
@@ -1415,21 +1418,23 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 						color == (unsigned)PaletteIndex::Identifier && prevColor == (unsigned)PaletteIndex::Default);
 				if (!sameColor && !buffer.empty()) {
 					const ImU32 targetColor = prevColor >= (ImU32)PaletteIndex::Max ? prevColor : Plt[(int)prevColor];
-					RenderText(offset, textScreenPos, prevColor, targetColor, buffer.c_str(), width);
+					RenderText(offset, textScreenPos, prevColor, targetColor, buffer.c_str(), glyphs, width);
 					textScreenPos.x += CharAdv.x * width;
 					buffer.clear();
+					glyphs.clear();
 					prevColor = color;
 					width = 0;
 				}
-				appendIndex = AppendBuffer(buffer, glyph, appendIndex, width);
+				appendIndex = AppendBuffer(buffer, glyphs, glyph, appendIndex, width);
 				++columnNo;
 				prevGlyph = &glyph;
 			}
 
 			if (!buffer.empty()) {
 				const ImU32 targetColor = prevColor >= (ImU32)PaletteIndex::Max ? prevColor : Plt[(int)prevColor];
-				RenderText(offset, textScreenPos, prevColor, targetColor, buffer.c_str(), width);
+				RenderText(offset, textScreenPos, prevColor, targetColor, buffer.c_str(), glyphs, width);
 				buffer.clear();
+				glyphs.clear();
 			}
 			appendIndex = 0;
 			lineStartScreenPos.y += CharAdv.y;
@@ -2641,6 +2646,7 @@ const CodeEditor::Palette &CodeEditor::GetDarkPalette(void) {
 		0xff70a0e0, // Char literal.
 		0xffb4b4b4, // Punctuation.
 		0xff409090, // Preprocessor.
+		0xff5ac8c8, // Symbol.
 		0xffdadada, // Identifier.
 		0xffb0c94e, // Known identifier.
 		0xffc040a0, // Preproc identifier.
@@ -2674,6 +2680,7 @@ const CodeEditor::Palette &CodeEditor::GetLightPalette(void) {
 		0xff304070, // Char literal.
 		0xff000000, // Punctuation.
 		0xff409090, // Preprocessor.
+		0xff5ac8c8, // Symbol.
 		0xff404040, // Identifier.
 		0xff606010, // Known identifier.
 		0xffc040a0, // Preproc identifier.
@@ -2707,6 +2714,7 @@ const CodeEditor::Palette &CodeEditor::GetRetroBluePalette(void) {
 		0xff808000, // Char literal.
 		0xffffffff, // Punctuation.
 		0xff008000, // Preprocessor.
+		0xff5ac8c8, // Symbol.
 		0xff00ffff, // Identifier.
 		0xffffffff, // Known identifier.
 		0xffff00ff, // Preproc identifier.
@@ -2731,7 +2739,7 @@ const CodeEditor::Palette &CodeEditor::GetRetroBluePalette(void) {
 	return plt;
 }
 
-void CodeEditor::RenderText(int &aOffset, const ImVec2 &aPosition, ImU32 aPalette, ImU32 aColor, const char* aText, int aWidth) {
+void CodeEditor::RenderText(int &aOffset, const ImVec2 &aPosition, ImU32 aPalette, ImU32 aColor, const char* aText, const std::list<Glyph> &aGlyphs, int aWidth) {
 	ImDrawList* drawList = GetWindowDrawList();
 
 	bool procSpaces =
@@ -2740,6 +2748,7 @@ void CodeEditor::RenderText(int &aOffset, const ImVec2 &aPosition, ImU32 aPalett
 		(aPalette != (ImU32)PaletteIndex::MultiLineComment && (*aText == '\t' || *aText == ' '));
 	if (procSpaces) {
 		ImVec2 step = aPosition;
+		std::list<Glyph>::const_iterator it = aGlyphs.begin();
 		while (*aText) {
 			const float size = GetFontSize();
 			if (*aText == '\t') {
@@ -2777,16 +2786,13 @@ void CodeEditor::RenderText(int &aOffset, const ImVec2 &aPosition, ImU32 aPalett
 			} else {
 				const int n = ImTextExpectUtf8Char(aText);
 				drawList->AddText(step, aColor, aText, aText + n);
-				if (n == 1) {
-					step.x += CharAdv.x;
-					aOffset += 1;
-				} else {
-					step.x += CharAdv.x * ICE_UTF_CHAR_WIDTH;
-					aOffset += ICE_UTF_CHAR_WIDTH;
-				}
+				const int w = it->Width;
+				step.x += CharAdv.x * w;
+				aOffset += w;
 
 				aText += n;
 			}
+			++it;
 		}
 	} else {
 		drawList->AddText(aPosition, aColor, aText);
@@ -2821,6 +2827,9 @@ void CodeEditor::ColorizeRange(int aFromLine, int aToLine) {
 		}
 	};
 
+	LastSymbol.clear();
+	LastSymbolPalette = PaletteIndex::Default;
+
 	std::string buffer;
 	const int endLine = std::max(0, std::min((int)CodeLines.size(), aToLine));
 	for (int i = aFromLine; i < endLine; ++i) {
@@ -2849,6 +2858,9 @@ void CodeEditor::ColorizeRange(int aFromLine, int aToLine) {
 					colorize(line, offset, offset + tokenLen, color);
 					first += tokenLen;
 
+					LastSymbol.assign(tokenBegin, tokenLen);
+					LastSymbolPalette = color;
+
 					continue;
 				}
 			}
@@ -2869,21 +2881,22 @@ void CodeEditor::ColorizeRange(int aFromLine, int aToLine) {
 					auto v = *results.begin();
 					auto start = v.first - buffer.begin();
 					auto end = v.second - buffer.begin();
-					std::string id = buffer.substr(start, end - start);
 					PaletteIndex color = regex.second;
+					LastSymbol = buffer.substr(start, end - start);
+					LastSymbolPalette = color;
 					if (color == PaletteIndex::Identifier) {
 						if (!LangDef.CaseSensitive)
-							std::transform(id.begin(), id.end(), id.begin(), ICE_CASE_FUNC);
+							std::transform(LastSymbol.begin(), LastSymbol.end(), LastSymbol.begin(), ICE_CASE_FUNC);
 
 						if (!preproc) {
-							if (LangDef.Keys.find(id) != LangDef.Keys.end())
+							if (LangDef.Keys.find(LastSymbol) != LangDef.Keys.end())
 								color = PaletteIndex::Keyword;
-							else if (LangDef.Ids.find(id) != LangDef.Ids.end())
+							else if (LangDef.Ids.find(LastSymbol) != LangDef.Ids.end())
 								color = PaletteIndex::KnownIdentifier;
-							else if (LangDef.PreprocIds.find(id) != LangDef.PreprocIds.end())
+							else if (LangDef.PreprocIds.find(LastSymbol) != LangDef.PreprocIds.end())
 								color = PaletteIndex::PreprocIdentifier;
 						} else {
-							if (LangDef.PreprocIds.find(id) != LangDef.PreprocIds.end())
+							if (LangDef.PreprocIds.find(LastSymbol) != LangDef.PreprocIds.end())
 								color = PaletteIndex::PreprocIdentifier;
 							else
 								color = PaletteIndex::Identifier;
@@ -3178,33 +3191,48 @@ std::string CodeEditor::GetText(const Coordinates &aStart, const Coordinates &aE
 	return result;
 }
 
-int CodeEditor::AppendBuffer(std::string &aBuffer, const Glyph &g, int aIndex, int &aWidth) {
-	Char chr = g.Character;
+int CodeEditor::AppendBuffer(std::string &aBuffer, std::list<Glyph> &aGlyphs, Glyph &aGlyph, int aIndex, int &aWidth) {
+	const Char chr = aGlyph.Character;
+
+	int num = aGlyph.Width;
+	if (num) {
+		ImTextAppendUtf8ToStdStr(aBuffer, chr);
+
+		aWidth += num;
+		aGlyphs.push_back(aGlyph);
+
+		return aIndex + num;
+	}
+
 	if (chr == '\t') {
-		int num = 0;
-		const bool literal = g.MultiLineComment ||
-			g.ColorIndex == (ImU32)PaletteIndex::String ||
-			g.ColorIndex == (ImU32)PaletteIndex::Comment ||
-			g.ColorIndex == (ImU32)PaletteIndex::MultiLineComment;
+		aBuffer.push_back('\t');
+
+		const bool literal = aGlyph.MultiLineComment ||
+			aGlyph.ColorIndex == (ImU32)PaletteIndex::String ||
+			aGlyph.ColorIndex == (ImU32)PaletteIndex::Comment ||
+			aGlyph.ColorIndex == (ImU32)PaletteIndex::MultiLineComment;
 		if (literal)
 			num = TabSize;
 		else
 			num = TabSize - aIndex % TabSize;
-		aBuffer.push_back('\t');
+
+		aGlyph.Width = num;
 		aWidth += num;
+		aGlyphs.push_back(aGlyph);
 
 		return aIndex + num;
 	} else {
-		if (ImTextAppendUtf8ToStdStr(aBuffer, chr) <= 1) {
-			++aWidth;
+		const int n = ImTextAppendUtf8ToStdStr(aBuffer, chr);
+		if (n <= 1)
+			num = 1;
+		else
+			num = GetCharacterWidth(aGlyph);
 
-			return aIndex + 1;
-		} else {
-			const int w = GetCharacterWidth(g);
-			aWidth += w;
+		aGlyph.Width = num;
+		aWidth += num;
+		aGlyphs.push_back(aGlyph);
 
-			return aIndex + w;
-		}
+		return aIndex + num;
 	}
 }
 

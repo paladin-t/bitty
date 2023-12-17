@@ -48,6 +48,7 @@ public:
 		CharLiteral,
 		Punctuation,
 		Preprocessor,
+		Symbol,
 		Identifier,
 		KnownIdentifier,
 		PreprocIdentifier,
@@ -142,6 +143,7 @@ public:
 		Char Character = 0;
 		ImU32 ColorIndex = (ImU32)PaletteIndex::Default; // Either a palette index or a 32bit color value.
 		bool MultiLineComment;
+		int Width = 0;
 
 		Glyph(Char aChar, ImU32 aColorIndex);
 		Glyph(Char aChar, PaletteIndex aColorIndex);
@@ -369,7 +371,7 @@ protected:
 
 	typedef std::vector<UndoRecord> UndoBuffer;
 
-	void RenderText(int &aOffset, const ImVec2 &aPosition, ImU32 aPalette, ImU32 aColor, const char* aText, int aWidth);
+	void RenderText(int &aOffset, const ImVec2 &aPosition, ImU32 aPalette, ImU32 aColor, const char* aText, const std::list<Glyph> &aGlyphs, int aWidth);
 	void Colorize(int aFromLine = 0, int aCount = -1);
 	void ColorizeRange(int aFromLine = 0, int aToLine = 0);
 	void ColorizeInternal(void);
@@ -383,7 +385,7 @@ protected:
 	bool IsOnWordBoundary(const Coordinates &aAt) const;
 	void AddUndo(UndoRecord &aValue);
 	std::string GetText(const Coordinates &aStart, const Coordinates &aEnd, const char* aNewline) const;
-	int AppendBuffer(std::string &aBuffer, const Glyph &g, int aIndex, int &aWidth);
+	int AppendBuffer(std::string &aBuffer, std::list<Glyph> &aGlyphs, Glyph &aGlyph, int aIndex, int &aWidth);
 	int InsertTextAt(Coordinates &aWhere, const char* aValue);
 	void DeleteRange(const Coordinates &aStart, const Coordinates &aEnd);
 	void DeleteSelection(void);
@@ -429,6 +431,8 @@ protected:
 	int ScrollToCursor;
 	bool WordSelectionMode;
 	int ColorRangeMin, ColorRangeMax;
+	std::string LastSymbol;
+	PaletteIndex LastSymbolPalette;
 	int CheckMultilineComments;
 	bool TooltipEnabled;
 	bool ShowWhiteSpaces;
