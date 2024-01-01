@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2023 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -26,6 +26,8 @@ class Editable : public Dispatchable {
 public:
 	enum Messages : unsigned {
 		SET_THEME_STYLE,
+		SET_INDENT_RULE,
+		SET_COLUMN_INDICATOR,
 		SET_SHOW_SPACES,
 		RECALCULATE,
 		FOCUS,

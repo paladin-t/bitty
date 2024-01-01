@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2023 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -784,7 +784,7 @@ bool find(
 				ImGui::SetKeyboardFocusHere();
 				*initialized = true;
 			}
-			ImGui::SetNextItemWidth(width - (ImGui::GetCursorPosX() - x) - (buttonSize.x + style.FramePadding.x * 2) * 4);
+			ImGui::SetNextItemWidth(width - (ImGui::GetCursorPosX() - x) - (buttonSize.x + style.FramePadding.x * 2) * 5);
 			char buf[256]; // Fixed size.
 			const size_t n = std::min(BITTY_COUNTOF(buf) - 1, what->length());
 			if (n > 0)

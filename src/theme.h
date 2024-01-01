@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2023 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -243,11 +243,24 @@ public:
 	BITTY_PROPERTY_READONLY(std::string, tabPreferences_Onscreen)
 
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences)
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_2Spaces);
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_40);
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_4Spaces);
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_80);
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_8Spaces);
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_100);
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_120);
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_Tab2SpacesWide);
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_Tab4SpacesWide);
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_Tab8SpacesWide);
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_AutoBackup)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_ClearOnStart)
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_ColumnIndicator)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_Console)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_IgnoreDotFiles)
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_IndentWith)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_LoadLastProjectAtStartup)
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_None)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_PackageFormat)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_Project)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_ShowWhiteSpaces)

@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2023 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -363,6 +363,70 @@ public:
 					break;
 				case Theme::LIGHT:
 					SetPalette(ImGui::CodeEditor::GetLightPalette());
+
+					break;
+				}
+			}
+
+			return Variant(true);
+		case SET_INDENT_RULE: {
+				const Int rule = unpack<Int>(argc, argv, 0, (Int)Workspace::Settings::TAB_4);
+				switch ((Workspace::Settings::IndentRules)rule) {
+				case Workspace::Settings::SPACE_2:
+					SetIndentWithTab(false);
+					SetTabSize(2);
+
+					break;
+				case Workspace::Settings::SPACE_4:
+					SetIndentWithTab(false);
+					SetTabSize(4);
+
+					break;
+				case Workspace::Settings::SPACE_8:
+					SetIndentWithTab(false);
+					SetTabSize(8);
+
+					break;
+				case Workspace::Settings::TAB_2:
+					SetIndentWithTab(true);
+					SetTabSize(2);
+
+					break;
+				case Workspace::Settings::TAB_4:
+					SetIndentWithTab(true);
+					SetTabSize(4);
+
+					break;
+				case Workspace::Settings::TAB_8:
+					SetIndentWithTab(true);
+					SetTabSize(8);
+
+					break;
+				}
+			}
+
+			return Variant(true);
+		case SET_COLUMN_INDICATOR: {
+				const Int rule = unpack<Int>(argc, argv, 0, (Int)Workspace::Settings::COL_80);
+				switch ((Workspace::Settings::IndentRules)rule) {
+				case Workspace::Settings::COL_NONE:
+					SetSafeColumnIndicatorOffset(0);
+
+					break;
+				case Workspace::Settings::COL_40:
+					SetSafeColumnIndicatorOffset(40);
+
+					break;
+				case Workspace::Settings::COL_80:
+					SetSafeColumnIndicatorOffset(80);
+
+					break;
+				case Workspace::Settings::COL_100:
+					SetSafeColumnIndicatorOffset(100);
+
+					break;
+				case Workspace::Settings::COL_120:
+					SetSafeColumnIndicatorOffset(120);
 
 					break;
 				}
@@ -924,6 +988,24 @@ private:
 		_breaking = ln;
 	}
 
+	bool tokenize(const char* inBegin, const char* inEnd, const char* &outBegin, const char* &outEnd, PaletteIndex &paletteIndex) const {
+		paletteIndex = PaletteIndex::Max;
+
+		while (inBegin < inEnd && isascii(*inBegin) && isblank(*inBegin))
+			inBegin++;
+
+		if (inBegin == inEnd) {
+			outBegin = inEnd;
+			outEnd = inEnd;
+			paletteIndex = PaletteIndex::Default;
+		} else if (tokenizeString(inBegin, inEnd, outBegin, outEnd, '"')) {
+			paletteIndex = PaletteIndex::String;
+		} else if (tokenizeString(inBegin, inEnd, outBegin, outEnd, '\'')) {
+			paletteIndex = PaletteIndex::String;
+		}
+
+		return paletteIndex != PaletteIndex::Max;
+	}
 	bool tokenizeString(const char* inBegin, const char* inEnd, const char* &outBegin, const char* &outEnd, char quote) const {
 		const char* p = inBegin;
 		if (*p != quote)
@@ -945,24 +1027,6 @@ private:
 		}
 
 		return false;
-	}
-	bool tokenize(const char* inBegin, const char* inEnd, const char* &outBegin, const char* &outEnd, PaletteIndex &paletteIndex) const {
-		paletteIndex = PaletteIndex::Max;
-
-		while (inBegin < inEnd && isascii(*inBegin) && isblank(*inBegin))
-			inBegin++;
-
-		if (inBegin == inEnd) {
-			outBegin = inEnd;
-			outEnd = inEnd;
-			paletteIndex = PaletteIndex::Default;
-		} else if (tokenizeString(inBegin, inEnd, outBegin, outEnd, '"')) {
-			paletteIndex = PaletteIndex::String;
-		} else if (tokenizeString(inBegin, inEnd, outBegin, outEnd, '\'')) {
-			paletteIndex = PaletteIndex::String;
-		}
-
-		return paletteIndex != PaletteIndex::Max;
 	}
 	LanguageDefinition languageDefinition(void) const {
 		LanguageDefinition langDef;

@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2023 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -313,11 +313,24 @@ bool Theme::open(class Renderer* rnd) {
 	tabPreferences_Onscreen("Onscreen");
 
 	windowPreferences("Preferences");
+	windowPreferences_Editor_2Spaces("2 spaces");
+	windowPreferences_Editor_40("40");
+	windowPreferences_Editor_4Spaces("4 spaces");
+	windowPreferences_Editor_80("80");
+	windowPreferences_Editor_8Spaces("8 spaces");
+	windowPreferences_Editor_100("100");
+	windowPreferences_Editor_120("120");
+	windowPreferences_Editor_Tab2SpacesWide("Tab (2 spaces wide)");
+	windowPreferences_Editor_Tab4SpacesWide("Tab (4 spaces wide)");
+	windowPreferences_Editor_Tab8SpacesWide("Tab (8 spaces wide)");
 	windowPreferences_Editor_AutoBackup("Auto backup");
 	windowPreferences_Editor_ClearOnStart("Clear on start");
+	windowPreferences_Editor_ColumnIndicator("Comlmn indicator");
 	windowPreferences_Editor_Console("Console:");
 	windowPreferences_Editor_IgnoreDotFiles("Ignore dot files");
+	windowPreferences_Editor_IndentWith("     Indent with");
 	windowPreferences_Editor_LoadLastProjectAtStartup("Load last project at startup");
+	windowPreferences_Editor_None("None");
 	windowPreferences_Editor_PackageFormat("Package format");
 	windowPreferences_Editor_Project("Project:");
 	windowPreferences_Editor_ShowWhiteSpaces("Show white spaces");
