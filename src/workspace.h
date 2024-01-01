@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2023 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -160,6 +160,22 @@ class CodeEditor;
 class Workspace : public Executable::Observer, public Dispatchable, public NonCopyable {
 public:
 	struct Settings {
+		enum IndentRules : unsigned {
+			SPACE_2,
+			SPACE_4,
+			SPACE_8,
+			TAB_2,
+			TAB_4,
+			TAB_8
+		};
+		enum ColumnIndicator : unsigned {
+			COL_NONE,
+			COL_40,
+			COL_80,
+			COL_100,
+			COL_120
+		};
+
 		int applicationWindowDisplayIndex = 0;
 		bool applicationWindowFullscreen = false;
 		bool applicationWindowMaximized = false;
@@ -177,6 +193,8 @@ public:
 
 		bool assetsVisible = true;
 
+		IndentRules editorIndentRule = TAB_4;
+		ColumnIndicator editorColumnIndicator = COL_80;
 		bool editorShowWhiteSpaces = true;
 		bool editorCaseSensitive = false;
 		bool editorMatchWholeWord = false;

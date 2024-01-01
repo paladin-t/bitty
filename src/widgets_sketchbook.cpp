@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2023 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -104,6 +104,49 @@ void PreferencesPopupBox::update(void) {
 				PushID(_theme->windowPreferences_Editor_TextEditor());
 				{
 					TextUnformatted(_theme->windowPreferences_Editor_TextEditor());
+
+					PushID("#Col");
+					{
+						AlignTextToFramePadding();
+						TextUnformatted(_theme->windowPreferences_Editor_ColumnIndicator());
+
+						SameLine();
+
+						const char* items[] = {
+							_theme->windowPreferences_Editor_None().c_str(),
+							_theme->windowPreferences_Editor_40().c_str(),
+							_theme->windowPreferences_Editor_80().c_str(),
+							_theme->windowPreferences_Editor_100().c_str(),
+							_theme->windowPreferences_Editor_120().c_str()
+						};
+						int pref = (int)_settingsShadow.editorColumnIndicator;
+						SetNextItemWidth(GetContentRegionAvail().x);
+						if (Combo("", &pref, items, BITTY_COUNTOF(items)))
+							_settingsShadow.editorColumnIndicator = (Workspace::Settings::ColumnIndicator)pref;
+					}
+					PopID();
+
+					PushID("#Ind");
+					{
+						AlignTextToFramePadding();
+						TextUnformatted(_theme->windowPreferences_Editor_IndentWith());
+
+						SameLine();
+
+						const char* items[] = {
+							_theme->windowPreferences_Editor_2Spaces().c_str(),
+							_theme->windowPreferences_Editor_4Spaces().c_str(),
+							_theme->windowPreferences_Editor_8Spaces().c_str(),
+							_theme->windowPreferences_Editor_Tab2SpacesWide().c_str(),
+							_theme->windowPreferences_Editor_Tab4SpacesWide().c_str(),
+							_theme->windowPreferences_Editor_Tab8SpacesWide().c_str()
+						};
+						int pref = (int)_settingsShadow.editorIndentRule;
+						SetNextItemWidth(GetContentRegionAvail().x);
+						if (Combo("", &pref, items, BITTY_COUNTOF(items)))
+							_settingsShadow.editorIndentRule = (Workspace::Settings::IndentRules)pref;
+					}
+					PopID();
 
 					Checkbox(_theme->windowPreferences_Editor_ShowWhiteSpaces(), &_settingsShadow.editorShowWhiteSpaces);
 
@@ -363,7 +406,7 @@ void AboutPopupBox::update(void) {
 			SameLine();
 			Url("Tony Wang", "https://paladin-t.github.io/");
 			SameLine();
-			TextUnformatted(", 2020 - 2023");
+			TextUnformatted(", 2020 - 2024");
 			NewLine();
 		}
 		Separator();

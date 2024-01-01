@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2023 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -66,6 +66,8 @@ WorkspaceSketchbook::SketchbookSettings &WorkspaceSketchbook::SketchbookSettings
 	bannerVisible = other.bannerVisible;
 	assetsVisible = other.assetsVisible;
 
+	editorIndentRule = other.editorIndentRule;
+	editorColumnIndicator = other.editorColumnIndicator;
 	editorShowWhiteSpaces = other.editorShowWhiteSpaces;
 	editorCaseSensitive = other.editorCaseSensitive;
 	editorMatchWholeWord = other.editorMatchWholeWord;
@@ -126,7 +128,9 @@ bool WorkspaceSketchbook::SketchbookSettings::operator != (const SketchbookSetti
 	if (assetsVisible != other.assetsVisible)
 		return true;
 
-	if (editorShowWhiteSpaces != other.editorShowWhiteSpaces ||
+	if (editorIndentRule != other.editorIndentRule ||
+		editorColumnIndicator != other.editorColumnIndicator ||
+		editorShowWhiteSpaces != other.editorShowWhiteSpaces ||
 		editorCaseSensitive != other.editorCaseSensitive ||
 		editorMatchWholeWord != other.editorMatchWholeWord ||
 		editorGlobalSearch != other.editorGlobalSearch
@@ -1395,6 +1399,24 @@ void WorkspaceSketchbook::showPreferences(class Window* wnd, class Renderer*, co
 				_settings.projectAutoBackup = sets.projectAutoBackup;
 			}
 
+			if (sets.editorIndentRule != _settings.editorIndentRule) {
+				prj->foreach(
+					[&] (Asset* &asset, Asset::List::Index) -> void {
+						Editable* editor =  asset->editor();
+						if (editor)
+							editor->post(Editable::SET_INDENT_RULE, (Variant::Int)sets.editorIndentRule);
+					}
+				);
+			}
+			if (sets.editorColumnIndicator != _settings.editorColumnIndicator) {
+				prj->foreach(
+					[&] (Asset* &asset, Asset::List::Index) -> void {
+						Editable* editor =  asset->editor();
+						if (editor)
+							editor->post(Editable::SET_COLUMN_INDICATOR, (Variant::Int)sets.editorColumnIndicator);
+					}
+				);
+			}
 			if (sets.editorShowWhiteSpaces != _settings.editorShowWhiteSpaces) {
 				prj->foreach(
 					[&] (Asset* &asset, Asset::List::Index) -> void {

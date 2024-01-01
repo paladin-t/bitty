@@ -59,6 +59,7 @@ public:
 		Cursor,
 		Selection,
 		ErrorMarker,
+		WarningMarker,
 		Breakpoint,
 		ProgramPointer,
 		LineNumber,
@@ -132,7 +133,15 @@ public:
 	typedef std::unordered_map<std::string, Identifier> Identifiers;
 	typedef std::unordered_set<std::string> Keywords;
 
-	typedef std::map<int, std::string> ErrorMarkers;
+	struct Error {
+		std::string message;
+		bool isWarning = false;
+		bool withLineNumber = false;
+
+		Error();
+		Error(const std::string &msg, bool isWarning_, bool withLineNumber_);
+	};
+	typedef std::map<int, Error> ErrorMarkers;
 	typedef std::unordered_map<int, bool> Breakpoints;
 
 	typedef std::array<ImU32, (size_t)PaletteIndex::Max> Palette;
@@ -274,11 +283,17 @@ public:
 	void DisableShortcut(ShortcutType aType);
 	bool IsShortcutsEnabled(ShortcutType aType) const;
 
+	void SetErrorTipEnabled(bool aValue);
+	bool IsErrorTipEnabled(void) const;
+
 	void SetTooltipEnabled(bool aValue);
 	bool IsTooltipEnabled(void) const;
 
 	void SetShowWhiteSpaces(bool aValue);
 	bool IsShowWhiteSpaces(void) const;
+
+	void SetSafeColumnIndicatorOffset(int aValue);
+	int GetSafeColumnIndicatorOffset(void) const;
 
 	bool IsEditorFocused(void) const;
 
@@ -312,6 +327,8 @@ public:
 	void Delete(void);
 	void Indent(bool aByKey = true);
 	void Unindent(bool aByKey = true);
+	void ToLowerCase(void);
+	void ToUpperCase(void);
 	void Comment(void);
 	void Uncomment(void);
 	void MoveLineUp(void);
@@ -341,6 +358,8 @@ protected:
 		Remove,
 		Indent,
 		Unindent,
+		ToLowerCase,
+		ToUpperCase,
 		Comment,
 		Uncomment,
 		MoveLineUp,
@@ -418,10 +437,10 @@ protected:
 	const ImFont* Font;
 	ImVector<ImWchar> InputBuffer;
 	ImVec2 CharAdv;
-	bool IndentWithTab = false;
+	bool IndentWithTab;
 	int TabSize;
 	int TextStart;
-	float HeadSize = 0;
+	float HeadSize;
 	bool Overwrite;
 	bool ReadOnly;
 	bool ShowLineNumbers;
@@ -434,8 +453,10 @@ protected:
 	std::string LastSymbol;
 	PaletteIndex LastSymbolPalette;
 	int CheckMultilineComments;
+	bool ErrorTipEnabled;
 	bool TooltipEnabled;
 	bool ShowWhiteSpaces;
+	int SafeColumnIndicatorOffset;
 	ImVec2 CursorScreenPos;
 	bool EditorFocused;
 

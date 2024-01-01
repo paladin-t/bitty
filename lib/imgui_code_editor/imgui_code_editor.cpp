@@ -1,5 +1,6 @@
 #include "imgui_code_editor.h"
 #include "../imgui/imgui_internal.h"
+#include <SDL.h>
 #include <algorithm>
 #include <chrono>
 #include <regex>
@@ -111,6 +112,34 @@ static int ImTextAppendUtf8ToStdStr(std::string &buf, CodeEditor::Char chr) {
 	}
 
 	return ret;
+}
+
+static size_t ImTextToLowerCase(std::string &str) {
+	size_t i = 0;
+	while (i < str.length()) {
+		int n = ImTextExpectUtf8Char(str.c_str() + i);
+		if (n == 0)
+			break;
+		else if (n == 1)
+			str[i] = (char)::tolower(str[i]);
+		i += n;
+	}
+
+	return i;
+}
+
+static size_t ImTextToUpperCase(std::string &str) {
+	size_t i = 0;
+	while (i < str.length()) {
+		int n = ImTextExpectUtf8Char(str.c_str() + i);
+		if (n == 0)
+			break;
+		else if (n == 1)
+			str[i] = (char)::toupper(str[i]);
+		i += n;
+	}
+
+	return i;
 }
 
 CodeEditor::LanguageDefinition CodeEditor::LanguageDefinition::Text(void) {
@@ -590,7 +619,9 @@ bool CodeEditor::UndoRecord::Similar(const UndoRecord* o) const {
 void CodeEditor::UndoRecord::Undo(CodeEditor* aEditor) {
 	if (!Content.empty()) {
 		switch (Type) {
-		case UndoType::Add: {
+		case UndoType::Add: // Fall through.
+		case UndoType::ToLowerCase:  // Fall through.
+		case UndoType::ToUpperCase: {
 				aEditor->State = After;
 
 				aEditor->DeleteRange(Start, End);
@@ -759,7 +790,9 @@ void CodeEditor::UndoRecord::Undo(CodeEditor* aEditor) {
 void CodeEditor::UndoRecord::Redo(CodeEditor* aEditor) {
 	if (!Content.empty()) {
 		switch (Type) {
-		case UndoType::Add: {
+		case UndoType::Add: // Fall through.
+		case UndoType::ToLowerCase:  // Fall through.
+		case UndoType::ToUpperCase: {
 				aEditor->State = Before;
 
 				aEditor->DeleteSelection();
@@ -915,6 +948,13 @@ void CodeEditor::UndoRecord::Redo(CodeEditor* aEditor) {
 	aEditor->OnModified();
 }
 
+CodeEditor::Error::Error() {
+}
+
+CodeEditor::Error::Error(const std::string &msg, bool isWarning_, bool withLineNumber_) :
+	message(msg), isWarning(isWarning_), withLineNumber(withLineNumber_) {
+}
+
 CodeEditor::Glyph::Glyph(Char aChar, ImU32 aColorIndex) : Character(aChar), ColorIndex(aColorIndex), MultiLineComment(false) {
 	if (aChar <= 255) {
 		Codepoint = (ImWchar)aChar;
@@ -960,8 +1000,10 @@ CodeEditor::CodeEditor() :
 	UndoIndex(0),
 	SavedIndex(0),
 	Font(nullptr),
+	IndentWithTab(false),
 	TabSize(4),
 	TextStart(7),
+	HeadSize(0),
 	Overwrite(false),
 	ReadOnly(false),
 	ShowLineNumbers(true),
@@ -973,8 +1015,10 @@ CodeEditor::CodeEditor() :
 	ColorRangeMin(0),
 	ColorRangeMax(0),
 	CheckMultilineComments(0),
+	ErrorTipEnabled(true),
 	TooltipEnabled(true),
 	ShowWhiteSpaces(true),
+	SafeColumnIndicatorOffset(0),
 	EditorFocused(false),
 	ProgramPointer(-1)
 {
@@ -1154,8 +1198,6 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 			MoveHome(shift);
 		else if (!ctrl && !alt && IsKeyPressed(GetKeyIndex(ImGuiKey_End)))
 			MoveEnd(shift);
-		else if (!IsReadOnly() && !ctrl && !shift && !alt && IsKeyPressed(GetKeyIndex(ImGuiKey_Backspace)))
-			BackSpace();
 
 		if (!IsReadOnly()) {
 			if (IsKeyPressed(GetKeyIndex(ImGuiKey_Enter)) || OnKeyPressed(ImGuiKey_Enter)) {
@@ -1187,6 +1229,14 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 							BackSpace(); // Unindent single line.
 					}
 				}
+			} else if (!ctrl && !shift && !alt && IsKeyPressed(GetKeyIndex(ImGuiKey_Backspace))) {
+				BackSpace();
+			} else if (ctrl && !alt && IsKeyPressed(SDL_SCANCODE_U)) {
+				if (shift) {
+					ToUpperCase();
+				} else {
+					ToLowerCase();
+				}
 			}
 		}
 
@@ -1205,7 +1255,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 						if (IndentWithTab) {
 							EnterCharacter(c);
 						} else {
-							for (int n = 0; n < TabSize; ++n)
+							for (int i = 0; i < TabSize; ++i)
 								EnterCharacter(' ');
 						}
 					} else {
@@ -1235,8 +1285,17 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 	int lineNo = (int)floor(scrollY / CharAdv.y);
 	const int lineMax = std::max(0, std::min((int)CodeLines.size() - 1, lineNo + (int)ceil((scrollY + contentSize.y) / CharAdv.y)));
 	if (!CodeLines.empty()) {
+		if (GetSafeColumnIndicatorOffset() > 0) {
+			const ImVec2 istart(
+				cursorScreenPos.x + CharAdv.x * TextStart + CharAdv.x * GetSafeColumnIndicatorOffset(),
+				cursorScreenPos.y + CharAdv.y * lineNo
+			);
+			const ImVec2 iend(istart.x, istart.y + std::max(CharAdv.y * (lineMax + 1), contentSize.y));
+			drawList->AddLine(istart, iend, Plt[(int)PaletteIndex::CurrentLineEdge]);
+		}
+
 		while (lineNo <= lineMax) {
-			ImVec2 lineStartScreenPos = ImVec2(cursorScreenPos.x, cursorScreenPos.y + lineNo * CharAdv.y);
+			ImVec2 lineStartScreenPos = ImVec2(cursorScreenPos.x, cursorScreenPos.y + CharAdv.y * lineNo);
 			ImVec2 textScreenPos = ImVec2(lineStartScreenPos.x + CharAdv.x * TextStart, lineStartScreenPos.y);
 
 			Line &line = CodeLines[lineNo];
@@ -1258,8 +1317,8 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				++ssend;
 
 			if (sstart != -1 && ssend != -1 && sstart < ssend) {
-				const ImVec2 vstart(lineStartScreenPos.x + (CharAdv.x) * (sstart + TextStart), lineStartScreenPos.y);
-				const ImVec2 vend(lineStartScreenPos.x + (CharAdv.x) * (ssend + TextStart), lineStartScreenPos.y + CharAdv.y);
+				const ImVec2 vstart(lineStartScreenPos.x + CharAdv.x * (sstart + TextStart), lineStartScreenPos.y);
+				const ImVec2 vend(lineStartScreenPos.x + CharAdv.x * (ssend + TextStart), lineStartScreenPos.y + CharAdv.y);
 				drawList->AddRectFilled(vstart, vend, Plt[(int)PaletteIndex::Selection]);
 			}
 
@@ -1313,20 +1372,35 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 
 			ErrorMarkers::iterator errorIt = Errs.find(lineNo);
 			if (errorIt != Errs.end()) {
+				const int ln = errorIt->first;
+				const Error &err = errorIt->second;
 				const ImVec2 end(lineStartScreenPos.x + contentSize.x + 2.0f * scrollX, lineStartScreenPos.y + CharAdv.y);
-				drawList->AddRectFilled(start, end, Plt[(int)PaletteIndex::ErrorMarker]);
+				if (err.isWarning)
+					drawList->AddRectFilled(start, end, Plt[(int)PaletteIndex::WarningMarker]);
+				else
+					drawList->AddRectFilled(start, end, Plt[(int)PaletteIndex::ErrorMarker]);
 
-				if (IsTooltipEnabled()) {
+				if (IsErrorTipEnabled()) {
 					if (IsMouseHoveringRect(lineStartScreenPos, end)) {
+						PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
 						BeginTooltip();
-						PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.2f, 0.2f, 1.0f));
-						Text("Error at line %d:", errorIt->first);
-						PopStyleColor();
-						Separator();
-						PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 0.2f, 1.0f));
-						Text("%s", errorIt->second.c_str());
-						PopStyleColor();
+						if (err.withLineNumber) {
+							if (err.isWarning) {
+								Text("Warning at line %d:", ln);
+							} else {
+								Text("Error at line %d:", ln);
+							}
+							Separator();
+							Text("%s", err.message.c_str());
+						} else {
+							if (err.isWarning) {
+								Text("Warning: %s", err.message.c_str());
+							} else {
+								Text("Error: %s", err.message.c_str());
+							}
+						}
 						EndTooltip();
+						PopStyleVar();
 					}
 				}
 			}
@@ -1788,6 +1862,14 @@ bool CodeEditor::IsShortcutsEnabled(ShortcutType aType) const {
 	return !!(ShortcutsEnabled & aType);
 }
 
+void CodeEditor::SetErrorTipEnabled(bool aValue) {
+	ErrorTipEnabled = aValue;
+}
+
+bool CodeEditor::IsErrorTipEnabled(void) const {
+	return ErrorTipEnabled;
+}
+
 void CodeEditor::SetTooltipEnabled(bool aValue) {
 	TooltipEnabled = aValue;
 }
@@ -1802,6 +1884,14 @@ void CodeEditor::SetShowWhiteSpaces(bool aValue) {
 
 bool CodeEditor::IsShowWhiteSpaces(void) const {
 	return ShowWhiteSpaces;
+}
+
+void CodeEditor::SetSafeColumnIndicatorOffset(int aValue) {
+	SafeColumnIndicatorOffset = aValue;
+}
+
+int CodeEditor::GetSafeColumnIndicatorOffset(void) const {
+	return SafeColumnIndicatorOffset;
 }
 
 bool CodeEditor::IsEditorFocused(void) const {
@@ -2392,6 +2482,66 @@ void CodeEditor::Unindent(bool aByKey) {
 	}
 }
 
+void CodeEditor::ToLowerCase(void) {
+	if (!HasSelection())
+		return;
+
+	UndoRecord u;
+	u.Type = UndoType::ToLowerCase;
+	u.Before = State;
+
+	std::string txt = GetSelectionText();
+	u.Overwritten = txt;
+	DeleteSelection();
+
+	ImTextToLowerCase(txt);
+	u.Content = txt;
+	u.Start = GetActualCursorCoordinates();
+
+	InsertText(txt.c_str());
+
+	u.End = GetActualCursorCoordinates();
+	u.After = State;
+	AddUndo(u);
+	State = u.Before;
+
+	OnModified();
+
+	OnChanged(u.Start, u.End, 0);
+
+	InteractiveStart = InteractiveEnd = State.CursorPosition;
+}
+
+void CodeEditor::ToUpperCase(void) {
+	if (!HasSelection())
+		return;
+
+	UndoRecord u;
+	u.Type = UndoType::ToUpperCase;
+	u.Before = State;
+
+	std::string txt = GetSelectionText();
+	u.Overwritten = txt;
+	DeleteSelection();
+
+	ImTextToUpperCase(txt);
+	u.Content = txt;
+	u.Start = GetActualCursorCoordinates();
+
+	InsertText(txt.c_str());
+
+	u.End = GetActualCursorCoordinates();
+	u.After = State;
+	AddUndo(u);
+	State = u.Before;
+
+	OnModified();
+
+	OnChanged(u.Start, u.End, 0);
+
+	InteractiveStart = InteractiveEnd = State.CursorPosition;
+}
+
 void CodeEditor::Comment(void) {
 	if (IsReadOnly())
 		return;
@@ -2656,7 +2806,8 @@ const CodeEditor::Palette &CodeEditor::GetDarkPalette(void) {
 		0xff2c2c2c, // Background.
 		0xffe0e0e0, // Cursor.
 		0x80a06020, // Selection.
-		0x804d00ff, // ErrorMarker.
+		0x804d00ff, // Error marker.
+		0x8005f0fa, // Warning marker.
 		0xe00020f0, // Breakpoint.
 		0xe000f0f0, // Program pointer.
 		0xffaf912b, // Line number.
@@ -2690,7 +2841,8 @@ const CodeEditor::Palette &CodeEditor::GetLightPalette(void) {
 		0xffffffff, // Background.
 		0xff000000, // Cursor.
 		0xffffd6ad, // Selection.
-		0xa00010ff, // ErrorMarker.
+		0xa00010ff, // Error marker.
+		0x8005f0fa, // Warning marker.
 		0xe00020f0, // Breakpoint.
 		0xe000f0f0, // Program pointer.
 		0xffaf912b, // Line number.
@@ -2724,7 +2876,8 @@ const CodeEditor::Palette &CodeEditor::GetRetroBluePalette(void) {
 		0xff753929, // Background.
 		0xff0080ff, // Cursor.
 		0x80ffff00, // Selection.
-		0xa00000ff, // ErrorMarker.
+		0xa00000ff, // Error marker.
+		0x8005f0fa, // Warning marker.
 		0xe00020f0, // Breakpoint.
 		0xe000f0f0, // Program pointer.
 		0xff808000, // Line number.

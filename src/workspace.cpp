@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2023 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -983,6 +983,16 @@ bool Workspace::load(class Window* wnd, class Renderer* rnd, const class Project
 	Jpath::get(doc, settings()->projectLoadLastProjectAtStartup, "project", "load_last_project_at_startup");
 	Jpath::get(doc, settings()->projectAutoBackup, "project", "auto_backup");
 
+	unsigned indentRule = 0;
+	if (Jpath::get(doc, indentRule, "editor", "indent_rule"))
+		settings()->editorIndentRule = (Settings::IndentRules)indentRule;
+	else
+		settings()->editorIndentRule = Settings::TAB_4;
+	unsigned columnIndicator = 0;
+	if (Jpath::get(doc, columnIndicator, "editor", "column_indicator"))
+		settings()->editorColumnIndicator = (Settings::ColumnIndicator)columnIndicator;
+	else
+		settings()->editorColumnIndicator = Settings::COL_80;
 	Jpath::get(doc, settings()->editorShowWhiteSpaces, "editor", "show_white_spaces");
 	Jpath::get(doc, settings()->editorCaseSensitive, "editor", "case_sensitive");
 	Jpath::get(doc, settings()->editorMatchWholeWord, "editor", "match_whole_word");
@@ -1090,6 +1100,8 @@ bool Workspace::save(class Window* wnd, class Renderer*, const class Project*, c
 	Jpath::set(doc, doc, settings()->projectLoadLastProjectAtStartup, "project", "load_last_project_at_startup");
 	Jpath::set(doc, doc, settings()->projectAutoBackup, "project", "auto_backup");
 
+	Jpath::set(doc, doc, (unsigned)settings()->editorIndentRule, "editor", "indent_rule");
+	Jpath::set(doc, doc, (unsigned)settings()->editorColumnIndicator, "editor", "column_indicator");
 	Jpath::set(doc, doc, settings()->editorShowWhiteSpaces, "editor", "show_white_spaces");
 	Jpath::set(doc, doc, settings()->editorCaseSensitive, "editor", "case_sensitive");
 	Jpath::set(doc, doc, settings()->editorMatchWholeWord, "editor", "match_whole_word");
@@ -3189,6 +3201,10 @@ int Workspace::withEditingAsset(const class Project* project, EditorHandler hand
 
 void Workspace::fillAssetEditorSettings(Editable* editor) const {
 	editor->post(Editable::SET_THEME_STYLE, (Variant::Int)theme()->styleIndex());
+
+	editor->post(Editable::SET_INDENT_RULE, (Variant::Int)settings()->editorIndentRule);
+
+	editor->post(Editable::SET_COLUMN_INDICATOR, (Variant::Int)settings()->editorColumnIndicator);
 
 	editor->post(Editable::SET_SHOW_SPACES, settings()->editorShowWhiteSpaces);
 }
