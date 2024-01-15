@@ -36,6 +36,10 @@ public:
 	virtual const Byte &get(size_t index) const = 0;
 	virtual void set(size_t index, Byte val) = 0;
 
+	virtual bool insert(size_t pos, Byte val) = 0;
+	virtual size_t remove(size_t pos, size_t count) = 0;
+	virtual size_t removeFront(size_t count) = 0;
+	virtual size_t removeBack(size_t pos) = 0;
 	virtual Bytes* resize(size_t size) = 0;
 	virtual void clear(void) = 0;
 

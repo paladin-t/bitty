@@ -61,8 +61,8 @@ public:
 		NONE = 0,
 		UDP = 1 << 0,
 		TCP = 1 << 1,
-		WEBSOCKET = 1 << 2,
-		ALL = UDP | TCP | WEBSOCKET
+		WEBSOCKET = 1 << 2, // Reserved.
+		ALL = UDP | TCP
 	};
 
 	enum States {
@@ -109,7 +109,7 @@ public:
 	virtual void disconnect(void) = 0;
 
 	virtual bool send(void* ptr, size_t sz, DataTypes y) = 0;
-	virtual bool broadcast(void* ptr, size_t sz, DataTypes y, bool filterPolling) = 0;
+	virtual bool broadcast(void* ptr, size_t sz, DataTypes y) = 0;
 
 	virtual const ReceivedHandler &receivedCallback(void) const = 0;
 	virtual const EstablishedHandler &establishedCallback(void) const = 0;
@@ -119,7 +119,7 @@ public:
 	virtual void callback(const DisconnectedHandler &cb /* nullable */) = 0;
 	virtual void callback(const ReceivedHandler &recvCb /* nullable */, const EstablishedHandler &stbCb /* nullable */, const DisconnectedHandler &dscnCb /* nullable */) = 0;
 
-	static Network* create(void);
+	static Network* create(const char* type);
 	static void destroy(Network* ptr);
 };
 

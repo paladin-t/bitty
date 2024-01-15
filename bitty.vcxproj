@@ -569,6 +569,20 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4100;4204;4307;4457;4702</DisableSpecificWarnings>
     </ClCompile>
+    <ClCompile Include="lib\civetweb\src\civetweb.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/civetweb/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/civetweb/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/civetweb/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/civetweb/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">NO_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">NO_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">NO_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">NO_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4057</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4057</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4057</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4057</DisableSpecificWarnings>
+    </ClCompile>
     <ClCompile Include="lib\curl\lib\altsvc.c">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/curl/lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/curl/lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -1478,6 +1492,672 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="lib\libuv\src\fs-poll.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\idna.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\inet.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\random.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\strscpy.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\strtok_.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\thread-common.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\threadpool.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\timer.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\uv-common.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\uv-data-getter-setters.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\version_.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\async.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\core.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\detect-wakeup.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\dl.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\error.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\fs-event.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\fs.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\getaddrinfo.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\getnameinfo.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\handle.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\loop-watcher.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\pipe.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\poll.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\process-stdio.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\process.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\signal.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\snprintf.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\stream_.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\tcp.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\thread.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\tty.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\udp.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\util.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\winapi.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\winsock.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='release|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='debug|x64'">lib/libuv/include;lib/libuv/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='release|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='release|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
     <ClCompile Include="lib\lua\src\lapi.c">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
@@ -1701,16 +2381,6 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4018;4100;4127;4200;4214;4244;4456;4701;4702;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\micropather\micropather.cpp">
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='release|Win32'">Level3</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">Level3</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='release|x64'">Level3</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='debug|x64'">Level3</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="lib\mongoose\mongoose.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4267;4273</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4267;4273</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4267;4273</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4267;4273</DisableSpecificWarnings>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='release|Win32'">Level3</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">Level3</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='release|x64'">Level3</WarningLevel>
@@ -2297,6 +2967,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClCompile Include="src\font.cpp" />
     <ClCompile Include="src\generic.cpp" />
     <ClCompile Include="src\hacks.cpp" />
+    <ClCompile Include="src\network_libuv.cpp" />
     <ClCompile Include="src\noiser.cpp" />
     <ClCompile Include="src\operations.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">
@@ -2318,9 +2989,9 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClCompile Include="src\scripting_lua_api_promises.cpp" />
     <ClCompile Include="src\walker.cpp" />
     <ClCompile Include="src\web.cpp" />
+    <ClCompile Include="src\web_civetweb.cpp" />
     <ClCompile Include="src\web_curl.cpp" />
     <ClCompile Include="src\web_html.cpp" />
-    <ClCompile Include="src\web_mongoose.cpp" />
     <ClCompile Include="src\widgets.cpp" />
     <ClCompile Include="src\loader.cpp" />
     <ClCompile Include="src\luaxx.cpp" />
@@ -2376,16 +3047,6 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     </ClCompile>
     <ClCompile Include="src\scripting_lua.cpp" />
     <ClCompile Include="src\network.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release|Win32'">
-      </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">
-      </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release|x64'">
-      </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug|x64'">
-      </ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="src\network_mongoose.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release|Win32'">
       </ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">
@@ -2485,6 +3146,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpTransform.h" />
     <ClInclude Include="lib\chipmunk2d\include\chipmunk\cpVect.h" />
     <ClInclude Include="lib\chipmunk2d\src\prime.h" />
+    <ClInclude Include="lib\civetweb\include\civetweb.h" />
     <ClInclude Include="lib\curl\include\curl\curl.h" />
     <ClInclude Include="lib\curl\include\curl\curlver.h" />
     <ClInclude Include="lib\curl\include\curl\easy.h" />
@@ -2659,6 +3321,34 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClInclude Include="lib\imgui_sdl\imgui_sdl.h" />
     <ClInclude Include="lib\jo_gif\jo_gif.h" />
     <ClInclude Include="lib\jpath\jpath.hpp" />
+    <ClInclude Include="lib\libuv\include\uv.h" />
+    <ClInclude Include="lib\libuv\include\uv\aix.h" />
+    <ClInclude Include="lib\libuv\include\uv\bsd.h" />
+    <ClInclude Include="lib\libuv\include\uv\darwin.h" />
+    <ClInclude Include="lib\libuv\include\uv\errno.h" />
+    <ClInclude Include="lib\libuv\include\uv\linux.h" />
+    <ClInclude Include="lib\libuv\include\uv\os390.h" />
+    <ClInclude Include="lib\libuv\include\uv\posix.h" />
+    <ClInclude Include="lib\libuv\include\uv\sunos.h" />
+    <ClInclude Include="lib\libuv\include\uv\threadpool.h" />
+    <ClInclude Include="lib\libuv\include\uv\tree.h" />
+    <ClInclude Include="lib\libuv\include\uv\unix.h" />
+    <ClInclude Include="lib\libuv\include\uv\version.h" />
+    <ClInclude Include="lib\libuv\include\uv\win.h" />
+    <ClInclude Include="lib\libuv\src\heap-inl.h" />
+    <ClInclude Include="lib\libuv\src\idna.h" />
+    <ClInclude Include="lib\libuv\src\queue.h" />
+    <ClInclude Include="lib\libuv\src\strscpy.h" />
+    <ClInclude Include="lib\libuv\src\strtok.h" />
+    <ClInclude Include="lib\libuv\src\uv-common.h" />
+    <ClInclude Include="lib\libuv\src\win\atomicops-inl.h" />
+    <ClInclude Include="lib\libuv\src\win\fs-fd-hash-inl.h" />
+    <ClInclude Include="lib\libuv\src\win\handle-inl.h" />
+    <ClInclude Include="lib\libuv\src\win\internal.h" />
+    <ClInclude Include="lib\libuv\src\win\req-inl.h" />
+    <ClInclude Include="lib\libuv\src\win\stream-inl.h" />
+    <ClInclude Include="lib\libuv\src\win\winapi.h" />
+    <ClInclude Include="lib\libuv\src\win\winsock.h" />
     <ClInclude Include="lib\lua\src\lapi.h" />
     <ClInclude Include="lib\lua\src\lauxlib.h" />
     <ClInclude Include="lib\lua\src\lcode.h" />
@@ -2694,7 +3384,6 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClInclude Include="lib\lz4\lib\xxhash.h" />
     <ClInclude Include="lib\md4c\src\md4c.h" />
     <ClInclude Include="lib\micropather\micropather.h" />
-    <ClInclude Include="lib\mongoose\mongoose.h" />
     <ClInclude Include="lib\network_info\cbits\common.h" />
     <ClInclude Include="lib\network_info\cbits\network.h" />
     <ClInclude Include="lib\portable_file_dialogs\portable-file-dialogs.h" />
@@ -2908,6 +3597,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClInclude Include="src\font.h" />
     <ClInclude Include="src\generic.h" />
     <ClInclude Include="src\hacks.h" />
+    <ClInclude Include="src\network_libuv.h" />
     <ClInclude Include="src\noiser.h" />
     <ClInclude Include="src\operations.h" />
     <ClInclude Include="src\plugin.h" />
@@ -2919,9 +3609,9 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClInclude Include="src\scripting_lua_api_promises.h" />
     <ClInclude Include="src\walker.h" />
     <ClInclude Include="src\web.h" />
+    <ClInclude Include="src\web_civetweb.h" />
     <ClInclude Include="src\web_curl.h" />
     <ClInclude Include="src\web_html.h" />
-    <ClInclude Include="src\web_mongoose.h" />
     <ClInclude Include="src\widgets.h" />
     <ClInclude Include="src\loader.h" />
     <ClInclude Include="src\luaxx.h" />
@@ -2943,7 +3633,6 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClInclude Include="src\archive.h" />
     <ClInclude Include="src\scripting_lua.h" />
     <ClInclude Include="src\network.h" />
-    <ClInclude Include="src\network_mongoose.h" />
     <ClInclude Include="src\palette.h" />
     <ClInclude Include="src\stream.h" />
     <ClInclude Include="src\object.h" />

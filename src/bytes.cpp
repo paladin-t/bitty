@@ -423,6 +423,66 @@ public:
 		_collection.at(index) = val;
 	}
 
+	virtual bool insert(size_t pos, Byte val) override {
+		if (pos > _collection.size())
+			return false;
+
+		_collection.insert(_collection.begin() + pos, val);
+
+		if (_cursor >= pos)
+			++_cursor;
+
+		return true;
+	}
+	virtual size_t remove(size_t pos, size_t count) override {
+		if (pos >= _collection.size())
+			return 0;
+		if (pos + count >= _collection.size())
+			return 0;
+
+		_collection.erase(_collection.begin() + pos, _collection.begin() + pos + count);
+
+		if (empty())
+			_cursor = 0;
+		else if (_cursor > _collection.size())
+			_cursor = _collection.size();
+
+		return count;
+	}
+	virtual size_t removeFront(size_t count) override {
+		if (count > _collection.size())
+			return 0;
+
+		if (count == _collection.size()) {
+			_collection.clear();
+			_cursor = 0;
+
+			return count;
+		}
+
+		_collection.erase(_collection.begin(), _collection.begin() + count);
+
+		if (empty())
+			_cursor = 0;
+		else if (_cursor > _collection.size())
+			_cursor = _collection.size();
+
+		return count;
+	}
+	virtual size_t removeBack(size_t pos) override {
+		if (pos >= _collection.size())
+			return 0;
+
+		const size_t result = _collection.size() - pos;
+		_collection.erase(_collection.begin() + pos);
+
+		if (empty())
+			_cursor = 0;
+		else if (_cursor > _collection.size())
+			_cursor = _collection.size();
+
+		return result;
+	}
 	virtual Bytes* resize(size_t expSize) override {
 		const size_t oldSize = _collection.size();
 		_collection.resize(expSize);

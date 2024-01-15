@@ -6636,7 +6636,7 @@ static int Network_ctor(lua_State* L) {
 	else if (n == 1)
 		read<>(L, recv);
 
-	Network::Ptr obj(Network::create());
+	Network::Ptr obj(Network::create("default"));
 	if (!obj)
 		return write(L, nullptr);
 
@@ -6818,11 +6818,7 @@ static int Network_broadcast(lua_State* L) {
 	const int n = getTop(L);
 	Network::Ptr* obj = nullptr;
 	Placeholder _2;
-	bool filterPolling = true;
-	if (n >= 3)
-		read<>(L, obj, _2, filterPolling);
-	else
-		read<>(L, obj, _2);
+	read<>(L, obj, _2);
 
 	if (obj) {
 		if (isUserdata(L, 2)) {
@@ -6831,7 +6827,7 @@ static int Network_broadcast(lua_State* L) {
 			read<2>(L, bytes);
 
 			if (bytes) {
-				const bool ret = obj->get()->broadcast((void*)bytes->get(), bytes->get()->count(), Network::BYTES, filterPolling);
+				const bool ret = obj->get()->broadcast((void*)bytes->get(), bytes->get()->count(), Network::BYTES);
 
 				return write(L, ret);
 			}
@@ -6841,7 +6837,7 @@ static int Network_broadcast(lua_State* L) {
 			read<2>(L, json);
 
 			if (json) {
-				const bool ret = obj->get()->broadcast((void*)json->get(), 0, Network::JSON, filterPolling);
+				const bool ret = obj->get()->broadcast((void*)json->get(), 0, Network::JSON);
 
 				return write(L, ret);
 			}
@@ -6853,7 +6849,7 @@ static int Network_broadcast(lua_State* L) {
 			if (tbl.type() == Variant::OBJECT) {
 				Json::Ptr json(Json::create());
 				if (json->fromAny(tbl)) {
-					const bool ret = obj->get()->broadcast((void*)json.get(), 0, Network::JSON, filterPolling);
+					const bool ret = obj->get()->broadcast((void*)json.get(), 0, Network::JSON);
 
 					return write(L, ret);
 				}
@@ -6863,7 +6859,7 @@ static int Network_broadcast(lua_State* L) {
 			std::string str;
 			read<2>(L, str);
 
-			const bool ret = obj->get()->broadcast((void*)str.c_str(), str.length(), Network::STRING, filterPolling);
+			const bool ret = obj->get()->broadcast((void*)str.c_str(), str.length(), Network::STRING);
 
 			return write(L, ret);
 		}
@@ -6960,8 +6956,7 @@ static void open_Network(lua_State* L) {
 		L,
 		"None", (Enum)Network::NONE,
 		"Udp", (Enum)Network::UDP,
-		"Tcp", (Enum)Network::TCP,
-		"WebSocket", (Enum)Network::WEBSOCKET // Undocumented.
+		"Tcp", (Enum)Network::TCP
 	);
 	pop(L);
 }
@@ -7123,7 +7118,11 @@ static int Web_getOnRequested(lua_State* L, Web::Ptr &obj) {
 
 static void Web_setOnRequested(lua_State* L, Web::Ptr &obj, const Function::Ptr &callback) {
 	Web::RequestedHandler::Callback func = std::bind(
-		[] (lua_State* L, Web* /* obj */, Web::RequestedHandler* self, const char* method, const char* uri, const char* query, const char* body, const char* /* message */) -> bool {
+		[] (lua_State* L, Web* /* obj */, Web::RequestedHandler* self, const char* method, const char* uri, const char* query, const char* body, const Text::Dictionary &/* headers */) -> bool {
+			LockGuard<RecursiveMutex>::UniquePtr guard;
+			ScriptingLua* impl = ScriptingLua::instanceOf(L);
+			impl->acquire(guard);
+
 			Function::Ptr* ptr = (Function::Ptr*)self->userdata().get();
 
 			bool ret = true;
@@ -7153,7 +7152,7 @@ static int Web_ctor(lua_State* L) {
 	if (n >= 1)
 		read<>(L, rspd);
 
-	Web::Ptr obj(Web::create());
+	Web::Ptr obj(Web::create("default"));
 	if (!obj)
 		return write(L, nullptr);
 

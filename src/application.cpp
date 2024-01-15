@@ -28,9 +28,10 @@
 #else /* BITTY_OS_APPLE */
 #	include "../lib/chipmunk2d/include/chipmunk/chipmunk.h"
 #endif /* BITTY_OS_APPLE */
+#include "../lib/civetweb/include/civetweb.h"
 #include "../lib/imgui_sdl/imgui_sdl.h"
 #include "../lib/jpath/jpath.hpp"
-#include "../lib/mongoose/mongoose.h"
+#include "../lib/libuv/include/uv.h"
 #include "../lib/sdl_gfx/SDL2_gfxPrimitives.h"
 #include "../lib/zlib/zlib.h"
 #if !defined BITTY_OS_HTML
@@ -1066,7 +1067,8 @@ private:
 		fprintf(stdout, "    ImGui v" IMGUI_VERSION "\n");
 		fprintf(stdout, " Chipmunk v%s\n", cpVersionString);
 #if !defined BITTY_OS_HTML
-		fprintf(stdout, " Mongoose v" MG_VERSION "\n");
+		fprintf(stdout, " CivetWeb v" CIVETWEB_VERSION "\n");
+		fprintf(stdout, "    libuv v%s\n", uv_version_string());
 		fprintf(stdout, "     cURL v" LIBCURL_VERSION "\n");
 #endif /* BITTY_OS_HTML */
 		fprintf(stdout, "RapidJSON v" RAPIDJSON_VERSION_STRING "\n");

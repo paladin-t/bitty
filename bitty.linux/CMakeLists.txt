@@ -114,6 +114,10 @@ list(
   "../lib/chipmunk2d/src/cpSweep1D.c"
 )
 list(
+  APPEND BITTY_LIB_CIVETWEB
+  "../lib/civetweb/src/civetweb.c"
+)
+list(
   APPEND BITTY_LIB_GL3W
   "../lib/gl3w/GL/gl3w.c"
 )
@@ -136,6 +140,21 @@ list(
 list(
   APPEND BITTY_LIB_JO_GIF
   "../lib/jo_gif/jo_gif.cpp"
+)
+list(
+  APPEND BITTY_LIB_LIBUV
+  "../lib/libuv/src/fs-poll.c"
+  "../lib/libuv/src/idna.c"
+  "../lib/libuv/src/inet.c"
+  "../lib/libuv/src/random.c"
+  "../lib/libuv/src/strscpy.c"
+  "../lib/libuv/src/strtok_.c"
+  "../lib/libuv/src/thread-common.c"
+  "../lib/libuv/src/threadpool.c"
+  "../lib/libuv/src/timer.c"
+  "../lib/libuv/src/uv-common.c"
+  "../lib/libuv/src/uv-data-getter-setters.c"
+  "../lib/libuv/src/version_.c"
 )
 list(
   APPEND BITTY_LIB_LUA
@@ -186,10 +205,6 @@ list(
 list(
   APPEND BITTY_LIB_MICROPATHER
   "../lib/micropather/micropather.cpp"
-)
-list(
-  APPEND BITTY_LIB_MONGOOSE
-  "../lib/mongoose/mongoose.c"
 )
 list(
   APPEND BITTY_LIB_NETWORK_INFO
@@ -276,11 +291,11 @@ list(
   "../src/executable.cpp"
   "../src/stream.cpp"
   "../src/updatable.cpp"
-  "../src/network_mongoose.cpp"
+  "../src/network_libuv.cpp"
   "../src/platform_linux.cpp"
+  "../src/web_civetweb.cpp"
   "../src/web_curl.cpp"
   "../src/web_html.cpp"
-  "../src/web_mongoose.cpp"
   "../src/archive.cpp"
   "../src/bytes.cpp"
   "../src/color.cpp"
@@ -332,16 +347,17 @@ add_executable(
   bitty
   ${BITTY_LIB_B64}
   ${BITTY_LIB_CHIPMUNK}
+  ${BITTY_LIB_CIVETWEB}
   ${BITTY_LIB_GL3W}
   ${BITTY_LIB_IMGUI}
   ${BITTY_LIB_IMGUI_CODE_EDITOR}
   ${BITTY_LIB_IMGUI_SDL}
   ${BITTY_LIB_JO_GIF}
+  ${BITTY_LIB_LIBUV}
   ${BITTY_LIB_LUA}
   ${BITTY_LIB_LZ4}
   ${BITTY_LIB_MD4C}
   ${BITTY_LIB_MICROPATHER}
-  ${BITTY_LIB_MONGOOSE}
   ${BITTY_LIB_NETWORK_INFO}
   ${BITTY_LIB_SDL_GFX}
   ${BITTY_LIB_ZLIB}

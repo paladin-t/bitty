@@ -85,9 +85,6 @@
     <ClCompile Include="lib\zlib\contrib\minizip\zip.c">
       <Filter>lib\zlib\contrib\minizip</Filter>
     </ClCompile>
-    <ClCompile Include="lib\mongoose\mongoose.c">
-      <Filter>lib\mongoose</Filter>
-    </ClCompile>
     <ClCompile Include="src\bytes.cpp">
       <Filter>src\shared</Filter>
     </ClCompile>
@@ -264,9 +261,6 @@
     </ClCompile>
     <ClCompile Include="src\image.cpp">
       <Filter>src\resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\network_mongoose.cpp">
-      <Filter>src\shared\network</Filter>
     </ClCompile>
     <ClCompile Include="src\palette.cpp">
       <Filter>src\resources</Filter>
@@ -910,9 +904,6 @@
     <ClCompile Include="src\web_html.cpp">
       <Filter>src\shared\web</Filter>
     </ClCompile>
-    <ClCompile Include="src\web_mongoose.cpp">
-      <Filter>src\shared\web</Filter>
-    </ClCompile>
     <ClCompile Include="src\mathematics.cpp">
       <Filter>src\shared</Filter>
     </ClCompile>
@@ -1039,6 +1030,126 @@
     <ClCompile Include="src\scripting_lua_api_physics.cpp">
       <Filter>src\executable\lua</Filter>
     </ClCompile>
+    <ClCompile Include="lib\libuv\src\fs-poll.c">
+      <Filter>lib\libuv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\idna.c">
+      <Filter>lib\libuv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\inet.c">
+      <Filter>lib\libuv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\random.c">
+      <Filter>lib\libuv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\strscpy.c">
+      <Filter>lib\libuv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\strtok_.c">
+      <Filter>lib\libuv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\thread-common.c">
+      <Filter>lib\libuv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\threadpool.c">
+      <Filter>lib\libuv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\timer.c">
+      <Filter>lib\libuv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\uv-common.c">
+      <Filter>lib\libuv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\uv-data-getter-setters.c">
+      <Filter>lib\libuv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\version_.c">
+      <Filter>lib\libuv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\async.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\core.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\detect-wakeup.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\dl.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\error.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\fs.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\fs-event.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\getaddrinfo.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\getnameinfo.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\handle.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\loop-watcher.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\pipe.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\poll.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\process.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\process-stdio.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\signal.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\snprintf.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\stream_.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\tcp.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\thread.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\tty.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\udp.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\util.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\winapi.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\libuv\src\win\winsock.c">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\civetweb\src\civetweb.c">
+      <Filter>lib\civetweb\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network_libuv.cpp">
+      <Filter>src\shared\network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\web_civetweb.cpp">
+      <Filter>src\shared\web</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -1094,9 +1205,6 @@
     </Filter>
     <Filter Include="lib\zlib\contrib\minizip">
       <UniqueIdentifier>{bc6e4a7d-6c7d-44fd-b208-cb9238095b09}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="lib\mongoose">
-      <UniqueIdentifier>{ffaca46c-9cd7-48be-ab28-a32be3e2d417}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\input">
       <UniqueIdentifier>{c28de17f-0fbd-431f-b68c-249086676a38}</UniqueIdentifier>
@@ -1265,6 +1373,30 @@
     </Filter>
     <Filter Include="lib\chipmunk2d\src">
       <UniqueIdentifier>{481caa09-4d33-417a-88d2-539d83eb4886}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\libuv">
+      <UniqueIdentifier>{7a77efca-e1f2-403c-9963-9fe4c7b9b109}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\libuv\include">
+      <UniqueIdentifier>{0b2d829d-2545-4af1-80e2-b55f4289f2d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\libuv\src">
+      <UniqueIdentifier>{15cb0a24-43f0-4842-949c-66beefb9844f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\libuv\include\uv">
+      <UniqueIdentifier>{82e1e243-7518-4826-9453-79ef02f13fe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\libuv\src\win">
+      <UniqueIdentifier>{35c5c729-27d3-4ae8-a2c3-75e736fa58ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\civetweb">
+      <UniqueIdentifier>{3a9f7ff1-c773-448d-b227-88d3434513eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\civetweb\include">
+      <UniqueIdentifier>{7505440d-36c7-46c2-a20d-350e8813cce5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\civetweb\src">
+      <UniqueIdentifier>{f7c34d6c-fa48-4a73-9288-4b656722b500}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1498,9 +1630,6 @@
     </ClInclude>
     <ClInclude Include="lib\zlib\contrib\minizip\zip.h">
       <Filter>lib\zlib\contrib\minizip</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\mongoose\mongoose.h">
-      <Filter>lib\mongoose</Filter>
     </ClInclude>
     <ClInclude Include="src\bytes.h">
       <Filter>src\shared</Filter>
@@ -1915,9 +2044,6 @@
     </ClInclude>
     <ClInclude Include="src\image.h">
       <Filter>src\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\network_mongoose.h">
-      <Filter>src\shared\network</Filter>
     </ClInclude>
     <ClInclude Include="src\palette.h">
       <Filter>src\resources</Filter>
@@ -2630,9 +2756,6 @@
     <ClInclude Include="src\web_html.h">
       <Filter>src\shared\web</Filter>
     </ClInclude>
-    <ClInclude Include="src\web_mongoose.h">
-      <Filter>src\shared\web</Filter>
-    </ClInclude>
     <ClInclude Include="src\mathematics.h">
       <Filter>src\shared</Filter>
     </ClInclude>
@@ -2791,6 +2914,99 @@
     </ClInclude>
     <ClInclude Include="src\scripting_lua_api_physics.h">
       <Filter>src\executable\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\include\uv.h">
+      <Filter>lib\libuv\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\include\uv\aix.h">
+      <Filter>lib\libuv\include\uv</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\include\uv\bsd.h">
+      <Filter>lib\libuv\include\uv</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\include\uv\darwin.h">
+      <Filter>lib\libuv\include\uv</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\include\uv\errno.h">
+      <Filter>lib\libuv\include\uv</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\include\uv\linux.h">
+      <Filter>lib\libuv\include\uv</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\include\uv\os390.h">
+      <Filter>lib\libuv\include\uv</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\include\uv\posix.h">
+      <Filter>lib\libuv\include\uv</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\include\uv\sunos.h">
+      <Filter>lib\libuv\include\uv</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\include\uv\threadpool.h">
+      <Filter>lib\libuv\include\uv</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\include\uv\tree.h">
+      <Filter>lib\libuv\include\uv</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\include\uv\unix.h">
+      <Filter>lib\libuv\include\uv</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\include\uv\version.h">
+      <Filter>lib\libuv\include\uv</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\include\uv\win.h">
+      <Filter>lib\libuv\include\uv</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\src\heap-inl.h">
+      <Filter>lib\libuv\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\src\idna.h">
+      <Filter>lib\libuv\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\src\queue.h">
+      <Filter>lib\libuv\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\src\strscpy.h">
+      <Filter>lib\libuv\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\src\strtok.h">
+      <Filter>lib\libuv\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\src\uv-common.h">
+      <Filter>lib\libuv\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\src\win\atomicops-inl.h">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\src\win\fs-fd-hash-inl.h">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\src\win\handle-inl.h">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\src\win\internal.h">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\src\win\req-inl.h">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\src\win\stream-inl.h">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\src\win\winapi.h">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\libuv\src\win\winsock.h">
+      <Filter>lib\libuv\src\win</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\civetweb\include\civetweb.h">
+      <Filter>lib\civetweb\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network_libuv.h">
+      <Filter>src\shared\network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\web_civetweb.h">
+      <Filter>src\shared\web</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

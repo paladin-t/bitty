@@ -14,7 +14,7 @@
 #else /* BITTY_OS_HTML */
 #	include "web_curl.h"
 #endif /* BITTY_OS_HTML */
-#include "web_mongoose.h"
+#include "web_civetweb.h"
 
 /*
 ** {===========================================================================
@@ -67,13 +67,23 @@ void Fetch::destroy(Fetch* ptr) {
 
 #if BITTY_WEB_ENABLED
 
-Web* Web::create(void) {
+Web* Web::create(const char* type) {
 #if defined BITTY_OS_HTML
-	WebHtml* result = new WebHtml();
+	Web* result = nullptr;
+	if (strcmp(type, "html") == 0 || strcmp(type, "default") == 0) {
+		result = new WebHtml();
+	} else {
+		assert(false && "Unknown backend type.");
+	}
 
 	return result;
 #else /* BITTY_OS_HTML */
-	WebMongoose* result = new WebMongoose();
+	Web* result = nullptr;
+	if (strcmp(type, "civetweb") == 0 || strcmp(type, "default") == 0) {
+		result = new WebCivetWeb();
+	} else {
+		assert(false && "Unknown backend type.");
+	}
 
 	return result;
 #endif /* BITTY_OS_HTML */
@@ -81,11 +91,31 @@ Web* Web::create(void) {
 
 void Web::destroy(Web* ptr) {
 #if defined BITTY_OS_HTML
-	WebHtml* impl = static_cast<WebHtml*>(ptr);
-	delete impl;
+	switch (ptr->type()) {
+	case WebHtml::TYPE(): {
+			WebHtml* impl = static_cast<WebHtml*>(ptr);
+			delete impl;
+		}
+
+		break;
+	default:
+		assert(false && "Unknown backend type.");
+
+		break;
+	}
 #else /* BITTY_OS_HTML */
-	WebMongoose* impl = static_cast<WebMongoose*>(ptr);
-	delete impl;
+	switch (ptr->type()) {
+	case WebCivetWeb::TYPE(): {
+			WebCivetWeb* impl = static_cast<WebCivetWeb*>(ptr);
+			delete impl;
+		}
+
+		break;
+	default:
+		assert(false && "Unknown backend type.");
+
+		break;
+	}
 #endif /* BITTY_OS_HTML */
 }
 

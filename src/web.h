@@ -90,7 +90,7 @@ class Web : public Updatable, public virtual Object {
 public:
 	typedef std::shared_ptr<Web> Ptr;
 
-	struct RequestedHandler : public Handler<RequestedHandler, bool, RequestedHandler*, const char*, const char*, const char*, const char*, const char*> {
+	struct RequestedHandler : public Handler<RequestedHandler, bool, RequestedHandler*, const char*, const char*, const char*, const char*, const Text::Dictionary &> {
 		using Handler::Handler;
 	};
 
@@ -114,7 +114,7 @@ public:
 	virtual const RequestedHandler &requestedCallback(void) const = 0;
 	virtual void callback(const RequestedHandler &cb /* nullable */) = 0;
 
-	static Web* create(void);
+	static Web* create(const char* type);
 	static void destroy(Web* ptr);
 };
 

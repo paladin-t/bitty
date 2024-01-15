@@ -9,7 +9,7 @@
 */
 
 #include "network.h"
-#include "network_mongoose.h"
+#include "network_libuv.h"
 
 /*
 ** {===========================================================================
@@ -29,15 +29,30 @@
 
 #if BITTY_NETWORK_ENABLED
 
-Network* Network::create(void) {
-	NetworkMongoose* result = new NetworkMongoose();
+Network* Network::create(const char* type) {
+	Network* result = nullptr;
+	if (strcmp(type, "libuv") == 0 || strcmp(type, "default") == 0) {
+		result = new NetworkLibuv();
+	} else {
+		assert(false && "Unknown backend type.");
+	}
 
 	return result;
 }
 
 void Network::destroy(Network* ptr) {
-	NetworkMongoose* impl = static_cast<NetworkMongoose*>(ptr);
-	delete impl;
+	switch (ptr->type()) {
+	case NetworkLibuv::TYPE(): {
+			NetworkLibuv* impl = static_cast<NetworkLibuv*>(ptr);
+			delete impl;
+		}
+
+		break;
+	default:
+		assert(false && "Unknown backend type.");
+
+		break;
+	}
 }
 
 #endif /* BITTY_NETWORK_ENABLED */

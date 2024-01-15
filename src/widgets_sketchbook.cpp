@@ -16,8 +16,9 @@
 #include "widgets_sketchbook.h"
 #include "window.h"
 #include "../lib/chipmunk2d/include/chipmunk/chipmunk.h"
+#include "../lib/civetweb/include/civetweb.h"
+#include "../lib/libuv/include/uv.h"
 #include "../lib/lua/src/lua.hpp"
-#include "../lib/mongoose/mongoose.h"
 #include "../lib/zlib/zlib.h"
 #if !defined BITTY_OS_HTML
 #	include <curl/curl.h>
@@ -312,7 +313,8 @@ AboutPopupBox::AboutPopupBox(
 	_specs += "      ImGui v" IMGUI_VERSION "\n";
 	_specs += "   Chipmunk v" + std::string(cpVersionString) +  "\n";
 #if !defined BITTY_OS_HTML
-	_specs += "   Mongoose v" MG_VERSION "\n";
+	_specs += "   CivetWeb v" CIVETWEB_VERSION "\n";
+	_specs += "      libuv v" + std::string(uv_version_string()) + "\n";
 	_specs += "       cURL v" LIBCURL_VERSION "\n";
 #endif /* BITTY_OS_HTML */
 	_specs += "  RapidJSON v" RAPIDJSON_VERSION_STRING "\n";

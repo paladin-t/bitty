@@ -1,5 +1,5 @@
-* [Source file structure](#source-file-structure)
-* [Encrypting assets](#encrypting-assets)
+- [Source file structure](#source-file-structure)
+- [Encrypting assets](#encrypting-assets)
 
 ## Source file structure
 
@@ -50,14 +50,14 @@ dispatchable               _|                              |               |
 executable                 _|                              |               |
 stream                     _|                              |               |
 updatable                  _|                              |               |
-network_mongoose           __ Network Implementation      _|               |
+network_libuv              __ Network Implementation      _|               |
 platform_html              __ Platform Implementations    _|               |
 platform_linux             _|                              |               |
 platform_macos             _|                              |               |
 platform_windows           _|                              |               |
 web_curl                   __ Web Implementation          _|               |
 web_html                   _|                              |               |
-web_mongoose               _|                              |               |
+web_civetweb               _|                              |               |
 archive                    ________________________________|               |
 bytes                      ________________________________|               |
 color                      ________________________________|               |
