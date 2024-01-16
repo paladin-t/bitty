@@ -38,6 +38,7 @@ Makefile
 Makefile.in
 
 /build/
+/lib/
 
 /test/.libs/
 /test/run-tests

@@ -13,7 +13,9 @@
 
 #include "mathematics.h"
 #include "network.h"
-#include "../lib/libuv/include/uv.h"
+#if BITTY_NETWORK_ENABLED
+#	include "../lib/libuv/include/uv.h"
+#endif /* BITTY_NETWORK_ENABLED */
 #include <map>
 #include <vector>
 

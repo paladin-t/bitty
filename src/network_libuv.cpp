@@ -591,17 +591,22 @@ void NetworkLibuv::disconnect(void) {
 	auto disconnect_ = [this] (uv_tcp_t* tcp) -> void {
 		//uv_stream_t* stream = _connect->handle;
 		uv_stream_t* stream = (uv_stream_t*)tcp;
-		if (_connect)
+		if (_connect) {
 			onClosed(stream);
+		} else {
+			TcpClientHandles tcpClients = _tcpClients;
+			for (uv_tcp_t* tcp_ : tcpClients)
+				onClosed((uv_stream_t*)tcp_);
+		}
 
-		const size_t writeQueueSize = uv_stream_get_write_queue_size(stream);
+		const size_t writeQueueSize = stream->write_queue_size;
 		if (uv_is_writable(stream) && writeQueueSize > 0) {
 			uv_shutdown_t* shutdownReq = (uv_shutdown_t*)malloc(sizeof(uv_shutdown_t));
 			uv_shutdown(
 				shutdownReq, stream,
 				[] (uv_shutdown_t* req, int /* status */) -> void{
 					if (!uv_is_closing((uv_handle_t*)req->handle)) {
-						uv_close((uv_handle_t*)req->handle, (uv_close_cb)free);
+						uv_close((uv_handle_t*)req->handle, [] (uv_handle_t* handle) -> void { free(handle); });
 					}
 					free(req);
 				}
@@ -609,14 +614,14 @@ void NetworkLibuv::disconnect(void) {
 		} else if (uv_is_readable(stream)) {
 			uv_read_stop(stream);
 
-			uv_close((uv_handle_t*)stream, (uv_close_cb)free);
+			uv_close((uv_handle_t*)stream, [] (uv_handle_t* handle) -> void { free(handle); });
 
 			for (; ; ) {
 				if (!uv_run(_loop, UV_RUN_NOWAIT))
 					break;
 			}
 		} else {
-			uv_close((uv_handle_t*)stream, (uv_close_cb)free);
+			uv_close((uv_handle_t*)stream, [] (uv_handle_t* handle) -> void { free(handle); });
 
 			for (; ; ) {
 				if (!uv_run(_loop, UV_RUN_NOWAIT))
@@ -629,9 +634,18 @@ void NetworkLibuv::disconnect(void) {
 		disconnect_(_tcp);
 		_tcp = nullptr;
 	}
+
+	if (!_wasBinded) {
+		_ready = IDLE;
+
+		fprintf(stdout, "Network (0x%p) incoming shutdown.\n", (Network*)this);
+	}
 }
 
 bool NetworkLibuv::send(void* ptr, size_t sz, DataTypes y) {
+	if (!_connect)
+		return false;
+
 	PushHandler pusher = std::bind(
 		networkSend, _connect->handle, false,
 		std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4
@@ -645,6 +659,9 @@ bool NetworkLibuv::broadcast(void* ptr, size_t sz, DataTypes y) {
 		return false;
 	if (!connective())
 		return false;
+
+	if (_tcpClients.empty())
+		return true;
 
 	PushHandler pusher = std::bind(
 		networkBroadcast, _tcpClients, false,
@@ -911,17 +928,15 @@ void NetworkLibuv::onClosed(uv_stream_t* handle) {
 			}
 		);
 		if (it != _tcpClients.end()) {
-			uv_close((uv_handle_t*)(*it), (uv_close_cb)free);
+			uv_close((uv_handle_t*)(*it), [] (uv_handle_t* handle) -> void { free(handle); });
 			_tcpClients.erase(it);
 		}
 	} else {
-		if (!_wasBinded && !_connect)
+		if (!_connect)
 			return;
 
-		if (_connect) {
-			free(_connect);
-			_connect = nullptr;
-		}
+		free(_connect);
+		_connect = nullptr;
 
 		_ready = IDLE;
 

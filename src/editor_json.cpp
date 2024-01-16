@@ -318,7 +318,7 @@ public:
 			return Variant(true);
 		case SET_COLUMN_INDICATOR: {
 				const Int rule = unpack<Int>(argc, argv, 0, (Int)Workspace::Settings::COL_80);
-				switch ((Workspace::Settings::IndentRules)rule) {
+				switch ((Workspace::Settings::ColumnIndicator)rule) {
 				case Workspace::Settings::COL_NONE:
 					SetSafeColumnIndicatorOffset(0);
 

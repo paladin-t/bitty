@@ -222,7 +222,18 @@ Dependencies: CMake, GCC.
 		cd ../..
 		```
 	2. Execute `lib/curl/copy_linux.sh`
-2. Build SDL2
+2. Build libuv
+	1. Execute:
+		```sh
+		cd lib/libuv
+		sh autogen.sh
+		./configure
+		make
+		make install
+		cd ../..
+		```
+	2. Execute `lib/libuv/copy_linux.sh`
+3. Build SDL2
 	1. Execute:
 		```sh
 		cd lib/sdl
@@ -232,7 +243,7 @@ Dependencies: CMake, GCC.
 		cd ../..
 		```
 	2. Execute `lib/sdl/copy_linux.sh`
-3. Build SDL2_mixer
+4. Build SDL2_mixer
 	1. Install necessary dependencies to enable extra audio format support, eg. for Ubuntu execute:
 		```sh
 		sudo apt install libflac-dev libfluidsynth-dev libmodplug-dev libmpg123-dev libopus-dev libopusfile-dev libvorbis-dev
@@ -245,7 +256,7 @@ Dependencies: CMake, GCC.
 		cd ../..
 		```
 	3. Execute `lib/sdl_mixer/copy_linux.sh`
-4. Build Bitty Engine
+5. Build Bitty Engine
 	1. Execute:
 		```sh
 		cd bitty.linux

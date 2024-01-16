@@ -55,9 +55,9 @@ platform_html              __ Platform Implementations    _|               |
 platform_linux             _|                              |               |
 platform_macos             _|                              |               |
 platform_windows           _|                              |               |
-web_curl                   __ Web Implementation          _|               |
+web_civetweb               __ Web Implementation          _|               |
+web_curl                   _|                              |               |
 web_html                   _|                              |               |
-web_civetweb               _|                              |               |
 archive                    ________________________________|               |
 bytes                      ________________________________|               |
 color                      ________________________________|               |

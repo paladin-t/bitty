@@ -8,11 +8,11 @@
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
 
-#include "../../lib/civetweb/include/civetweb.h" // Need to be above all to avoid compile error.
 #include "bytes.h"
 #include "json.h"
 #include "text.h"
 #include "web_civetweb.h"
+#include "../lib/civetweb/include/civetweb.h"
 
 /*
 ** {===========================================================================

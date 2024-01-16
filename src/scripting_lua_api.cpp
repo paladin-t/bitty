@@ -6815,7 +6815,6 @@ static int Network_send(lua_State* L) {
 }
 
 static int Network_broadcast(lua_State* L) {
-	const int n = getTop(L);
 	Network::Ptr* obj = nullptr;
 	Placeholder _2;
 	read<>(L, obj, _2);

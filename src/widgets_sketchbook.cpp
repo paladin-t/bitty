@@ -17,7 +17,9 @@
 #include "window.h"
 #include "../lib/chipmunk2d/include/chipmunk/chipmunk.h"
 #include "../lib/civetweb/include/civetweb.h"
-#include "../lib/libuv/include/uv.h"
+#if !defined BITTY_OS_HTML
+#	include "../lib/libuv/include/uv.h"
+#endif /* BITTY_OS_HTML */
 #include "../lib/lua/src/lua.hpp"
 #include "../lib/zlib/zlib.h"
 #if !defined BITTY_OS_HTML

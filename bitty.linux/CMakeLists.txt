@@ -142,21 +142,6 @@ list(
   "../lib/jo_gif/jo_gif.cpp"
 )
 list(
-  APPEND BITTY_LIB_LIBUV
-  "../lib/libuv/src/fs-poll.c"
-  "../lib/libuv/src/idna.c"
-  "../lib/libuv/src/inet.c"
-  "../lib/libuv/src/random.c"
-  "../lib/libuv/src/strscpy.c"
-  "../lib/libuv/src/strtok_.c"
-  "../lib/libuv/src/thread-common.c"
-  "../lib/libuv/src/threadpool.c"
-  "../lib/libuv/src/timer.c"
-  "../lib/libuv/src/uv-common.c"
-  "../lib/libuv/src/uv-data-getter-setters.c"
-  "../lib/libuv/src/version_.c"
-)
-list(
   APPEND BITTY_LIB_LUA
   "../lib/lua/src/lapi.c"
   "../lib/lua/src/lauxlib.c"
@@ -353,7 +338,6 @@ add_executable(
   ${BITTY_LIB_IMGUI_CODE_EDITOR}
   ${BITTY_LIB_IMGUI_SDL}
   ${BITTY_LIB_JO_GIF}
-  ${BITTY_LIB_LIBUV}
   ${BITTY_LIB_LUA}
   ${BITTY_LIB_LZ4}
   ${BITTY_LIB_MD4C}
@@ -374,7 +358,10 @@ add_executable(
 list(
   APPEND BITTY_INC
   "../lib/chipmunk2d/include"
+  "../lib/civetweb/include"
+  "../lib/civetweb/src"
   "../lib/imgui"
+  "../lib/libuv/include"
   "../lib/sdl/include"
   "../lib/sdl_mixer/include"
   "../lib/zlib"
@@ -421,6 +408,12 @@ add_library(libcurl SHARED IMPORTED)
 set_target_properties(libcurl PROPERTIES IMPORTED_LOCATION "./libcurl.so")
 target_link_libraries(bitty libcurl)
 
+# libuv.
+include_directories("../lib/libuv/include")
+add_library(libuv SHARED IMPORTED)
+set_target_properties(libuv PROPERTIES IMPORTED_LOCATION "./libuv.so.1.0.0")
+target_link_libraries(bitty libuv)
+
 # SDL.
 include_directories("../lib/sdl/lib/x${BITTY_ARCH}")
 add_library(libsdl SHARED IMPORTED)
@@ -435,6 +428,7 @@ add_custom_target(
   bitty_prev_sdl
   COMMAND cp "../lib/curl/x${BITTY_ARCH}/libcurl.a" ${BITTY_TEMP}
   COMMAND cp "../lib/curl/x${BITTY_ARCH}/libcurl.so" ${BITTY_TEMP}
+  COMMAND cp "../lib/libuv/lib/x${BITTY_ARCH}/libuv.so.1.0.0" ${BITTY_TEMP}
   COMMAND cp "../lib/sdl/lib/x${BITTY_ARCH}/libSDL2.a" ${BITTY_TEMP}
   COMMAND cp "../lib/sdl/lib/x${BITTY_ARCH}/libSDL2-2.0.so.0" ${BITTY_TEMP}
   COMMAND cp "../lib/sdl_mixer/lib/x${BITTY_ARCH}/libSDL2_mixer-2.0.so.0" ${BITTY_TEMP}
@@ -446,10 +440,12 @@ add_custom_command(
   TARGET bitty POST_BUILD
   COMMAND file "${BITTY_TEMP}bitty"
   COMMAND file "${BITTY_TEMP}libcurl.so"
+  COMMAND file "${BITTY_TEMP}libuv.so.1.0.0"
   COMMAND file "${BITTY_TEMP}libSDL2-2.0.so.0"
   COMMAND file "${BITTY_TEMP}libSDL2_mixer-2.0.so.0"
   COMMAND cp "${BITTY_TEMP}bitty" "../bitty/x${BITTY_ARCH}_release/"
   COMMAND cp "${BITTY_TEMP}libcurl.so" "../bitty/x${BITTY_ARCH}_release/"
+  COMMAND cp "${BITTY_TEMP}libuv.so.1.0.0" "../bitty/x${BITTY_ARCH}_release/"
   COMMAND cp "${BITTY_TEMP}libSDL2-2.0.so.0" "../bitty/x${BITTY_ARCH}_release/"
   COMMAND cp "${BITTY_TEMP}libSDL2_mixer-2.0.so.0" "../bitty/x${BITTY_ARCH}_release/"
 )

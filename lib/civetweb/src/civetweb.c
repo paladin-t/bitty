@@ -8542,7 +8542,7 @@ open_auth_file(struct mg_connection *conn,
 
 
 /* Parsed Authorization header */
-struct ah {
+struct ah_ {
 	char *user;
 	int type;             /* 1 = basic, 2 = digest */
 	char *plain_password; /* Basic only */
@@ -8550,12 +8550,12 @@ struct ah {
 };
 
 
-/* Return 1 on success. Always initializes the ah structure. */
+/* Return 1 on success. Always initializes the ah_ structure. */
 static int
 parse_auth_header(struct mg_connection *conn,
                   char *buf,
                   size_t buf_size,
-                  struct ah *ah)
+                  struct ah_ *ah)
 {
 	char *name, *value, *s;
 	const char *auth_header;
@@ -8720,7 +8720,7 @@ mg_fgets(char *buf, size_t size, struct mg_file *filep)
 #if !defined(NO_FILESYSTEMS)
 struct read_auth_file_struct {
 	struct mg_connection *conn;
-	struct ah ah;
+	struct ah_ ah;
 	const char *domain;
 	char buf[256 + 256 + 40];
 	const char *f_user;

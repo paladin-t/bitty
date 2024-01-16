@@ -31,7 +31,9 @@
 #include "../lib/civetweb/include/civetweb.h"
 #include "../lib/imgui_sdl/imgui_sdl.h"
 #include "../lib/jpath/jpath.hpp"
-#include "../lib/libuv/include/uv.h"
+#if !defined BITTY_OS_HTML
+#	include "../lib/libuv/include/uv.h"
+#endif /* BITTY_OS_HTML */
 #include "../lib/sdl_gfx/SDL2_gfxPrimitives.h"
 #include "../lib/zlib/zlib.h"
 #if !defined BITTY_OS_HTML

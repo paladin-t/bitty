@@ -4,6 +4,7 @@
 #include "../imgui/imgui.h"
 #include <array>
 #include <functional>
+#include <list>
 #include <map>
 #include <memory>
 #include <regex>
