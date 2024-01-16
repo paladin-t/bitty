@@ -57,6 +57,8 @@ struct Shortcut {
 
 namespace Tools {
 
+typedef std::vector<const std::string*> TextPages;
+
 struct Marker {
 	struct Coordinates {
 		int index = 0;
@@ -108,6 +110,7 @@ bool jump(
 /**
  * @param[in, out] cursor
  * @param[in, out] initialized
+ * @param[in, out] focused
  * @param[in, out] what
  * @param[in, out] direction
  * @param[in, out] caseSensitive
@@ -123,6 +126,30 @@ bool find(
 	const Marker::Coordinates &max = Marker::Coordinates(),
 	int* direction = nullptr,
 	bool* caseSensitive = nullptr, bool* wholeWord = nullptr,
+	bool visible = true,
+	TextWordGetter getWord = nullptr
+);
+
+/**
+ * @param[in, out] cursor
+ * @param[in, out] initialized
+ * @param[in, out] focused
+ * @param[in, out] what
+ * @param[in, out] direction
+ * @param[in, out] caseSensitive
+ * @param[in, out] wholeWord
+ * @param[in, out] globalSearch
+ */
+bool find(
+	Renderer* rnd,
+	Workspace* ws,
+	Marker* cursor = nullptr,
+	float width = -1.0f,
+	bool* initialized = nullptr, bool* focused = nullptr,
+	const TextPages* textPages = nullptr, std::string* what = nullptr,
+	const Marker::Coordinates &max = Marker::Coordinates(),
+	int* direction = nullptr,
+	bool* caseSensitive = nullptr, bool* wholeWord = nullptr, bool* globalSearch = nullptr,
 	bool visible = true,
 	TextWordGetter getWord = nullptr
 );
