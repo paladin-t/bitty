@@ -1,3 +1,22 @@
+### v1.3 Jan. 17, 2024
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added an option to the `fetch(...)` function to specify whether to allow insecure connection for HTTPS
+* Added global search to the code editor
+* Added a shortcut Ctrl+W to select the current word
+* Added a shortcut Ctrl+/ to toggle comment
+* Added shortcuts Alt+Up/Alt+Down to move code lines up/down
+* Added shortcuts Ctrl+PgUp/Ctrl+PgDown to change asset pages
+* Added shortcuts Ctrl+U/Ctrl+Shift+U to toggle lower case/upper case
+* Added a preference setting to specify indent rule
+* Added a preference setting to specify column indicator
+* Changed default window scale to 2x if display is big enough
+* Improved rendering of document layout
+* Optimized text width measurement of the code editor
+* Updated the text-based editors to set focus properly
+* Updated the code editor to allow moving cursor to the first none-space character when press the Home key
+
 ### v1.2.2 Sep. 17, 2023
 
 Enhanced modules, improved usability, fixed some bugs.

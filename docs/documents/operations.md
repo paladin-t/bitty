@@ -44,6 +44,7 @@
 
 * Ctrl+Tab: switch asset
 * Ctrl+W: close the current asset
+* Ctrl+PgUp/Ctrl+PgDown: change asset page
 
 * Ctrl+E: toggle assets filter
 * Ctrl+Shift+N: add asset
@@ -71,8 +72,16 @@
 
 # Code Edit
 
+* Ctrl+Q: select the current word
+
 * Tab: indent
 * Ctrl+Shift+Tab/Shift+Tab: unindent
+
+* Ctrl+U: to lower case
+* Ctrl+Shift+U: to upper case
+
+* Ctrl+/: toggle comment
+* Alt+Up/Alt+Down: move code lines up/down
 
 * Ctrl+F: find
 * F3: find next
@@ -187,8 +196,12 @@
 
 # JSON Edit
 
+* Ctrl+Q: select the current word
+
 * Tab: indent
 * Shift+Tab: unindent
+
+* Alt+Up/Alt+Down: move lines up/down
 
 * Ctrl+F: find
 * F3: find next
@@ -199,8 +212,12 @@
 
 # Text Edit
 
+* Ctrl+Q: select the current word
+
 * Tab: indent
 * Shift+Tab: unindent
+
+* Alt+Up/Alt+Down: move lines up/down
 
 * Ctrl+F: find
 * F3: find next

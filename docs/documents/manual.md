@@ -112,6 +112,8 @@
 
 A new created project consists of a meta info asset ("info.json") and an entry source ("main.lua"). The meta info indicates basic information of the project in JSON. The entry is where the project starts to execute. You can add supported existing file or create new blank assets into a project. All text-based assets use Unix LF ('\n') for line ending.
 
+Note that it requires external programs to open file dialogs on Linux for opening, saving, exporting, etc. Make sure that at least one of the following is available: "zenity", "kdialog", "matedialog", "qarma".
+
 ### In Directory
 
 All assets are stored as raw files under a specific directory in this format.
@@ -1320,6 +1322,14 @@ fetch('https://github.com', {
   end)
 ```
 
+| Option | Values | Description |
+|---|---|---|
+| `method` | "GET", "POST", "PUT", "DELETE", etc. | Specific method to perform HTTP request |
+| `headers` | Valid HTTP headers | Optional. Header data |
+| `body` | Request body | Optional. Body data |
+| `hint` | "bytes", "string", "json" | Optional, defaults to "string". Prefers how to interpret respond data |
+| `allow_insecure_connection_for_https` | `true`, `false` | Optional, defaults to `false`, for desktop only. Specifies whether to allow insecure connection for HTTPS |
+
 [TOP](#reference-manual)
 
 ## Assets and Resources
@@ -1988,11 +1998,14 @@ Click "Project", "Export..." to select and export some assets to a "*.bit", "*.t
 
 # Building
 
-Note that building on Linux requires to open a "save file" dialog, which depends on one of the following commands: "zenity", "kdialog", "matedialog", "qarma".
-
 ## Building for Desktop
 
 Click "Project", "Build", then "Windows"/"MacOS"/"Linux" to make an executable for Windows/MacOS/Linux respectively with the current opened project.
+
+It might require execution permission to launch an exported desktop binary, to apply that permission:
+
+* For MacOS "xattr -cr bitty_stage.app", then "chmod 777 bitty_stage.app/Contents/MacOS/bitty_stage"
+* For Linux "chmod 777 x64/bitty"
 
 [TOP](#reference-manual)
 
