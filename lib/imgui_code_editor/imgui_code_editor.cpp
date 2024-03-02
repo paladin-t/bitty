@@ -1146,11 +1146,14 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 	EditorFocused = IsWindowFocused();
 
 	if (IsEditorFocused()) {
-		const ImVec2 start(GetWindowPos());
-		const ImVec2 end(start.x + GetWindowWidth(), start.y + GetWindowHeight());
-		if (IsMouseHoveringRect(start, end))
-			SetMouseCursor(ImGuiMouseCursor_TextInput);
-		CaptureKeyboardFromApp(true);
+		do {
+			const float margin = 12.0f;
+			const ImVec2 start(GetWindowPos().x + margin, GetWindowPos().y);
+			const ImVec2 end(start.x + GetWindowWidth() - margin * 2, start.y + GetWindowHeight());
+			if (IsMouseHoveringRect(start, end))
+				SetMouseCursor(ImGuiMouseCursor_TextInput);
+			CaptureKeyboardFromApp(true);
+		} while (false);
 
 		io.WantCaptureKeyboard = true;
 		io.WantTextInput = true;
@@ -1216,17 +1219,15 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 							Unindent();
 					}
 				} else {
-					if (!ctrl && !shift && !alt) {
+					if (!ctrl && !shift && !alt) { // Insert tab.
 						unsigned int c = '\t'; // Insert tab.
 						io.AddInputCharacter((ImWchar)c);
-					} else if (!ctrl && shift && !alt) {
-						Char cc = GetCharUnderCursor();
-						if (cc == '\t' || cc == ' ')
-							BackSpace(); // Unindent single line.
-					} else if (ctrl && shift && !alt) {
-						Char cc = GetCharUnderCursor();
-						if (cc == '\t' || cc == ' ')
-							BackSpace(); // Unindent single line.
+					}
+					if (IsShortcutsEnabled(ShortcutType::IndentUnindent)) {
+						if (!ctrl && shift && !alt) // Unindent single line.
+							Unindent();
+						else if (ctrl && shift && !alt) // Unindent single line.
+							Unindent();
 					}
 				}
 			} else if (!ctrl && !shift && !alt && IsKeyPressed(GetKeyIndex(ImGuiKey_Backspace))) {
@@ -1325,8 +1326,10 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 			const ImVec2 start(lineStartScreenPos.x + scrollX, lineStartScreenPos.y);
 
 			if (dblClkLineNo == -1 && IsHeadClickEnabled() && IsEditorFocused()) {
-				const ImVec2 end(lineStartScreenPos.x + CharAdv.x * std::min((TextStart - 1), 3), lineStartScreenPos.y + CharAdv.y);
-				if (IsMouseHoveringRect(start, end)) {
+				const float margin = 4.0f;
+				const ImVec2 start_(start.x + margin, start.y);
+				const ImVec2 end(lineStartScreenPos.x + CharAdv.x * std::min((TextStart - 1), 5), lineStartScreenPos.y + CharAdv.y);
+				if (IsMouseHoveringRect(start_, end)) {
 					SetMouseCursor(ImGuiMouseCursor_Hand);
 					if (IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
 						dblClkLineNo = lineNo;
@@ -1544,6 +1547,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				if (ctrl)
 					WordSelectionMode = true;
 				SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
+				OnLineClicked(State.CursorPosition.Line, false);
 			}
 			if (IsMouseDoubleClicked(ImGuiMouseButton_Left) && !ctrl) {
 				if (dblClkLineNo == -1) {
@@ -1551,6 +1555,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 					WordSelectionMode = true;
 					SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
 					State.CursorPosition = State.SelectionEnd;
+					OnLineClicked(State.CursorPosition.Line, true);
 				}
 			} else if (IsMouseDragging(ImGuiMouseButton_Left) && IsMouseDown(ImGuiMouseButton_Left)) {
 				io.WantCaptureMouse = true;
@@ -1605,6 +1610,10 @@ void CodeEditor::SetModifiedHandler(const Modified &aHandler) {
 
 void CodeEditor::SetHeadClickedHandler(const HeadClicked &aHandler) {
 	HeadClickedHandler = aHandler;
+}
+
+void CodeEditor::SetLineClickedHandler(const LineClicked &aHandler) {
+	LineClickedHandler = aHandler;
 }
 
 bool CodeEditor::IsChangesSaved(void) const {
@@ -1674,6 +1683,10 @@ std::vector<std::string> CodeEditor::GetTextLines(bool aIncludeComment, bool aIn
 	}
 
 	return result;
+}
+
+std::string CodeEditor::GetTextLine(int aLine) const {
+	return GetText(Coordinates(aLine, 0), Coordinates(aLine, GetColumnsAt(aLine)), nullptr);
 }
 
 void CodeEditor::InsertText(const char* aValue) {
@@ -2134,18 +2147,20 @@ void CodeEditor::SetSelectionEnd(const Coordinates &aPosition) {
 void CodeEditor::SetSelection(const Coordinates &aStart, const Coordinates &aEnd, bool aWordMode) {
 	State.SelectionStart = SanitizeCoordinates(aStart);
 	State.SelectionEnd = SanitizeCoordinates(aEnd);
-	if (aStart > aEnd)
+	if (State.SelectionStart > State.SelectionEnd)
 		std::swap(State.SelectionStart, State.SelectionEnd);
 
 	if (aWordMode) {
 		State.SelectionStart = FindWordStart(State.SelectionStart);
 		//if (!IsOnWordBoundary(State.SelectionEnd))
 		State.SelectionEnd = FindWordEnd(FindWordStart(State.SelectionEnd));
+		if (State.SelectionStart > State.SelectionEnd)
+			std::swap(State.SelectionStart, State.SelectionEnd);
 	}
 }
 
 void CodeEditor::SelectWordUnderCursor(void) {
-	Coordinates c = GetCursorPosition();
+	const Coordinates c = GetCursorPosition();
 	SetSelection(FindWordStart(c), FindWordEnd(c));
 }
 
@@ -2356,7 +2371,7 @@ void CodeEditor::Indent(bool aByKey) {
 	if (IsReadOnly())
 		return;
 
-	if (HasSelection() && GetSelectionLines() > 1) {
+	if ((HasSelection() && GetSelectionLines() > 1) || !aByKey) {
 		UndoRecord u;
 		u.Type = UndoType::Indent;
 		u.Before = State;
@@ -2388,97 +2403,128 @@ void CodeEditor::Indent(bool aByKey) {
 			OnChanged(pos, pos, 0);
 		}
 
-		State.SelectionEnd.Column = (int)CodeLines[State.SelectionEnd.Line].Glyphs.size();
+		switch (GetSelectionLines()) {
+		case 0:
+			// Do nothing.
+
+			break;
+		case 1: {
+				const int step = (int)u.Content.size();
+				State.CursorPosition.Column += step;
+				State.SelectionStart.Column += step;
+				State.SelectionEnd.Column += step;
+			}
+
+			break;
+		default:
+			State.SelectionEnd.Column = (int)CodeLines[State.SelectionEnd.Line].Glyphs.size();
+			if (State.SelectionStart > State.SelectionEnd)
+				std::swap(State.SelectionStart, State.SelectionEnd);
+
+			break;
+		}
 
 		u.After = State;
 		AddUndo(u);
 
 		OnModified();
-	} else {
-		if (!aByKey) {
-			if (IndentWithTab) {
-				EnterCharacter('\t');
-			} else {
-				for (int n = 0; n < TabSize; ++n)
-					EnterCharacter(' ');
-			}
-		}
 	}
 }
 
 void CodeEditor::Unindent(bool aByKey) {
+	(void)aByKey;
+
 	if (IsReadOnly())
 		return;
 
-	if (HasSelection() && GetSelectionLines() > 1) {
-		UndoRecord u;
-		u.Type = UndoType::Unindent;
-		u.Before = State;
+	UndoRecord u;
+	u.Type = UndoType::Unindent;
+	u.Before = State;
 
-		u.Start = State.SelectionStart;
-		u.End = State.SelectionEnd;
+	u.Start = State.SelectionStart;
+	u.End = State.SelectionEnd;
 
-		int affectedLines = 0;
-		for (int i = u.Start.Line; i <= u.End.Line; ++i) {
-			Line &line = CodeLines[i];
-			if (line.Glyphs.empty()) {
-				if (i == u.Start.Line)
-					u.Content.push_back(0);
+	int affectedLines = 0;
+	for (int i = u.Start.Line; i <= u.End.Line; ++i) {
+		Line &line = CodeLines[i];
+		if (line.Glyphs.empty()) {
+			if (i == u.Start.Line)
+				u.Content.push_back(0);
 
-				continue;
-			}
+			continue;
+		}
 
-			const Glyph &g = *line.Glyphs.begin();
-			if (g.Character == '\t') {
+		const Glyph &g = *line.Glyphs.begin();
+		if (g.Character == '\t') {
+			line.Glyphs.erase(line.Glyphs.begin());
+			if (i == u.Start.Line)
+				u.Content.push_back('\t');
+			++affectedLines;
+
+			Coordinates pos(i, 0);
+			OnChanged(pos, pos, 0);
+		} else if (g.Character == ' ') {
+			int k = 0;
+			for (int j = 0; j < TabSize; ++j, ++k) {
+				if (line.Glyphs.empty())
+					break;
+
+				const Glyph &h = *line.Glyphs.begin();
+				if (h.Character != ' ')
+					break;
+
 				line.Glyphs.erase(line.Glyphs.begin());
 				if (i == u.Start.Line)
-					u.Content.push_back('\t');
+					u.Content.push_back(' ');
+			}
+			if (k)
 				++affectedLines;
 
-				Coordinates pos(i, 0);
-				OnChanged(pos, pos, 0);
-			} else if (g.Character == ' ') {
-				int k = 0;
-				for (int j = 0; j < TabSize; ++j, ++k) {
-					if (line.Glyphs.empty())
-						break;
-
-					const Glyph &h = *line.Glyphs.begin();
-					if (h.Character != ' ')
-						break;
-
-					line.Glyphs.erase(line.Glyphs.begin());
-					if (i == u.Start.Line)
-						u.Content.push_back(' ');
-				}
-				if (k)
-					++affectedLines;
-
-				Coordinates pos(i, 0);
-				OnChanged(pos, pos, 0);
-			} else {
-				if (i == u.Start.Line)
-					u.Content.push_back(0);
-			}
+			Coordinates pos(i, 0);
+			OnChanged(pos, pos, 0);
+		} else {
+			if (i == u.Start.Line)
+				u.Content.push_back(0);
 		}
+	}
+
+	switch (GetSelectionLines()) {
+	case 0:
+		// Do nothing.
+
+		break;
+	case 1: {
+			const bool valid = !u.Content.empty() && u.Content.front() != '\0';
+			if (!valid)
+				break;
+
+			const int step = (int)u.Content.size();
+			State.CursorPosition.Column -= step;
+			State.SelectionStart.Column -= step;
+			State.SelectionEnd.Column -= step;
+			if (State.SelectionStart > State.SelectionEnd)
+				std::swap(State.SelectionStart, State.SelectionEnd);
+		}
+
+		break;
+	default:
 		if (affectedLines > 0) {
 			const Line &line = CodeLines[State.SelectionEnd.Line];
-			if ((int)line.Glyphs.size() < State.SelectionEnd.Column)
+			if ((int)line.Glyphs.size() < State.SelectionEnd.Column) {
 				State.SelectionEnd.Column = (int)line.Glyphs.size();
+				if (State.SelectionStart > State.SelectionEnd)
+					std::swap(State.SelectionStart, State.SelectionEnd);
+			}
 		}
 
-		u.After = State;
-		if (affectedLines > 0) {
-			AddUndo(u);
+		break;
+	}
 
-			OnModified();
-		}
-	} else {
-		if (!aByKey) {
-			Char cc = GetCharUnderCursor();
-			if (cc == '\t' || cc == ' ')
-				BackSpace(); // Unindent single line.
-		}
+	u.After = State;
+	if (affectedLines > 0) {
+		AddUndo(u);
+
+		OnModified();
 	}
 }
 
@@ -2558,6 +2604,8 @@ void CodeEditor::Comment(void) {
 
 	for (int i = u.Start.Line; i <= u.End.Line; ++i) {
 		Line &line = CodeLines[i];
+		const int m = (int)line.Glyphs.size();
+
 		if (line.Glyphs.empty()) {
 			for (int j = (int)LangDef.SimpleCommentHead.length() - 1; j >= 0; --j)
 				line.Glyphs.insert(line.Glyphs.begin(), Glyph(LangDef.SimpleCommentHead[j], PaletteIndex::Comment));
@@ -2569,11 +2617,25 @@ void CodeEditor::Comment(void) {
 			u.Content.push_back(2);
 		}
 
+		const int diff = (int)line.Glyphs.size() - m;
+		if (diff > 0) {
+			if (State.CursorPosition.Line == i) {
+				State.CursorPosition.Column += diff;
+			}
+			if (State.SelectionStart.Line == i) {
+				State.SelectionStart.Column += diff;
+			}
+			if (State.SelectionEnd.Line == i) {
+				State.SelectionEnd.Column += diff;
+			}
+		}
+
 		Coordinates pos(i, 0);
 		OnChanged(pos, pos, 0);
 	}
 
-	State.SelectionEnd.Column = (int)CodeLines[State.SelectionEnd.Line].Glyphs.size();
+	if (State.SelectionStart > State.SelectionEnd)
+		std::swap(State.SelectionStart, State.SelectionEnd);
 
 	Colorize(State.SelectionStart.Line, State.SelectionEnd.Line - State.SelectionStart.Line + 1);
 
@@ -2600,6 +2662,8 @@ void CodeEditor::Uncomment(void) {
 	int affectedLines = 0;
 	for (int i = u.Start.Line; i <= u.End.Line; ++i) {
 		Line &line = CodeLines[i];
+		const int m = (int)line.Glyphs.size();
+
 		if (line.Glyphs.empty()) {
 			u.Content.push_back(0);
 
@@ -2642,12 +2706,22 @@ void CodeEditor::Uncomment(void) {
 		} else {
 			u.Content.push_back(0);
 		}
+
+		const int diff = (int)line.Glyphs.size() - m;
+		if (diff < 0) {
+			if (State.CursorPosition.Line == i) {
+				State.CursorPosition.Column += diff;
+			}
+			if (State.SelectionStart.Line == i) {
+				State.SelectionStart.Column += diff;
+			}
+			if (State.SelectionEnd.Line == i) {
+				State.SelectionEnd.Column += diff;
+			}
+		}
 	}
-	if (affectedLines > 0) {
-		const Line &line = CodeLines[State.SelectionEnd.Line];
-		if ((int)line.Glyphs.size() < State.SelectionEnd.Column)
-			State.SelectionEnd.Column = (int)line.Glyphs.size();
-	}
+	if (State.SelectionStart > State.SelectionEnd)
+		std::swap(State.SelectionStart, State.SelectionEnd);
 
 	Colorize(State.SelectionStart.Line, State.SelectionEnd.Line - State.SelectionStart.Line + 1);
 
@@ -2685,6 +2759,8 @@ void CodeEditor::MoveLineUp(void) {
 	--State.SelectionStart.Line;
 	--State.SelectionEnd.Line;
 	--State.CursorPosition.Line;
+	if (State.SelectionStart > State.SelectionEnd)
+		std::swap(State.SelectionStart, State.SelectionEnd);
 
 	Colorize(State.SelectionStart.Line - 1, State.SelectionEnd.Line - State.SelectionStart.Line + 2);
 
@@ -2720,6 +2796,8 @@ void CodeEditor::MoveLineDown(void) {
 	++State.SelectionStart.Line;
 	++State.SelectionEnd.Line;
 	++State.CursorPosition.Line;
+	if (State.SelectionStart > State.SelectionEnd)
+		std::swap(State.SelectionStart, State.SelectionEnd);
 
 	Colorize(State.SelectionStart.Line, State.SelectionEnd.Line - State.SelectionStart.Line + 2);
 
@@ -2785,6 +2863,18 @@ void CodeEditor::Redo(int aSteps) {
 	while (CanRedo() && aSteps-- > 0) {
 		UndoBuf[UndoIndex++].Redo(this);
 	}
+}
+
+void CodeEditor::SyncTo(CodeEditor* aOther) {
+	aOther->CodeLines = CodeLines;
+	aOther->State = State;
+	aOther->UndoBuf = UndoBuf;
+	aOther->UndoIndex = UndoIndex;
+	aOther->SavedIndex = SavedIndex;
+
+	aOther->Brks = Brks;
+	aOther->Errs = Errs;
+	aOther->ProgramPointer = ProgramPointer;
 }
 
 const CodeEditor::Palette &CodeEditor::GetDarkPalette(void) {
@@ -3071,88 +3161,97 @@ void CodeEditor::ColorizeRange(int aFromLine, int aToLine) {
 	}
 }
 
-void CodeEditor::ColorizeInternal(void) {
-	if (CodeLines.empty())
-		return;
+bool CodeEditor::ColorizeMultilineComments(void) {
+	const std::string &startStr = LangDef.CommentStart;
+	const std::string &endStr = LangDef.CommentEnd;
+	if (startStr.empty() || endStr.empty())
+		return false;
 
-	if (CheckMultilineComments && GetFrameCount() > CheckMultilineComments) {
-		Coordinates end((int)CodeLines.size(), 0);
-		Coordinates commentStart = end;
-		bool withinString = false;
-		for (Coordinates i = Coordinates(0, 0); i < end; Advance(i)) {
-			Line &line = CodeLines[i.Line];
-			if (!line.Glyphs.empty()) {
-				const Glyph &g = line.Glyphs[i.Column];
-				Char c = g.Character;
+	Coordinates end((int)CodeLines.size(), 0);
+	Coordinates commentStart = end;
+	bool withinString = false;
+	for (Coordinates i = Coordinates(0, 0); i < end; Advance(i)) {
+		Line &line = CodeLines[i.Line];
+		if (!line.Glyphs.empty()) {
+			const Glyph &g = line.Glyphs[i.Column];
+			Char c = g.Character;
 
-				bool inComment = commentStart <= i;
+			bool inComment = commentStart <= i;
 
-				if (withinString) {
-					line.Glyphs[i.Column].MultiLineComment = inComment;
+			if (withinString) {
+				line.Glyphs[i.Column].MultiLineComment = inComment;
 
-					if (c == '\"') {
-						if (i.Column + 1 < (int)line.Glyphs.size() && line.Glyphs[i.Column + 1].Character == '\"') {
-							Advance(i);
-							if (i.Column < (int)line.Glyphs.size())
-								line.Glyphs[i.Column].MultiLineComment = inComment;
-						} else {
-							withinString = false;
-						}
-					} else if (c == '\\') {
+				if (c == '\"') {
+					if (i.Column + 1 < (int)line.Glyphs.size() && line.Glyphs[i.Column + 1].Character == '\"') {
 						Advance(i);
 						if (i.Column < (int)line.Glyphs.size())
 							line.Glyphs[i.Column].MultiLineComment = inComment;
-					}
-				} else {
-					if (c == '\"') {
-						withinString = true;
-						line.Glyphs[i.Column].MultiLineComment = inComment;
 					} else {
-						auto pred = [] (const char &a, const Glyph &b) {
-							return a == (const char)b.Character;
-						};
-						bool except = false;
-						const std::string &startStr = LangDef.CommentStart;
-						auto from = line.Glyphs.begin() + i.Column;
-						if (i.Column + startStr.size() <= line.Glyphs.size()) {
-							if (LangDef.CommentException != '\0' && from != line.Glyphs.begin()) {
-								auto prev = from - 1;
-								if (prev->Character == LangDef.CommentException)
-									except = true;
-							}
-							if (!except) {
-								if (!startStr.empty() && std::equal(startStr.begin(), startStr.end(), from, from + startStr.size(), pred)) {
-									commentStart = i;
-								}
+						withinString = false;
+					}
+				} else if (c == '\\') {
+					Advance(i);
+					if (i.Column < (int)line.Glyphs.size())
+						line.Glyphs[i.Column].MultiLineComment = inComment;
+				}
+			} else {
+				if (c == '\"') {
+					withinString = true;
+					line.Glyphs[i.Column].MultiLineComment = inComment;
+				} else {
+					auto pred = [] (const char &a, const Glyph &b) {
+						return a == (const char)b.Character;
+					};
+					bool except = false;
+					auto from = line.Glyphs.begin() + i.Column;
+					if (i.Column + startStr.size() <= line.Glyphs.size()) {
+						if (LangDef.CommentException != '\0' && from != line.Glyphs.begin()) {
+							auto prev = from - 1;
+							if (prev->Character == LangDef.CommentException)
+								except = true;
+						}
+						if (!except) {
+							if (!startStr.empty() && std::equal(startStr.begin(), startStr.end(), from, from + startStr.size(), pred)) {
+								commentStart = i;
 							}
 						}
+					}
 
-						inComment = commentStart <= i;
+					inComment = commentStart <= i;
 
-						line.Glyphs[i.Column].MultiLineComment = inComment;
+					line.Glyphs[i.Column].MultiLineComment = inComment;
 
-						except = false;
-						const std::string &endStr = LangDef.CommentEnd;
-						if (i.Column + 1 >= (int)endStr.size()) {
-							auto till = from + 1 - endStr.size();
-							if (LangDef.CommentException != '\0' && till != line.Glyphs.begin()) {
-								auto prev = till - 1;
-								if (prev->Character == LangDef.CommentException)
-									except = true;
-							}
-							if (!except) {
-								if (!endStr.empty() && std::equal(endStr.begin(), endStr.end(), till, from + 1, pred)) {
-									commentStart = end;
-								}
+					except = false;
+					if (i.Column + 1 >= (int)endStr.size()) {
+						auto till = from + 1 - endStr.size();
+						if (LangDef.CommentException != '\0' && till != line.Glyphs.begin()) {
+							auto prev = till - 1;
+							if (prev->Character == LangDef.CommentException)
+								except = true;
+						}
+						if (!except) {
+							if (!endStr.empty() && std::equal(endStr.begin(), endStr.end(), till, from + 1, pred)) {
+								commentStart = end;
 							}
 						}
 					}
 				}
 			}
 		}
-		CheckMultilineComments = 0;
+	}
 
-		OnColorized(true);
+	return true;
+}
+
+void CodeEditor::ColorizeInternal(void) {
+	if (CodeLines.empty())
+		return;
+
+	if (CheckMultilineComments && GetFrameCount() > CheckMultilineComments) {
+		if (ColorizeMultilineComments())
+			OnColorized(true);
+
+		CheckMultilineComments = 0;
 
 		return;
 	}
@@ -3831,6 +3930,13 @@ void CodeEditor::OnHeadClicked(int aLine, bool aDoubleClicked) const {
 		return;
 
 	HeadClickedHandler(aLine, aDoubleClicked);
+}
+
+void CodeEditor::OnLineClicked(int aLine, bool aDoubleClicked) const {
+	if (LineClickedHandler == nullptr)
+		return;
+
+	LineClickedHandler(aLine, aDoubleClicked);
 }
 
 }

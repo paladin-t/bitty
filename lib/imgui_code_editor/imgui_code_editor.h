@@ -213,6 +213,7 @@ public:
 	typedef std::function<void(bool)> Colorized;
 	typedef std::function<void(void)> Modified;
 	typedef std::function<void(int, bool)> HeadClicked;
+	typedef std::function<void(int, bool)> LineClicked;
 
 	CodeEditor();
 	virtual ~CodeEditor();
@@ -240,6 +241,7 @@ public:
 	void SetColorizedHandler(const Colorized &aHandler);
 	void SetModifiedHandler(const Modified &aHandler);
 	void SetHeadClickedHandler(const HeadClicked &aHandler);
+	void SetLineClickedHandler(const LineClicked &aHandler);
 	bool IsChangesSaved(void) const;
 	void SetChangesCleared(void);
 	void SetChangesSaved(void);
@@ -247,6 +249,7 @@ public:
 	void SetText(const std::string &aText);
 	std::string GetText(const char* aNewline = "\n") const;
 	std::vector<std::string> GetTextLines(bool aIncludeComment, bool aIncludeString) const;
+	std::string GetTextLine(int aLine) const;
 
 	void InsertText(const char* aValue);
 	void AppendText(const char* aText, ImU32 aColor = (ImU32)PaletteIndex::Default);
@@ -341,6 +344,8 @@ public:
 	void Undo(int aSteps = 1);
 	void Redo(int aSteps = 1);
 
+	void SyncTo(CodeEditor* aOther);
+
 	static const Palette &GetDarkPalette(void);
 	static const Palette &GetLightPalette(void);
 	static const Palette &GetRetroBluePalette(void);
@@ -394,6 +399,7 @@ protected:
 	void RenderText(int &aOffset, const ImVec2 &aPosition, ImU32 aPalette, ImU32 aColor, const char* aText, const std::list<Glyph> &aGlyphs, int aWidth);
 	void Colorize(int aFromLine = 0, int aCount = -1);
 	void ColorizeRange(int aFromLine = 0, int aToLine = 0);
+	bool ColorizeMultilineComments(void);
 	void ColorizeInternal(void);
 	int TextDistanceToLineStart(const Coordinates &aFrom) const;
 	int GetPageSize(void) const;
@@ -423,6 +429,7 @@ protected:
 	void OnColorized(bool aMultilineComment) const;
 	void OnModified(void) const;
 	void OnHeadClicked(int aLine, bool aDoubleClicked) const;
+	void OnLineClicked(int aLine, bool aDoubleClicked) const;
 
 	Lines CodeLines;
 	float LineSpacing;
@@ -434,6 +441,7 @@ protected:
 	Colorized ColorizedHandler;
 	Modified ModifiedHandler;
 	HeadClicked HeadClickedHandler;
+	LineClicked LineClickedHandler;
 
 	const ImFont* Font;
 	ImVector<ImWchar> InputBuffer;
