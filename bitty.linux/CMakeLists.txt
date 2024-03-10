@@ -411,7 +411,7 @@ target_link_libraries(bitty libcurl)
 # libuv.
 include_directories("../lib/libuv/include")
 add_library(libuv SHARED IMPORTED)
-set_target_properties(libuv PROPERTIES IMPORTED_LOCATION "./libuv.so.1.0.0")
+set_target_properties(libuv PROPERTIES IMPORTED_LOCATION "./libuv.so.1")
 target_link_libraries(bitty libuv)
 
 # SDL.
@@ -428,7 +428,7 @@ add_custom_target(
   bitty_prev_sdl
   COMMAND cp "../lib/curl/x${BITTY_ARCH}/libcurl.a" ${BITTY_TEMP}
   COMMAND cp "../lib/curl/x${BITTY_ARCH}/libcurl.so" ${BITTY_TEMP}
-  COMMAND cp "../lib/libuv/lib/x${BITTY_ARCH}/libuv.so.1.0.0" ${BITTY_TEMP}
+  COMMAND cp "../lib/libuv/lib/x${BITTY_ARCH}/libuv.so.1" ${BITTY_TEMP}
   COMMAND cp "../lib/sdl/lib/x${BITTY_ARCH}/libSDL2.a" ${BITTY_TEMP}
   COMMAND cp "../lib/sdl/lib/x${BITTY_ARCH}/libSDL2-2.0.so.0" ${BITTY_TEMP}
   COMMAND cp "../lib/sdl_mixer/lib/x${BITTY_ARCH}/libSDL2_mixer-2.0.so.0" ${BITTY_TEMP}
@@ -440,12 +440,12 @@ add_custom_command(
   TARGET bitty POST_BUILD
   COMMAND file "${BITTY_TEMP}bitty"
   COMMAND file "${BITTY_TEMP}libcurl.so"
-  COMMAND file "${BITTY_TEMP}libuv.so.1.0.0"
+  COMMAND file "${BITTY_TEMP}libuv.so.1"
   COMMAND file "${BITTY_TEMP}libSDL2-2.0.so.0"
   COMMAND file "${BITTY_TEMP}libSDL2_mixer-2.0.so.0"
   COMMAND cp "${BITTY_TEMP}bitty" "../bitty/x${BITTY_ARCH}_release/"
   COMMAND cp "${BITTY_TEMP}libcurl.so" "../bitty/x${BITTY_ARCH}_release/"
-  COMMAND cp "${BITTY_TEMP}libuv.so.1.0.0" "../bitty/x${BITTY_ARCH}_release/"
+  COMMAND cp "${BITTY_TEMP}libuv.so.1" "../bitty/x${BITTY_ARCH}_release/"
   COMMAND cp "${BITTY_TEMP}libSDL2-2.0.so.0" "../bitty/x${BITTY_ARCH}_release/"
   COMMAND cp "${BITTY_TEMP}libSDL2_mixer-2.0.so.0" "../bitty/x${BITTY_ARCH}_release/"
 )
