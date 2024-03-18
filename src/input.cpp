@@ -537,6 +537,7 @@ public:
 				SDL_TouchID tid = SDL_GetTouchDevice(m);
 				if (tid == 0)
 					continue;
+
 				const int f = SDL_GetNumTouchFingers(tid);
 				while ((int)_mouseStatesNative.size() < f)
 					_mouseStatesNative.push_back(Mouse(-1, -1, false, false, false, 0, 0));
@@ -544,9 +545,11 @@ public:
 					SDL_Finger* finger = SDL_GetTouchFinger(tid, i);
 					if (!finger)
 						continue;
+
 					Mouse &touch = _mouseStatesNative[i];
 					if (touch.buttons[0])
 						continue;
+
 					touch = Mouse(
 						(int)(finger->x * ((float)wndw - Math::EPSILON<float>())),
 						(int)(finger->y * ((float)wndh - Math::EPSILON<float>())),
@@ -568,7 +571,7 @@ public:
 				if (_mouseStatesNative.empty())
 					_mouseStatesNative.push_back(Mouse(-1, -1, false, false, false, 0, 0));
 				Mouse &touch = _mouseStatesNative[0];
-				Uint32 btns = SDL_GetMouseState(&touch.x, &touch.y);
+				const Uint32 btns = SDL_GetMouseState(&touch.x, &touch.y);
 				touch.buttons[0] = !!(btns & SDL_BUTTON(SDL_BUTTON_LEFT));
 				touch.buttons[1] = !!(btns & SDL_BUTTON(SDL_BUTTON_RIGHT));
 				touch.buttons[2] = !!(btns & SDL_BUTTON(SDL_BUTTON_MIDDLE));
@@ -835,7 +838,7 @@ public:
 
 				if (!hasTouch) {
 					int x = 0, y = 0;
-					Uint32 btns = SDL_GetMouseState(&x, &y);
+					const Uint32 btns = SDL_GetMouseState(&x, &y);
 					if (!!(btns & SDL_BUTTON(SDL_BUTTON_LEFT))) {
 						if (collides(range, (float)x, (float)y, scale_)) {
 							pad[i] = true;

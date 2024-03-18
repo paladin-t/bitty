@@ -645,10 +645,12 @@ private:
 	}
 
 	bool updateImGui(double delta, bool mouseCursorIndicated) {
+		// Prepare.
 		SDL_Window* wnd = (SDL_Window*)_window->pointer();
 
 		ImGuiIO &io = ImGui::GetIO();
 
+		// Handle the events.
 		SDL_Event evt;
 		bool alive = true;
 		bool reset = false;
@@ -882,7 +884,64 @@ private:
 				io.DisplayFramebufferScale = ImVec2((float)displayW / wndW, (float)displayH / wndH);
 		} while (false);
 
+		// Handle the mouse/touch input.
+		auto assignMouseStates = [&] (Window* wnd, Renderer* rnd, int mouseX, int mouseY) -> void {
+			const int scale = rnd->scale() / wnd->scale();
+			ImVec2 pos((float)mouseX, (float)mouseY);
+			if (scale != 1) {
+				pos.x /= scale;
+				pos.y /= scale;
+			}
+			if (_context.mousePosition.x != pos.x || _context.mousePosition.y != pos.y) {
+				_context.mousePosition = pos;
+
+				requestFrameRate(APPLICATION_INPUTING_FRAME_RATE);
+			}
+			io.MousePos = pos;
+		};
+
 		do {
+			io.MouseDown[0] = _context.mousePressed[0]; // If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
+			io.MouseDown[1] = _context.mousePressed[1];
+			io.MouseDown[2] = _context.mousePressed[2];
+			_context.mousePressed[0] = _context.mousePressed[1] = _context.mousePressed[2] = false;
+		} while (false);
+
+		bool hasTouch = false;
+		do {
+			const int wndw = _window->width();
+			const int wndh = _window->height();
+
+			const int n = SDL_GetNumTouchDevices();
+			for (int m = 0; m < n; ++m) {
+				SDL_TouchID tid = SDL_GetTouchDevice(m);
+				if (tid == 0)
+					continue;
+
+				const int f = SDL_GetNumTouchFingers(tid);
+				for (int i = 0; i < f; ++i) {
+					SDL_Finger* finger = SDL_GetTouchFinger(tid, i);
+					if (!finger)
+						continue;
+
+					const int touchX = (int)(finger->x * ((float)wndw - Math::EPSILON<float>()));
+					const int touchY = (int)(finger->y * ((float)wndh - Math::EPSILON<float>()));
+					assignMouseStates(_window, _renderer, touchX, touchY);
+					io.MouseDown[0] |= true;
+					hasTouch = true;
+
+					break;
+				}
+
+				if (hasTouch)
+					break;
+			}
+		} while (false);
+
+		do {
+			if (hasTouch)
+				break;
+
 			if (io.WantSetMousePos)
 				SDL_WarpMouseInWindow(wnd, (int)io.MousePos.x, (int)io.MousePos.y);
 			else
@@ -890,10 +949,9 @@ private:
 
 			int mouseX = 0, mouseY = 0;
 			const Uint32 mouseButtons = SDL_GetMouseState(&mouseX, &mouseY);
-			io.MouseDown[0] = _context.mousePressed[0] || !!(mouseButtons & SDL_BUTTON(SDL_BUTTON_LEFT)); // If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
-			io.MouseDown[1] = _context.mousePressed[1] || !!(mouseButtons & SDL_BUTTON(SDL_BUTTON_RIGHT));
-			io.MouseDown[2] = _context.mousePressed[2] || !!(mouseButtons & SDL_BUTTON(SDL_BUTTON_MIDDLE));
-			_context.mousePressed[0] = _context.mousePressed[1] = _context.mousePressed[2] = false;
+			io.MouseDown[0] |= !!(mouseButtons & SDL_BUTTON(SDL_BUTTON_LEFT));
+			io.MouseDown[1] |= !!(mouseButtons & SDL_BUTTON(SDL_BUTTON_RIGHT));
+			io.MouseDown[2] |= !!(mouseButtons & SDL_BUTTON(SDL_BUTTON_MIDDLE));
 
 #if SDL_VERSION_ATLEAST(2, 0, 4) && (defined BITTY_OS_WIN || defined BITTY_OS_MAC || defined BITTY_OS_LINUX)
 			SDL_Window* focusedWindow = SDL_GetKeyboardFocus();
@@ -908,18 +966,7 @@ private:
 					mouseX -= wndX;
 					mouseY -= wndY;
 				}
-				const int scale = _renderer->scale() / _window->scale();
-				ImVec2 pos((float)mouseX, (float)mouseY);
-				if (scale != 1) {
-					pos.x /= scale;
-					pos.y /= scale;
-				}
-				if (_context.mousePosition.x != pos.x || _context.mousePosition.y != pos.y) {
-					_context.mousePosition = pos;
-
-					requestFrameRate(APPLICATION_INPUTING_FRAME_RATE);
-				}
-				io.MousePos = pos;
+				assignMouseStates(_window, _renderer, mouseX, mouseY);
 			}
 
 			// `SDL_CaptureMouse` let the OS know e.g. that our ImGui drag outside the SDL window boundaries shouldn't e.g. trigger the OS window resize cursor.
@@ -927,8 +974,9 @@ private:
 			const bool anyMouseButtonDown = ImGui::IsAnyMouseDown();
 			SDL_CaptureMouse(anyMouseButtonDown ? SDL_TRUE : SDL_FALSE);
 #else /* Platform macro. */
-			if (SDL_GetWindowFlags(wnd) & SDL_WINDOW_INPUT_FOCUS)
-				io.MousePos = ImVec2((float)mouseX, (float)mouseY);
+			if (SDL_GetWindowFlags(wnd) & SDL_WINDOW_INPUT_FOCUS) {
+				assignMouseStates(_window, _renderer, mouseX, mouseY);
+			}
 #endif /* Platform macro. */
 		} while (false);
 
@@ -951,6 +999,7 @@ private:
 			}
 		} while (false);
 
+		// Handle the gamepad input.
 		do {
 			memset(io.NavInputs, 0, sizeof(io.NavInputs));
 			if (!(io.ConfigFlags & ImGuiConfigFlags_NavEnableGamepad))
@@ -988,6 +1037,7 @@ private:
 #undef MAP_ANALOG
 		} while (false);
 
+		// Finish.
 		return alive;
 	}
 
