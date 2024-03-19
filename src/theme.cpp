@@ -290,6 +290,7 @@ bool Theme::open(class Renderer* rnd) {
 	dialogItem_InputAnimationName("Input animation name:");
 	dialogItem_InputAssetName("Input asset name:");
 	dialogItem_InputInterval("Input interval:");
+	dialogItem_InvalidAssetOrCorruptData("Invalid asset or corrupt data: \"%s\".");
 	dialogItem_MapSize("Map size:");
 	dialogItem_Palette("Palette:");
 	dialogItem_Path("Path:");

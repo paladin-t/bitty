@@ -220,6 +220,7 @@ public:
 	BITTY_PROPERTY_READONLY(std::string, dialogItem_InputAnimationName)
 	BITTY_PROPERTY_READONLY(std::string, dialogItem_InputAssetName)
 	BITTY_PROPERTY_READONLY(std::string, dialogItem_InputInterval)
+	BITTY_PROPERTY_READONLY(std::string, dialogItem_InvalidAssetOrCorruptData)
 	BITTY_PROPERTY_READONLY(std::string, dialogItem_MapSize)
 	BITTY_PROPERTY_READONLY(std::string, dialogItem_Palette)
 	BITTY_PROPERTY_READONLY(std::string, dialogItem_Path)

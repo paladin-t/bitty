@@ -167,7 +167,9 @@ public:
 	bool revertible(void) const;
 
 	/**
-	 * @brief Gets whether the asset is referencing.
+	 * @brief Gets whether the asset would reference another.
+	 *
+	 * @return The possible referencing type.
 	 */
 	unsigned referencing(void) const;
 

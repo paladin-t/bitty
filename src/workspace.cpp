@@ -1839,8 +1839,12 @@ void Workspace::editing(class Window* wnd, class Renderer* rnd, const class Proj
 
 								asset->prepare(Asset::EDITING, false);
 
-								if (!asset->object(Asset::EDITING))
-									resolveAssetRef(wnd, rnd, project, asset->entry().c_str());
+								if (!asset->object(Asset::EDITING)) {
+									if (asset->referencing())
+										resolveAssetRef(wnd, rnd, project, asset->entry().c_str());
+									else
+										notifyAssetCorrupt(wnd, rnd, project, asset->entry().c_str());
+								}
 
 								editor = asset->editor();
 
@@ -3575,6 +3579,34 @@ void Workspace::resolveAssetRef(class Window* /* wnd */, class Renderer* rnd, co
 				warn(msg.c_str());
 			}
 		);
+}
+
+void Workspace::notifyAssetCorrupt(class Window* /* wnd */, class Renderer* /* rnd */, const class Project* project, const char* asset_) {
+	LockGuard<RecursiveMutex>::UniquePtr acquired;
+	Project* prj = project->acquire(acquired);
+	if (!prj)
+		return;
+
+	Asset* asset = prj->get(asset_);
+	if (!asset)
+		return;
+
+	const std::string entry = asset->entry().name();
+
+	const std::string msg = Text::cformat(theme()->dialogItem_InvalidAssetOrCorruptData().c_str(), entry.c_str());
+	error(msg.c_str());
+
+	Asset::States* states = asset->states();
+	states->deactivate();
+
+	asset->finish(Asset::EDITING, false);
+
+	messagePopupBox(
+		msg,
+		nullptr,
+		nullptr,
+		nullptr
+	);
 }
 
 void Workspace::beginSplash(class Window* wnd, class Renderer* rnd, const class Project* project) {

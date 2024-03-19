@@ -628,6 +628,7 @@ protected:
 	void resizeAssetTile(class Window* wnd, class Renderer* rnd, const class Project* project, Asset::List::Index index);
 	void rebindAssetRef(class Window* wnd, class Renderer* rnd, const class Project* project, Asset::List::Index index);
 	void resolveAssetRef(class Window* wnd, class Renderer* rnd, const class Project* project, const char* asset);
+	void notifyAssetCorrupt(class Window* wnd, class Renderer* rnd, const class Project* project, const char* asset);
 
 	void beginSplash(class Window* wnd, class Renderer* rnd, const class Project* project);
 	void endSplash(class Window* wnd, class Renderer* rnd, const Text::Dictionary &options);
