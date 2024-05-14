@@ -665,8 +665,11 @@ public:
 			Coordinates srcBegin, srcEnd;
 			GetSelection(srcBegin, srcEnd);
 
-			Shared::Cache::Array &strings = _shared.cache();
+			if (_shared.cache().empty())
+				refreshCache(project);
+
 			Editing::Tools::TextPages cache;
+			Shared::Cache::Array &strings = _shared.cache();
 			do {
 				LockGuard<RecursiveMutex>::UniquePtr acquired;
 				Project* prj = project->acquire(acquired);
@@ -832,57 +835,7 @@ public:
 		strings.clear();
 	}
 	virtual void gainFocus(class Renderer* /* rnd */, const class Project* project) override {
-		Shared::Cache::Array &strings = _shared.cache();
-		do {
-			LockGuard<RecursiveMutex>::UniquePtr acquired;
-			Project* prj = project->acquire(acquired);
-			if (!prj)
-				break;
-
-			for (int i = 0; i < prj->count(); ++i) {
-				Asset* asset = prj->get(Asset::List::Index(i, false));
-				if (!asset)
-					break;
-
-				if (asset->type() != Code::TYPE()) {
-					strings.push_back(Shared::Cache("", false));
-
-					continue;
-				}
-
-				if (_name == asset->entry().name())
-					_index = i;
-
-				const bool readyForEditing = asset->readyFor(Asset::EDITING);
-				if (readyForEditing) {
-					EditorCodeImpl* editor = (EditorCodeImpl*)asset->editor();
-					if (!editor)
-						break;
-
-					size_t len = 0;
-					const char* txt = editor->text(&len);
-					std::string str;
-					str.assign(txt, len);
-					strings.push_back(Shared::Cache(txt, true));
-				} else {
-					asset->prepare(Asset::EDITING, true);
-					Object::Ptr obj = asset->object(Asset::EDITING);
-					asset->finish(Asset::EDITING, true);
-
-					if (!obj)
-						break;
-					Code::Ptr code = Object::as<Code::Ptr>(obj);
-					if (!code)
-						break;
-
-					size_t len = 0;
-					const char* txt = code->text(&len);
-					std::string str;
-					str.assign(txt, len);
-					strings.push_back(Shared::Cache(txt, true));
-				}
-			}
-		} while (false);
+		refreshCache(project);
 	}
 
 private:
@@ -893,6 +846,7 @@ private:
 		const Editing::Shortcut esc(SDL_SCANCODE_ESCAPE);
 		if (esc.pressed()) {
 			_tools.clear();
+			_shared.clear();
 		}
 	}
 
@@ -986,6 +940,60 @@ private:
 	}
 	void headClicked(int ln) {
 		_breaking = ln;
+	}
+
+	void refreshCache(const Project* project) {
+		Shared::Cache::Array &strings = _shared.cache();
+		do {
+			LockGuard<RecursiveMutex>::UniquePtr acquired;
+			Project* prj = project->acquire(acquired);
+			if (!prj)
+				break;
+
+			for (int i = 0; i < prj->count(); ++i) {
+				Asset* asset = prj->get(Asset::List::Index(i, false));
+				if (!asset)
+					break;
+
+				if (asset->type() != Code::TYPE()) {
+					strings.push_back(Shared::Cache("", false));
+
+					continue;
+				}
+
+				if (_name == asset->entry().name())
+					_index = i;
+
+				const bool readyForEditing = asset->readyFor(Asset::EDITING);
+				if (readyForEditing) {
+					EditorCodeImpl* editor = (EditorCodeImpl*)asset->editor();
+					if (!editor)
+						break;
+
+					size_t len = 0;
+					const char* txt = editor->text(&len);
+					std::string str;
+					str.assign(txt, len);
+					strings.push_back(Shared::Cache(txt, true));
+				} else {
+					asset->prepare(Asset::EDITING, true);
+					Object::Ptr obj = asset->object(Asset::EDITING);
+					asset->finish(Asset::EDITING, true);
+
+					if (!obj)
+						break;
+					Code::Ptr code = Object::as<Code::Ptr>(obj);
+					if (!code)
+						break;
+
+					size_t len = 0;
+					const char* txt = code->text(&len);
+					std::string str;
+					str.assign(txt, len);
+					strings.push_back(Shared::Cache(txt, true));
+				}
+			}
+		} while (false);
 	}
 
 	bool tokenize(const char* inBegin, const char* inEnd, const char* &outBegin, const char* &outEnd, PaletteIndex &paletteIndex) const {

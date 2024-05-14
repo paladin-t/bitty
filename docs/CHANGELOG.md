@@ -1,3 +1,14 @@
+### v1.3.1 May. 14, 2024
+
+Improved usability, fixed some bugs.
+
+* Fixed an indent/unindent bug with context menu
+* Fixed a selection positioning issue after comment/uncomment
+* Fixed a shortcut handling bug of closing searching bar with Escape
+* Fixed a potential crash bug when search for the first time
+* Improved usability with touch screen
+* Improved asset corruption notification
+
 ### v1.3 Jan. 17, 2024
 
 Enhanced modules, improved usability, fixed some bugs.
