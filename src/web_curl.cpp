@@ -239,6 +239,8 @@ bool FetchCurl::perform(void) {
 
 		Platform::threadName("WEB");
 
+		Platform::locale("C");
+
 		CURLcode res = curl_easy_perform(curl);
 		if (res != CURLE_OK) {
 			const char* err = curl_easy_strerror(res);
