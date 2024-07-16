@@ -646,7 +646,7 @@ namespace ImGuiSDL
 								// so that the larger texture coordinates are at topleft instead of bottomright.
 								// We don't consider equal texture coordinates to require a flip, as then the rectangle is mostlikely simply a colored rectangle.
 								const bool doHorizontalFlip = v2.uv.x < v0.uv.x;
-								const bool doVerticalFlip = v2.uv.x < v0.uv.x;
+								const bool doVerticalFlip = v2.uv.y < v0.uv.y;
 
 								if (isWrappedTexture)
 								{
