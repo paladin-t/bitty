@@ -494,10 +494,10 @@ bool Theme::open(class Renderer* rnd) {
 	sliceNumber_3(createTexture(rnd, RES_SLICE_NUMBER_3, BITTY_COUNTOF(RES_SLICE_NUMBER_3)));
 	sliceNumber_4(createTexture(rnd, RES_SLICE_NUMBER_4, BITTY_COUNTOF(RES_SLICE_NUMBER_4)));
 
-	imagePadPortraitTop(createTexture(rnd, RES_IMAGE_PAD_PORTRAIT_TOP, BITTY_COUNTOF(RES_IMAGE_PAD_PORTRAIT_TOP)));
-	imagePadPortraitBottom(createTexture(rnd, RES_IMAGE_PAD_PORTRAIT_BOTTOM, BITTY_COUNTOF(RES_IMAGE_PAD_PORTRAIT_BOTTOM)));
-	imagePadLandscapeLeft(createTexture(rnd, RES_IMAGE_PAD_LANDSCAPE_LEFT, BITTY_COUNTOF(RES_IMAGE_PAD_LANDSCAPE_LEFT)));
-	imagePadLandscapeRight(createTexture(rnd, RES_IMAGE_PAD_LANDSCAPE_RIGHT, BITTY_COUNTOF(RES_IMAGE_PAD_LANDSCAPE_RIGHT)));
+	imagePadPortraitTop(createTexture(rnd, RES_IMAGE_PAD_TRANSPARENT, BITTY_COUNTOF(RES_IMAGE_PAD_TRANSPARENT)));
+	imagePadPortraitBottom(createTexture(rnd, RES_IMAGE_PAD_TRANSPARENT, BITTY_COUNTOF(RES_IMAGE_PAD_TRANSPARENT)));
+	imagePadLandscapeLeft(createTexture(rnd, RES_IMAGE_PAD_TRANSPARENT, BITTY_COUNTOF(RES_IMAGE_PAD_TRANSPARENT)));
+	imagePadLandscapeRight(createTexture(rnd, RES_IMAGE_PAD_TRANSPARENT, BITTY_COUNTOF(RES_IMAGE_PAD_TRANSPARENT)));
 
 	return true;
 }
@@ -1014,14 +1014,30 @@ void Theme::fromFile(class Renderer* rnd, const char* path_) {
 
 			const std::string key = jkimg.GetString();
 			const std::string val = jvimg.IsString() ? jvimg.GetString() : "";
-			if (key == "pad_portrait_top")
-				setImage(rnd, imagePadPortraitTop(), val);
-			else if (key == "pad_portrait_bottom")
-				setImage(rnd, imagePadPortraitBottom(), val);
-			else if (key == "pad_portrait_left")
-				setImage(rnd, imagePadLandscapeLeft(), val);
-			else if (key == "pad_portrait_right")
-				setImage(rnd, imagePadLandscapeRight(), val);
+			if (val == "builtin") {
+				if (key == "pad_portrait_top") {
+					destroyTexture(rnd, imagePadPortraitTop());
+					imagePadPortraitTop(createTexture(rnd, RES_IMAGE_PAD_PORTRAIT_TOP, BITTY_COUNTOF(RES_IMAGE_PAD_PORTRAIT_TOP)));
+				} else if (key == "pad_portrait_bottom") {
+					destroyTexture(rnd, imagePadPortraitBottom());
+					imagePadPortraitBottom(createTexture(rnd, RES_IMAGE_PAD_PORTRAIT_BOTTOM, BITTY_COUNTOF(RES_IMAGE_PAD_PORTRAIT_BOTTOM)));
+				} else if (key == "pad_portrait_left") {
+					destroyTexture(rnd, imagePadLandscapeLeft());
+					imagePadLandscapeLeft(createTexture(rnd, RES_IMAGE_PAD_LANDSCAPE_LEFT, BITTY_COUNTOF(RES_IMAGE_PAD_LANDSCAPE_LEFT)));
+				} else if (key == "pad_portrait_right") {
+					destroyTexture(rnd, imagePadLandscapeRight());
+					imagePadLandscapeRight(createTexture(rnd, RES_IMAGE_PAD_LANDSCAPE_RIGHT, BITTY_COUNTOF(RES_IMAGE_PAD_LANDSCAPE_RIGHT)));
+				}
+			} else {
+				if (key == "pad_portrait_top")
+					setImage(rnd, imagePadPortraitTop(), val);
+				else if (key == "pad_portrait_bottom")
+					setImage(rnd, imagePadPortraitBottom(), val);
+				else if (key == "pad_portrait_left")
+					setImage(rnd, imagePadLandscapeLeft(), val);
+				else if (key == "pad_portrait_right")
+					setImage(rnd, imagePadLandscapeRight(), val);
+			}
 		}
 	}
 }
