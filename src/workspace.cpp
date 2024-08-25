@@ -855,7 +855,7 @@ void Workspace::renderTargetsReset(class Window* /* wnd */, class Renderer* /* r
 	// Do nothing.
 }
 
-void Workspace::moved(Window* wnd, Renderer* /* rnd */, const Math::Vec2i &wndPos) {
+void Workspace::moved(class Window* wnd, class Renderer* /* rnd */, const Math::Vec2i &wndPos) {
 	if (!wnd->maximized() && !wnd->fullscreen())
 		settings()->applicationWindowPosition = wndPos;
 }
@@ -880,6 +880,18 @@ void Workspace::maximized(class Window*, class Renderer*) {
 void Workspace::restored(class Window* wnd, class Renderer*) {
 	settings()->applicationWindowFullscreen = wnd->fullscreen();
 	settings()->applicationWindowMaximized = false;
+}
+
+void Workspace::fileDropped(class Window*, class Renderer*, const char* const) {
+	// Do nothing.
+}
+
+void Workspace::dropBegan(class Window*, class Renderer*) {
+	// Do nothing.
+}
+
+void Workspace::dropEndded(class Window*, class Renderer*, Executable*) {
+	// Do nothing.
 }
 
 bool Workspace::quit(class Window*, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {

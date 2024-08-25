@@ -726,6 +726,28 @@ private:
 				}
 
 				break;
+			case SDL_DROPFILE:
+				if (evt.drop.file) {
+					fprintf(stdout, "SDL: SDL_DROPFILE.\n");
+
+					_workspace->fileDropped(_window, _renderer, evt.drop.file);
+
+					SDL_free(evt.drop.file);
+				}
+
+				break;
+			case SDL_DROPBEGIN:
+				fprintf(stdout, "SDL: SDL_DROPBEGIN.\n");
+
+				_workspace->dropBegan(_window, _renderer);
+
+				break;
+			case SDL_DROPCOMPLETE:
+				fprintf(stdout, "SDL: SDL_DROPCOMPLETE.\n");
+
+				_workspace->dropEndded(_window, _renderer, _executable);
+
+				break;
 			case SDL_RENDER_TARGETS_RESET:
 				fprintf(stdout, "SDL: SDL_RENDER_TARGETS_RESET.\n");
 

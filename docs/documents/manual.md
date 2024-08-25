@@ -223,6 +223,13 @@ function focusGained()
 end
 ```
 
+Define a `fileDropped` function to run code on file dropped:
+
+```lua
+function fileDropped(paths) -- For desktop only.
+end
+```
+
 Define a `rendererReset` function to run code on renderer reset:
 
 ```lua

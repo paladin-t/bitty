@@ -59,6 +59,7 @@ ScriptingLua::ScriptingLua() {
 	_focusing = IDLE;
 	_rendererResetting = false;
 	_state = READY;
+	_droppedFileCount = 0;
 
 	_stepOver = 0;
 	_stepInto = 0;
@@ -190,6 +191,12 @@ void ScriptingLua::finish(void) {
 
 		_focusing = IDLE;
 		_rendererResetting = false;
+		do {
+			LockGuard<decltype(_droppedFilesLock)> guardDrop(_droppedFilesLock);
+
+			_droppedFileCount = 0;
+			_droppedFiles.clear();
+		} while (false);
 
 		if (_update)
 			_update = nullptr;
@@ -199,6 +206,8 @@ void ScriptingLua::finish(void) {
 			_focusLost = nullptr;
 		if (_focusGained)
 			_focusGained = nullptr;
+		if (_fileDropped)
+			_fileDropped = nullptr;
 		if (_rendererReset)
 			_rendererReset = nullptr;
 
@@ -328,6 +337,10 @@ bool ScriptingLua::setup(void) {
 		Lua::read(_L, _focusGained);
 		Lua::pop(_L);
 
+		Lua::getGlobal(_L, SCRIPTING_FILE_DROPPED_FUNCTION_NAME);
+		Lua::read(_L, _fileDropped);
+		Lua::pop(_L);
+
 		Lua::getGlobal(_L, SCRIPTING_RENDERER_RESET_FUNCTION_NAME);
 		Lua::read(_L, _rendererReset);
 		Lua::pop(_L);
@@ -429,6 +442,15 @@ bool ScriptingLua::focusGained(void) {
 	return true;
 }
 
+bool ScriptingLua::fileDropped(const Text::Array &paths) {
+	LockGuard<decltype(_droppedFilesLock)> guard(_droppedFilesLock);
+
+	_droppedFileCount = (int)paths.size();
+	_droppedFiles = paths;
+
+	return true;
+}
+
 bool ScriptingLua::renderTargetsReset(void) {
 	_rendererResetting = true;
 
@@ -501,6 +523,27 @@ void ScriptingLua::sync(double delta) {
 			break;
 		}
 	} while (false);
+
+	if (_droppedFileCount > 0) {
+		LockGuard<decltype(_droppedFilesLock)> guard(_droppedFilesLock);
+
+		if (_fileDropped && _fileDropped->valid()) {
+			const int ret = Lua::invoke(
+				_L,
+				[] (lua_State* L, void* ud) -> void {
+					ScriptingLua* impl = (ScriptingLua*)ud;
+
+					check(L, Lua::call(L, *impl->_fileDropped, impl->_droppedFiles));
+					assert(Lua::getTop(L) == 0 && "Polluted Lua stack.");
+				},
+				this
+			);
+			check(_L, ret);
+		}
+
+		_droppedFileCount = 0;
+		_droppedFiles.clear();
+	}
 
 	if (_rendererResetting) {
 		if (_rendererReset && _rendererReset->valid()) {

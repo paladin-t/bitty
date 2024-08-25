@@ -40,6 +40,8 @@ private:
 
 	class Loader* _loader = nullptr;
 
+	Text::Array _droppedFiles;
+
 public:
 	WorkspaceSketchbook();
 	virtual ~WorkspaceSketchbook() override;
@@ -64,6 +66,10 @@ public:
 	virtual void focusLost(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) override;
 
 	virtual void renderTargetsReset(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) override;
+
+	virtual void fileDropped(class Window* wnd, class Renderer* rnd, const char* const path) override;
+	virtual void dropBegan(class Window* wnd, class Renderer* rnd) override;
+	virtual void dropEndded(class Window* wnd, class Renderer* rnd, Executable* exec) override;
 
 protected:
 	using Workspace::load;

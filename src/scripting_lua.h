@@ -64,11 +64,15 @@ protected:
 	Lua::Function::Ptr _quit = nullptr;                     // By the Lua thread.
 	Lua::Function::Ptr _focusLost = nullptr;                // By the Lua thread.
 	Lua::Function::Ptr _focusGained = nullptr;              // By the Lua thread.
+	Lua::Function::Ptr _fileDropped = nullptr;              // By the Lua thread.
 	Lua::Function::Ptr _rendererReset = nullptr;            // By the Lua thread.
 
 	Atomic<FocusStates> _focusing;                          // By the Lua, graphics threads.
 	Atomic<bool> _rendererResetting;                        // By the Lua, graphics threads.
 	Atomic<States> _state;                                  // By the Lua, graphics threads.
+	Atomic<int> _droppedFileCount;                          // By the Lua, graphics threads.
+	Text::Array _droppedFiles;                              // By the Lua, graphics threads.
+	RecursiveMutex _droppedFilesLock;                       // By the Lua, graphics threads.
 
 	Atomic<int> _stepOver;                                  // By the Lua, graphics threads.
 	Atomic<int> _stepInto;                                  // By the Lua, graphics threads.
@@ -122,6 +126,7 @@ public:
 	virtual bool cycle(double delta) override;
 	virtual bool focusLost(void) override;
 	virtual bool focusGained(void) override;
+	virtual bool fileDropped(const Text::Array &paths) override;
 	virtual bool renderTargetsReset(void) override;
 
 	virtual bool update(double delta) override;

@@ -413,6 +413,27 @@ void WorkspaceSketchbook::renderTargetsReset(class Window* wnd, class Renderer* 
 	exec->renderTargetsReset();
 }
 
+void WorkspaceSketchbook::fileDropped(class Window* wnd, class Renderer* rnd, const char* const path) {
+	Workspace::fileDropped(wnd, rnd, path);
+
+	if (path)
+		_droppedFiles.push_back(path);
+}
+
+void WorkspaceSketchbook::dropBegan(class Window* wnd, class Renderer* rnd) {
+	Workspace::dropBegan(wnd, rnd);
+
+	_droppedFiles.clear();
+}
+
+void WorkspaceSketchbook::dropEndded(class Window* wnd, class Renderer* rnd, Executable* exec) {
+	Workspace::dropEndded(wnd, rnd, exec);
+
+	exec->fileDropped(_droppedFiles);
+
+	_droppedFiles.clear();
+}
+
 void WorkspaceSketchbook::loadProject(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, const Text::Dictionary &options) {
 	promise::Defer start;
 

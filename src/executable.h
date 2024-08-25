@@ -14,6 +14,7 @@
 #include "bitty.h"
 #include "mathematics.h"
 #include "promise.h"
+#include "text.h"
 
 /*
 ** {===========================================================================
@@ -169,6 +170,7 @@ public:
 	virtual bool cycle(double delta) = 0;
 	virtual bool focusLost(void) = 0;
 	virtual bool focusGained(void) = 0;
+	virtual bool fileDropped(const Text::Array &paths) = 0;
 	virtual bool renderTargetsReset(void) = 0;
 
 	virtual bool update(double delta) = 0;

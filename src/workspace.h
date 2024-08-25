@@ -498,7 +498,7 @@ public:
 	/**
 	 * @brief Callback when the application window has been moved.
 	 */
-	virtual void moved(Window* wnd, Renderer* rnd, const Math::Vec2i &wndPos);
+	virtual void moved(class Window* wnd, class Renderer* rnd, const Math::Vec2i &wndPos);
 	/**
 	 * @brief Callback when the application window has been resized.
 	 */
@@ -511,6 +511,18 @@ public:
 	 * @brief Callback when the application window has been restored.
 	 */
 	virtual void restored(class Window* wnd, class Renderer* rnd);
+	/**
+	 * @brief Callback when files have been dropped to the application.
+	 */
+	virtual void fileDropped(class Window* wnd, class Renderer* rnd, const char* const path);
+	/**
+	 * @brief Callback when drag&drop begins.
+	 */
+	virtual void dropBegan(class Window* wnd, class Renderer* rnd);
+	/**
+	 * @brief Callback when drag&drop ends.
+	 */
+	virtual void dropEndded(class Window* wnd, class Renderer* rnd, Executable* exec);
 	/**
 	 * @brief Callback when the application is going to quit.
 	 */
