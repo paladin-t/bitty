@@ -1,3 +1,16 @@
+### v1.3.2 Feb. 6, 2025
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added a callback API of file drag&drop
+* Changed the default border textures to transparent
+* Fixed a `fetch` locale bug
+* Improved support for Windows' dark mode
+* Improved compatibility with different newline flavours including `\r`, `\n` and `\r\n`
+* Improved code editor behaviour when input quotes
+* Improved file dialog behaviour on Windows
+* Upgraded Lua from v5.4.6 to v5.4.7
+
 ### v1.3.1 May. 14, 2024
 
 Improved usability, fixed some bugs.
