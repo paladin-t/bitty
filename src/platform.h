@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -86,6 +86,9 @@ public:
 	static void redirectIoToConsole(void);
 
 	static void idle(void);
+
+	static bool isSystemInDarkMode(void);
+	static void useDarkMode(class Window* wnd);
 
 	/**< GUI. */
 

@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -458,6 +458,14 @@ void Platform::closeInput(void) {
 void Platform::inputScreenPosition(int x, int y) {
 	SDL_Rect rect{ x, y, 20, 20 };
 	SDL_SetTextInputRect(&rect);
+}
+
+bool Platform::isSystemInDarkMode(void) {
+	return false;
+}
+
+void Platform::useDarkMode(class Window* wnd) {
+	(void)wnd;
 }
 
 /* ===========================================================================} */

@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -64,6 +64,8 @@ PreferencesPopupBox::~PreferencesPopupBox() {
 }
 
 void PreferencesPopupBox::update(void) {
+	ImGuiStyle &style = ImGui::GetStyle();
+
 	bool isOpen = true;
 	bool toConfirm = false;
 	bool toApply = false;
@@ -173,6 +175,14 @@ void PreferencesPopupBox::update(void) {
 				TextUnformatted(_theme->windowPreferences_Graphics_Canvas());
 
 				Checkbox(_theme->windowPreferences_Graphics_FixCanvasRatio(), &_settingsShadow.canvasFixRatio);
+
+				SameLine();
+				TextUnformatted(_theme->windowPreferences_Graphics_FixCanvasRatioQ());
+				if (IsItemHovered()) {
+					VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
+
+					SetTooltip(_theme->windowPreferences_Graphics_FixCanvasRatioTooltip());
+				}
 
 				EndTabItem();
 			}
@@ -410,7 +420,7 @@ void AboutPopupBox::update(void) {
 			SameLine();
 			Url("Tony Wang", "https://paladin-t.github.io/");
 			SameLine();
-			TextUnformatted(", 2020 - 2024");
+			TextUnformatted(", 2020 - 2025");
 			NewLine();
 		}
 		Separator();

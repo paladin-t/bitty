@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -274,6 +274,8 @@ public:
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Graphics_Application)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Graphics_Canvas)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Graphics_FixCanvasRatio)
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Graphics_FixCanvasRatioQ)
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Graphics_FixCanvasRatioTooltip)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Graphics_Fullscreen)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Misc_PauseOnFocusLost)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_NeedToReopen)

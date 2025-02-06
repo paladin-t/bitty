@@ -67,6 +67,10 @@
 #   endif
 #endif
 
+#if _WIN32
+extern HWND portableFileDialogsActiveWindow;
+#endif /* _WIN32 */
+
 namespace pfd
 {
 
@@ -501,7 +505,7 @@ static inline bool is_directory(std::string const &path)
 
 static inline std::string getenv(std::string const &str)
 {
-#if _WIN32
+#if _MSC_VER
     char *buf = nullptr;
     size_t size = 0;
     if (_dupenv_s(&buf, &size, str.c_str()) == 0 && buf)
@@ -1132,7 +1136,9 @@ inline internal::file_dialog::file_dialog(type in_type,
         OPENFILENAMEW ofn;
         memset(&ofn, 0, sizeof(ofn));
         ofn.lStructSize = sizeof(OPENFILENAMEW);
-        ofn.hwndOwner = GetActiveWindow();
+        HWND hwnd = GetActiveWindow();
+        if (hwnd == NULL) hwnd = portableFileDialogsActiveWindow;
+        ofn.hwndOwner = hwnd;
 
         ofn.lpstrFilter = wfilter_list.c_str();
 
@@ -1444,7 +1450,9 @@ inline std::string internal::file_dialog::select_folder_vista(IFileDialog *ifd, 
     ifd->SetOptions(FOS_PICKFOLDERS | FOS_FORCEFILESYSTEM);
     ifd->SetTitle(m_wtitle.c_str());
 
-    hr = ifd->Show(GetActiveWindow());
+    HWND hwnd = GetActiveWindow();
+    if (hwnd == NULL) hwnd = portableFileDialogsActiveWindow;
+    hr = ifd->Show(hwnd);
     if (SUCCEEDED(hr))
     {
         IShellItem* item;
@@ -1634,7 +1642,9 @@ inline message::message(std::string const &title,
         auto wtitle = internal::str2wstr(title);
         // Apply new visual style (required for all Windows versions)
         new_style_context ctx;
-        *exit_code = MessageBoxW(GetActiveWindow(), wtext.c_str(), wtitle.c_str(), style);
+        HWND hwnd = GetActiveWindow();
+        if (hwnd == NULL) hwnd = portableFileDialogsActiveWindow;
+        *exit_code = MessageBoxW(hwnd, wtext.c_str(), wtitle.c_str(), style);
         return "";
     });
 
@@ -1885,4 +1895,3 @@ inline std::string select_folder::result()
 #endif // PFD_SKIP_IMPLEMENTATION
 
 } // namespace pfd
-

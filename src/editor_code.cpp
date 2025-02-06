@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -1101,6 +1101,12 @@ private:
 		langDef.CommentStart = "--[[";
 		langDef.CommentEnd = "]]";
 		langDef.SimpleCommentHead = "--";
+
+		langDef.RangedCharPatterns = {
+			std::make_pair('\'', '\''),
+			std::make_pair('"', '"'),
+			std::make_pair('(', ')')
+		};
 
 		langDef.CaseSensitive = true;
 

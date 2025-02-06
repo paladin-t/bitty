@@ -1150,6 +1150,9 @@
     <ClCompile Include="src\web_civetweb.cpp">
       <Filter>src\shared\web</Filter>
     </ClCompile>
+    <ClCompile Include="lib\portable_file_dialogs\portable-file-dialogs.cpp">
+      <Filter>lib\portable_file_dialogs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">

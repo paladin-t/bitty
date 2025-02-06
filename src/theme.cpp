@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -339,6 +339,16 @@ bool Theme::open(class Renderer* rnd) {
 	windowPreferences_Graphics_Application("Application:");
 	windowPreferences_Graphics_Canvas("Canvas:");
 	windowPreferences_Graphics_FixCanvasRatio("Fix canvas ratio");
+	windowPreferences_Graphics_FixCanvasRatioQ("                             [?]");
+	windowPreferences_Graphics_FixCanvasRatioTooltip(
+		"* Check this to avoid stretch with fixed canvas width & height\n"
+		"  * Call `canvas:resize(width, height)` to resize canvas, i.e.\n"
+		"    * `canvas:resize(320, 240)` for fixed width and height\n"
+		"    * `canvas:resize(320, 0)` for fixed width, auto height\n"
+		"    * `canvas:resize(0, 240)` for auto width, fixed height\n"
+		"    * `canvas:resize(0, 0)` for auto width and height\n"
+		"* Uncheck this to let canvas follow up with window/application size"
+	);
 	windowPreferences_Graphics_Fullscreen("Fullscreen");
 	windowPreferences_Input_ClickAgainToCancelBackspaceToClear("(Click again to cancel, Backspace to clear)");
 	windowPreferences_Input_ClickToChange("(Click to change)");

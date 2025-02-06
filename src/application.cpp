@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -34,6 +34,15 @@
 #if !defined BITTY_OS_HTML
 #	include "../lib/libuv/include/uv.h"
 #endif /* BITTY_OS_HTML */
+#if defined BITTY_CP_VC
+#	pragma warning(push)
+#	pragma warning(disable : 4800)
+#	pragma warning(disable : 4819)
+#endif /* BITTY_CP_VC */
+#include "../lib/portable_file_dialogs/portable-file-dialogs.h"
+#if defined BITTY_CP_VC
+#	pragma warning(pop)
+#endif /* BITTY_CP_VC */
 #include "../lib/sdl_gfx/SDL2_gfxPrimitives.h"
 #include "../lib/zlib/zlib.h"
 #if !defined BITTY_OS_HTML
@@ -330,6 +339,8 @@ public:
 			highDpi, opengl,
 			alwaysOnTop
 		);
+		if (Platform::isSystemInDarkMode())
+			Platform::useDarkMode(_window);
 #if !defined BITTY_OS_MAC
 		if (fullscreen)
 			_window->fullscreen(true);
@@ -612,7 +623,11 @@ private:
 		SDL_SysWMinfo wmInfo;
 		SDL_VERSION(&wmInfo.version);
 		SDL_GetWindowWMInfo(wnd, &wmInfo);
-		io.ImeWindowHandle = wmInfo.info.win.window;
+
+		const HWND hwnd = wmInfo.info.win.window;
+		io.ImeWindowHandle = hwnd;
+
+		portableFileDialogsActiveWindow = hwnd;
 #else /* BITTY_OS_WIN */
 		(void)wnd;
 

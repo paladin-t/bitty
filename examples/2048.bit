@@ -13,7 +13,7 @@ data:text/lua;count=2337;path=block.lua;
 --[[
 Example for the Bitty Engine
 
-Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
+Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
 
 Homepage: https://paladin-t.github.io/bitty/
 ]]
@@ -101,7 +101,7 @@ data:text/lua;count=747;path=class.lua;
 --[[
 Example for the Bitty Engine
 
-Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
+Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
 
 Homepage: https://paladin-t.github.io/bitty/
 ]]
@@ -149,7 +149,7 @@ data:text/lua;count=1725;path=co.lua;
 --[[
 Example for the Bitty Engine
 
-Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
+Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
 
 Homepage: https://paladin-t.github.io/bitty/
 ]]
@@ -251,7 +251,7 @@ data:text/lua;count=2790;path=grids.lua;
 --[[
 Example for the Bitty Engine
 
-Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
+Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
 
 Homepage: https://paladin-t.github.io/bitty/
 ]]
@@ -399,7 +399,7 @@ data:text/lua;count=2665;path=keycode.lua;
 --[[
 Example for the Bitty Engine
 
-Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
+Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
 
 Homepage: https://paladin-t.github.io/bitty/
 ]]
@@ -543,7 +543,7 @@ data:text/lua;count=7669;path=main.lua;
 --[[
 Example for the Bitty Engine
 
-Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
+Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
 
 Homepage: https://paladin-t.github.io/bitty/
 ]]
@@ -946,7 +946,7 @@ data:text/lua;count=242;path=utils.lua;
 --[[
 Example for the Bitty Engine
 
-Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
+Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
 
 Homepage: https://paladin-t.github.io/bitty/
 ]]

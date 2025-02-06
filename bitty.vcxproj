@@ -2406,6 +2406,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='release|x64'">Level3</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='debug|x64'">Level3</WarningLevel>
     </ClCompile>
+    <ClCompile Include="lib\portable_file_dialogs\portable-file-dialogs.cpp" />
     <ClCompile Include="lib\sdl_gfx\SDL2_framerate.c">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='release|Win32'">Level3</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">Level3</WarningLevel>

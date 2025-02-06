@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -218,12 +218,12 @@ public:
 			}
 			ln[size - 1] = readByte();
 			if (ln[size - 1] == '\r') {
-				break;
-			} else if (ln[size - 1] == '\n') {
 				const size_t l = peek();
-				if (readByte() != '\r')
+				if (readByte() != '\n')
 					poke(l);
 
+				break;
+			} else if (ln[size - 1] == '\n') {
 				break;
 			}
 		}

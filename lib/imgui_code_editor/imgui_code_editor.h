@@ -180,6 +180,7 @@ public:
 	struct LanguageDefinition {
 		typedef std::pair<std::string, PaletteIndex> TokenRegexString;
 		typedef std::vector<TokenRegexString> TokenRegexStrings;
+		typedef std::vector<std::pair<Char, Char> > RangedCharPairs;
 
 		typedef std::function<bool(const char*, const char*, const char* &, const char* &, PaletteIndex &)> TokenizeCallback;
 
@@ -194,6 +195,8 @@ public:
 		TokenizeCallback Tokenize;
 
 		TokenRegexStrings TokenRegexPatterns;
+
+		RangedCharPairs RangedCharPatterns;
 
 		bool CaseSensitive;
 
@@ -250,6 +253,7 @@ public:
 	std::string GetText(const char* aNewline = "\n") const;
 	std::vector<std::string> GetTextLines(bool aIncludeComment, bool aIncludeString) const;
 	std::string GetTextLine(int aLine) const;
+	std::vector<std::pair<std::string, PaletteIndex> > GetWordsAtLine(int aLine, bool aIncludeComment, bool aIncludeString, bool aIncludeSpace) const;
 
 	void InsertText(const char* aValue);
 	void AppendText(const char* aText, ImU32 aColor = (ImU32)PaletteIndex::Default);
@@ -260,7 +264,7 @@ public:
 
 	void SetCursorPosition(const Coordinates &aPosition);
 	Coordinates GetCursorPosition(void) const;
-	void EnsureCursorVisible(bool aForceAbove = false);
+	void EnsureCursorVisible(bool aForceAbove = false, bool aSlowMode = false);
 
 	void SetIndentWithTab(bool aValue);
 	bool GetIndentWithTab(void) const;
@@ -279,6 +283,9 @@ public:
 
 	void SetShowLineNumbers(bool aValue);
 	bool IsShowLineNumbers(void) const;
+
+	void SetStickyLineNumbers(bool aValue);
+	bool IsStickyLineNumbers(void) const;
 
 	void SetHeadClickEnabled(bool aValue);
 	bool IsHeadClickEnabled(void) const;
@@ -328,6 +335,7 @@ public:
 	void Copy(void);
 	void Cut(void);
 	void Paste(void);
+	void Paste(const char* aTxt);
 	void Delete(void);
 	void Indent(bool aByKey = true);
 	void Unindent(bool aByKey = true);
@@ -424,6 +432,7 @@ protected:
 	Coordinates FindWordEnd(const Coordinates &aFrom) const;
 	std::string GetWordAt(const Coordinates &aCoords, Coordinates* aStart = nullptr, Coordinates* aEnd = nullptr) const;
 	Char GetCharUnderCursor(void) const;
+	const LanguageDefinition::RangedCharPairs::value_type* FindRangedCharPair(Char aChar) const;
 	void OnChanged(const Coordinates &aStart, const Coordinates &aEnd, int aOffset);
 	bool OnKeyPressed(ImGuiKey aKey);
 	void OnColorized(bool aMultilineComment) const;
@@ -453,6 +462,7 @@ protected:
 	bool Overwrite;
 	bool ReadOnly;
 	bool ShowLineNumbers;
+	bool StickyLineNumbers;
 	bool HeadClickEnabled;
 	ShortcutType ShortcutsEnabled;
 	bool WithinRender;

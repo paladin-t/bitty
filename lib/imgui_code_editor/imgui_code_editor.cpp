@@ -1007,6 +1007,7 @@ CodeEditor::CodeEditor() :
 	Overwrite(false),
 	ReadOnly(false),
 	ShowLineNumbers(true),
+	StickyLineNumbers(false),
 	HeadClickEnabled(false),
 	ShortcutsEnabled(ShortcutType::All),
 	WithinRender(false),
@@ -1102,6 +1103,7 @@ int CodeEditor::GetProgramPointer(void) {
 }
 
 void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
+	// Prepare.
 	WithinRender = true;
 
 	ImGuiContext &g = *GImGui;
@@ -1145,6 +1147,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 	CursorScreenPos = GetCursorScreenPos();
 	EditorFocused = IsWindowFocused();
 
+	// Process shortcuts.
 	if (IsEditorFocused()) {
 		do {
 			const float margin = 12.0f;
@@ -1268,8 +1271,10 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 		}
 	}
 
+	// Process colorization.
 	ColorizeInternal();
 
+	// Process the code lines.
 	static std::string buffer; // Shared.
 	static std::list<Glyph> glyphs; // Shared.
 	ImVec2 contentSize = GetWindowContentRegionMax();
@@ -1286,6 +1291,14 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 	int lineNo = (int)floor(scrollY / CharAdv.y);
 	const int lineMax = std::max(0, std::min((int)CodeLines.size() - 1, lineNo + (int)ceil((scrollY + contentSize.y) / CharAdv.y)));
 	if (!CodeLines.empty()) {
+		// Render the safe column indicator.
+		if (IsStickyLineNumbers()) {
+			PushClipRect(
+				ImVec2(cursorScreenPos.x + scrollX + GetHeadSize(), cursorScreenPos.y + scrollY),
+				ImVec2(cursorScreenPos.x + scrollX + GetHeadSize() + aSize.x, cursorScreenPos.y + scrollY + aSize.y),
+				true
+			);
+		}
 		if (GetSafeColumnIndicatorOffset() > 0) {
 			const ImVec2 istart(
 				cursorScreenPos.x + CharAdv.x * TextStart + CharAdv.x * GetSafeColumnIndicatorOffset(),
@@ -1294,8 +1307,26 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 			const ImVec2 iend(istart.x, istart.y + std::max(CharAdv.y * (lineMax + 1), contentSize.y));
 			drawList->AddLine(istart, iend, Plt[(int)PaletteIndex::CurrentLineEdge]);
 		}
+		if (IsStickyLineNumbers()) {
+			PopClipRect();
+		}
 
+		// Render the background of the head.
+		if (IsStickyLineNumbers()) {
+			const float factor = std::min(std::max(scrollX, 0.0f), CharAdv.x * 6) / (CharAdv.x * 6) * 0.15f;
+			const ImVec4 col1 = ColorConvertU32ToFloat4(Plt[(int)PaletteIndex::CurrentLineFill]);
+			const ImVec4 col(col1.x, col1.y, col1.z, factor);
+			const ImU32 headColor = ColorConvertFloat4ToU32(col);
+			drawList->AddRectFilled(
+				ImVec2(cursorScreenPos.x + scrollX, cursorScreenPos.y + scrollY),
+				ImVec2(cursorScreenPos.x + scrollX + GetHeadSize(), cursorScreenPos.y + scrollY + aSize.y),
+				headColor
+			);
+		}
+
+		// Render the code lines.
 		while (lineNo <= lineMax) {
+			// Prepare.
 			ImVec2 lineStartScreenPos = ImVec2(cursorScreenPos.x, cursorScreenPos.y + CharAdv.y * lineNo);
 			ImVec2 textScreenPos = ImVec2(lineStartScreenPos.x + CharAdv.x * TextStart, lineStartScreenPos.y);
 
@@ -1317,18 +1348,15 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 			if (State.SelectionEnd.Line > lineNo)
 				++ssend;
 
-			if (sstart != -1 && ssend != -1 && sstart < ssend) {
-				const ImVec2 vstart(lineStartScreenPos.x + CharAdv.x * (sstart + TextStart), lineStartScreenPos.y);
-				const ImVec2 vend(lineStartScreenPos.x + CharAdv.x * (ssend + TextStart), lineStartScreenPos.y + CharAdv.y);
-				drawList->AddRectFilled(vstart, vend, Plt[(int)PaletteIndex::Selection]);
-			}
-
 			const ImVec2 start(lineStartScreenPos.x + scrollX, lineStartScreenPos.y);
+			const float lineNumberWidth = CharAdv.x * (TextStart - 1);
+			const float lineStartX = IsStickyLineNumbers() ? start.x : lineStartScreenPos.x;
 
+			// Process head clicking.
 			if (dblClkLineNo == -1 && IsHeadClickEnabled() && IsEditorFocused()) {
 				const float margin = 4.0f;
 				const ImVec2 start_(start.x + margin, start.y);
-				const ImVec2 end(lineStartScreenPos.x + CharAdv.x * std::min((TextStart - 1), 5), lineStartScreenPos.y + CharAdv.y);
+				const ImVec2 end(lineStartX + CharAdv.x * std::min((TextStart - 1), 5), lineStartScreenPos.y + CharAdv.y);
 				if (IsMouseHoveringRect(start_, end)) {
 					SetMouseCursor(ImGuiMouseCursor_Hand);
 					if (IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
@@ -1340,13 +1368,14 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				}
 			}
 
+			// Render the break points.
 			auto brk = Brks.find(lineNo);
 			if (brk != Brks.end()) {
 				//ImVec2 end(lineStartScreenPos.x + contentSize.x + 2.0f * scrollX, lineStartScreenPos.y + CharAdv.y);
 				//drawList->AddRectFilled(start, end, Plt[(int)PaletteIndex::Breakpoint]);
 
 				const float offsetX = 2;
-				const ImVec2 end(lineStartScreenPos.x + CharAdv.x * (TextStart - 1), lineStartScreenPos.y + CharAdv.y);
+				const ImVec2 end(lineStartX + lineNumberWidth, lineStartScreenPos.y + CharAdv.y);
 				const ImVec2 points[5] = {
 					ImVec2(offsetX + start.x, start.y),
 					ImVec2(end.x - CharAdv.y * 0.5f, start.y),
@@ -1359,10 +1388,12 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				else
 					drawList->AddPolyline(points, countof(points), Plt[(int)PaletteIndex::Breakpoint], true, 1);
 			}
+
+			// Render the program pointer.
 			if (GetProgramPointer() >= 0 && GetProgramPointer() == lineNo) {
 				const float margin = brk != Brks.end() ? 1.0f : 0.0f;
 				const float offsetX = 2;
-				const ImVec2 end(lineStartScreenPos.x + CharAdv.x * (TextStart - 1), lineStartScreenPos.y + CharAdv.y);
+				const ImVec2 end(lineStartX + lineNumberWidth, lineStartScreenPos.y + CharAdv.y);
 				const ImVec2 points[5] = {
 					ImVec2(offsetX + start.x + margin, start.y + margin),
 					ImVec2(end.x - CharAdv.y * 0.5f - margin, start.y + margin),
@@ -1373,6 +1404,23 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				drawList->AddConvexPolyFilled(points, countof(points), Plt[(int)PaletteIndex::ProgramPointer]);
 			}
 
+			// Push the clip rectangle.
+			if (IsStickyLineNumbers()) {
+				PushClipRect(
+					ImVec2(start.x + GetHeadSize(), start.y),
+					ImVec2(start.x + GetHeadSize() + aSize.x, start.y + aSize.y),
+					true
+				);
+			}
+
+			// Render the selection.
+			if (sstart != -1 && ssend != -1 && sstart < ssend) {
+				const ImVec2 vstart(lineStartScreenPos.x + CharAdv.x * (sstart + TextStart), lineStartScreenPos.y);
+				const ImVec2 vend(lineStartScreenPos.x + CharAdv.x * (ssend + TextStart), lineStartScreenPos.y + CharAdv.y);
+				drawList->AddRectFilled(vstart, vend, Plt[(int)PaletteIndex::Selection]);
+			}
+
+			// Render the error/warning mark.
 			ErrorMarkers::iterator errorIt = Errs.find(lineNo);
 			if (errorIt != Errs.end()) {
 				const int ln = errorIt->first;
@@ -1408,52 +1456,59 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				}
 			}
 
-			if (IsShowLineNumbers()) {
-				static char buf[16]; // Shared.
-				switch (TextStart - 1) {
-				case 5: snprintf(buf, countof(buf), "%4d", lineNo + 1); break;
-				case 6: snprintf(buf, countof(buf), "%5d", lineNo + 1); break;
-				default: snprintf(buf, countof(buf), "%6d", lineNo + 1); break;
-				}
-				drawList->AddText(ImVec2(lineStartScreenPos.x /*+ CharAdv.x * 1*/, lineStartScreenPos.y), Plt[(int)PaletteIndex::LineNumber], buf);
-			}
-			switch (line.Changed) {
-			case LineState::None: // Do nothing.
-				break;
-			case LineState::Edited:
-				drawList->AddRectFilled(
-					ImVec2(lineStartScreenPos.x + CharAdv.x * (TextStart - 1), lineStartScreenPos.y),
-					ImVec2(lineStartScreenPos.x + CharAdv.x * (TextStart - 1) + CharAdv.x * 0.5f, lineStartScreenPos.y + CharAdv.y),
-					Plt[(int)PaletteIndex::LineEdited]
-				);
-
-				break;
-			case LineState::EditedSaved:
-				drawList->AddRectFilled(
-					ImVec2(lineStartScreenPos.x + CharAdv.x * (TextStart - 1), lineStartScreenPos.y),
-					ImVec2(lineStartScreenPos.x + CharAdv.x * (TextStart - 1) + CharAdv.x * 0.5f, lineStartScreenPos.y + CharAdv.y),
-					Plt[(int)PaletteIndex::LineEditedSaved]
-				);
-
-				break;
-			case LineState::EditedReverted:
-				drawList->AddRectFilled(
-					ImVec2(lineStartScreenPos.x + CharAdv.x * (TextStart - 1), lineStartScreenPos.y),
-					ImVec2(lineStartScreenPos.x + CharAdv.x * (TextStart - 1) + CharAdv.x * 0.5f, lineStartScreenPos.y + CharAdv.y),
-					Plt[(int)PaletteIndex::LineEditedReverted]
-				);
-
-				break;
-			}
-
+			// Render the line indicator.
 			if (State.CursorPosition.Line == lineNo) {
 				bool focused = IsEditorFocused();
 
 				if (!IsReadOnly() && !HasSelection()) {
+					const ImVec2 start_ = IsStickyLineNumbers() ?
+						ImVec2(start.x + GetHeadSize(), start.y) :
+						start;
 					const ImVec2 end(start.x + contentSize.x + scrollX, start.y + CharAdv.y);
-					drawList->AddRectFilled(start, end, Plt[(int)(focused ? PaletteIndex::CurrentLineFill : PaletteIndex::CurrentLineFillInactive)]);
-					drawList->AddRect(start, end, Plt[(int)PaletteIndex::CurrentLineEdge]);
+					drawList->AddRectFilled(start_, end, Plt[(int)(focused ? PaletteIndex::CurrentLineFill : PaletteIndex::CurrentLineFillInactive)]);
+					drawList->AddRect(start_, end, Plt[(int)PaletteIndex::CurrentLineEdge]);
 				}
+			}
+
+			// Render the code text.
+			appendIndex = 0;
+			unsigned prevColor = line.Glyphs.empty() ? (ImU32)PaletteIndex::Default : (line.Glyphs[0].MultiLineComment ? (ImU32)PaletteIndex::MultiLineComment : line.Glyphs[0].ColorIndex);
+			const Glyph* prevGlyph = nullptr;
+
+			int width = 0;
+			int offset = 0;
+			for (Glyph &glyph : line.Glyphs) {
+				unsigned color = glyph.MultiLineComment ? (ImU32)PaletteIndex::MultiLineComment : glyph.ColorIndex;
+
+				const bool sameColor = color == prevColor ||
+					(glyph.Codepoint > 255 &&
+						color == (unsigned)PaletteIndex::Default && prevColor == (unsigned)PaletteIndex::Identifier) ||
+						((prevGlyph && prevGlyph->Codepoint > 255) &&
+							color == (unsigned)PaletteIndex::Identifier && prevColor == (unsigned)PaletteIndex::Default);
+				if (!sameColor && !buffer.empty()) {
+					const ImU32 targetColor = prevColor >= (ImU32)PaletteIndex::Max ? prevColor : Plt[(int)prevColor];
+					RenderText(offset, textScreenPos, prevColor, targetColor, buffer.c_str(), glyphs, width);
+					textScreenPos.x += CharAdv.x * width;
+					buffer.clear();
+					glyphs.clear();
+					prevColor = color;
+					width = 0;
+				}
+				appendIndex = AppendBuffer(buffer, glyphs, glyph, appendIndex, width);
+				++columnNo;
+				prevGlyph = &glyph;
+			}
+
+			if (!buffer.empty()) {
+				const ImU32 targetColor = prevColor >= (ImU32)PaletteIndex::Max ? prevColor : Plt[(int)prevColor];
+				RenderText(offset, textScreenPos, prevColor, targetColor, buffer.c_str(), glyphs, width);
+				buffer.clear();
+				glyphs.clear();
+			}
+
+			// Render the line cursor.
+			if (State.CursorPosition.Line == lineNo) {
+				bool focused = IsEditorFocused();
 
 				int cx = TextDistanceToLineStart(State.CursorPosition);
 
@@ -1479,40 +1534,53 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				}
 			}
 
-			appendIndex = 0;
-			unsigned prevColor = line.Glyphs.empty() ? (ImU32)PaletteIndex::Default : (line.Glyphs[0].MultiLineComment ? (ImU32)PaletteIndex::MultiLineComment : line.Glyphs[0].ColorIndex);
-			const Glyph* prevGlyph = nullptr;
+			// Pop the clip rectangle.
+			if (IsStickyLineNumbers()) {
+				PopClipRect();
+			}
 
-			int width = 0;
-			int offset = 0;
-			for (Glyph &glyph : line.Glyphs) {
-				unsigned color = glyph.MultiLineComment ? (ImU32)PaletteIndex::MultiLineComment : glyph.ColorIndex;
-
-				const bool sameColor = color == prevColor ||
-					(glyph.Codepoint > 255 &&
-						color == (unsigned)PaletteIndex::Default && prevColor == (unsigned)PaletteIndex::Identifier) ||
-					((prevGlyph && prevGlyph->Codepoint > 255) &&
-						color == (unsigned)PaletteIndex::Identifier && prevColor == (unsigned)PaletteIndex::Default);
-				if (!sameColor && !buffer.empty()) {
-					const ImU32 targetColor = prevColor >= (ImU32)PaletteIndex::Max ? prevColor : Plt[(int)prevColor];
-					RenderText(offset, textScreenPos, prevColor, targetColor, buffer.c_str(), glyphs, width);
-					textScreenPos.x += CharAdv.x * width;
-					buffer.clear();
-					glyphs.clear();
-					prevColor = color;
-					width = 0;
+			// Render the line number.
+			if (IsShowLineNumbers()) {
+				static char buf[16]; // Shared.
+				switch (TextStart - 1) {
+				case 5: snprintf(buf, countof(buf), "%4d", lineNo + 1); break;
+				case 6: snprintf(buf, countof(buf), "%5d", lineNo + 1); break;
+				default: snprintf(buf, countof(buf), "%6d", lineNo + 1); break;
 				}
-				appendIndex = AppendBuffer(buffer, glyphs, glyph, appendIndex, width);
-				++columnNo;
-				prevGlyph = &glyph;
+				drawList->AddText(ImVec2(lineStartX /*+ CharAdv.x * 1*/, lineStartScreenPos.y), Plt[(int)PaletteIndex::LineNumber], buf);
 			}
 
-			if (!buffer.empty()) {
-				const ImU32 targetColor = prevColor >= (ImU32)PaletteIndex::Max ? prevColor : Plt[(int)prevColor];
-				RenderText(offset, textScreenPos, prevColor, targetColor, buffer.c_str(), glyphs, width);
-				buffer.clear();
-				glyphs.clear();
+			// Render the modification status.
+			switch (line.Changed) {
+			case LineState::None: // Do nothing.
+				break;
+			case LineState::Edited:
+				drawList->AddRectFilled(
+					ImVec2(lineStartX + lineNumberWidth, lineStartScreenPos.y),
+					ImVec2(lineStartX + lineNumberWidth + CharAdv.x * 0.5f, lineStartScreenPos.y + CharAdv.y),
+					Plt[(int)PaletteIndex::LineEdited]
+				);
+
+				break;
+			case LineState::EditedSaved:
+				drawList->AddRectFilled(
+					ImVec2(lineStartX + lineNumberWidth, lineStartScreenPos.y),
+					ImVec2(lineStartX + lineNumberWidth + CharAdv.x * 0.5f, lineStartScreenPos.y + CharAdv.y),
+					Plt[(int)PaletteIndex::LineEditedSaved]
+				);
+
+				break;
+			case LineState::EditedReverted:
+				drawList->AddRectFilled(
+					ImVec2(lineStartX + lineNumberWidth, lineStartScreenPos.y),
+					ImVec2(lineStartX + lineNumberWidth + CharAdv.x * 0.5f, lineStartScreenPos.y + CharAdv.y),
+					Plt[(int)PaletteIndex::LineEditedReverted]
+				);
+
+				break;
 			}
+
+			// Step one line.
 			appendIndex = 0;
 			lineStartScreenPos.y += CharAdv.y;
 			textScreenPos.x = lineStartScreenPos.x + CharAdv.x * TextStart;
@@ -1520,6 +1588,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 			++lineNo;
 		}
 
+		// Render tooltip according to the current context.
 		if (IsTooltipEnabled()) {
 			std::string id = GetWordAt(ScreenPosToCoordinates(GetMousePos()));
 			if (!id.empty()) {
@@ -1540,6 +1609,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 		}
 	}
 
+	// Process selection.
 	if (IsWindowHovered()) {
 		if (!shift && !alt) {
 			if (IsMouseClicked(ImGuiMouseButton_Left)) {
@@ -1547,6 +1617,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				if (ctrl)
 					WordSelectionMode = true;
 				SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
+				EnsureCursorVisible(false, true);
 				OnLineClicked(State.CursorPosition.Line, false);
 			}
 			if (IsMouseDoubleClicked(ImGuiMouseButton_Left) && !ctrl) {
@@ -1554,6 +1625,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 					State.CursorPosition = InteractiveStart = InteractiveEnd = SanitizeCoordinates(ScreenPosToCoordinates(GetMousePos()));
 					WordSelectionMode = true;
 					SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
+					EnsureCursorVisible(false, true);
 					State.CursorPosition = State.SelectionEnd;
 					OnLineClicked(State.CursorPosition.Line, true);
 				}
@@ -1561,12 +1633,14 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				io.WantCaptureMouse = true;
 				State.CursorPosition = InteractiveEnd = SanitizeCoordinates(ScreenPosToCoordinates(GetMousePos()));
 				SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
+				EnsureCursorVisible(false, true);
 			}
 		} else if (shift) {
 			if (IsMouseClicked(ImGuiMouseButton_Left)) {
 				io.WantCaptureMouse = true;
 				State.CursorPosition = InteractiveEnd = SanitizeCoordinates(ScreenPosToCoordinates(GetMousePos()));
 				SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
+				EnsureCursorVisible(false, true);
 			}
 		}
 
@@ -1575,6 +1649,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 		}
 	}
 
+	// Finish.
 	Dummy(ImVec2((longest + 2) * CharAdv.x, CodeLines.size() * CharAdv.y));
 
 	if (ScrollToCursor) {
@@ -1689,6 +1764,69 @@ std::string CodeEditor::GetTextLine(int aLine) const {
 	return GetText(Coordinates(aLine, 0), Coordinates(aLine, GetColumnsAt(aLine)), nullptr);
 }
 
+std::vector<std::pair<std::string, CodeEditor::PaletteIndex> > CodeEditor::GetWordsAtLine(int aLine, bool aIncludeComment, bool aIncludeString, bool aIncludeSpace) const {
+	std::vector<std::pair<std::string, PaletteIndex> > result;
+
+	if (aLine < 0 || aLine >= (int)CodeLines.size())
+		return result;
+
+	const Line &line = CodeLines[aLine];
+	if (line.Glyphs.empty())
+		return result;
+
+	auto append = [&result, &line] (PaletteIndex &cstart, std::string &word, int col) -> void {
+		if (!word.empty())
+			result.push_back(std::make_pair(word, cstart));
+
+		if (col >= 0 && col < (int)line.Glyphs.size())
+			cstart = (PaletteIndex)line.Glyphs[col].ColorIndex;
+		word.clear();
+	};
+
+	int col = 0;
+	PaletteIndex cstart = (PaletteIndex)line.Glyphs[col].ColorIndex;
+	std::string word;
+	while (col < (int)line.Glyphs.size()) {
+		const Glyph &g = line.Glyphs[col];
+		if (((PaletteIndex)g.ColorIndex == PaletteIndex::Comment || (PaletteIndex)g.ColorIndex == PaletteIndex::MultiLineComment) && !aIncludeComment) {
+			if (cstart != (PaletteIndex)g.ColorIndex)
+				append(cstart, word, col);
+
+			++col;
+
+			continue;
+		}
+
+		if ((PaletteIndex)g.ColorIndex == PaletteIndex::String && !aIncludeString) {
+			if (cstart != (PaletteIndex)g.ColorIndex)
+				append(cstart, word, col);
+
+			++col;
+
+			continue;
+		}
+
+		if ((g.Character == ' ' || g.Character == '\t') && !aIncludeSpace) {
+			if (cstart != (PaletteIndex)g.ColorIndex)
+				append(cstart, word, col);
+
+			++col;
+
+			continue;
+		}
+
+		if (cstart != (PaletteIndex)g.ColorIndex)
+			append(cstart, word, col);
+
+		ImTextAppendUtf8ToStdStr(word, g.Character);
+
+		++col;
+	}
+	append(cstart, word, col);
+
+	return result;
+}
+
 void CodeEditor::InsertText(const char* aValue) {
 	if (aValue == nullptr)
 		return;
@@ -1775,7 +1913,7 @@ CodeEditor::Coordinates CodeEditor::GetCursorPosition(void) const {
 	return GetActualCursorCoordinates();
 }
 
-void CodeEditor::EnsureCursorVisible(bool aForceAbove) {
+void CodeEditor::EnsureCursorVisible(bool aForceAbove, bool aSlowMode) {
 	if (!WithinRender) {
 		ScrollToCursor = aForceAbove ? -1 : 1;
 
@@ -1785,8 +1923,8 @@ void CodeEditor::EnsureCursorVisible(bool aForceAbove) {
 	float scrollX = GetScrollX();
 	float scrollY = GetScrollY();
 
-	float height = GetWindowHeight();
 	float width = GetWindowWidth();
+	float height = GetWindowHeight();
 
 	int top = 1 + (int)ceil(scrollY / CharAdv.y);
 	int bottom = (int)ceil((scrollY + height) / CharAdv.y);
@@ -1797,14 +1935,18 @@ void CodeEditor::EnsureCursorVisible(bool aForceAbove) {
 	Coordinates pos = GetActualCursorCoordinates();
 	int len = TextDistanceToLineStart(pos);
 
+	const int stepUp = 1;
+	const int stepDown = aSlowMode ? 2 : 4;
+	const int stepRight = aSlowMode ? 3 : 4;
+
 	if (pos.Line < top || aForceAbove)
-		SetScrollY(std::max(0.0f, (pos.Line - 1) * CharAdv.y));
-	else if (pos.Line > bottom - 4)
-		SetScrollY(std::max(0.0f, (pos.Line + 4) * CharAdv.y - height));
-	if (len + TextStart < left + 4)
-		SetScrollX(std::max(0.0f, (len + TextStart - 4) * CharAdv.x));
-	else if (len + TextStart > right - 4)
-		SetScrollX(std::max(0.0f, (len + TextStart + 4) * CharAdv.x - width));
+		SetScrollY(std::max(0.0f, (pos.Line - stepUp) * CharAdv.y));
+	else if (pos.Line > bottom - stepDown)
+		SetScrollY(std::max(0.0f, (pos.Line + stepDown) * CharAdv.y - height));
+	if (len < left)
+		SetScrollX(std::max(0.0f, len * CharAdv.x));
+	else if (len + TextStart > right - stepRight)
+		SetScrollX(std::max(0.0f, (len + TextStart + stepRight) * CharAdv.x - width));
 }
 
 void CodeEditor::SetIndentWithTab(bool aValue) {
@@ -1853,6 +1995,15 @@ void CodeEditor::SetShowLineNumbers(bool aValue) {
 
 bool CodeEditor::IsShowLineNumbers(void) const {
 	return ShowLineNumbers;
+}
+
+
+void CodeEditor::SetStickyLineNumbers(bool aValue) {
+	StickyLineNumbers = aValue;
+}
+
+bool CodeEditor::IsStickyLineNumbers(void) const {
+	return StickyLineNumbers;
 }
 
 void CodeEditor::SetHeadClickEnabled(bool aValue) {
@@ -2286,7 +2437,11 @@ void CodeEditor::Cut(void) {
 
 void CodeEditor::Paste(void) {
 	const char* const clipText = GetClipboardText();
-	if (clipText != nullptr && strlen(clipText) > 0) {
+	Paste(clipText);
+}
+
+void CodeEditor::Paste(const char* aTxt) {
+	if (aTxt != nullptr && strlen(aTxt) > 0) {
 		UndoRecord u;
 		u.Type = UndoType::Add;
 		u.Before = State;
@@ -2296,10 +2451,10 @@ void CodeEditor::Paste(void) {
 			DeleteSelection();
 		}
 
-		u.Content = clipText;
+		u.Content = aTxt;
 		u.Start = GetActualCursorCoordinates();
 
-		InsertText(clipText);
+		InsertText(aTxt);
 
 		u.End = GetActualCursorCoordinates();
 		u.After = State;
@@ -2698,7 +2853,7 @@ void CodeEditor::Uncomment(void) {
 				}
 			}
 
-			u.Content.push_back((char)n);
+			u.Content.push_back((std::string::value_type)n);
 			++affectedLines;
 
 			Coordinates pos(i, 0);
@@ -3313,10 +3468,12 @@ CodeEditor::Coordinates CodeEditor::SanitizeCoordinates(const Coordinates &aValu
 	int line = std::max(0, std::min((int)CodeLines.size() - 1, aValue.Line));
 	int column = 0;
 	if (!CodeLines.empty()) {
-		if (line < aValue.Line)
+		if (line < aValue.Line) {
 			column = (int)CodeLines[line].Glyphs.size();
-		else
+		} else {
 			column = std::min((int)CodeLines[line].Glyphs.size(), aValue.Column);
+			column = std::max(column, 0);
+		}
 	}
 
 	return Coordinates(line, column);
@@ -3715,6 +3872,8 @@ void CodeEditor::EnterCharacter(Char aChar) {
 	if (CodeLines.empty())
 		CodeLines.push_back(Line());
 
+	int moveCursor = 0;
+	const LanguageDefinition::RangedCharPairs::value_type* rangedPair = aChar == '\n' ? nullptr : FindRangedCharPair(aChar);
 	if (aChar == '\n') {
 		InsertLine(coord.Line + 1);
 		Line &line = CodeLines[coord.Line];
@@ -3769,7 +3928,25 @@ void CodeEditor::EnterCharacter(Char aChar) {
 			}
 		}
 
+		SetSelection(State.CursorPosition, State.CursorPosition);
+
 		OnChanged(coord, Coordinates(coord.Line + 1, 0), 0);
+	} else if (rangedPair) {
+		ImTextAppendUtf8ToStdStr(u.Content, rangedPair->first);
+		if (!u.Overwritten.empty())
+			u.Content += u.Overwritten;
+		ImTextAppendUtf8ToStdStr(u.Content, rangedPair->second);
+		u.Start = GetActualCursorCoordinates();
+
+		InsertText(u.Content.c_str());
+
+		u.End = GetActualCursorCoordinates();
+		u.After = State;
+
+		OnChanged(u.Start, u.End, 0);
+
+		if (u.Overwritten.empty())
+			moveCursor = -1;
 	} else {
 		Line &line = CodeLines[coord.Line];
 		if (Overwrite && (int)line.Glyphs.size() > coord.Column)
@@ -3795,6 +3972,9 @@ void CodeEditor::EnterCharacter(Char aChar) {
 	EnsureCursorVisible();
 
 	OnModified();
+
+	if (moveCursor != 0)
+		State.CursorPosition.Column += moveCursor;
 }
 
 CodeEditor::Coordinates CodeEditor::FindWordStart(const Coordinates &aFrom) const {
@@ -3880,6 +4060,19 @@ CodeEditor::Char CodeEditor::GetCharUnderCursor(void) const {
 	const Glyph &g = CodeLines[c.Line].Glyphs[c.Column];
 
 	return g.Character;
+}
+
+const CodeEditor::LanguageDefinition::RangedCharPairs::value_type* CodeEditor::FindRangedCharPair(Char aChar) const {
+	CodeEditor::LanguageDefinition::RangedCharPairs::const_iterator it = std::find_if(
+		LangDef.RangedCharPatterns.begin(), LangDef.RangedCharPatterns.end(),
+		[aChar] (const CodeEditor::LanguageDefinition::RangedCharPairs::value_type &pair) -> bool {
+			return pair.first == aChar;
+		}
+	);
+	if (it == LangDef.RangedCharPatterns.end())
+		return nullptr;
+
+	return &(*it);
 }
 
 void CodeEditor::OnChanged(const Coordinates &aStart, const Coordinates &aEnd, int aOffset) {

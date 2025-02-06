@@ -3,7 +3,7 @@
 **
 ** An itty bitty game engine.
 **
-** Copyright (C) 2020 - 2024 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -11,13 +11,28 @@
 #include "encoding.h"
 #include "platform.h"
 #include "text.h"
+#include "window.h"
 #include <SDL.h>
+#include <SDL_syswm.h>
 #include <direct.h>
+#include <dwmapi.h>
 #include <fcntl.h>
 #include <filesystem>
 namespace filesystem = std::experimental::filesystem;
 #include <io.h>
+#include <shellapi.h>
 #include <ShlObj.h>
+
+/*
+** {===========================================================================
+** Macros and constants
+*/
+
+#ifndef DWMWA_USE_IMMERSIVE_DARK_MODE
+#	define DWMWA_USE_IMMERSIVE_DARK_MODE 20
+#endif /* DWMWA_USE_IMMERSIVE_DARK_MODE */
+
+/* ===========================================================================} */
 
 /*
 ** {===========================================================================
@@ -379,6 +394,38 @@ void Platform::closeInput(void) {
 void Platform::inputScreenPosition(int x, int y) {
 	SDL_Rect rect{ x, y, 20, 20 };
 	SDL_SetTextInputRect(&rect);
+}
+
+bool Platform::isSystemInDarkMode(void) {
+	char buf[4];
+	memset(buf, BITTY_COUNTOF(buf) * sizeof(char), 0);
+	DWORD cbData = (DWORD)(BITTY_COUNTOF(buf) * sizeof(char));
+	const LSTATUS res = ::RegGetValueW(
+		HKEY_CURRENT_USER,
+		L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+		L"AppsUseLightTheme",
+		RRF_RT_REG_DWORD,
+		nullptr,
+		buf,
+		&cbData
+	);
+
+	if (res != ERROR_SUCCESS)
+		return false;
+
+	const int i = (int)(buf[3] << 24 | buf[2] << 16 | buf[1] << 8 | buf[0]);
+
+	return i != 1;
+}
+
+void Platform::useDarkMode(class Window* wnd) {
+	SDL_SysWMinfo wmInfo;
+	SDL_VERSION(&wmInfo.version);
+	SDL_GetWindowWMInfo((SDL_Window*)wnd->pointer(), &wmInfo);
+
+	HWND hWnd = wmInfo.info.win.window;
+	const BOOL value = TRUE;
+	::DwmSetWindowAttribute(hWnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &value, sizeof(value));
 }
 
 /* ===========================================================================} */
