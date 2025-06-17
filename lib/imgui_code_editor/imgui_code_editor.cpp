@@ -2131,7 +2131,7 @@ void CodeEditor::MoveLeft(int aAmount, bool aSelect, bool aWordMode) {
 	Coordinates oldPos = State.CursorPosition;
 	State.CursorPosition = GetActualCursorCoordinates();
 
-	while (aAmount-- > 0) {
+	auto moveLeft = [this] (bool aWordMode) -> void {
 		if (State.CursorPosition.Column == 0) {
 			if (State.CursorPosition.Line > 0) {
 				--State.CursorPosition.Line;
@@ -2142,6 +2142,13 @@ void CodeEditor::MoveLeft(int aAmount, bool aSelect, bool aWordMode) {
 			if (aWordMode)
 				State.CursorPosition = FindWordStart(State.CursorPosition);
 		}
+	};
+
+	while (aAmount-- > 0) {
+		moveLeft(aWordMode);
+	}
+	if (State.CursorPosition == oldPos) {
+		moveLeft(false);
 	}
 
 	assert(State.CursorPosition.Column >= 0);
@@ -2168,7 +2175,7 @@ void CodeEditor::MoveRight(int aAmount, bool aSelect, bool aWordMode) {
 	if (CodeLines.empty())
 		return;
 
-	while (aAmount-- > 0) {
+	auto moreRight = [this] (bool aWordMode) -> void {
 		const Line &line = CodeLines[State.CursorPosition.Line];
 		if (State.CursorPosition.Column >= (int)line.Glyphs.size()) {
 			if (State.CursorPosition.Line < (int)CodeLines.size() - 1) {
@@ -2180,6 +2187,13 @@ void CodeEditor::MoveRight(int aAmount, bool aSelect, bool aWordMode) {
 			if (aWordMode)
 				State.CursorPosition = FindWordEnd(State.CursorPosition);
 		}
+	};
+
+	while (aAmount-- > 0) {
+		moreRight(aWordMode);
+	}
+	if (State.CursorPosition == oldPos) {
+		moreRight(false);
 	}
 
 	if (aSelect) {
@@ -3057,7 +3071,7 @@ const CodeEditor::Palette &CodeEditor::GetDarkPalette(void) {
 		0xff70a0e0, // Char literal.
 		0xffb4b4b4, // Punctuation.
 		0xff409090, // Preprocessor.
-		0xff5ac8c8, // Symbol.
+		0xffb8d7a3, // Symbol.
 		0xffdadada, // Identifier.
 		0xffb0c94e, // Known identifier.
 		0xffc040a0, // Preproc identifier.
@@ -3305,6 +3319,8 @@ void CodeEditor::ColorizeRange(int aFromLine, int aToLine) {
 						if (!preproc) {
 							if (LangDef.Keys.find(LastSymbol) != LangDef.Keys.end())
 								color = PaletteIndex::Keyword;
+							else if (LangDef.Symbols.find(LastSymbol) != LangDef.Symbols.end())
+								color = PaletteIndex::Symbol;
 							else if (LangDef.Ids.find(LastSymbol) != LangDef.Ids.end())
 								color = PaletteIndex::KnownIdentifier;
 							else if (LangDef.PreprocIds.find(LastSymbol) != LangDef.PreprocIds.end())
@@ -4045,7 +4061,7 @@ CodeEditor::Coordinates CodeEditor::FindWordStart(const Coordinates &aFrom) cons
 	if (at.Column > 0) {
 		while (at.Column > 0) {
 			const Glyph &g = line.Glyphs[at.Column - 1];
-			if (cstart != PaletteIndex::String && (g.Character == ' ' || g.Character == '\t'))
+			if ((cstart != PaletteIndex::Default && cstart != PaletteIndex::String) && (g.Character == ' ' || g.Character == '\t'))
 				break;
 			if (cstart != (PaletteIndex)g.ColorIndex)
 				break;
@@ -4073,7 +4089,7 @@ CodeEditor::Coordinates CodeEditor::FindWordEnd(const Coordinates &aFrom) const 
 	if (at.Column < (int)line.Glyphs.size()) {
 		while (at.Column < (int)line.Glyphs.size()) {
 			const Glyph &g = line.Glyphs[at.Column];
-			if (cstart != PaletteIndex::String && (g.Character == ' ' || g.Character == '\t'))
+			if ((cstart != PaletteIndex::Default && cstart != PaletteIndex::String) && (g.Character == ' ' || g.Character == '\t'))
 				break;
 			if (cstart != (PaletteIndex)g.ColorIndex)
 				break;

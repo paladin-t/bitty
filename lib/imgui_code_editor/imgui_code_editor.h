@@ -186,6 +186,7 @@ public:
 
 		std::string Name;
 		Keywords Keys;
+		Keywords Symbols;
 		Identifiers Ids;
 		Identifiers PreprocIds;
 		std::string CommentStart, CommentEnd;
