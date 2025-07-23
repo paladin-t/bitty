@@ -1105,7 +1105,9 @@ private:
 		langDef.RangedCharPatterns = {
 			std::make_pair('\'', '\''),
 			std::make_pair('"', '"'),
-			std::make_pair('(', ')')
+			std::make_pair('(', ')'),
+			std::make_pair('[', ']'),
+			std::make_pair('{', '}')
 		};
 
 		langDef.CaseSensitive = true;

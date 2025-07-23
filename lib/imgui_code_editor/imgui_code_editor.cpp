@@ -784,7 +784,7 @@ void CodeEditor::UndoRecord::Undo(CodeEditor* aEditor) {
 	aEditor->State = Before;
 	aEditor->EnsureCursorVisible();
 
-	aEditor->OnModified();
+	aEditor->OnModified(false, true);
 }
 
 void CodeEditor::UndoRecord::Redo(CodeEditor* aEditor) {
@@ -945,7 +945,7 @@ void CodeEditor::UndoRecord::Redo(CodeEditor* aEditor) {
 	aEditor->State = After;
 	aEditor->EnsureCursorVisible();
 
-	aEditor->OnModified();
+	aEditor->OnModified(false, true);
 }
 
 CodeEditor::Error::Error() {
@@ -1017,6 +1017,7 @@ CodeEditor::CodeEditor() :
 	WordSelectionMode(false),
 	ColorRangeMin(0),
 	ColorRangeMax(0),
+	InputtedRangedPair(false),
 	CheckMultilineComments(0),
 	ErrorTipEnabled(true),
 	TooltipEnabled(true),
@@ -1182,8 +1183,10 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				Cut();
 			else if (!IsReadOnly() && ctrl && !shift && !alt && IsKeyPressed(GetKeyIndex(ImGuiKey_V)))
 				Paste();
-			else if (!IsReadOnly() && !ctrl && !shift && !alt && IsKeyPressed(GetKeyIndex(ImGuiKey_Delete)))
+			else if (!IsReadOnly() && !shift && !alt && IsKeyPressed(GetKeyIndex(ImGuiKey_Delete)))
 				Delete();
+			else if (!IsReadOnly() && shift && !alt && IsKeyPressed(GetKeyIndex(ImGuiKey_Delete)))
+				DeleteLine();
 		}
 
 		if (!ctrl && !alt && IsKeyPressed(GetKeyIndex(ImGuiKey_UpArrow)))
@@ -1235,13 +1238,21 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 							Unindent();
 					}
 				}
-			} else if (!ctrl && !shift && !alt && IsKeyPressed(GetKeyIndex(ImGuiKey_Backspace))) {
-				BackSpace();
-			} else if (ctrl && !alt && IsKeyPressed(SDL_SCANCODE_U)) {
-				if (shift) {
-					ToUpperCase();
-				} else {
-					ToLowerCase();
+			}
+			if (IsShortcutsEnabled(ShortcutType::BackSpaceOrWordwise)) {
+				if (!ctrl && !alt && IsKeyPressed(GetKeyIndex(ImGuiKey_Backspace))) {
+					BackSpace();
+				} else if (ctrl && !alt && IsKeyPressed(GetKeyIndex(ImGuiKey_Backspace))) {
+					BackSpaceWordwise();
+				}
+			}
+			if (IsShortcutsEnabled(ShortcutType::ToUpperOrLowerCase)) {
+				if (ctrl && !alt && IsKeyPressed(SDL_SCANCODE_U)) {
+					if (shift) {
+						ToUpperCase();
+					} else {
+						ToLowerCase();
+					}
 				}
 			}
 		}
@@ -1626,6 +1637,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
 				EnsureCursorVisible(false, true);
 				OnLineClicked(State.CursorPosition.Line, false);
+				InputtedRangedPair = false;
 			}
 			if (IsMouseDoubleClicked(ImGuiMouseButton_Left) && !ctrl) {
 				if (dblClkLineNo == -1) {
@@ -1648,6 +1660,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				State.CursorPosition = InteractiveEnd = SanitizeCoordinates(ScreenPosToCoordinates(GetMousePos()));
 				SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
 				EnsureCursorVisible(false, true);
+				InputtedRangedPair = false;
 			}
 		}
 
@@ -2098,6 +2111,8 @@ void CodeEditor::MoveUp(int aAmount, bool aSelect) {
 
 		EnsureCursorVisible();
 	}
+
+	InputtedRangedPair = false;
 }
 
 void CodeEditor::MoveDown(int aAmount, bool aSelect) {
@@ -2122,6 +2137,8 @@ void CodeEditor::MoveDown(int aAmount, bool aSelect) {
 
 		EnsureCursorVisible();
 	}
+
+	InputtedRangedPair = false;
 }
 
 void CodeEditor::MoveLeft(int aAmount, bool aSelect, bool aWordMode) {
@@ -2167,6 +2184,8 @@ void CodeEditor::MoveLeft(int aAmount, bool aSelect, bool aWordMode) {
 	SetSelection(InteractiveStart, InteractiveEnd, aSelect && aWordMode);
 
 	EnsureCursorVisible();
+
+	InputtedRangedPair = false;
 }
 
 void CodeEditor::MoveRight(int aAmount, bool aSelect, bool aWordMode) {
@@ -2211,6 +2230,8 @@ void CodeEditor::MoveRight(int aAmount, bool aSelect, bool aWordMode) {
 	SetSelection(InteractiveStart, InteractiveEnd, aSelect && aWordMode);
 
 	EnsureCursorVisible();
+
+	InputtedRangedPair = false;
 }
 
 void CodeEditor::MoveTop(bool aSelect) {
@@ -2224,6 +2245,8 @@ void CodeEditor::MoveTop(bool aSelect) {
 		InteractiveStart = InteractiveEnd = State.CursorPosition;
 	}
 	SetSelection(InteractiveStart, InteractiveEnd);
+
+	InputtedRangedPair = false;
 }
 
 void CodeEditor::CodeEditor::MoveBottom(bool aSelect) {
@@ -2237,6 +2260,8 @@ void CodeEditor::CodeEditor::MoveBottom(bool aSelect) {
 		InteractiveStart = InteractiveEnd = newPos;
 	}
 	SetSelection(InteractiveStart, InteractiveEnd);
+
+	InputtedRangedPair = false;
 }
 
 void CodeEditor::MoveHome(bool aSelect) {
@@ -2279,6 +2304,8 @@ void CodeEditor::MoveHome(bool aSelect) {
 	}
 	if (State.CursorPosition != oldPos || !aSelect)
 		SetSelection(InteractiveStart, InteractiveEnd);
+
+	InputtedRangedPair = false;
 }
 
 void CodeEditor::MoveEnd(bool aSelect) {
@@ -2305,6 +2332,8 @@ void CodeEditor::MoveEnd(bool aSelect) {
 	}
 	if (State.CursorPosition != oldPos || !aSelect)
 		SetSelection(InteractiveStart, InteractiveEnd);
+
+	InputtedRangedPair = false;
 }
 
 std::string CodeEditor::GetWordUnderCursor(Coordinates* aStart, Coordinates* aEnd) const {
@@ -2457,7 +2486,7 @@ void CodeEditor::Cut(void) {
 			u.After = State;
 			AddUndo(u);
 
-			OnModified();
+			OnModified(false, true);
 
 			Coordinates pos = u.Start < u.End ? u.Start : u.End;
 			OnChanged(pos, pos, 0);
@@ -2490,7 +2519,7 @@ void CodeEditor::Paste(const char* aTxt) {
 		u.After = State;
 		AddUndo(u);
 
-		OnModified();
+		OnModified(false, true);
 
 		OnChanged(u.Start, u.End, 0);
 
@@ -2549,7 +2578,56 @@ void CodeEditor::Delete(void) {
 	u.After = State;
 	AddUndo(u);
 
-	OnModified();
+	OnModified(false, true);
+}
+
+void CodeEditor::DeleteLine(void) {
+	assert(!ReadOnly);
+
+	if (CodeLines.empty())
+		return;
+	if (CodeLines.front().Glyphs.empty())
+		return;
+
+	UndoRecord u;
+	u.Type = UndoType::Remove;
+	u.Before = State;
+
+	if (HasSelection()) {
+		u.Content = GetSelectionText();
+		u.Start = State.SelectionStart;
+		u.End = State.SelectionEnd;
+		DeleteSelection();
+
+		Coordinates pos = State.SelectionStart < State.SelectionEnd ? State.SelectionStart : State.SelectionEnd;
+		OnChanged(pos, pos, 0);
+	} else {
+		Coordinates pos = GetActualCursorCoordinates();
+		SetCursorPosition(pos);
+		Line &line = CodeLines[pos.Line];
+
+		State.SelectionStart = Coordinates(pos.Line, 0);
+		if (pos.Line < (int)CodeLines.size() - 1)
+			State.SelectionEnd = Coordinates(pos.Line + 1, 0);
+		else
+			State.SelectionEnd = Coordinates(pos.Line, (int)line.Glyphs.size());
+
+		if (State.SelectionStart == State.SelectionEnd)
+			return;
+
+		u.Content = GetSelectionText();
+		u.Start = State.SelectionStart;
+		u.End = State.SelectionEnd;
+		DeleteSelection();
+
+		pos = State.SelectionStart < State.SelectionEnd ? State.SelectionStart : State.SelectionEnd;
+		OnChanged(pos, pos, 0);
+	}
+
+	u.After = State;
+	AddUndo(u);
+
+	OnModified(false, true);
 }
 
 void CodeEditor::Indent(bool aByKey) {
@@ -2612,7 +2690,7 @@ void CodeEditor::Indent(bool aByKey) {
 		u.After = State;
 		AddUndo(u);
 
-		OnModified();
+		OnModified(false, true);
 	}
 }
 
@@ -2709,7 +2787,7 @@ void CodeEditor::Unindent(bool aByKey) {
 	if (affectedLines > 0) {
 		AddUndo(u);
 
-		OnModified();
+		OnModified(false, true);
 	}
 }
 
@@ -2736,7 +2814,7 @@ void CodeEditor::ToLowerCase(void) {
 	AddUndo(u);
 	State = u.Before;
 
-	OnModified();
+	OnModified(false, true);
 
 	OnChanged(u.Start, u.End, 0);
 
@@ -2766,7 +2844,7 @@ void CodeEditor::ToUpperCase(void) {
 	AddUndo(u);
 	State = u.Before;
 
-	OnModified();
+	OnModified(false, true);
 
 	OnChanged(u.Start, u.End, 0);
 
@@ -2827,7 +2905,7 @@ void CodeEditor::Comment(void) {
 	u.After = State;
 	AddUndo(u);
 
-	OnModified();
+	OnModified(false, true);
 }
 
 void CodeEditor::Uncomment(void) {
@@ -2914,7 +2992,7 @@ void CodeEditor::Uncomment(void) {
 	if (affectedLines > 0) {
 		AddUndo(u);
 
-		OnModified();
+		OnModified(false, true);
 	}
 }
 
@@ -2952,7 +3030,7 @@ void CodeEditor::MoveLineUp(void) {
 	u.After = State;
 	AddUndo(u);
 
-	OnModified();
+	OnModified(false, true);
 }
 
 void CodeEditor::MoveLineDown(void) {
@@ -2989,7 +3067,7 @@ void CodeEditor::MoveLineDown(void) {
 	u.After = State;
 	AddUndo(u);
 
-	OnModified();
+	OnModified(false, true);
 }
 
 void CodeEditor::ClearUndoRedoStack(void) {
@@ -3883,7 +3961,47 @@ void CodeEditor::BackSpace(void) {
 	u.After = State;
 	AddUndo(u);
 
-	OnModified();
+	OnModified(false, true);
+}
+
+void CodeEditor::BackSpaceWordwise(void) {
+	assert(!ReadOnly);
+
+	if (CodeLines.empty())
+		return;
+
+	UndoRecord u;
+	u.Type = UndoType::Remove;
+	u.Before = State;
+
+	if (HasSelection()) {
+		u.Content = GetSelectionText();
+		u.Start = State.SelectionStart;
+		u.End = State.SelectionEnd;
+		DeleteSelection();
+
+		OnChanged(State.SelectionStart, State.SelectionStart, 0);
+	} else {
+		SelectWordUnderCursor();
+
+		if (u.Start == u.End) {
+			BackSpace();
+
+			return;
+		}
+
+		u.Content = GetSelectionText();
+		u.Start = State.SelectionStart;
+		u.End = State.SelectionEnd;
+		DeleteSelection();
+
+		OnChanged(State.SelectionStart, State.SelectionStart, 0);
+	}
+
+	u.After = State;
+	AddUndo(u);
+
+	OnModified(false, true);
 }
 
 void CodeEditor::EnterCharacter(Char aChar) {
@@ -3906,8 +4024,15 @@ void CodeEditor::EnterCharacter(Char aChar) {
 
 	bool autoIndent = false;
 	int moveCursor = 0;
-	const LanguageDefinition::RangedCharPairs::value_type* rangedPair = aChar == '\n' ? nullptr : FindRangedCharPair(aChar);
-	if (aChar == '\n') {
+	bool append = false;
+	const bool isNewLine = aChar == '\n';
+	const LanguageDefinition::RangedCharPairs::value_type* rangedPairStart = nullptr;
+	const LanguageDefinition::RangedCharPairs::value_type* rangedPairEnd = nullptr;
+	if (aChar != '\n') {
+		rangedPairStart = FindRangedCharPairStart(aChar);
+		rangedPairEnd = FindRangedCharPairEnd(aChar);
+	}
+	if (isNewLine) {
 		int indent = 0;
 		if (LastAutoIndent.hasValue) {
 			if (LastAutoIndent.record.End == u.Start) {
@@ -3996,11 +4121,22 @@ void CodeEditor::EnterCharacter(Char aChar) {
 		SetSelection(State.CursorPosition, State.CursorPosition);
 
 		OnChanged(coord, Coordinates(coord.Line + 1, 0), 0);
-	} else if (rangedPair) {
-		ImTextAppendUtf8ToStdStr(u.Content, rangedPair->first);
+	} else if (rangedPairEnd && InputtedRangedPair) {
+		InputtedRangedPair = false;
+		Coordinates c = GetCursorPosition();
+		++c.Column;
+		const Char ch = GetCharAt(c);
+		if ((Char)rangedPairEnd->second == ch) {
+			++State.CursorPosition.Column;
+
+			return;
+		}
+		append = true;
+	} else if (rangedPairStart) {
+		ImTextAppendUtf8ToStdStr(u.Content, rangedPairStart->first);
 		if (!u.Overwritten.empty())
 			u.Content += u.Overwritten;
-		ImTextAppendUtf8ToStdStr(u.Content, rangedPair->second);
+		ImTextAppendUtf8ToStdStr(u.Content, rangedPairStart->second);
 		u.Start = GetActualCursorCoordinates();
 
 		InsertText(u.Content.c_str());
@@ -4012,7 +4148,12 @@ void CodeEditor::EnterCharacter(Char aChar) {
 
 		if (u.Overwritten.empty())
 			moveCursor = -1;
+
+		InputtedRangedPair = true;
 	} else {
+		append = true;
+	}
+	if (append) {
 		Line &line = CodeLines[coord.Line];
 		if (Overwrite && (int)line.Glyphs.size() > coord.Column)
 			line.Glyphs[coord.Column] = Glyph(aChar, PaletteIndex::Default);
@@ -4041,7 +4182,7 @@ void CodeEditor::EnterCharacter(Char aChar) {
 	Colorize(coord.Line - 1, 3);
 	EnsureCursorVisible();
 
-	OnModified(false);
+	OnModified(isNewLine, false);
 
 	if (moveCursor != 0)
 		State.CursorPosition.Column += moveCursor;
@@ -4122,9 +4263,14 @@ std::string CodeEditor::GetWordAt(const Coordinates &aCoords, Coordinates* aStar
 	return r;
 }
 
-CodeEditor::Char CodeEditor::GetCharUnderCursor(void) const {
-	Coordinates c = GetCursorPosition();
+CodeEditor::Char CodeEditor::GetCharAt(const Coordinates &aCoords) const {
+	Coordinates c = aCoords;
 	if (--c.Column < 0)
+		return '\0';
+
+	if (c.Line < 0 || c.Line >= (int)CodeLines.size())
+		return '\0';
+	if (c.Column < 0 || c.Column >= (int)CodeLines[c.Line].Glyphs.size())
 		return '\0';
 
 	const Glyph &g = CodeLines[c.Line].Glyphs[c.Column];
@@ -4132,11 +4278,30 @@ CodeEditor::Char CodeEditor::GetCharUnderCursor(void) const {
 	return g.Character;
 }
 
-const CodeEditor::LanguageDefinition::RangedCharPairs::value_type* CodeEditor::FindRangedCharPair(Char aChar) const {
+CodeEditor::Char CodeEditor::GetCharUnderCursor(void) const {
+	Coordinates c = GetCursorPosition();
+
+	return GetCharAt(c);
+}
+
+const CodeEditor::LanguageDefinition::RangedCharPairs::value_type* CodeEditor::FindRangedCharPairStart(Char aChar) const {
 	CodeEditor::LanguageDefinition::RangedCharPairs::const_iterator it = std::find_if(
 		LangDef.RangedCharPatterns.begin(), LangDef.RangedCharPatterns.end(),
 		[aChar] (const CodeEditor::LanguageDefinition::RangedCharPairs::value_type &pair) -> bool {
 			return pair.first == aChar;
+		}
+	);
+	if (it == LangDef.RangedCharPatterns.end())
+		return nullptr;
+
+	return &(*it);
+}
+
+const CodeEditor::LanguageDefinition::RangedCharPairs::value_type* CodeEditor::FindRangedCharPairEnd(Char aChar) const {
+	CodeEditor::LanguageDefinition::RangedCharPairs::const_iterator it = std::find_if(
+		LangDef.RangedCharPatterns.begin(), LangDef.RangedCharPatterns.end(),
+		[aChar] (const CodeEditor::LanguageDefinition::RangedCharPairs::value_type &pair) -> bool {
+			return pair.second == aChar;
 		}
 	);
 	if (it == LangDef.RangedCharPatterns.end())
@@ -4165,6 +4330,8 @@ void CodeEditor::OnChanged(const Coordinates &aStart, const Coordinates &aEnd, i
 			line.Change();
 		}
 	}
+
+	InputtedRangedPair = false;
 }
 
 bool CodeEditor::OnKeyPressed(ImGuiKey aKey) {
@@ -4181,14 +4348,14 @@ void CodeEditor::OnColorized(bool aMultilineComment) const {
 	ColorizedHandler(aMultilineComment);
 }
 
-void CodeEditor::OnModified(bool aClearAutoIndent) const {
+void CodeEditor::OnModified(bool aNewLine,bool aClearAutoIndent) const {
 	if (aClearAutoIndent)
 		LastAutoIndent.clear();
 
 	if (ModifiedHandler == nullptr)
 		return;
 
-	ModifiedHandler();
+	ModifiedHandler(aNewLine);
 }
 
 void CodeEditor::OnHeadClicked(int aLine, bool aDoubleClicked) const {

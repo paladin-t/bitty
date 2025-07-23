@@ -74,10 +74,12 @@ public:
 	};
 
 	enum ShortcutType {
-		UndoRedo = 1 << 0,
-		CopyCutPasteDelete = 1 << 2,
-		IndentUnindent = 1 << 3,
-		All = UndoRedo | CopyCutPasteDelete | IndentUnindent
+		UndoRedo            = 1 << 0,
+		CopyCutPasteDelete  = 1 << 1,
+		BackSpaceOrWordwise = 1 << 2,
+		IndentUnindent      = 1 << 3,
+		ToUpperOrLowerCase  = 1 << 4,
+		All                 = UndoRedo | CopyCutPasteDelete | BackSpaceOrWordwise | IndentUnindent | ToUpperOrLowerCase
 	};
 
 	struct Coordinates {
@@ -215,7 +217,7 @@ public:
 	typedef std::function<bool(ImGuiKey)> KeyPressed;
 
 	typedef std::function<void(bool)> Colorized;
-	typedef std::function<void(void)> Modified;
+	typedef std::function<void(bool)> Modified;
 	typedef std::function<void(int, bool)> HeadClicked;
 	typedef std::function<void(int, bool)> LineClicked;
 
@@ -340,6 +342,7 @@ public:
 	void Paste(void);
 	void Paste(const char* aTxt);
 	void Delete(void);
+	void DeleteLine(void);
 	void Indent(bool aByKey = true);
 	void Unindent(bool aByKey = true);
 	void ToLowerCase(void);
@@ -430,16 +433,19 @@ protected:
 	void RemoveLine(int aStart, int aEnd);
 	void RemoveLine(int aIndex);
 	void BackSpace(void);
+	void BackSpaceWordwise(void);
 	void EnterCharacter(Char aChar);
 	Coordinates FindWordStart(const Coordinates &aFrom) const;
 	Coordinates FindWordEnd(const Coordinates &aFrom) const;
 	std::string GetWordAt(const Coordinates &aCoords, Coordinates* aStart = nullptr, Coordinates* aEnd = nullptr) const;
+	Char GetCharAt(const Coordinates &aCoords) const;
 	Char GetCharUnderCursor(void) const;
-	const LanguageDefinition::RangedCharPairs::value_type* FindRangedCharPair(Char aChar) const;
+	const LanguageDefinition::RangedCharPairs::value_type* FindRangedCharPairStart(Char aChar) const;
+	const LanguageDefinition::RangedCharPairs::value_type* FindRangedCharPairEnd(Char aChar) const;
 	void OnChanged(const Coordinates &aStart, const Coordinates &aEnd, int aOffset);
 	bool OnKeyPressed(ImGuiKey aKey);
 	void OnColorized(bool aMultilineComment) const;
-	void OnModified(bool aClearAutoIndent = true) const;
+	void OnModified(bool aNewLine, bool aClearAutoIndent) const;
 	void OnHeadClicked(int aLine, bool aDoubleClicked) const;
 	void OnLineClicked(int aLine, bool aDoubleClicked) const;
 
@@ -491,6 +497,7 @@ protected:
 	int ColorRangeMin, ColorRangeMax;
 	std::string LastSymbol;
 	PaletteIndex LastSymbolPalette;
+	bool InputtedRangedPair;
 	int CheckMultilineComments;
 	bool ErrorTipEnabled;
 	bool TooltipEnabled;
