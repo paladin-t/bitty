@@ -639,7 +639,7 @@ void CodeEditor::UndoRecord::Undo(CodeEditor* aEditor) {
 				Coordinates end(std::max(Start.Line + lines - 1, 0), Start.Column);
 				if (Start > end)
 					end = Start;
-				aEditor->OnChanged(Start, end, -1);
+				aEditor->OnChanged(Start, end, -1, true);
 			}
 
 			break;
@@ -648,7 +648,7 @@ void CodeEditor::UndoRecord::Undo(CodeEditor* aEditor) {
 				aEditor->InsertTextAt(start, Content.c_str());
 				aEditor->Colorize(Start.Line - 1, End.Line - Start.Line + 2);
 
-				aEditor->OnChanged(Start, End, -1);
+				aEditor->OnChanged(Start, End, -1, true);
 			}
 
 			break;
@@ -663,7 +663,7 @@ void CodeEditor::UndoRecord::Undo(CodeEditor* aEditor) {
 					}
 
 					Coordinates pos(i, 0);
-					aEditor->OnChanged(pos, pos, -1);
+					aEditor->OnChanged(pos, pos, -1, true);
 				}
 			}
 
@@ -678,7 +678,7 @@ void CodeEditor::UndoRecord::Undo(CodeEditor* aEditor) {
 						line.Glyphs.insert(line.Glyphs.begin(), Glyph(Content[j], PaletteIndex::Default));
 
 						Coordinates pos(i, 0);
-						aEditor->OnChanged(pos, pos, -1);
+						aEditor->OnChanged(pos, pos, -1, true);
 					}
 				}
 			}
@@ -723,7 +723,7 @@ void CodeEditor::UndoRecord::Undo(CodeEditor* aEditor) {
 						}
 
 						Coordinates pos(i, 0);
-						aEditor->OnChanged(pos, pos, -1);
+						aEditor->OnChanged(pos, pos, -1, true);
 					} else {
 						assert(false);
 					}
@@ -748,7 +748,7 @@ void CodeEditor::UndoRecord::Undo(CodeEditor* aEditor) {
 							line.Glyphs.insert(line.Glyphs.begin(), Glyph(aEditor->LangDef.SimpleCommentHead[j], PaletteIndex::Comment));
 
 						Coordinates pos(i, 0);
-						aEditor->OnChanged(pos, pos, -1);
+						aEditor->OnChanged(pos, pos, -1, true);
 					} else {
 						assert(false);
 					}
@@ -764,7 +764,7 @@ void CodeEditor::UndoRecord::Undo(CodeEditor* aEditor) {
 				}
 				Coordinates pos(Start.Line - 1, 0);
 				Coordinates pos_(End.Line - 1 + 1, 0);
-				aEditor->OnChanged(pos, pos_, -1);
+				aEditor->OnChanged(pos, pos_, -1, true);
 			}
 
 			break;
@@ -774,7 +774,7 @@ void CodeEditor::UndoRecord::Undo(CodeEditor* aEditor) {
 				}
 				Coordinates pos(Start.Line + 1 - 1, 0);
 				Coordinates pos_(End.Line + 1, 0);
-				aEditor->OnChanged(pos, pos_, -1);
+				aEditor->OnChanged(pos, pos_, -1, true);
 			}
 
 			break;
@@ -801,7 +801,7 @@ void CodeEditor::UndoRecord::Redo(CodeEditor* aEditor) {
 				aEditor->InsertTextAt(start, Content.c_str());
 				aEditor->Colorize(Start.Line - 1, End.Line - Start.Line + 1 + 1);
 
-				aEditor->OnChanged(Start, End, 1);
+				aEditor->OnChanged(Start, End, 1, true);
 			}
 
 			break;
@@ -809,7 +809,7 @@ void CodeEditor::UndoRecord::Redo(CodeEditor* aEditor) {
 				aEditor->DeleteRange(Start, End);
 				aEditor->Colorize(Start.Line - 1, End.Line - Start.Line + 1);
 
-				aEditor->OnChanged(Start, Start, 1);
+				aEditor->OnChanged(Start, Start, 1, true);
 			}
 
 			break;
@@ -820,7 +820,7 @@ void CodeEditor::UndoRecord::Redo(CodeEditor* aEditor) {
 						line.Glyphs.insert(line.Glyphs.begin(), Glyph(Content[j], PaletteIndex::Default));
 
 						Coordinates pos(i, 0);
-						aEditor->OnChanged(pos, pos, 1);
+						aEditor->OnChanged(pos, pos, 1, true);
 					}
 				}
 			}
@@ -840,7 +840,7 @@ void CodeEditor::UndoRecord::Redo(CodeEditor* aEditor) {
 					}
 
 					Coordinates pos(i, 0);
-					aEditor->OnChanged(pos, pos, 1);
+					aEditor->OnChanged(pos, pos, 1, true);
 				}
 			}
 
@@ -860,7 +860,7 @@ void CodeEditor::UndoRecord::Redo(CodeEditor* aEditor) {
 							line.Glyphs.insert(line.Glyphs.begin(), Glyph(aEditor->LangDef.SimpleCommentHead[j], PaletteIndex::Comment));
 
 						Coordinates pos(i, 0);
-						aEditor->OnChanged(pos, pos, -1);
+						aEditor->OnChanged(pos, pos, -1, true);
 					} else {
 						assert(false);
 					}
@@ -909,7 +909,7 @@ void CodeEditor::UndoRecord::Redo(CodeEditor* aEditor) {
 						}
 
 						Coordinates pos(i, 0);
-						aEditor->OnChanged(pos, pos, -1);
+						aEditor->OnChanged(pos, pos, -1, true);
 					} else {
 						assert(false);
 					}
@@ -925,7 +925,7 @@ void CodeEditor::UndoRecord::Redo(CodeEditor* aEditor) {
 				}
 				Coordinates pos(Start.Line - 1, 0);
 				Coordinates pos_(End.Line, 0);
-				aEditor->OnChanged(pos, pos_, -1);
+				aEditor->OnChanged(pos, pos_, -1, true);
 			}
 
 			break;
@@ -935,7 +935,7 @@ void CodeEditor::UndoRecord::Redo(CodeEditor* aEditor) {
 				}
 				Coordinates pos(Start.Line, 0);
 				Coordinates pos_(End.Line + 1, 0);
-				aEditor->OnChanged(pos, pos_, -1);
+				aEditor->OnChanged(pos, pos_, -1, true);
 			}
 
 			break;
@@ -2489,7 +2489,7 @@ void CodeEditor::Cut(void) {
 			OnModified(false, true);
 
 			Coordinates pos = u.Start < u.End ? u.Start : u.End;
-			OnChanged(pos, pos, 0);
+			OnChanged(pos, pos, 0, true);
 		}
 	}
 }
@@ -2521,7 +2521,7 @@ void CodeEditor::Paste(const char* aTxt) {
 
 		OnModified(false, true);
 
-		OnChanged(u.Start, u.End, 0);
+		OnChanged(u.Start, u.End, 0, true);
 
 		InteractiveStart = InteractiveEnd = State.CursorPosition;
 	}
@@ -2544,7 +2544,7 @@ void CodeEditor::Delete(void) {
 		DeleteSelection();
 
 		Coordinates pos = State.SelectionStart < State.SelectionEnd ? State.SelectionStart : State.SelectionEnd;
-		OnChanged(pos, pos, 0);
+		OnChanged(pos, pos, 0, true);
 	} else {
 		Coordinates pos = GetActualCursorCoordinates();
 		SetCursorPosition(pos);
@@ -2572,7 +2572,7 @@ void CodeEditor::Delete(void) {
 
 		Colorize(pos.Line, 1);
 
-		OnChanged(pos, pos, 0);
+		OnChanged(pos, pos, 0, true);
 	}
 
 	u.After = State;
@@ -2600,7 +2600,7 @@ void CodeEditor::DeleteLine(void) {
 		DeleteSelection();
 
 		Coordinates pos = State.SelectionStart < State.SelectionEnd ? State.SelectionStart : State.SelectionEnd;
-		OnChanged(pos, pos, 0);
+		OnChanged(pos, pos, 0, true);
 	} else {
 		Coordinates pos = GetActualCursorCoordinates();
 		SetCursorPosition(pos);
@@ -2621,7 +2621,7 @@ void CodeEditor::DeleteLine(void) {
 		DeleteSelection();
 
 		pos = State.SelectionStart < State.SelectionEnd ? State.SelectionStart : State.SelectionEnd;
-		OnChanged(pos, pos, 0);
+		OnChanged(pos, pos, 0, true);
 	}
 
 	u.After = State;
@@ -2663,7 +2663,7 @@ void CodeEditor::Indent(bool aByKey) {
 			}
 
 			Coordinates pos(i, 0);
-			OnChanged(pos, pos, 0);
+			OnChanged(pos, pos, 0, true);
 		}
 
 		switch (GetSelectionLines()) {
@@ -2725,7 +2725,7 @@ void CodeEditor::Unindent(bool aByKey) {
 			++affectedLines;
 
 			Coordinates pos(i, 0);
-			OnChanged(pos, pos, 0);
+			OnChanged(pos, pos, 0, true);
 		} else if (g.Character == ' ') {
 			int k = 0;
 			for (int j = 0; j < TabSize; ++j, ++k) {
@@ -2744,7 +2744,7 @@ void CodeEditor::Unindent(bool aByKey) {
 				++affectedLines;
 
 			Coordinates pos(i, 0);
-			OnChanged(pos, pos, 0);
+			OnChanged(pos, pos, 0, true);
 		} else {
 			if (i == u.Start.Line)
 				u.Content.push_back(0);
@@ -2816,7 +2816,7 @@ void CodeEditor::ToLowerCase(void) {
 
 	OnModified(false, true);
 
-	OnChanged(u.Start, u.End, 0);
+	OnChanged(u.Start, u.End, 0, true);
 
 	InteractiveStart = InteractiveEnd = State.CursorPosition;
 }
@@ -2846,7 +2846,7 @@ void CodeEditor::ToUpperCase(void) {
 
 	OnModified(false, true);
 
-	OnChanged(u.Start, u.End, 0);
+	OnChanged(u.Start, u.End, 0, true);
 
 	InteractiveStart = InteractiveEnd = State.CursorPosition;
 }
@@ -2894,7 +2894,7 @@ void CodeEditor::Comment(void) {
 		}
 
 		Coordinates pos(i, 0);
-		OnChanged(pos, pos, 0);
+		OnChanged(pos, pos, 0, true);
 	}
 
 	if (State.SelectionStart > State.SelectionEnd)
@@ -2965,7 +2965,7 @@ void CodeEditor::Uncomment(void) {
 			++affectedLines;
 
 			Coordinates pos(i, 0);
-			OnChanged(pos, pos, 0);
+			OnChanged(pos, pos, 0, true);
 		} else {
 			u.Content.push_back(0);
 		}
@@ -3015,7 +3015,7 @@ void CodeEditor::MoveLineUp(void) {
 	}
 	Coordinates pos(u.Start.Line - 1, 0);
 	Coordinates pos_(u.End.Line, 0);
-	OnChanged(pos, pos_, 0);
+	OnChanged(pos, pos_, 0, true);
 
 	u.Content.push_back(0);
 
@@ -3052,7 +3052,7 @@ void CodeEditor::MoveLineDown(void) {
 	}
 	Coordinates pos(u.Start.Line, 0);
 	Coordinates pos_(u.End.Line + 1, 0);
-	OnChanged(pos, pos_, 0);
+	OnChanged(pos, pos_, 0, true);
 
 	u.Content.push_back(0);
 
@@ -3918,7 +3918,7 @@ void CodeEditor::BackSpace(void) {
 		u.End = State.SelectionEnd;
 		DeleteSelection();
 
-		OnChanged(State.SelectionStart, State.SelectionStart, 0);
+		OnChanged(State.SelectionStart, State.SelectionStart, 0, true);
 	} else {
 		Coordinates pos = GetActualCursorCoordinates();
 		SetCursorPosition(pos);
@@ -3939,7 +3939,7 @@ void CodeEditor::BackSpace(void) {
 			u.Start = GetActualCursorCoordinates();
 			u.End = Coordinates(u.Start.Line + 1, 0);
 
-			OnChanged(State.CursorPosition, State.CursorPosition, 0);
+			OnChanged(State.CursorPosition, State.CursorPosition, 0, true);
 		} else {
 			Line &line = CodeLines[State.CursorPosition.Line];
 
@@ -3952,7 +3952,7 @@ void CodeEditor::BackSpace(void) {
 			if (State.CursorPosition.Column < (int)line.Glyphs.size())
 				line.Glyphs.erase(line.Glyphs.begin() + State.CursorPosition.Column);
 
-			OnChanged(State.CursorPosition, State.CursorPosition, 0);
+			OnChanged(State.CursorPosition, State.CursorPosition, 0, true);
 		}
 		EnsureCursorVisible();
 		Colorize(State.CursorPosition.Line, 1);
@@ -3980,7 +3980,7 @@ void CodeEditor::BackSpaceWordwise(void) {
 		u.End = State.SelectionEnd;
 		DeleteSelection();
 
-		OnChanged(State.SelectionStart, State.SelectionStart, 0);
+		OnChanged(State.SelectionStart, State.SelectionStart, 0, true);
 	} else {
 		SelectWordUnderCursor();
 
@@ -3995,7 +3995,7 @@ void CodeEditor::BackSpaceWordwise(void) {
 		u.End = State.SelectionEnd;
 		DeleteSelection();
 
-		OnChanged(State.SelectionStart, State.SelectionStart, 0);
+		OnChanged(State.SelectionStart, State.SelectionStart, 0, true);
 	}
 
 	u.After = State;
@@ -4120,7 +4120,7 @@ void CodeEditor::EnterCharacter(Char aChar) {
 
 		SetSelection(State.CursorPosition, State.CursorPosition);
 
-		OnChanged(coord, Coordinates(coord.Line + 1, 0), 0);
+		OnChanged(coord, Coordinates(coord.Line + 1, 0), 0, true);
 	} else if (rangedPairEnd && InputtedRangedPair) {
 		InputtedRangedPair = false;
 		Coordinates c = GetCursorPosition();
@@ -4144,7 +4144,7 @@ void CodeEditor::EnterCharacter(Char aChar) {
 		u.End = GetActualCursorCoordinates();
 		u.After = State;
 
-		OnChanged(u.Start, u.End, 0);
+		OnChanged(u.Start, u.End, 0, false);
 
 		if (u.Overwritten.empty())
 			moveCursor = -1;
@@ -4164,7 +4164,7 @@ void CodeEditor::EnterCharacter(Char aChar) {
 
 		ImTextAppendUtf8ToStdStr(u.Content, aChar);
 
-		OnChanged(coord, coord, 0);
+		OnChanged(coord, coord, 0, false);
 	}
 
 	InteractiveStart = InteractiveEnd = State.CursorPosition;
@@ -4310,7 +4310,7 @@ const CodeEditor::LanguageDefinition::RangedCharPairs::value_type* CodeEditor::F
 	return &(*it);
 }
 
-void CodeEditor::OnChanged(const Coordinates &aStart, const Coordinates &aEnd, int aOffset) {
+void CodeEditor::OnChanged(const Coordinates &aStart, const Coordinates &aEnd, int aOffset, bool aClearInputtedRangedPair) {
 	Coordinates s, e;
 	if (aStart < aEnd) {
 		s = aStart;
@@ -4331,7 +4331,8 @@ void CodeEditor::OnChanged(const Coordinates &aStart, const Coordinates &aEnd, i
 		}
 	}
 
-	InputtedRangedPair = false;
+	if (aClearInputtedRangedPair)
+		InputtedRangedPair = false;
 }
 
 bool CodeEditor::OnKeyPressed(ImGuiKey aKey) {

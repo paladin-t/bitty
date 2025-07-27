@@ -442,7 +442,7 @@ protected:
 	Char GetCharUnderCursor(void) const;
 	const LanguageDefinition::RangedCharPairs::value_type* FindRangedCharPairStart(Char aChar) const;
 	const LanguageDefinition::RangedCharPairs::value_type* FindRangedCharPairEnd(Char aChar) const;
-	void OnChanged(const Coordinates &aStart, const Coordinates &aEnd, int aOffset);
+	void OnChanged(const Coordinates &aStart, const Coordinates &aEnd, int aOffset, bool aClearInputtedRangedPair);
 	bool OnKeyPressed(ImGuiKey aKey);
 	void OnColorized(bool aMultilineComment) const;
 	void OnModified(bool aNewLine, bool aClearAutoIndent) const;
