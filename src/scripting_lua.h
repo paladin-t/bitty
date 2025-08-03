@@ -69,6 +69,7 @@ protected:
 
 	Atomic<FocusStates> _focusing;                          // By the Lua, graphics threads.
 	Atomic<bool> _rendererResetting;                        // By the Lua, graphics threads.
+	Atomic<bool> _started;                                  // By the Lua, graphics threads.
 	Atomic<States> _state;                                  // By the Lua, graphics threads.
 	Atomic<int> _droppedFileCount;                          // By the Lua, graphics threads.
 	Text::Array _droppedFiles;                              // By the Lua, graphics threads.

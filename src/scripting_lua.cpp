@@ -58,6 +58,7 @@ ScriptingLua::ScriptingLua() {
 
 	_focusing = IDLE;
 	_rendererResetting = false;
+	_started = false;
 	_state = READY;
 	_droppedFileCount = 0;
 
@@ -94,8 +95,10 @@ bool ScriptingLua::open(
 
 bool ScriptingLua::close(void) {
 #if BITTY_MULTITHREAD_ENABLED
-	if (_thread.joinable())
+	if (_thread.joinable()) {
 		_thread.join();
+		_started = false;
+	}
 #endif /* BITTY_MULTITHREAD_ENABLED */
 
 	finish();
@@ -610,6 +613,8 @@ bool ScriptingLua::run(void) {
 
 		impl->_state = RUNNING;
 
+		impl->_started = true;
+
 		impl->hookNormal();
 
 		if (impl->setup()) {
@@ -682,6 +687,10 @@ bool ScriptingLua::run(void) {
 #endif /* BITTY_THREADING_GUARD_ENABLED */
 	};
 	_thread = std::thread(proc, this);
+	while (!_started) {
+		constexpr const int STEP = 10;
+		DateTime::sleep(STEP);
+	}
 #if BITTY_THREADING_GUARD_ENABLED
 	graphicsThreadingGuard.begin(_thread);
 #endif /* BITTY_THREADING_GUARD_ENABLED */
@@ -705,6 +714,7 @@ bool ScriptingLua::stop(void) {
 	if (_state != RUNNING && _state != PAUSED) {
 		if (_thread.joinable()) {
 			_thread.join();
+			_started = false;
 
 			return true;
 		}
@@ -715,6 +725,8 @@ bool ScriptingLua::stop(void) {
 	_state = HALTING;
 
 	_thread.join();
+
+	_started = false;
 
 	return true;
 #else /* BITTY_MULTITHREAD_ENABLED */
