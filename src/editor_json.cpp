@@ -106,7 +106,7 @@ public:
 		}
 		Editing::Data::toCheckpoint(project, _name.c_str(), _checkpoint);
 
-		DisableShortcut(All);
+		DisableShortcut((ShortcutType)(UndoRedo | CopyCutPasteDelete | IndentUnindent));
 
 		SetTooltipEnabled(false);
 

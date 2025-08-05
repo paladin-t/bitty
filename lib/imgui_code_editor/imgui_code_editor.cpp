@@ -595,15 +595,18 @@ bool CodeEditor::UndoRecord::Similar(const UndoRecord* o) const {
 		return ch == ' ' || ch == '\t';
 	};
 	if ((Content.length() == 1 && isalpha(*Content.begin())) &&
-		(o->Content.length() == 1 && isalpha(*o->Content.begin()))) {
+		(o->Content.length() == 1 && isalpha(*o->Content.begin()))
+	) {
 		return true;
 	}
 	if ((Content.length() == 1 && isnum(*Content.begin())) &&
-		(o->Content.length() == 1 && isnum(*o->Content.begin()))) {
+		(o->Content.length() == 1 && isnum(*o->Content.begin()))
+	) {
 		return true;
 	}
 	if ((Content.length() == 1 && isblank(*Content.begin())) &&
-		(o->Content.length() == 1 && isblank(*o->Content.begin()))) {
+		(o->Content.length() == 1 && isblank(*o->Content.begin()))
+	) {
 		return true;
 	}
 	if (Content.length() > 1 && Content.length() <= 4 && o->Content.length() > 1 && o->Content.length() <= 4) {
@@ -2707,6 +2710,7 @@ void CodeEditor::Unindent(bool aByKey) {
 	u.Start = State.SelectionStart;
 	u.End = State.SelectionEnd;
 
+	int steps = 0;
 	int affectedLines = 0;
 	for (int i = u.Start.Line; i <= u.End.Line; ++i) {
 		Line &line = CodeLines[i];
@@ -2720,8 +2724,10 @@ void CodeEditor::Unindent(bool aByKey) {
 		const Glyph &g = *line.Glyphs.begin();
 		if (g.Character == '\t') {
 			line.Glyphs.erase(line.Glyphs.begin());
-			if (i == u.Start.Line)
+			if (i == u.Start.Line) {
 				u.Content.push_back('\t');
+				++steps;
+			}
 			++affectedLines;
 
 			Coordinates pos(i, 0);
@@ -2737,8 +2743,10 @@ void CodeEditor::Unindent(bool aByKey) {
 					break;
 
 				line.Glyphs.erase(line.Glyphs.begin());
-				if (i == u.Start.Line)
+				if (i == u.Start.Line) {
 					u.Content.push_back(' ');
+					++steps;
+				}
 			}
 			if (k)
 				++affectedLines;
@@ -2753,7 +2761,9 @@ void CodeEditor::Unindent(bool aByKey) {
 
 	switch (GetSelectionLines()) {
 	case 0:
-		// Do nothing.
+		State.CursorPosition.Column = std::max(State.CursorPosition.Column - steps, 0);
+		State.SelectionStart.Column = std::max(State.SelectionStart.Column - steps, 0);
+		State.SelectionEnd.Column = std::max(State.SelectionEnd.Column - steps, 0);
 
 		break;
 	case 1: {
@@ -3112,9 +3122,9 @@ void CodeEditor::Redo(int aSteps) {
 		UndoRecord r;
 		UndoRecord* p = nullptr;
 		while (CanRedo() && (!p || (UndoIndex + 1 <= (int)UndoBuf.size() && UndoBuf[UndoIndex].Similar(p)))) {
-			if (p == nullptr && UndoIndex + 1 < (int)UndoBuf.size()) {
+			if (p == nullptr && UndoIndex < (int)UndoBuf.size()) {
 				p = &r;
-				*p = UndoBuf[UndoIndex + 1];
+				*p = UndoBuf[UndoIndex];
 			}
 			UndoBuf[UndoIndex++].Redo(this);
 		}

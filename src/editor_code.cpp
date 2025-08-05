@@ -184,7 +184,7 @@ public:
 
 		SetHeadClickEnabled(true);
 
-		DisableShortcut(All);
+		DisableShortcut((ShortcutType)(UndoRedo | CopyCutPasteDelete | IndentUnindent));
 
 		SetTooltipEnabled(false);
 
