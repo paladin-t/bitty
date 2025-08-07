@@ -2365,8 +2365,8 @@ void CodeEditor::SetSelection(const Coordinates &aStart, const Coordinates &aEnd
 
 	if (aWordMode) {
 		State.SelectionStart = FindWordStart(State.SelectionStart);
-		//if (!IsOnWordBoundary(State.SelectionEnd))
-		State.SelectionEnd = FindWordEnd(FindWordStart(State.SelectionEnd));
+		if (!IsOnWordBoundary(State.SelectionEnd))
+			State.SelectionEnd = FindWordEnd(FindWordStart(State.SelectionEnd));
 		if (State.SelectionStart > State.SelectionEnd)
 			std::swap(State.SelectionStart, State.SelectionEnd);
 	}
@@ -4271,6 +4271,21 @@ std::string CodeEditor::GetWordAt(const Coordinates &aCoords, Coordinates* aStar
 	}
 
 	return r;
+}
+
+CodeEditor::PaletteIndex CodeEditor::GetPaletteIndexAt(const Coordinates &aCoords) const {
+	Coordinates c = aCoords;
+	if (--c.Column < 0)
+		return PaletteIndex::Default;
+
+	if (c.Line < 0 || c.Line >= (int)CodeLines.size())
+		return PaletteIndex::Default;
+	if (c.Column < 0 || c.Column >= (int)CodeLines[c.Line].Glyphs.size())
+		return PaletteIndex::Default;
+
+	const Glyph &g = CodeLines[c.Line].Glyphs[c.Column];
+
+	return (PaletteIndex)g.ColorIndex;
 }
 
 CodeEditor::Char CodeEditor::GetCharAt(const Coordinates &aCoords) const {

@@ -438,6 +438,7 @@ protected:
 	Coordinates FindWordStart(const Coordinates &aFrom) const;
 	Coordinates FindWordEnd(const Coordinates &aFrom) const;
 	std::string GetWordAt(const Coordinates &aCoords, Coordinates* aStart = nullptr, Coordinates* aEnd = nullptr) const;
+	PaletteIndex GetPaletteIndexAt(const Coordinates &aCoords) const;
 	Char GetCharAt(const Coordinates &aCoords) const;
 	Char GetCharUnderCursor(void) const;
 	const LanguageDefinition::RangedCharPairs::value_type* FindRangedCharPairStart(Char aChar) const;
