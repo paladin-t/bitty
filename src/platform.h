@@ -90,6 +90,8 @@ public:
 	static bool isSystemInDarkMode(void);
 	static void useDarkMode(class Window* wnd);
 
+	static void setWindowTransparentColor(class Window* wnd, const struct Color* col);
+
 	/**< GUI. */
 
 	static void msgbox(const char* text, const char* caption);

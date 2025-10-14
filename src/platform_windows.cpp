@@ -8,6 +8,7 @@
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
 
+#include "color.h"
 #include "encoding.h"
 #include "platform.h"
 #include "text.h"
@@ -426,6 +427,23 @@ void Platform::useDarkMode(class Window* wnd) {
 	HWND hWnd = wmInfo.info.win.window;
 	const BOOL value = TRUE;
 	::DwmSetWindowAttribute(hWnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &value, sizeof(value));
+}
+
+void Platform::setWindowTransparentColor(class Window* wnd, const struct Color* col) {
+	SDL_SysWMinfo wmInfo;
+	SDL_VERSION(&wmInfo.version);
+	SDL_GetWindowWMInfo((SDL_Window*)wnd->pointer(), &wmInfo);
+
+	HWND hWnd = wmInfo.info.win.window;
+	LONG style = ::GetWindowLong(hWnd, GWL_EXSTYLE);
+	if (col) {
+		style |= WS_EX_LAYERED;
+		::SetWindowLong(hWnd, GWL_EXSTYLE, style);
+		::SetLayeredWindowAttributes(hWnd, RGB(col->r, col->g, col->b), 0, LWA_COLORKEY);
+	} else {
+		style &= ~WS_EX_LAYERED;
+		::SetWindowLong(hWnd, GWL_EXSTYLE, style);
+	}
 }
 
 /* ===========================================================================} */

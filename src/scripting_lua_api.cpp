@@ -10717,6 +10717,30 @@ static int Application_setOption(lua_State* L) {
 			nullptr,
 			true
 		);
+	} else if (key == "transparent_color") {
+		Color* col = nullptr;
+		read<2>(L, col);
+
+		if (col) {
+			const Color col_ = *col;
+			impl->primitives()->function(
+				[=] (const Variant &) -> void {
+					Window* wnd = impl->primitives()->window();
+					Platform::setWindowTransparentColor(wnd, &col_);
+				},
+				nullptr,
+				true
+			);
+		} else {
+			impl->primitives()->function(
+				[=] (const Variant &) -> void {
+					Window* wnd = impl->primitives()->window();
+					Platform::setWindowTransparentColor(wnd, nullptr);
+				},
+				nullptr,
+				true
+			);
+		}
 	} else {
 		error(L, "Invalid option.");
 	}

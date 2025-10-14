@@ -1857,15 +1857,18 @@ Module.ccall(
 
 Available options:
 
-| Key             | Value                       | Note                                                                         |
-|-----------------|-----------------------------|------------------------------------------------------------------------------|
-| "title"         | String, `title`             | Sets the title of the application window                                     |
-| "minimum_size"  | Integers, `width`, `height` | Sets the minimum size of the application window                              |
-| "maximum_size"  | Integers, `width`, `height` | Sets the maximum size of the application window                              |
-| "bordered"      | Boolean, `bordered`         | Sets whether the application window is bordered                              |
-| "resizable"     | Boolean, `resizable`        | Sets whether the application window is resizable                             |
-| "position"      | Integers, `x`, `y`          | Sets the position of the application window                                  |
-| "display_index" | Integers, `index`           | Sets the index where the application window will be displayed on that device |
+| Key                 | Value                       | Note                                                                         |
+|---------------------|-----------------------------|------------------------------------------------------------------------------|
+| "title"             | String, `title`             | Sets the title of the application window                                     |
+| "minimum_size"      | Integers, `width`, `height` | Sets the minimum size of the application window                              |
+| "maximum_size"      | Integers, `width`, `height` | Sets the maximum size of the application window                              |
+| "bordered"          | Boolean, `bordered`         | Sets whether the application window is bordered                              |
+| "resizable"         | Boolean, `resizable`        | Sets whether the application window is resizable                             |
+| "position"          | Integers, `x`, `y`          | Sets the position of the application window                                  |
+| "display_index"     | Integers, `index`           | Sets the index where the application window will be displayed on that device |
+| "transparent_color" | Color | `nil`, `color`      | **Experimental**, sets the transparent color key of the application window   |
+
+_The "transparent_color" option is an experimental feature, it supports Windows 10 and above. Note that it affects the whole application window._
 
 * `Application.setCursor(img[, x, y])`: sets the mouse cursor
 	* `img`: the specific `Image` to set, `nil` to reset
