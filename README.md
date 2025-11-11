@@ -4,23 +4,23 @@
 
 ![](docs/imgs/floppy.gif) **An itty bitty game engine.**
 
-* [About Bitty Engine](#about-bitty-engine)
-	* [Why Bitty Engine?](#why-bitty-engine)
-	* [Features](#features)
-	* [Technical specifications](#technical-specifications)
-* [Glance](#glance)
-	* [Code](#code)
-	* [Games](#games)
-* [Redistributing](#redistributing)
-* [Getting Bitty Engine](#getting-bitty-engine)
-* [Compiling from source](#compiling-from-source)
-	* [Startup project](#startup-project)
-	* [Windows](#windows)
-	* [MacOS](#macos)
-	* [Linux](#linux)
-	* [Other platforms](#other-platforms)
-* [Community and contributing](#community-and-contributing)
-* [Documentation](#documentation)
+- [About Bitty Engine](#about-bitty-engine)
+	- [Why Bitty Engine?](#why-bitty-engine)
+	- [Features](#features)
+	- [Technical specifications](#technical-specifications)
+- [Glance](#glance)
+	- [Code](#code)
+	- [Games](#games)
+- [Redistributing](#redistributing)
+- [Getting Bitty Engine](#getting-bitty-engine)
+- [Compiling from source](#compiling-from-source)
+	- [Startup project](#startup-project)
+	- [Windows](#windows)
+	- [MacOS](#macos)
+	- [Linux](#linux)
+	- [Other platforms](#other-platforms)
+- [Community and contributing](#community-and-contributing)
+- [Documentation](#documentation)
 
 ## About Bitty Engine
 
@@ -117,17 +117,15 @@ See more in [examples](examples).
 
 Bitty Engine helps you to make standalone binaries for Windows, MacOS, Linux, and HTML (WebAssembly). It is redistributable for both non-commercial and commercial use without extra fee, your project is totally yours.
 
-Everything is done with Bitty Engine (pro) by nothing more than a few mouse clicks.
+Everything is done with Bitty Engine by nothing more than a few mouse clicks.
 
 Put an image at "../icon.png" relative to executable to customize the icon dynamically. Put an image at "../splash.png" as well to customize the splash, the image could be transparent.
 
 ## Getting Bitty Engine
 
-The pro version is available on [Steam](https://store.steampowered.com/app/1386180/) and [Itch](https://tonywang.itch.io/bitty).
+The pre-built binary is available on [Steam](https://store.steampowered.com/app/1386180/) and [Itch](https://tonywang.itch.io/bitty).
 
 [![](docs/imgs/steam.png)](https://store.steampowered.com/app/1386180/) [![](docs/imgs/itch.png)](https://tonywang.itch.io/bitty)
-
-See [version comparison](versions.md).
 
 ## Compiling from source
 
