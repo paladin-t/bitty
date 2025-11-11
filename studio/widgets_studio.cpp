@@ -8,13 +8,13 @@
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
 
-#include "effects.h"
-#include "platform.h"
-#include "primitives.h"
-#include "renderer.h"
-#include "theme.h"
-#include "widgets_sketchbook.h"
-#include "window.h"
+#include "theme_studio.h"
+#include "widgets_studio.h"
+#include "../src/effects.h"
+#include "../src/platform.h"
+#include "../src/primitives.h"
+#include "../src/renderer.h"
+#include "../src/window.h"
 #include "../lib/chipmunk2d/include/chipmunk/chipmunk.h"
 #include "../lib/civetweb/include/civetweb.h"
 #if !defined BITTY_OS_HTML
@@ -30,17 +30,17 @@
 
 /*
 ** {===========================================================================
-** Sketchbook widgets
+** Studio widgets
 */
 
 namespace ImGui {
 
-namespace Sketchbook {
+namespace Studio {
 
 PreferencesPopupBox::PreferencesPopupBox(
-	class Primitives* primitives, class Theme* theme,
+	class Primitives* primitives, class ThemeStudio* theme,
 	const std::string &title,
-	WorkspaceSketchbook::SketchbookSettings &settings,
+	WorkspaceStudio::StudioSettings &settings,
 	bool editable,
 	const ConfirmHandler &confirm, const CancelHandler &cancel, const ApplyHandler &applyHandler,
 	const char* confirmTxt, const char* cancelTxt, const char* applyTxt
@@ -78,6 +78,24 @@ void PreferencesPopupBox::update(void) {
 	if (BeginPopupModal(_title, nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav)) {
 		if (BeginTabBar("@Pref")) {
 			if (_editable && BeginTabItem(_theme->tabPreferences_Editor(), nullptr, ImGuiTabItemFlags_NoTooltip, _theme->style()->tabTextColor)) {
+				PushID(_theme->windowPreferences_Theme());
+				{
+					TextUnformatted(_theme->windowPreferences_Theme());
+
+					AlignTextToFramePadding();
+
+					TextUnformatted(_theme->windowPreferences_Style());
+
+					SameLine();
+
+					const char* items[] = { "Dark", "Classic", "Light" };
+					SetNextItemWidth(GetContentRegionAvail().x);
+					Combo("", &_settingsShadow.themeStyle, items, BITTY_COUNTOF(items));
+				}
+				PopID();
+
+				Separator();
+
 				PushID(_theme->windowPreferences_Editor_Project());
 				{
 					TextUnformatted(_theme->windowPreferences_Editor_Project());
@@ -99,6 +117,8 @@ void PreferencesPopupBox::update(void) {
 					SameLine();
 
 					TextUnformatted(_theme->windowPreferences_NeedToReopen());
+
+					Checkbox(_theme->windowPreferences_Editor_LoadLastProjectAtStartup(), &_settingsShadow.projectLoadLastProjectAtStartup);
 
 					Checkbox(_theme->windowPreferences_Editor_AutoBackup(), &_settingsShadow.projectAutoBackup);
 				}
@@ -307,11 +327,8 @@ AboutPopupBox::AboutPopupBox(
 	_title(title),
 	_confirmHandler(confirm)
 {
-#if BITTY_TRIAL_ENABLED
-	_desc = "Trial v" BITTY_VERSION_STRING " - An itty bitty game engine";
-#else /* BITTY_TRIAL_ENABLED */
+	_name = BITTY_TITLE;
 	_desc = "v" BITTY_VERSION_STRING " - An itty bitty game engine";
-#endif /* BITTY_TRIAL_ENABLED */
 
 	_specs += "Built for " BITTY_OS ", ";
 	_specs += Platform::isLittleEndian() ? "little-endian" : "big-endian";
@@ -409,7 +426,12 @@ void AboutPopupBox::update(void) {
 		OpenPopup(_title);
 
 	if (BeginPopupModal(_title, nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav)) {
-		Url(BITTY_TITLE, "https://paladin-t.github.io/bitty/");
+		if (!_prefix.empty()) {
+			TextUnformatted(_prefix);
+			SameLine();
+		}
+
+		Url(_name.c_str(), "https://paladin-t.github.io/bitty/");
 		SameLine();
 		TextUnformatted(_desc);
 

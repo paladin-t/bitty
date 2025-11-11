@@ -269,7 +269,7 @@ Dependencies: CMake, GCC.
 <details>
 <summary>Details</summary>
 
-You can also setup your own build pipeline for other platforms. The "lib" and "src" directories are almost what you need. See the [README](src/README.md) under the "src" directory for code architecture.
+You can also setup your own build pipeline for other platforms. The "lib", "src", and "studio" directories are almost what you need. See the [README](src/README.md) under the "src" directory for code architecture.
 
 The "platform_*" files contain most platform dependent code, you'll probably make a specific port.
 

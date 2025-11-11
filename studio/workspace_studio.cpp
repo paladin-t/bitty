@@ -8,26 +8,30 @@
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
 
-#include "code.h"
-#include "editable.h"
-#include "encoding.h"
-#include "file_handle.h"
-#include "filesystem.h"
-#include "loader.h"
-#include "operations.h"
-#include "platform.h"
-#include "primitives.h"
-#include "project.h"
-#include "recorder.h"
-#include "renderer.h"
-#include "scripting_lua_api.h"
-#include "scripting_lua_api_promises.h"
-#include "theme_sketchbook.h"
-#include "widgets_sketchbook.h"
-#include "window.h"
-#include "workspace_sketchbook.h"
+#include "loader_studio.h"
+#include "theme_studio.h"
+#include "widgets_studio.h"
+#include "workspace_studio.h"
+#include "../src/code.h"
+#include "../src/editable.h"
+#include "../src/encoding.h"
+#include "../src/file_handle.h"
+#include "../src/filesystem.h"
+#include "../src/operations.h"
+#include "../src/platform.h"
+#include "../src/primitives.h"
+#include "../src/project.h"
+#include "../src/recorder.h"
+#include "../src/renderer.h"
+#include "../src/scripting_lua_api.h"
+#include "../src/scripting_lua_api_physics.h"
+#include "../src/scripting_lua_api_plugin.h"
+#include "../src/scripting_lua_api_promises.h"
+#include "scripting_lua_api_studio.h"
+#include "../src/window.h"
 #include "../lib/imgui/imgui_internal.h"
 #include "../lib/imgui_code_editor/imgui_code_editor.h"
+#include "../lib/jpath/jpath.hpp"
 #include <SDL.h>
 
 /*
@@ -35,21 +39,31 @@
 ** Macros and constants
 */
 
-#if BITTY_TRIAL_ENABLED
-#	pragma message("Trial enabled.")
-#endif /* BITTY_TRIAL_ENABLED */
+#ifndef WORKSPACE_RECENT_FILE_MAX_COUNT
+#	define WORKSPACE_RECENT_FILE_MAX_COUNT 10
+#endif /* WORKSPACE_RECENT_FILE_MAX_COUNT */
 
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
-** Sketchbook workspace
+** Studio workspace
 */
 
-WorkspaceSketchbook::SketchbookSettings::SketchbookSettings() {
+WorkspaceStudio::StudioSettings::RecentTouched::RecentTouched() {
 }
 
-WorkspaceSketchbook::SketchbookSettings &WorkspaceSketchbook::SketchbookSettings::operator = (const WorkspaceSketchbook::SketchbookSettings &other) {
+WorkspaceStudio::StudioSettings::RecentTouched::RecentTouched(Types type_, const std::string &path_) : type(type_), path(path_) {
+}
+
+bool WorkspaceStudio::StudioSettings::RecentTouched::operator == (const RecentTouched &other) const {
+	return type == other.type && path == other.path;
+}
+
+WorkspaceStudio::StudioSettings::StudioSettings() {
+}
+
+WorkspaceStudio::StudioSettings &WorkspaceStudio::StudioSettings::operator = (const StudioSettings &other) {
 	applicationWindowDisplayIndex = other.applicationWindowDisplayIndex;
 	applicationWindowFullscreen = other.applicationWindowFullscreen;
 	applicationWindowMaximized = other.applicationWindowMaximized;
@@ -90,10 +104,14 @@ WorkspaceSketchbook::SketchbookSettings &WorkspaceSketchbook::SketchbookSettings
 	inputOnscreenGamepadScale = other.inputOnscreenGamepadScale;
 	inputOnscreenGamepadPadding = other.inputOnscreenGamepadPadding;
 
+	themeStyle = other.themeStyle;
+
+	recentTouched = other.recentTouched;
+
 	return *this;
 }
 
-bool WorkspaceSketchbook::SketchbookSettings::operator != (const SketchbookSettings &other) const {
+bool WorkspaceStudio::StudioSettings::operator != (const StudioSettings &other) const {
 	for (int i = 0; i < INPUT_GAMEPAD_COUNT; ++i) {
 		if (inputGamepads[i] != other.inputGamepads[i])
 			return true;
@@ -157,16 +175,21 @@ bool WorkspaceSketchbook::SketchbookSettings::operator != (const SketchbookSetti
 		return true;
 	}
 
+	if (themeStyle != other.themeStyle)
+		return true;
+
+	// `recentTouched` is ignored here.
+
 	return false;
 }
 
-WorkspaceSketchbook::WorkspaceSketchbook() {
-	_theme = new ThemeSketchbook();
+WorkspaceStudio::WorkspaceStudio() {
+	_theme = new ThemeStudio();
 
-	_loader = new Loader();
+	_loader = new LoaderStudio();
 }
 
-WorkspaceSketchbook::~WorkspaceSketchbook() {
+WorkspaceStudio::~WorkspaceStudio() {
 	delete _loader;
 	_loader = nullptr;
 
@@ -174,29 +197,24 @@ WorkspaceSketchbook::~WorkspaceSketchbook() {
 	_theme = nullptr;
 }
 
-bool WorkspaceSketchbook::open(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, unsigned fps, const Text::Dictionary &options) {
+bool WorkspaceStudio::open(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, unsigned fps, const Text::Dictionary &options) {
 	if (_opened)
 		return false;
 	_opened = true;
 
-#if BITTY_TRIAL_ENABLED
-#	if defined BITTY_DEBUG
-	wnd->title(BITTY_TITLE " Trial v" BITTY_VERSION_STRING " [DEBUG]");
-#	else /* BITTY_DEBUG */
-	wnd->title(BITTY_TITLE " Trial v" BITTY_VERSION_STRING);
-#	endif /* BITTY_DEBUG */
-#else /* BITTY_TRIAL_ENABLED */
-#	if defined BITTY_DEBUG
+#if defined BITTY_DEBUG
 	wnd->title(BITTY_TITLE " v" BITTY_VERSION_STRING " [DEBUG]");
-#	else /* BITTY_DEBUG */
+#else /* BITTY_DEBUG */
 	wnd->title(BITTY_TITLE " v" BITTY_VERSION_STRING);
-#	endif /* BITTY_DEBUG */
-#endif /* BITTY_TRIAL_ENABLED */
+#endif /* BITTY_DEBUG */
 
 	beginSplash(wnd, rnd, project);
 
 	_theme->open(rnd);
 	_theme->load(rnd);
+
+	ImGuiStyle &style = ImGui::GetStyle();
+	memcpy(style.Colors, _theme->style()->builtin, sizeof(style.Colors));
 
 	do {
 		LockGuard<RecursiveMutex>::UniquePtr acquired;
@@ -224,9 +242,24 @@ bool WorkspaceSketchbook::open(class Window* wnd, class Renderer* rnd, const cla
 		return false;
 	}
 
-	consoleTextBox()->SetPalette(ImGui::CodeEditor::GetDarkPalette());
-
 	loadProject(wnd, rnd, project, exec, primitives, options);
+
+	_theme->styleIndex((Theme::Styles)_settings.themeStyle);
+
+	switch (_settings.themeStyle) {
+	case Theme::DARK:
+		consoleTextBox()->SetPalette(ImGui::CodeEditor::GetDarkPalette());
+
+		break;
+	case Theme::CLASSIC:
+		consoleTextBox()->SetPalette(ImGui::CodeEditor::GetRetroBluePalette());
+
+		break;
+	case Theme::LIGHT:
+		consoleTextBox()->SetPalette(ImGui::CodeEditor::GetLightPalette());
+
+		break;
+	}
 
 	endSplash(wnd, rnd, options);
 
@@ -235,17 +268,30 @@ bool WorkspaceSketchbook::open(class Window* wnd, class Renderer* rnd, const cla
 	const std::string ready = _theme->generic_Ready() + '\n';
 	print(ready.c_str());
 
+#if defined BITTY_OS_LINUX
+	const bool hasFileDialog = Platform::checkProgram("zenity") || Platform::checkProgram("kdialog") || Platform::checkProgram("matedialog") || Platform::checkProgram("qarma");
+	if (!hasFileDialog) {
+		const std::string msg_ = "Requires zenity/matedialog/qarma/kdialog to show file dialogs.\n(To open or save something.)";
+		messagePopupBox(
+			msg_,
+			nullptr,
+			nullptr,
+			nullptr
+		);
+	}
+#endif /* BITTY_OS_LINUX */
+
 	return true;
 }
 
-bool WorkspaceSketchbook::close(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec) {
+bool WorkspaceStudio::close(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec) {
 	if (!_opened)
 		return false;
 	_opened = false;
 
-	unloadProject(project, exec);
-
 	Operations::fileClean(rnd, this, project);
+
+	unloadProject(project, exec);
 
 	Workspace::close(wnd, rnd, project, exec);
 
@@ -264,23 +310,35 @@ bool WorkspaceSketchbook::close(class Window* wnd, class Renderer* rnd, const cl
 	return true;
 }
 
-const WorkspaceSketchbook::Settings* WorkspaceSketchbook::settings(void) const {
+const WorkspaceStudio::Settings* WorkspaceStudio::settings(void) const {
 	return &_settings;
 }
 
-WorkspaceSketchbook::Settings* WorkspaceSketchbook::settings(void) {
+WorkspaceStudio::Settings* WorkspaceStudio::settings(void) {
 	return &_settings;
 }
 
-class Theme* WorkspaceSketchbook::theme(void) const {
+class Theme* WorkspaceStudio::theme(void) const {
 	return _theme;
 }
 
-bool WorkspaceSketchbook::prefer2XScaleForBigDisplay(void) const {
+bool WorkspaceStudio::prefer2XScaleForBigDisplay(void) const {
 	return true;
 }
 
-bool WorkspaceSketchbook::load(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives) {
+void WorkspaceStudio::touchedFile(const char* path) {
+	addRecentTouched(StudioSettings::RecentTouched::FILE, path);
+}
+
+void WorkspaceStudio::touchedDirectory(const char* path) {
+	addRecentTouched(StudioSettings::RecentTouched::DIRECTORY, path);
+}
+
+void WorkspaceStudio::touchedExample(const char* path) {
+	addRecentTouched(StudioSettings::RecentTouched::EXAMPLE, path);
+}
+
+bool WorkspaceStudio::load(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives) {
 	const std::string pref = Path::writableDirectory();
 	const std::string fn = std::string(WORKSPACE_PREFERENCES_NAME) + std::string("." BITTY_JSON_EXT);
 	const std::string path = Path::combine(pref.c_str(), fn.c_str());
@@ -302,7 +360,7 @@ bool WorkspaceSketchbook::load(class Window* wnd, class Renderer* rnd, const cla
 	return true;
 }
 
-bool WorkspaceSketchbook::save(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives) {
+bool WorkspaceStudio::save(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives) {
 	rapidjson::Document doc;
 
 	if (!save(wnd, rnd, project, primitives, doc))
@@ -324,7 +382,7 @@ bool WorkspaceSketchbook::save(class Window* wnd, class Renderer* rnd, const cla
 	return true;
 }
 
-unsigned WorkspaceSketchbook::update(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, unsigned fps, bool alive, bool* indicated) {
+unsigned WorkspaceStudio::update(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, unsigned fps, bool alive, bool* indicated) {
 	// Prepare.
 	unsigned result = 0;
 
@@ -371,7 +429,7 @@ unsigned WorkspaceSketchbook::update(class Window* wnd, class Renderer* rnd, con
 	return result;
 }
 
-void WorkspaceSketchbook::require(Executable* exec) {
+void WorkspaceStudio::require(Executable* exec) {
 	const Executable::Languages lang = exec->language();
 	if (lang & Executable::LUA) {
 		// Common.
@@ -383,22 +441,40 @@ void WorkspaceSketchbook::require(Executable* exec) {
 		Lua::Invoke::open(exec);
 		Lua::Application::open(exec);
 
+		// Physics.
+		if (exec->primitives()) {
+			Lua::Engine::physics(exec);
+		}
+
 		// Promise.
 		Lua::Standard::promise(exec);
 		Lua::Libs::promise(exec);
+
+		// Studio.
+		if (exec->primitives()) {
+			Lua::Libs::studio(exec);
+			Lua::Engine::studio(exec);
+			Lua::Application::studio(exec);
+		}
+		if (exec->editing()) {
+			Lua::Application::plugin(exec);
+			Lua::Editor::plugin(exec);
+			Lua::Libs::studio(exec);
+			Lua::Studio::studio(exec);
+		}
 	}
 	if (lang & Executable::NATIVE) {
 		// Do nothing.
 	}
 }
 
-void WorkspaceSketchbook::focusGained(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
+void WorkspaceStudio::focusGained(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
 	Workspace::focusGained(wnd, rnd, project, exec, primitives);
 
 	exec->focusGained();
 }
 
-void WorkspaceSketchbook::focusLost(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
+void WorkspaceStudio::focusLost(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
 	Workspace::focusLost(wnd, rnd, project, exec, primitives);
 
 	exec->focusLost();
@@ -412,26 +488,26 @@ void WorkspaceSketchbook::focusLost(class Window* wnd, class Renderer* rnd, cons
 	showPaused(wnd, rnd, project, primitives);
 }
 
-void WorkspaceSketchbook::renderTargetsReset(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
+void WorkspaceStudio::renderTargetsReset(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
 	Workspace::renderTargetsReset(wnd, rnd, project, exec, primitives);
 
 	exec->renderTargetsReset();
 }
 
-void WorkspaceSketchbook::fileDropped(class Window* wnd, class Renderer* rnd, const char* const path) {
+void WorkspaceStudio::fileDropped(class Window* wnd, class Renderer* rnd, const char* const path) {
 	Workspace::fileDropped(wnd, rnd, path);
 
 	if (path)
 		_droppedFiles.push_back(path);
 }
 
-void WorkspaceSketchbook::dropBegan(class Window* wnd, class Renderer* rnd) {
+void WorkspaceStudio::dropBegan(class Window* wnd, class Renderer* rnd) {
 	Workspace::dropBegan(wnd, rnd);
 
 	_droppedFiles.clear();
 }
 
-void WorkspaceSketchbook::dropEndded(class Window* wnd, class Renderer* rnd, Executable* exec) {
+void WorkspaceStudio::dropEndded(class Window* wnd, class Renderer* rnd, Executable* exec) {
 	Workspace::dropEndded(wnd, rnd, exec);
 
 	exec->fileDropped(_droppedFiles);
@@ -439,12 +515,48 @@ void WorkspaceSketchbook::dropEndded(class Window* wnd, class Renderer* rnd, Exe
 	_droppedFiles.clear();
 }
 
-void WorkspaceSketchbook::loadProject(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, const Text::Dictionary &options) {
+bool WorkspaceStudio::load(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives, const rapidjson::Document &doc) {
+	if (!Workspace::load(wnd, rnd, project, primitives, doc))
+		return false;
+
+	Jpath::get(doc, _settings.themeStyle, "theme", "style");
+
+	_settings.recentTouched.clear();
+	for (int i = 0; i < WORKSPACE_RECENT_FILE_MAX_COUNT; ++i) {
+		unsigned type = 0;
+		std::string path;
+		if (!Jpath::get(doc, type, "file", "recent", i, "type") || !Jpath::get(doc, path, "file", "recent", i, "path"))
+			continue;
+
+		_settings.recentTouched.push_back(StudioSettings::RecentTouched((StudioSettings::RecentTouched::Types)type, path));
+	}
+
+	return true;
+}
+
+bool WorkspaceStudio::save(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives, rapidjson::Document &doc) {
+	if (!Workspace::save(wnd, rnd, project, primitives, doc))
+		return false;
+
+	Jpath::set(doc, doc, _settings.themeStyle, "theme", "style");
+
+	for (int i = 0; i < WORKSPACE_RECENT_FILE_MAX_COUNT && i < (int)_settings.recentTouched.size(); ++i) {
+		const unsigned type = (unsigned)_settings.recentTouched[i].type;
+		const std::string &path = _settings.recentTouched[i].path;
+		Jpath::set(doc, doc, type, "file", "recent", i, "type");
+		Jpath::set(doc, doc, path, "file", "recent", i, "path");
+	}
+
+	return true;
+}
+
+void WorkspaceStudio::loadProject(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, const Text::Dictionary &options) {
 	promise::Defer start;
 
 	Text::Dictionary::const_iterator pathOpt = options.find(WORKSPACE_OPTION_APPLICATION_DEFAULT_KEY); // The non-flag option indicates initial directory/file path.
 	if (pathOpt == options.end()) {
-		auto run = [] (WorkspaceSketchbook* self, Window* wnd, Renderer* rnd, const Project* project, Executable* exec, Primitives* primitives, const char* /* name */) -> void {
+#if false && defined BITTY_DEBUG
+		auto run = [] (WorkspaceStudio* self, Window* wnd, Renderer* rnd, const Project* project, Executable* exec, Primitives* primitives, const char* name) -> void {
 			do {
 				LockGuard<RecursiveMutex>::UniquePtr acquired;
 				Project* prj = project->acquire(acquired);
@@ -487,6 +599,8 @@ void WorkspaceSketchbook::loadProject(class Window* wnd, class Renderer* rnd, co
 				configAsset = nullptr;
 				prj = nullptr;
 			} while (false);
+
+			self->autorun(name);
 
 			self->canvasFull(true);
 
@@ -533,6 +647,42 @@ void WorkspaceSketchbook::loadProject(class Window* wnd, class Renderer* rnd, co
 			// Rejection.
 			start = promise::newPromise([] (promise::Defer df) -> void { df.reject(); });
 		}
+#else /* BITTY_DEBUG */
+		(void)wnd;
+		(void)primitives;
+
+		// Open the last project.
+		if (_settings.projectLoadLastProjectAtStartup) {
+			for (int i = 0; i < WORKSPACE_RECENT_FILE_MAX_COUNT && i < (int)_settings.recentTouched.size(); ++i) {
+				const StudioSettings::RecentTouched::Types type = _settings.recentTouched[i].type;
+				const std::string &path = _settings.recentTouched[i].path;
+				switch (type) {
+				case StudioSettings::RecentTouched::EXAMPLE:
+					if (Path::existsFile(path.c_str()))
+						start = Operations::fileOpenExample(rnd, this, project, exec, path.c_str());
+
+					break;
+				case StudioSettings::RecentTouched::FILE:
+					if (Path::existsFile(path.c_str()))
+						start = Operations::fileOpenFile(rnd, this, project, exec, path.c_str());
+
+					break;
+				case StudioSettings::RecentTouched::DIRECTORY:
+					if (Path::existsDirectory(path.c_str()))
+						start = Operations::fileOpenDirectory(rnd, this, project, exec, path.c_str());
+
+					break;
+				}
+
+				if (start)
+					break;
+			}
+		}
+
+		// Rejection.
+		if (!start)
+			start = promise::newPromise([] (promise::Defer df) -> void { df.reject(); });
+#endif /* BITTY_DEBUG */
 	} else {
 		// Open the initial directory or file.
 		std::string path = pathOpt->second;
@@ -551,7 +701,7 @@ void WorkspaceSketchbook::loadProject(class Window* wnd, class Renderer* rnd, co
 		);
 }
 
-void WorkspaceSketchbook::unloadProject(const class Project* project, Executable* exec) {
+void WorkspaceStudio::unloadProject(const class Project* project, Executable* exec) {
 	do {
 		LockGuard<decltype(consoleLock())> guard(consoleLock());
 
@@ -559,6 +709,8 @@ void WorkspaceSketchbook::unloadProject(const class Project* project, Executable
 	} while (false);
 
 	canvasFull(false);
+
+	autorun(nullptr);
 
 	exec->clearBreakpoints(nullptr);
 
@@ -571,25 +723,112 @@ void WorkspaceSketchbook::unloadProject(const class Project* project, Executable
 	prj->readonly(false);
 }
 
-void WorkspaceSketchbook::checkAliveness(class Window* wnd, class Renderer*, const class Project*, Executable*, class Primitives*) {
+void WorkspaceStudio::checkAliveness(class Window* wnd, class Renderer*, const class Project*, Executable*, class Primitives*) {
 	if (halting() || !canvasTexture()) {
-#if BITTY_TRIAL_ENABLED
-#	if defined BITTY_DEBUG
-		wnd->title(BITTY_TITLE " Trial v" BITTY_VERSION_STRING " [DEBUG]");
-#	else /* BITTY_DEBUG */
-		wnd->title(BITTY_TITLE " Trial v" BITTY_VERSION_STRING);
-#	endif /* BITTY_DEBUG */
-#else /* BITTY_TRIAL_ENABLED */
-#	if defined BITTY_DEBUG
+#if defined BITTY_DEBUG
 		wnd->title(BITTY_TITLE " v" BITTY_VERSION_STRING " [DEBUG]");
-#	else /* BITTY_DEBUG */
+#else /* BITTY_DEBUG */
 		wnd->title(BITTY_TITLE " v" BITTY_VERSION_STRING);
-#	endif /* BITTY_DEBUG */
-#endif /* BITTY_TRIAL_ENABLED */
+#endif /* BITTY_DEBUG */
 	}
 }
 
-void WorkspaceSketchbook::shortcuts(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
+void WorkspaceStudio::addRecentTouched(StudioSettings::RecentTouched::Types type, const char* path) {
+	if (!path)
+		return;
+
+	StudioSettings::RecentTouched record;
+	switch (type) {
+	case StudioSettings::RecentTouched::FILE:
+		record.type = type;
+		record.path = path;
+
+		break;
+	case StudioSettings::RecentTouched::DIRECTORY:
+		record.type = type;
+		record.path = path;
+
+		break;
+	case StudioSettings::RecentTouched::EXAMPLE:
+		record.type = type;
+		record.path = path;
+
+		break;
+	default:
+		return;
+	}
+	StudioSettings::RecentTouched::Array::iterator it = std::remove(_settings.recentTouched.begin(), _settings.recentTouched.end(), record);
+	if (it != _settings.recentTouched.end())
+		_settings.recentTouched.erase(it, _settings.recentTouched.end());
+	_settings.recentTouched.insert(_settings.recentTouched.begin(), record);
+	if (_settings.recentTouched.size() > WORKSPACE_RECENT_FILE_MAX_COUNT)
+		_settings.recentTouched.pop_back();
+}
+
+void WorkspaceStudio::openRecentTouched(class Window*, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, StudioSettings::RecentTouched::Types type, int idx, const char* path) {
+	bool exists = true;
+	switch (type) {
+	case StudioSettings::RecentTouched::EXAMPLE:
+		exists = Path::existsFile(path);
+		if (exists) {
+			Operations::projectStop(rnd, this, project, exec, primitives);
+
+			Operations::fileOpenExample(rnd, this, project, exec, path);
+		}
+
+		break;
+	case StudioSettings::RecentTouched::FILE:
+		exists = Path::existsFile(path);
+		if (exists) {
+			Operations::projectStop(rnd, this, project, exec, primitives);
+
+			Operations::fileOpenFile(rnd, this, project, exec, path);
+		}
+
+		break;
+	case StudioSettings::RecentTouched::DIRECTORY:
+		exists = Path::existsDirectory(path);
+		if (exists) {
+			Operations::projectStop(rnd, this, project, exec, primitives);
+
+			Operations::fileOpenDirectory(rnd, this, project, exec, path);
+		}
+
+		break;
+	default:
+		exists = false;
+
+		break;
+	}
+
+	if (!exists) {
+		const std::string &msg = _theme->dialogPrompt_PathDoesntExistRemoveThisRecord();
+		ImGui::MessagePopupBox::ConfirmHandler confirm = ImGui::MessagePopupBox::ConfirmHandler(
+			[&, idx] (void) -> void {
+				_settings.recentTouched.erase(_settings.recentTouched.begin() + idx);
+
+				popupBox(nullptr);
+			},
+			nullptr
+		);
+		ImGui::MessagePopupBox::DenyHandler deny = ImGui::MessagePopupBox::DenyHandler(
+			[&] (void) -> void {
+				popupBox(nullptr);
+			},
+			nullptr
+		);
+		const char* confirmText = _theme->generic_Yes().c_str();
+		const char* denyText = _theme->generic_No().c_str();
+
+		messagePopupBox(
+			msg,
+			confirm, deny, nullptr,
+			confirmText, denyText, nullptr
+		);
+	}
+}
+
+void WorkspaceStudio::shortcuts(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
 	// Prepare.
 	ImGuiIO &io = ImGui::GetIO();
 
@@ -686,9 +925,7 @@ void WorkspaceSketchbook::shortcuts(class Window* wnd, class Renderer* rnd, cons
 		Operations::projectStop(rnd, this, project, exec, primitives);
 
 		Operations::fileOpenDirectory(rnd, this, project, exec);
-	}
-#if !BITTY_TRIAL_ENABLED
-	if (s && modifier) {
+	} else if (s && modifier) {
 		Operations::fileSaveAsset(rnd, this, project, assetsEditingIndex());
 	} else if (s && modifier && io.KeyShift) {
 		do {
@@ -703,9 +940,6 @@ void WorkspaceSketchbook::shortcuts(class Window* wnd, class Renderer* rnd, cons
 				Operations::fileSaveDirectory(rnd, this, project, false);
 		} while (false);
 	}
-#else /* BITTY_TRIAL_ENABLED */
-	(void)s;
-#endif /* BITTY_TRIAL_ENABLED */
 
 	// Edit operations.
 	if (z && modifier) {
@@ -939,7 +1173,7 @@ void WorkspaceSketchbook::shortcuts(class Window* wnd, class Renderer* rnd, cons
 		toggleManual(nullptr);
 }
 
-void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
+void WorkspaceStudio::menu(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
 	if (canvasFull())
 		return;
 
@@ -997,6 +1231,29 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 					ImGui::EndMenu();
 				}
 			}
+			if (ImGui::BeginMenu(_theme->menuFile_OpenRecent(), !_settings.recentTouched.empty())) {
+				for (int i = 0; i < WORKSPACE_RECENT_FILE_MAX_COUNT && i < (int)_settings.recentTouched.size(); ++i) {
+					const unsigned type = (unsigned)_settings.recentTouched[i].type;
+					const std::string &path = _settings.recentTouched[i].path;
+					std::string name = path;
+					if (type == (unsigned)StudioSettings::RecentTouched::EXAMPLE) {
+						FileInfo::Ptr fileInfo = FileInfo::make(path.c_str());
+						name = fileInfo->fileName() + "." + fileInfo->extName();
+					} else if (name.length() > BITTY_MAX_PATH) {
+						name = name.substr(0, BITTY_MAX_PATH);
+					}
+					if (ImGui::MenuItem(name)) {
+						openRecentTouched(wnd, rnd, project, exec, primitives, (StudioSettings::RecentTouched::Types)type, i, path.c_str());
+
+						break;
+					}
+				}
+				ImGui::Separator();
+				if (ImGui::MenuItem(_theme->menuFile_Clear())) {
+					_settings.recentTouched.clear();
+				}
+				ImGui::EndMenu();
+			}
 			ImGui::Separator();
 			if (ImGui::MenuItem(_theme->menuFile_Close())) {
 				Operations::projectStop(rnd, this, project, exec, primitives);
@@ -1004,7 +1261,6 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 				Operations::fileClose(rnd, this, project, exec);
 			}
 			ImGui::Separator();
-#if !BITTY_TRIAL_ENABLED
 			if (ImGui::MenuItem(_theme->menuFile_SaveAsset(), WORKSPACE_MODIFIER_KEY_NAME "+S", nullptr, dirty)) {
 				Operations::fileSaveAsset(rnd, this, project, assetsEditingIndex());
 			}
@@ -1030,7 +1286,6 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 				}
 			}
 			ImGui::Separator();
-#endif /* BITTY_TRIAL_ENABLED */
 			if (ImGui::MenuItem(_theme->menuFile_Preferences())) {
 				showPreferences(wnd, rnd, project, primitives);
 			}
@@ -1253,14 +1508,12 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 			if (ImGui::MenuItem(_theme->menuProject_AddFile(), WORKSPACE_MODIFIER_KEY_NAME "+Shift+A")) {
 				Operations::projectAddFile(rnd, this, project, assetsSelectedIndex());
 			}
-#if !BITTY_TRIAL_ENABLED
 			if (ImGui::MenuItem(_theme->menuProject_Import())) {
 				Operations::projectImport(rnd, this, project);
 			}
 			if (ImGui::MenuItem(_theme->menuProject_Export())) {
 				Operations::projectExport(rnd, this, project);
 			}
-#endif /* BITTY_TRIAL_ENABLED */
 			ImGui::Separator();
 			if (ImGui::MenuItem(_theme->menuProject_Reload(), WORKSPACE_MODIFIER_KEY_NAME "+Shift+R", nullptr, prjPersisted)) {
 				Operations::projectStop(rnd, this, project, exec, primitives);
@@ -1415,13 +1668,40 @@ void WorkspaceSketchbook::menu(class Window* wnd, class Renderer* rnd, const cla
 	}
 }
 
-void WorkspaceSketchbook::showPreferences(class Window* wnd, class Renderer*, const class Project* project, class Primitives* primitives) {
-	auto set = [wnd, this, project, primitives] (const WorkspaceSketchbook::SketchbookSettings &sets) -> void {
+void WorkspaceStudio::showPreferences(class Window* wnd, class Renderer*, const class Project* project, class Primitives* primitives) {
+	auto set = [wnd, this, project, primitives] (const WorkspaceStudio::StudioSettings &sets) -> void {
 		do {
 			LockGuard<RecursiveMutex>::UniquePtr acquired;
 			Project* prj = project->acquire(acquired);
 			if (!prj)
 				break;
+
+			if (sets.themeStyle != _settings.themeStyle) {
+				_theme->styleIndex((Theme::Styles)sets.themeStyle);
+
+				switch (sets.themeStyle) {
+				case Theme::DARK:
+					consoleTextBox()->SetPalette(ImGui::CodeEditor::GetDarkPalette());
+
+					break;
+				case Theme::CLASSIC:
+					consoleTextBox()->SetPalette(ImGui::CodeEditor::GetRetroBluePalette());
+
+					break;
+				case Theme::LIGHT:
+					consoleTextBox()->SetPalette(ImGui::CodeEditor::GetLightPalette());
+
+					break;
+				}
+
+				prj->foreach(
+					[&] (Asset* &asset, Asset::List::Index) -> void {
+						Editable* editor =  asset->editor();
+						if (editor)
+							editor->post(Editable::SET_THEME_STYLE, (Variant::Int)_theme->styleIndex());
+					}
+				);
+			}
 
 			if (sets.projectPreference != prj->preference()) {
 				prj->preference(sets.projectPreference);
@@ -1478,29 +1758,29 @@ void WorkspaceSketchbook::showPreferences(class Window* wnd, class Renderer*, co
 		_settings = sets;
 	};
 
-	ImGui::Sketchbook::PreferencesPopupBox::ConfirmHandler confirm(
-		[this, set] (const WorkspaceSketchbook::SketchbookSettings &sets) -> void {
+	ImGui::Studio::PreferencesPopupBox::ConfirmHandler confirm(
+		[this, set] (const WorkspaceStudio::StudioSettings &sets) -> void {
 			set(sets);
 
 			popupBox(nullptr);
 		},
 		nullptr
 	);
-	ImGui::Sketchbook::PreferencesPopupBox::CancelHandler cancel(
+	ImGui::Studio::PreferencesPopupBox::CancelHandler cancel(
 		[this] (void) -> void {
 			popupBox(nullptr);
 		},
 		nullptr
 	);
-	ImGui::Sketchbook::PreferencesPopupBox::ApplyHandler apply(
-		[set] (const WorkspaceSketchbook::SketchbookSettings &sets) -> void {
+	ImGui::Studio::PreferencesPopupBox::ApplyHandler apply(
+		[set] (const WorkspaceStudio::StudioSettings &sets) -> void {
 			set(sets);
 		},
 		nullptr
 	);
 	popupBox(
 		ImGui::PopupBox::Ptr(
-			new ImGui::Sketchbook::PreferencesPopupBox(
+			new ImGui::Studio::PreferencesPopupBox(
 				primitives,
 				_theme,
 				_theme->windowPreferences(),
@@ -1513,33 +1793,33 @@ void WorkspaceSketchbook::showPreferences(class Window* wnd, class Renderer*, co
 	);
 }
 
-void WorkspaceSketchbook::showAbout(class Window* wnd, class Renderer* rnd, class Primitives* primitives) {
+void WorkspaceStudio::showAbout(class Window* wnd, class Renderer* rnd, class Primitives* primitives) {
 	popupBox(
 		ImGui::PopupBox::Ptr(
-			new ImGui::Sketchbook::AboutPopupBox(
+			new ImGui::Studio::AboutPopupBox(
 				wnd, rnd, primitives,
 				_theme->windowAbout(),
-				ImGui::Sketchbook::AboutPopupBox::ConfirmHandler([&] (void) -> void { popupBox(nullptr); }, nullptr),
+				ImGui::Studio::AboutPopupBox::ConfirmHandler([&] (void) -> void { popupBox(nullptr); }, nullptr),
 				_theme->generic_Ok().c_str()
 			)
 		)
 	);
 }
 
-void WorkspaceSketchbook::showPaused(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives) {
-	ImGui::Sketchbook::PausedPopupBox::ResumeHandler resume(
+void WorkspaceStudio::showPaused(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives) {
+	ImGui::Studio::PausedPopupBox::ResumeHandler resume(
 		[this] (void) -> void {
 			popupBox(nullptr);
 		},
 		nullptr
 	);
-	ImGui::Sketchbook::PausedPopupBox::OptionsHandler options(
+	ImGui::Studio::PausedPopupBox::OptionsHandler options(
 		[wnd, rnd, this, project, primitives] (void) -> void {
 			showPreferences(wnd, rnd, project, primitives);
 		},
 		nullptr
 	);
-	ImGui::Sketchbook::PausedPopupBox::AboutHandler about(
+	ImGui::Studio::PausedPopupBox::AboutHandler about(
 		[wnd, rnd, this, primitives] (void) -> void {
 			showAbout(wnd, rnd, primitives);
 		},
@@ -1547,7 +1827,7 @@ void WorkspaceSketchbook::showPaused(class Window* wnd, class Renderer* rnd, con
 	);
 	popupBox(
 		ImGui::PopupBox::Ptr(
-			new ImGui::Sketchbook::PausedPopupBox(
+			new ImGui::Studio::PausedPopupBox(
 				rnd,
 				resume, options, about,
 				_theme->windowPaused_Resume(), _theme->windowPaused_Options(), _theme->windowAbout()

@@ -142,6 +142,14 @@ list(
   "../lib/jo_gif/jo_gif.cpp"
 )
 list(
+  APPEND BITTY_LIB_KISSFFT
+  "../lib/kissfft/kfc.c"
+  "../lib/kissfft/kiss_fft.c"
+  "../lib/kissfft/kiss_fftnd.c"
+  "../lib/kissfft/kiss_fftndr.c"
+  "../lib/kissfft/kiss_fftr.c"
+)
+list(
   APPEND BITTY_LIB_LUA
   "../lib/lua/src/lapi.c"
   "../lib/lua/src/lauxlib.c"
@@ -233,6 +241,8 @@ list(
   "../src/luaxx.cpp"
   "../src/scripting_lua.cpp"
   "../src/scripting_lua_api.cpp"
+  "../src/scripting_lua_api_physics.cpp"
+  "../src/scripting_lua_api_plugin.cpp"
   "../src/scripting_lua_api_promises.cpp"
   "../src/scripting_lua_dbg.cpp"
   "../src/plugin.cpp"
@@ -302,18 +312,33 @@ list(
 )
 list(
   APPEND BITTY_SRC_WORKSPACE
+  "../src/command.cpp"
+  "../src/commands_image.cpp"
+  "../src/commands_map.cpp"
+  "../src/commands_paintable.cpp"
+  "../src/commands_palette.cpp"
+  "../src/commands_sprite.cpp"
   "../src/editing.cpp"
   "../src/editor.cpp"
+  "../src/editor_bytes.cpp"
   "../src/editor_code.cpp"
+  "../src/editor_font.cpp"
+  "../src/editor_image.cpp"
   "../src/editor_json.cpp"
-  "../src/editor_polyfill.cpp"
+  "../src/editor_map.cpp"
+  "../src/editor_palette.cpp"
+  "../src/editor_plugin.cpp"
+  "../src/editor_sound.cpp"
+  "../src/editor_sprite.cpp"
   "../src/editor_text.cpp"
   "../src/resource/inline_resource.cpp"
   "../src/editable.cpp"
+  "../src/analyser.cpp"
   "../src/document.cpp"
   "../src/entry.cpp"
   "../src/generic.cpp"
   "../src/recorder.cpp"
+  "../src/shapes.cpp"
   "../src/asset.cpp"
   "../src/loader.cpp"
   "../src/operations.cpp"
@@ -323,10 +348,12 @@ list(
   "../src/workspace.cpp"
 )
 list(
-  APPEND BITTY_SRC_SKETCHBOOK
-  "../src/theme_sketchbook.cpp"
-  "../src/widgets_sketchbook.cpp"
-  "../src/workspace_sketchbook.cpp"
+  APPEND BITTY_SRC_STUDIO
+  "../studio/loader_studio.cpp"
+  "../studio/scripting_lua_api_studio.cpp"
+  "../studio/theme_studio.cpp"
+  "../studio/widgets_studio.cpp"
+  "../studio/workspace_studio.cpp"
 )
 add_executable(
   bitty
@@ -338,6 +365,7 @@ add_executable(
   ${BITTY_LIB_IMGUI_CODE_EDITOR}
   ${BITTY_LIB_IMGUI_SDL}
   ${BITTY_LIB_JO_GIF}
+  ${BITTY_LIB_KISSFFT}
   ${BITTY_LIB_LUA}
   ${BITTY_LIB_LZ4}
   ${BITTY_LIB_MD4C}
@@ -352,8 +380,8 @@ add_executable(
   ${BITTY_SRC_RESOURCES}
   ${BITTY_SRC_SHARED}
   ${BITTY_SRC_WORKSPACE}
-  ${BITTY_SRC_SKETCHBOOK}
-  "../src/main.cpp"
+  ${BITTY_SRC_STUDIO}
+  "../studio/main.cpp"
 )
 list(
   APPEND BITTY_INC
@@ -361,6 +389,7 @@ list(
   "../lib/civetweb/include"
   "../lib/civetweb/src"
   "../lib/imgui"
+  "../lib/kissfft"
   "../lib/libuv/include"
   "../lib/sdl/include"
   "../lib/sdl_mixer/include"
@@ -372,6 +401,7 @@ target_include_directories(bitty PRIVATE ${BITTY_INC})
 list(
   APPEND BITTY_DEF
   BITTY_TRIAL_ENABLED=0
+  NO_SSL
 )
 target_compile_definitions(bitty PRIVATE ${BITTY_DEF})
 
@@ -379,7 +409,7 @@ target_compile_definitions(bitty PRIVATE ${BITTY_DEF})
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNDEBUG")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-format-security -Wno-unused-result")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-format-security -Wno-unused-result -Wno-stringop-overflow")
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
 # Linkage.

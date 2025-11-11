@@ -15,6 +15,7 @@ luaxx                      __ Lua     __ Executable                       _|
 scripting_lua              _|          |                                   |
 scripting_lua_api          _|          |                                   |
 scripting_lua_api_physics  _|          |                                   |
+scripting_lua_api_plugin   _|          |                                   |
 scripting_lua_api_promises _|          |                                   |
 scripting_lua_dbg          _|          |                                   |
 plugin                     ____________|                                   |
@@ -77,7 +78,13 @@ promise                    ________________________________|               |
 text                       ________________________________|               |
 web                        ________________________________|               |
                                                                            |
-editing                    __________________ Editors     __ Workspace    _|
+command                    __ Commands     __ Editors     __ Workspace    _|
+commands_image             _|               |              |               |
+commands_map               _|               |              |               |
+commands_paintable         _|               |              |               |
+commands_palette           _|               |              |               |
+commands_sprite            _|               |              |               |
+editing                    _________________|              |               |
 editor                     _________________|              |               |
 editor_bytes               _________________|              |               |
 editor_code                _________________|              |               |
@@ -99,10 +106,12 @@ resource/inline_slice      _|                              |               |
 resource/inline_sound      _|                              |               |
 resource/inline_toast      _|                              |               |
 editable                   __ Interfaces                  _|               |
-document                   __ Shared                      _|               |
+analyser                   __ Shared                      _|               |
+document                   _|                              |               |
 entry                      _|                              |               |
 generic                    _|                              |               |
 recorder                   _|                              |               |
+shapes                     _|                              |               |
 asset                      ________________________________|               |
 loader                     ________________________________|               |
 operations                 ________________________________|               |

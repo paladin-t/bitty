@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <!-- Workspace. -->
+
+  <Type Name="Asset">
+    <DisplayString>[Asset]: {_entry}</DisplayString>
+    <Expand>
+      <Item Name="[entry]">_entry</Item>
+      <Item Name="[object]">_object</Item>
+      <Item Name="[editing]">_editing</Item>
+      <Item Name="[texture]">_texture</Item>
+      <Item Name="[painting]">_painting</Item>
+      <Item Name="[editor]">_editor</Item>
+    </Expand>
+  </Type>
+  <Type Name="Project">
+    <DisplayString>[Project]: {_title}, {_path}</DisplayString>
+    <Expand>
+      <Item Name="[title]">_title</Item>
+      <Item Name="[path]">_path</Item>
+      <Item Name="[assets]">_assets</Item>
+    </Expand>
+  </Type>
+</AutoVisualizer>

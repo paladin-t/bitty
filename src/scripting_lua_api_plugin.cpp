@@ -1,0 +1,206 @@
+/*
+** Bitty
+**
+** An itty bitty game engine.
+**
+** Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
+**
+** For the latest info, see https://github.com/paladin-t/bitty/
+*/
+
+#include "bitty.h"
+#include "bytes.h"
+#include "executable.h"
+#include "filesystem.h"
+#include "project.h"
+#include "scripting_lua_api_plugin.h"
+
+/*
+** {===========================================================================
+** Utilities
+*/
+
+namespace Lua { // Library.
+
+/**< Bytes. */
+
+LUA_CHECK_OBJ(Bytes)
+LUA_READ_OBJ(Bytes)
+LUA_WRITE_OBJ(Bytes)
+LUA_WRITE_OBJ_CONST(Bytes)
+
+}
+
+namespace Lua { // Application.
+
+/**< Project. */
+
+typedef std::shared_ptr<const Project> ProjectPtr;
+LUA_CHECK_ALIAS(ProjectPtr, Project)
+LUA_READ_ALIAS(ProjectPtr, Project)
+LUA_WRITE_ALIAS(ProjectPtr, Project)
+LUA_WRITE_ALIAS_CONST(ProjectPtr, Project)
+
+}
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
+** Application
+*/
+
+namespace Lua {
+
+namespace Application {
+
+/**< Project. */
+
+static int Project_write(lua_State* L) {
+#if BITTY_TRIAL_ENABLED
+	if (isPlugin(L)) {
+		error(L, "The \"project:write(...)\" method is not available for trial.");
+
+		return 0;
+	}
+#endif /* BITTY_TRIAL_ENABLED */
+
+	// Get arguments.
+	const int n = getTop(L);
+	ProjectPtr* obj = nullptr;
+	std::string name;
+	Bytes::Ptr* bytes = nullptr;
+	bool overwrite = true;
+	if (n >= 4)
+		read<>(L, obj, name, bytes, overwrite);
+	else
+		read<>(L, obj, name, bytes);
+
+	// Prepare.
+	if (!obj || !bytes)
+		return write(L, false);
+
+	const Project* project = obj->get();
+	if (!project)
+		return write(L, false);
+
+	LockGuard<RecursiveMutex>::UniquePtr acquired;
+	Project* prj = project->acquire(acquired);
+	if (!prj)
+		return write(L, false);
+
+	if (prj->iterating()) {
+		error(L, "Cannot write to project while iterating.");
+
+		return write(L, false);
+	}
+
+	Asset* asset = prj->get(name.c_str());
+	if (asset && !overwrite)
+		return write(L, false);
+
+	// Write.
+	std::string ext;
+	Path::split(name, nullptr, &ext, nullptr);
+	const bool add = !asset;
+	if (add) {
+		asset = prj->factory().create(prj);
+		const unsigned type = Asset::typeOf(ext, true);
+		asset->link(type, bytes->get(), name.c_str(), nullptr);
+
+		asset->dirty(true);
+
+		prj->add(asset);
+		prj->dirty(true);
+	} else {
+		Asset::States* states = asset->states();
+		states->deactivate();
+		states->deselect();
+
+		asset->finish((Asset::Usages)(Asset::RUNNING | Asset::EDITING), false);
+		asset->unload();
+		prj->cleanup((Asset::Usages)(Asset::RUNNING | Asset::EDITING));
+
+		const unsigned type = Asset::typeOf(ext, true);
+		asset->link(type, bytes->get(), name.c_str(), nullptr);
+
+		asset->dirty(true);
+
+		prj->dirty(true);
+	}
+
+	// Process the asset.
+	asset->prepare(Asset::EDITING, false);
+
+	Asset::States* states = asset->states();
+	states->activate(Asset::States::EDITABLE);
+	states->focus();
+
+	prj->bringToFront(asset);
+
+	// Finish.
+	return write(L, true);
+}
+
+static void open_Project(lua_State* L) {
+	newMeta(L, "Project");
+	{
+		setTable(L, "write", Project_write);
+	}
+	pop(L);
+}
+
+/**< Categories. */
+
+void plugin(class Executable* exec) {
+	// Prepare.
+	lua_State* L = (lua_State*)exec->pointer();
+
+	// Project.
+	open_Project(L);
+}
+
+}
+
+}
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
+** Editor
+*/
+
+namespace Lua {
+
+namespace Editor {
+
+/**< Editor. */
+
+static void open_Editor(lua_State* L) {
+	def( // Undocumented.
+		L, "Editor",
+		LUA_LIB(
+			array<luaL_Reg>()
+		),
+		array<luaL_Reg>(),
+		array<luaL_Reg>(),
+		nullptr, nullptr
+	);
+}
+
+/**< Categories. */
+
+void plugin(class Executable* exec) {
+	// Prepare.
+	lua_State* L = (lua_State*)exec->pointer();
+
+	// Editor.
+	open_Editor(L);
+}
+
+}
+
+}
+
+/* ===========================================================================} */

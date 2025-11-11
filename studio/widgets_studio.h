@@ -8,40 +8,40 @@
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
 
-#ifndef __WIDGETS_SKETCHBOOK_H__
-#define __WIDGETS_SKETCHBOOK_H__
+#ifndef __WIDGETS_STUDIO_H__
+#define __WIDGETS_STUDIO_H__
 
-#include "workspace_sketchbook.h"
+#include "workspace_studio.h"
 
 /*
 ** {===========================================================================
-** Sketchbook widgets
+** Studio widgets
 **
-** @note Specialized widgets.
+** @note Specialized widgets for Pro version.
 */
 
 namespace ImGui {
 
-namespace Sketchbook {
+namespace Studio {
 
 class PreferencesPopupBox : public PopupBox {
 public:
-	struct ConfirmHandler : public Handler<ConfirmHandler, void, const WorkspaceSketchbook::SketchbookSettings &> {
+	struct ConfirmHandler : public Handler<ConfirmHandler, void, const WorkspaceStudio::StudioSettings &> {
 		using Handler::Handler;
 	};
 	struct CancelHandler : public Handler<CancelHandler, void> {
 		using Handler::Handler;
 	};
-	struct ApplyHandler : public Handler<ApplyHandler, void, const WorkspaceSketchbook::SketchbookSettings &> {
+	struct ApplyHandler : public Handler<ApplyHandler, void, const WorkspaceStudio::StudioSettings &> {
 		using Handler::Handler;
 	};
 
 private:
 	class Primitives* _primitives = nullptr;
-	class Theme* _theme = nullptr;
+	class ThemeStudio* _theme = nullptr;
 	std::string _title;
-	WorkspaceSketchbook::SketchbookSettings &_settings;
-	WorkspaceSketchbook::SketchbookSettings _settingsShadow;
+	WorkspaceStudio::StudioSettings &_settings;
+	WorkspaceStudio::StudioSettings _settingsShadow;
 	int _activeGamepadIndex = -1;
 	int _activeButtonIndex = -1;
 	bool _editable = true;
@@ -57,9 +57,9 @@ private:
 
 public:
 	PreferencesPopupBox(
-		class Primitives* primitives, class Theme* theme,
+		class Primitives* primitives, class ThemeStudio* theme,
 		const std::string &title,
-		WorkspaceSketchbook::SketchbookSettings &settings,
+		WorkspaceStudio::StudioSettings &settings,
 		bool editable,
 		const ConfirmHandler &confirm, const CancelHandler &cancel, const ApplyHandler &applyHandler,
 		const char* confirmTxt /* nullable */, const char* cancelTxt /* nullable */, const char* applyTxt /* nullable */
@@ -75,9 +75,11 @@ public:
 		using Handler::Handler;
 	};
 
-private:
+protected:
 	class Primitives* _primitives = nullptr;
 	std::string _title;
+	std::string _prefix;
+	std::string _name;
 	std::string _desc;
 	std::string _specs;
 
@@ -140,4 +142,4 @@ public:
 
 /* ===========================================================================} */
 
-#endif /* __WIDGETS_SKETCHBOOK_H__ */
+#endif /* __WIDGETS_STUDIO_H__ */

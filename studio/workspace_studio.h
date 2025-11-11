@@ -8,43 +8,68 @@
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
 
-#ifndef __WORKSPACE_SKETCHBOOK_H__
-#define __WORKSPACE_SKETCHBOOK_H__
+#ifndef __WORKSPACE_STUDIO_H__
+#define __WORKSPACE_STUDIO_H__
 
-#include "workspace.h"
+#include "../src/workspace.h"
 
 /*
 ** {===========================================================================
-** Sketchbook workspace
+** Studio workspace
 **
-** @note Specialized workspace.
+** @note Specialized workspace for Pro version.
 */
 
-class WorkspaceSketchbook : public Workspace {
+class WorkspaceStudio : public Workspace {
 public:
-	struct SketchbookSettings : public Settings {
-		SketchbookSettings();
-		SketchbookSettings(const SketchbookSettings &other) = delete;
+	struct StudioSettings : public Settings {
+		struct RecentTouched {
+			enum Types {
+				EXAMPLE,
+				FILE,
+				DIRECTORY
+			};
 
-		SketchbookSettings &operator = (const SketchbookSettings &other);
+			typedef std::vector<RecentTouched> Array;
 
-		bool operator != (const SketchbookSettings &other) const;
+			Types type = EXAMPLE;
+			std::string path;
+
+			RecentTouched();
+			RecentTouched(Types type, const std::string &path);
+
+			bool operator == (const RecentTouched &other) const;
+		};
+
+		int themeStyle = 0;
+
+		RecentTouched::Array recentTouched;
+
+		StudioSettings();
+		StudioSettings(const StudioSettings &other) = delete;
+
+		StudioSettings &operator = (const StudioSettings &other);
+
+		bool operator != (const StudioSettings &other) const;
 	};
+
+private:
+	BITTY_PROPERTY_READONLY_PTR(const char, autorun)
 
 private:
 	bool _opened = false;
 
-	SketchbookSettings _settings;
+	StudioSettings _settings;
 
-	class ThemeSketchbook* _theme = nullptr;
+	class ThemeStudio* _theme = nullptr;
 
 	class Loader* _loader = nullptr;
 
 	Text::Array _droppedFiles;
 
 public:
-	WorkspaceSketchbook();
-	virtual ~WorkspaceSketchbook() override;
+	WorkspaceStudio();
+	virtual ~WorkspaceStudio() override;
 
 	virtual bool open(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, unsigned fps, const Text::Dictionary &options) override;
 	virtual bool close(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec) override;
@@ -54,6 +79,10 @@ public:
 	virtual class Theme* theme(void) const override;
 
 	virtual bool prefer2XScaleForBigDisplay(void) const override;
+
+	virtual void touchedFile(const char* path) override;
+	virtual void touchedDirectory(const char* path) override;
+	virtual void touchedExample(const char* path) override;
 
 	virtual bool load(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives) override;
 	virtual bool save(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives) override;
@@ -72,14 +101,17 @@ public:
 	virtual void dropEndded(class Window* wnd, class Renderer* rnd, Executable* exec) override;
 
 protected:
-	using Workspace::load;
-	using Workspace::save;
+	virtual bool load(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives, const rapidjson::Document &doc) override;
+	virtual bool save(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives, rapidjson::Document &doc) override;
 
 	virtual void loadProject(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, const Text::Dictionary &options);
 	virtual void unloadProject(const class Project* project, Executable* exec) override;
 
 private:
 	void checkAliveness(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
+
+	void addRecentTouched(StudioSettings::RecentTouched::Types type, const char* path);
+	void openRecentTouched(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, StudioSettings::RecentTouched::Types type, int idx, const char* path);
 
 	void shortcuts(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 	void menu(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
@@ -91,4 +123,4 @@ private:
 
 /* ===========================================================================} */
 
-#endif /* __WORKSPACE_SKETCHBOOK_H__ */
+#endif /* __WORKSPACE_STUDIO_H__ */

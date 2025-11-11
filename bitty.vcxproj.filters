@@ -286,12 +286,6 @@
     <ClCompile Include="src\document.cpp">
       <Filter>src\workspace\shared</Filter>
     </ClCompile>
-    <ClCompile Include="src\theme_sketchbook.cpp">
-      <Filter>src\workspace\sketchbook</Filter>
-    </ClCompile>
-    <ClCompile Include="src\workspace_sketchbook.cpp">
-      <Filter>src\workspace\sketchbook</Filter>
-    </ClCompile>
     <ClCompile Include="lib\imgui_code_editor\imgui_code_editor.cpp">
       <Filter>lib\imgui_code_editor</Filter>
     </ClCompile>
@@ -352,9 +346,6 @@
     <ClCompile Include="src\editor_json.cpp">
       <Filter>src\workspace\editors</Filter>
     </ClCompile>
-    <ClCompile Include="src\widgets_sketchbook.cpp">
-      <Filter>src\workspace\sketchbook</Filter>
-    </ClCompile>
     <ClCompile Include="src\stream.cpp">
       <Filter>src\shared\interfaces</Filter>
     </ClCompile>
@@ -406,9 +397,6 @@
     <ClCompile Include="src\primitives.cpp">
       <Filter>src\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\main.cpp">
-      <Filter>src\application</Filter>
-    </ClCompile>
     <ClCompile Include="src\plugin.cpp">
       <Filter>src\executable</Filter>
     </ClCompile>
@@ -438,9 +426,6 @@
     </ClCompile>
     <ClCompile Include="src\hacks.cpp">
       <Filter>src\shared</Filter>
-    </ClCompile>
-    <ClCompile Include="src\editor_polyfill.cpp">
-      <Filter>src\workspace\editors</Filter>
     </ClCompile>
     <ClCompile Include="src\scripting_lua_api_promises.cpp">
       <Filter>src\executable\lua</Filter>
@@ -1153,6 +1138,90 @@
     <ClCompile Include="lib\portable_file_dialogs\portable-file-dialogs.cpp">
       <Filter>lib\portable_file_dialogs</Filter>
     </ClCompile>
+    <ClCompile Include="lib\kissfft\kfc.c">
+      <Filter>lib\kissfft</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\kissfft\kiss_fft.c">
+      <Filter>lib\kissfft</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\kissfft\kiss_fftnd.c">
+      <Filter>lib\kissfft</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\kissfft\kiss_fftndr.c">
+      <Filter>lib\kissfft</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\kissfft\kiss_fftr.c">
+      <Filter>lib\kissfft</Filter>
+    </ClCompile>
+    <ClCompile Include="src\analyser.cpp">
+      <Filter>src\workspace\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\command.cpp">
+      <Filter>src\workspace\editors\commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands_image.cpp">
+      <Filter>src\workspace\editors\commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands_map.cpp">
+      <Filter>src\workspace\editors\commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands_paintable.cpp">
+      <Filter>src\workspace\editors\commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands_palette.cpp">
+      <Filter>src\workspace\editors\commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands_sprite.cpp">
+      <Filter>src\workspace\editors\commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editor_bytes.cpp">
+      <Filter>src\workspace\editors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editor_font.cpp">
+      <Filter>src\workspace\editors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editor_image.cpp">
+      <Filter>src\workspace\editors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editor_map.cpp">
+      <Filter>src\workspace\editors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editor_palette.cpp">
+      <Filter>src\workspace\editors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editor_plugin.cpp">
+      <Filter>src\workspace\editors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editor_sound.cpp">
+      <Filter>src\workspace\editors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editor_sprite.cpp">
+      <Filter>src\workspace\editors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shapes.cpp">
+      <Filter>src\workspace\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scripting_lua_api_plugin.cpp">
+      <Filter>src\executable\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="studio\scripting_lua_api_studio.cpp">
+      <Filter>src\executable\lua\studio</Filter>
+    </ClCompile>
+    <ClCompile Include="studio\loader_studio.cpp">
+      <Filter>src\workspace\studio</Filter>
+    </ClCompile>
+    <ClCompile Include="studio\theme_studio.cpp">
+      <Filter>src\workspace\studio</Filter>
+    </ClCompile>
+    <ClCompile Include="studio\widgets_studio.cpp">
+      <Filter>src\workspace\studio</Filter>
+    </ClCompile>
+    <ClCompile Include="studio\workspace_studio.cpp">
+      <Filter>src\workspace\studio</Filter>
+    </ClCompile>
+    <ClCompile Include="studio\main.cpp">
+      <Filter>src\application</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -1314,9 +1383,6 @@
     <Filter Include="src\executable\lua">
       <UniqueIdentifier>{d3c8332f-0be8-4a95-a84c-8f8b915e7579}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\workspace\sketchbook">
-      <UniqueIdentifier>{451d7194-2c7b-484c-9a3f-1d55dadb7ac8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="lib\md4c\src">
       <UniqueIdentifier>{d451e8d4-6db2-408b-98a1-61f0bae2933f}</UniqueIdentifier>
     </Filter>
@@ -1400,6 +1466,18 @@
     </Filter>
     <Filter Include="lib\civetweb\src">
       <UniqueIdentifier>{f7c34d6c-fa48-4a73-9288-4b656722b500}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\kissfft">
+      <UniqueIdentifier>{a9ebc14b-cce6-4ec2-9fb5-6274682497ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\workspace\editors\commands">
+      <UniqueIdentifier>{49ec61d3-08c4-4d0c-9afd-3c9c2fdec347}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\executable\lua\studio">
+      <UniqueIdentifier>{8165b665-6cdb-489d-89c9-42fae30b1e03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\workspace\studio">
+      <UniqueIdentifier>{f642cdb3-1509-450d-9bb6-2ff382059ada}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2072,12 +2150,6 @@
     <ClInclude Include="src\document.h">
       <Filter>src\workspace\shared</Filter>
     </ClInclude>
-    <ClInclude Include="src\theme_sketchbook.h">
-      <Filter>src\workspace\sketchbook</Filter>
-    </ClInclude>
-    <ClInclude Include="src\workspace_sketchbook.h">
-      <Filter>src\workspace\sketchbook</Filter>
-    </ClInclude>
     <ClInclude Include="lib\imgui_code_editor\imgui_code_editor.h">
       <Filter>lib\imgui_code_editor</Filter>
     </ClInclude>
@@ -2183,9 +2255,6 @@
     <ClInclude Include="src\editor_json.h">
       <Filter>src\workspace\editors</Filter>
     </ClInclude>
-    <ClInclude Include="src\widgets_sketchbook.h">
-      <Filter>src\workspace\sketchbook</Filter>
-    </ClInclude>
     <ClInclude Include="lib\lua\src\ljumptab.h">
       <Filter>lib\lua\src</Filter>
     </ClInclude>
@@ -2269,9 +2338,6 @@
     </ClInclude>
     <ClInclude Include="src\hacks.h">
       <Filter>src\shared</Filter>
-    </ClInclude>
-    <ClInclude Include="src\editor_polyfill.h">
-      <Filter>src\workspace\editors</Filter>
     </ClInclude>
     <ClInclude Include="src\scripting_lua_api_promises.h">
       <Filter>src\executable\lua</Filter>
@@ -3011,6 +3077,69 @@
     <ClInclude Include="src\web_civetweb.h">
       <Filter>src\shared\web</Filter>
     </ClInclude>
+    <ClInclude Include="lib\kissfft\_kiss_fft_guts.h">
+      <Filter>lib\kissfft</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\kissfft\kfc.h">
+      <Filter>lib\kissfft</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\kissfft\kiss_fft.h">
+      <Filter>lib\kissfft</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\kissfft\kiss_fft_log.h">
+      <Filter>lib\kissfft</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\kissfft\kiss_fftnd.h">
+      <Filter>lib\kissfft</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\kissfft\kiss_fftndr.h">
+      <Filter>lib\kissfft</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\kissfft\kiss_fftr.h">
+      <Filter>lib\kissfft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\analyser.h">
+      <Filter>src\workspace\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\command.h">
+      <Filter>src\workspace\editors\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="src\commands_image.h">
+      <Filter>src\workspace\editors\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="src\commands_map.h">
+      <Filter>src\workspace\editors\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="src\commands_paintable.h">
+      <Filter>src\workspace\editors\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="src\commands_palette.h">
+      <Filter>src\workspace\editors\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="src\commands_sprite.h">
+      <Filter>src\workspace\editors\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shapes.h">
+      <Filter>src\workspace\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scripting_lua_api_plugin.h">
+      <Filter>src\executable\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="studio\scripting_lua_api_studio.h">
+      <Filter>src\executable\lua\studio</Filter>
+    </ClInclude>
+    <ClInclude Include="studio\loader_studio.h">
+      <Filter>src\workspace\studio</Filter>
+    </ClInclude>
+    <ClInclude Include="studio\theme_studio.h">
+      <Filter>src\workspace\studio</Filter>
+    </ClInclude>
+    <ClInclude Include="studio\widgets_studio.h">
+      <Filter>src\workspace\studio</Filter>
+    </ClInclude>
+    <ClInclude Include="studio\workspace_studio.h">
+      <Filter>src\workspace\studio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\network_info\cbits\common.inc">
@@ -3041,5 +3170,10 @@
     <ResourceCompile Include="res\bitty.rc">
       <Filter>res</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="studio\visualizer.natvis">
+      <Filter>src\workspace\studio</Filter>
+    </Natvis>
   </ItemGroup>
 </Project>

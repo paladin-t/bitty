@@ -8,9 +8,9 @@
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
 
-#include "bitty.h"
-#include "application.h"
-#include "workspace_sketchbook.h"
+#include "workspace_studio.h"
+#include "../src/bitty.h"
+#include "../src/application.h"
 #if defined BITTY_OS_HTML
 #	include <emscripten.h>
 #elif defined BITTY_OS_WIN
@@ -50,8 +50,8 @@ static int entry(int argc, const char* argv[]) {
 		constexpr const int STEP = 10;
 		emscripten_sleep(STEP);
 	}
-	WORKSPACE_PREFERENCES_NAME = "sketchbook_preferences";
-	Application* app = createApplication(new WorkspaceSketchbook(), argc, argv);
+	WORKSPACE_PREFERENCES_NAME = "preferences";
+	Application* app = createApplication(new WorkspaceStudio(), argc, argv);
 	emscripten_cancel_main_loop();
 	emscripten_set_main_loop_arg(
 		[] (void* arg) -> void {
@@ -63,8 +63,8 @@ static int entry(int argc, const char* argv[]) {
 	);
 	destroyApplication(app);
 #else /* BITTY_OS_HTML */
-	WORKSPACE_PREFERENCES_NAME = "sketchbook_preferences";
-	Application* app = createApplication(new WorkspaceSketchbook(), argc, argv);
+	WORKSPACE_PREFERENCES_NAME = "preferences";
+	Application* app = createApplication(new WorkspaceStudio(), argc, argv);
 	while (updateApplication(app)) { /* Do nothing. */ }
 	destroyApplication(app);
 #endif /* BITTY_OS_HTML */
