@@ -39,6 +39,10 @@
 ** Macros and constants
 */
 
+#ifndef WORKSPACE_AUTORUN_ENABLED
+#	define WORKSPACE_AUTORUN_ENABLED 1
+#endif /* WORKSPACE_AUTORUN_ENABLED */
+
 #ifndef WORKSPACE_RECENT_FILE_MAX_COUNT
 #	define WORKSPACE_RECENT_FILE_MAX_COUNT 10
 #endif /* WORKSPACE_RECENT_FILE_MAX_COUNT */
@@ -554,8 +558,8 @@ void WorkspaceStudio::loadProject(class Window* wnd, class Renderer* rnd, const 
 	promise::Defer start;
 
 	Text::Dictionary::const_iterator pathOpt = options.find(WORKSPACE_OPTION_APPLICATION_DEFAULT_KEY); // The non-flag option indicates initial directory/file path.
-	if (pathOpt == options.end()) {
-#if false && defined BITTY_DEBUG
+	if (pathOpt == options.end()) { // No initial path specified.
+#if WORKSPACE_AUTORUN_ENABLED
 		auto run = [] (WorkspaceStudio* self, Window* wnd, Renderer* rnd, const Project* project, Executable* exec, Primitives* primitives, const char* name) -> void {
 			do {
 				LockGuard<RecursiveMutex>::UniquePtr acquired;
@@ -643,16 +647,14 @@ void WorkspaceStudio::loadProject(class Window* wnd, class Renderer* rnd, const 
 						);
 					}
 				);
-		} else {
-			// Rejection.
-			start = promise::newPromise([] (promise::Defer df) -> void { df.reject(); });
 		}
-#else /* BITTY_DEBUG */
+#else /* WORKSPACE_AUTORUN_ENABLED */
 		(void)wnd;
 		(void)primitives;
+#endif /* WORKSPACE_AUTORUN_ENABLED */
 
 		// Open the last project.
-		if (_settings.projectLoadLastProjectAtStartup) {
+		if (!start && _settings.projectLoadLastProjectAtStartup) {
 			for (int i = 0; i < WORKSPACE_RECENT_FILE_MAX_COUNT && i < (int)_settings.recentTouched.size(); ++i) {
 				const StudioSettings::RecentTouched::Types type = _settings.recentTouched[i].type;
 				const std::string &path = _settings.recentTouched[i].path;
@@ -682,8 +684,7 @@ void WorkspaceStudio::loadProject(class Window* wnd, class Renderer* rnd, const 
 		// Rejection.
 		if (!start)
 			start = promise::newPromise([] (promise::Defer df) -> void { df.reject(); });
-#endif /* BITTY_DEBUG */
-	} else {
+	} else { // Initial path specified.
 		// Open the initial directory or file.
 		std::string path = pathOpt->second;
 		path = Unicode::fromOs(path);
