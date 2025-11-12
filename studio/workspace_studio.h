@@ -53,10 +53,10 @@ public:
 		bool operator != (const StudioSettings &other) const;
 	};
 
-private:
+protected:
 	BITTY_PROPERTY_READONLY_PTR(const char, autorun)
 
-private:
+protected:
 	bool _opened = false;
 
 	StudioSettings _settings;
