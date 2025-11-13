@@ -962,149 +962,155 @@ Note that when open a file as `Stream.Append`, it always writes data at the end 
 
 **Constants**
 
-* `Vec2.Zero`: equals to `Vec2.new(0, 0)`
-* `Vec2.One`: equals to `Vec2.new(1, 1)`
-* `Vec2.Left`: equals to `Vec2.new(-1, 0)`
-* `Vec2.Right`: equals to `Vec2.new(1, 0)`
-* `Vec2.Up`: equals to `Vec2.new(0, -1)`
-* `Vec2.Down`: equals to `Vec2.new(0, 1)`
-
-* `Vec3.Zero`: equals to `Vec3.new(0, 0, 0)`
-* `Vec3.One`: equals to `Vec3.new(1, 1, 1)`
-
-* `Vec4.Zero`: equals to `Vec4.new(0, 0, 0, 0)`
-* `Vec4.One`: equals to `Vec4.new(1, 1, 1, 1)`
+* `Vec2`
+	* `Vec2.Zero`: equals to `Vec2.new(0, 0)`
+	* `Vec2.One`: equals to `Vec2.new(1, 1)`
+	* `Vec2.Left`: equals to `Vec2.new(-1, 0)`
+	* `Vec2.Right`: equals to `Vec2.new(1, 0)`
+	* `Vec2.Up`: equals to `Vec2.new(0, -1)`
+	* `Vec2.Down`: equals to `Vec2.new(0, 1)`
+* `Vec3`
+	* `Vec3.Zero`: equals to `Vec3.new(0, 0, 0)`
+	* `Vec3.One`: equals to `Vec3.new(1, 1, 1)`
+* `Vec4`
+	* `Vec4.Zero`: equals to `Vec4.new(0, 0, 0, 0)`
+	* `Vec4.One`: equals to `Vec4.new(1, 1, 1, 1)`
 
 **Static Functions**
 
-* `Rect.byXYWH(x, y, w, h)`: constructs a rectangle object in real numbers by position and size
-
-* `Recti.byXYWH(x, y, w, h)`: constructs a rectangle object in integers by position and size
+* `Rect`
+	* `Rect.byXYWH(x, y, w, h)`: constructs a rectangle object in real numbers by position and size
+* `Recti`
+	* `Recti.byXYWH(x, y, w, h)`: constructs a rectangle object in integers by position and size
 
 **Constructors**
 
-* `Vec2.new([x, y])`: constructs a vector object in 2 dimensions
-
-* `Vec3.new([x, y, z])`: constructs a vector object in 3 dimensions
-
-* `Vec4.new([x, y, z, w])`: constructs a vector object in 4 dimensions
-
-* `Rect.new([x0, y0, x1, y1])`: constructs a rectangle object in real numbers by points
-
-* `Recti.new([x0, y0, x1, y1])`: constructs a rectangle object in integers by points
-
-* `Rot.new([s, c])`: constructs a rotation object
+* `Vec2`
+	* `Vec2.new([x, y])`: constructs a vector object in 2 dimensions
+* `Vec3`
+	* `Vec3.new([x, y, z])`: constructs a vector object in 3 dimensions
+* `Vec4`
+	* `Vec4.new([x, y, z, w])`: constructs a vector object in 4 dimensions
+* `Rect`
+	* `Rect.new([x0, y0, x1, y1])`: constructs a rectangle object in real numbers by points
+* `Recti`
+	* `Recti.new([x0, y0, x1, y1])`: constructs a rectangle object in integers by points
+* `Rot`
+	* `Rot.new([s, c])`: constructs a rotation object
 
 **Operators**
 
-* `vec2:__add(vec2_)`: adds with another `Vec2` componentwisely
-* `vec2:__sub(vec2_)`: subtracts by another `Vec2` componentwisely
-* `vec2:__mul(num)`: multiplies with another number
-* `vec2:__mul(vec2_)`: multiplies with another `Vec2` componentwisely
-* `vec2:__unm()`: takes the opposite `Vec2` componentwisely
-* `vec2:__len()`: gets the length of the `Vec2`
-* `vec2:__eq(vec2_)`: compares with another `Vec2` for equality
-
-* `vec3:__add(vec3_)`: adds with another `Vec3` componentwisely
-* `vec3:__sub(vec3_)`: subtracts by another `Vec3` componentwisely
-* `vec3:__mul(num)`: multiplies with another number
-* `vec3:__mul(vec3_)`: multiplies with another `Vec3` componentwisely
-* `vec3:__unm()`: takes the opposite `Vec3` componentwisely
-* `vec3:__len()`: gets the length of the `Vec3`
-* `vec3:__eq(vec3_)`: compares with another `Vec3` for equality
-
-* `vec4:__add(vec4_)`: adds with another `Vec4` componentwisely
-* `vec4:__sub(vec4_)`: subtracts by another `Vec4` componentwisely
-* `vec4:__mul(num)`: multiplies with another number
-* `vec4:__mul(vec4_)`: multiplies with another `Vec4` componentwisely
-* `vec4:__unm()`: takes the opposite `Vec4` componentwisely
-* `vec4:__eq(vec4_)`: compares with another `Vec4` for equality
-
-* `rot:__add(rot_)`: adds with another `Rot` in angle
-* `rot:__sub(rot_)`: subtracts by another `Rot` in angle
-* `rot:__mul(vec2)`: rotates another `Vec2`
-* `rot:__mul(rot_)`: rotates another `Rot`
-* `rot:__unm()`: takes the opposite `Rot` in angle
-* `rot:__eq(rot_)`: compares with another `Rot` for equality
-
-* `rect:__eq(rect_)`: compares with another `Rect` for equality
-
+* `Vec2`
+	* `vec2:__add(vec2_)`: adds with another `Vec2` componentwisely
+	* `vec2:__sub(vec2_)`: subtracts by another `Vec2` componentwisely
+	* `vec2:__mul(num)`: multiplies with another number
+	* `vec2:__mul(vec2_)`: multiplies with another `Vec2` componentwisely
+	* `vec2:__unm()`: takes the opposite `Vec2` componentwisely
+	* `vec2:__len()`: gets the length of the `Vec2`
+	* `vec2:__eq(vec2_)`: compares with another `Vec2` for equality
+* `Vec3`
+	* `vec3:__add(vec3_)`: adds with another `Vec3` componentwisely
+	* `vec3:__sub(vec3_)`: subtracts by another `Vec3` componentwisely
+	* `vec3:__mul(num)`: multiplies with another number
+	* `vec3:__mul(vec3_)`: multiplies with another `Vec3` componentwisely
+	* `vec3:__unm()`: takes the opposite `Vec3` componentwisely
+	* `vec3:__len()`: gets the length of the `Vec3`
+	* `vec3:__eq(vec3_)`: compares with another `Vec3` for equality
+* `Vec4`
+	* `vec4:__add(vec4_)`: adds with another `Vec4` componentwisely
+	* `vec4:__sub(vec4_)`: subtracts by another `Vec4` componentwisely
+	* `vec4:__mul(num)`: multiplies with another number
+	* `vec4:__mul(vec4_)`: multiplies with another `Vec4` componentwisely
+	* `vec4:__unm()`: takes the opposite `Vec4` componentwisely
+	* `vec4:__eq(vec4_)`: compares with another `Vec4` for equality
+* `Rot`
+	* `rot:__add(rot_)`: adds with another `Rot` in angle
+	* `rot:__sub(rot_)`: subtracts by another `Rot` in angle
+	* `rot:__mul(vec2)`: rotates another `Vec2`
+	* `rot:__mul(rot_)`: rotates another `Rot`
+	* `rot:__unm()`: takes the opposite `Rot` in angle
+	* `rot:__eq(rot_)`: compares with another `Rot` for equality
+* `Rect`
+	* `rect:__eq(rect_)`: compares with another `Rect` for equality
+* `Recti`
 * `recti:__eq(recti_)`: compares with another `Recti` for equality
 
 **Object Fields**
 
-* `vec2.x`: gets or sets the x component
-* `vec2.y`: gets or sets the y component
-* `vec2.normalized`: readonly, gets the normalized `Vec2`
-* `vec2.length`: readonly, gets the length
-* `vec2.angle`: readonly, gets the rotated angle in radians as a vector
-
-* `vec3.x`: gets or sets the x component
-* `vec3.y`: gets or sets the y component
-* `vec3.z`: gets or sets the z component
-* `vec3.normalized`: readonly, gets the normalized `Vec3`
-* `vec3.length`: readonly, gets the length
-
-* `rect4.x`: gets or sets the x component
-* `rect4.y`: gets or sets the y component
-* `rect4.z`: gets or sets the z component
-* `rect4.w`: gets or sets the w component
-
-* `rot.s`: gets or sets the sine component
-* `rot.c`: gets or sets the cosine component
-* `rot.angle`: gets or sets the angle in radians denoted by the `Rot`
-
-* `rect.x0`: gets or sets the first x component
-* `rect.y0`: gets or sets the first y component
-* `rect.x1`: gets or sets the second x component
-* `rect.y1`: gets or sets the second y component
-
-* `recti.x0`: gets or sets the first x component
-* `recti.y0`: gets or sets the first y component
-* `recti.x1`: gets or sets the second x component
-* `recti.y1`: gets or sets the second y component
+* `Vec2`
+	* `vec2.x`: gets or sets the x component
+	* `vec2.y`: gets or sets the y component
+	* `vec2.normalized`: readonly, gets the normalized `Vec2`
+	* `vec2.length`: readonly, gets the length
+	* `vec2.angle`: readonly, gets the rotated angle in radians as a vector
+* `Vec3`
+	* `vec3.x`: gets or sets the x component
+	* `vec3.y`: gets or sets the y component
+	* `vec3.z`: gets or sets the z component
+	* `vec3.normalized`: readonly, gets the normalized `Vec3`
+	* `vec3.length`: readonly, gets the length
+* `Vec4`
+	* `vec4.x`: gets or sets the x component
+	* `vec4.y`: gets or sets the y component
+	* `vec4.z`: gets or sets the z component
+	* `vec4.w`: gets or sets the w component
+* `Rot`
+	* `rot.s`: gets or sets the sine component
+	* `rot.c`: gets or sets the cosine component
+	* `rot.angle`: gets or sets the angle in radians denoted by the `Rot`
+* `Rect`
+	* `rect.x0`: gets or sets the first x component
+	* `rect.y0`: gets or sets the first y component
+	* `rect.x1`: gets or sets the second x component
+	* `rect.y1`: gets or sets the second y component
+* `Recti`
+	* `recti.x0`: gets or sets the first x component
+	* `recti.y0`: gets or sets the first y component
+	* `recti.x1`: gets or sets the second x component
+	* `recti.y1`: gets or sets the second y component
 
 **Methods**
 
-* `vec2:normalize()`: normalizes the `Vec2`
-	* returns the original length before normalization
-* `vec2:distanceTo(vec2_)`: gets the distance between this and another `Vec2`
-	* returns the distance number
-* `vec2:dot(vec2_)`: applies a dot multiplication
-	* returns the dot result as number
-* `vec2:cross(num)`: applies a cross multiplication
-	* returns the cross `Vec2`
-* `vec2:cross(vec2_)`: applies a cross multiplication
-	* returns the cross result as number
-* `vec2:angleTo(vec2_)`: gets the angle between this and another `Vec2` as vectors
-	* returns the angle in radians
-* `vec2:rotated(angle[, pivot])`: gets the rotated `Vec2`
-	* `angle`: the angle to rotate
-	* `pivot`: the pivot `Vec2` to rotate around
-	* returns the rotated `Vec2`
-* `vec2:rotated(rot[, pivot])`: gets the rotated `Vec2`
-	* `rot`: the `Rot` to rotate
-	* `pivot`: the pivot `Vec2` to rotate around
-	* returns the rotated `Vec2`
-
-* `vec3:normalize()`: normalizes the `Vec3`
-	* returns the original length before normalization
-* `vec3:dot(vec3_)`: applies a dot multiplication
-	* returns the dot result as number
-
-* `rect:xMin()`: gets the minimum x component
-* `rect:yMin()`: gets the minimum y component
-* `rect:xMax()`: gets the maximum x component
-* `rect:xMax()`: gets the maximum y component
-* `rect:width()`: gets the width, equals to `rect:xMax() - rect:xMin()`
-* `rect:height()`: gets the height, equals to `rect:yMax() - rect:yMin()`
-
-* `recti:xMin()`: gets the minimum x component
-* `recti:yMin()`: gets the minimum y component
-* `recti:xMax()`: gets the maximum x component
-* `recti:xMax()`: gets the maximum y component
-* `recti:width()`: gets the width, equals to `rect:xMax() - rect:xMin() + 1`
-* `recti:height()`: gets the height, equals to `rect:yMax() - rect:yMin() + 1`
+* `Vec2`
+	* `vec2:normalize()`: normalizes the `Vec2`
+		* returns the original length before normalization
+	* `vec2:distanceTo(vec2_)`: gets the distance between this and another `Vec2`
+		* returns the distance number
+	* `vec2:dot(vec2_)`: applies a dot multiplication
+		* returns the dot result as number
+	* `vec2:cross(num)`: applies a cross multiplication
+		* returns the cross `Vec2`
+	* `vec2:cross(vec2_)`: applies a cross multiplication
+		* returns the cross result as number
+	* `vec2:angleTo(vec2_)`: gets the angle between this and another `Vec2` as vectors
+		* returns the angle in radians
+	* `vec2:rotated(angle[, pivot])`: gets the rotated `Vec2`
+		* `angle`: the angle to rotate
+		* `pivot`: the pivot `Vec2` to rotate around
+		* returns the rotated `Vec2`
+	* `vec2:rotated(rot[, pivot])`: gets the rotated `Vec2`
+		* `rot`: the `Rot` to rotate
+		* `pivot`: the pivot `Vec2` to rotate around
+		* returns the rotated `Vec2`
+* `Vec3`
+	* `vec3:normalize()`: normalizes the `Vec3`
+		* returns the original length before normalization
+	* `vec3:dot(vec3_)`: applies a dot multiplication
+		* returns the dot result as number
+* `Rect`
+	* `rect:xMin()`: gets the minimum x component
+	* `rect:yMin()`: gets the minimum y component
+	* `rect:xMax()`: gets the maximum x component
+	* `rect:xMax()`: gets the maximum y component
+	* `rect:width()`: gets the width, equals to `rect:xMax() - rect:xMin()`
+	* `rect:height()`: gets the height, equals to `rect:yMax() - rect:yMin()`
+* `Recti`
+	* `recti:xMin()`: gets the minimum x component
+	* `recti:yMin()`: gets the minimum y component
+	* `recti:xMax()`: gets the maximum x component
+	* `recti:xMax()`: gets the maximum y component
+	* `recti:width()`: gets the width, equals to `rect:xMax() - rect:xMin() + 1`
+	* `recti:height()`: gets the height, equals to `rect:yMax() - rect:yMin() + 1`
 
 #### Intersection Detection
 
