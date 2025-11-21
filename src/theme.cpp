@@ -401,6 +401,11 @@ bool Theme::open(class Renderer* rnd) {
 	tooltipEditing_DeleteFrame("Delete frame");
 	tooltipEditing_GlobalSearchForCode("Global search (for code)");
 	tooltipEditing_InsertFrame("Insert frame");
+#if WORKSPACE_MODIFIER_KEY == WORKSPACE_MODIFIER_KEY_CTRL
+	tooltipEditing_Magnifiable("(-/+ or Ctrl+Mouse Wheel)");
+#elif WORKSPACE_MODIFIER_KEY == WORKSPACE_MODIFIER_KEY_CMD
+	tooltipEditing_Magnifiable("(-/+ or Cmd+Mouse Wheel)");
+#endif /* WORKSPACE_MODIFIER_KEY */
 	tooltipEditing_MatchWholeWords("Match whole words");
 	tooltipEditing_RenameAnimation("Rename animation");
 

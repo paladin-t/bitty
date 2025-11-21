@@ -654,7 +654,8 @@ public:
 						nullptr,
 						nullptr,
 						&_ref.gridUnit, _ref.gridsVisible || ws->settings()->editorAlwaysShowGrids,
-						_ref.transparentBackbroundVisible || ws->settings()->editorAlwaysShowTransparentBackground
+						_ref.transparentBackbroundVisible || ws->settings()->editorAlwaysShowTransparentBackground,
+						ImGuiMouseButton_Left
 					);
 					if (painting)
 						_ref.cursor = cursor;

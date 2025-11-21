@@ -462,7 +462,8 @@ bool image(
 	const Brush* selection,
 	Texture* overlay,
 	const Math::Vec2i* gridSize, bool showGrids,
-	bool showTransparentBackbround
+	bool showTransparentBackbround,
+	int mouseActionButton
 ) {
 	return image(
 		rnd,
@@ -473,7 +474,8 @@ bool image(
 		selection,
 		overlay,
 		gridSize, showGrids,
-		showTransparentBackbround
+		showTransparentBackbround,
+		mouseActionButton
 	);
 }
 
@@ -486,7 +488,8 @@ bool image(
 	const Brush* selection,
 	Texture* overlay,
 	const Math::Vec2i* gridSize, bool showGrids,
-	bool showTransparentBackbround
+	bool showTransparentBackbround,
+	int mouseActionButton
 ) {
 	ImGuiStyle &style = ImGui::GetStyle();
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -632,7 +635,7 @@ bool image(
 		const Int y = Math::clamp((int)imgPos.y, 0, ptr->height() - 1);
 
 		if (cursorStamp.empty()) {
-			if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
+			if (ImGui::IsMouseDown(mouseActionButton))
 				result = true;
 
 			if (cursor) {
@@ -642,7 +645,7 @@ bool image(
 				);
 			}
 		} else if (cursor) {
-			if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+			if (ImGui::IsMouseClicked(mouseActionButton)) {
 				cursorStamp.position = Math::Vec2i(
 					x / cursorStamp.size.x,
 					y / cursorStamp.size.y
@@ -652,14 +655,14 @@ bool image(
 					y / cursorStamp.size.y * cursorStamp.size.y
 				);
 				cursor->size = cursorStamp.size;
-			} else if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+			} else if (ImGui::IsMouseDown(mouseActionButton)) {
 				const Math::Vec2i diff = Math::Vec2i(x / cursorStamp.size.x, y / cursorStamp.size.y) -
 					cursorStamp.position +
 					Math::Vec2i(1, 1);
 				const Math::Recti rect = Math::Recti::byXYWH(cursorStamp.position.x, cursorStamp.position.y, diff.x, diff.y);
 				cursor->position = Math::Vec2i(rect.xMin(), rect.yMin()) * cursorStamp.size;
 				cursor->size = Math::Vec2i(rect.width(), rect.height()) * cursorStamp.size;
-			} else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+			} else if (ImGui::IsMouseReleased(mouseActionButton)) {
 				result = true;
 			}
 		}
@@ -1083,7 +1086,8 @@ bool map(
 	const Tiler* selection,
 	const Math::Vec2i* showGrids,
 	bool showTransparentBackbround,
-	MapCelGetter getCel
+	MapCelGetter getCel,
+	int mouseActionButton
 ) {
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
 
@@ -1143,7 +1147,7 @@ bool map(
 				if (hoveringWnd && focusingWnd && !result) {
 					const ImVec2 mousePos = ImGui::GetMousePos();
 					if (rect.Contains(mousePos)) {
-						if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
+						if (ImGui::IsMouseDown(mouseActionButton))
 							result = true;
 
 						if (cursor)
@@ -1648,6 +1652,7 @@ bool magnifiable(
 	float width,
 	bool allowShortcuts
 ) {
+	ImGuiIO &io = ImGui::GetIO();
 	ImGuiStyle &style = ImGui::GetStyle();
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
 
@@ -1667,7 +1672,7 @@ bool magnifiable(
 		xOffset = (width - size * X_COUNT) * 0.5f;
 	}
 
-	constexpr const char* const TOOLTIP = "(-/+)";
+	const char* const TOOLTIP = theme->tooltipEditing_Magnifiable().c_str();
 	const Shortcut shortcuts[] = {
 		Shortcut(SDL_SCANCODE_MINUS),
 		Shortcut(SDL_SCANCODE_EQUALS)
@@ -1691,14 +1696,23 @@ bool magnifiable(
 				*cursor = 0;
 		}
 	}
-	if (allowShortcuts && focusingWnd && shortcuts[0].pressed()) {
+	constexpr const int MIN_ZOOM = 0;
+	constexpr const int MAX_ZOOM = 3;
+#if WORKSPACE_MODIFIER_KEY == WORKSPACE_MODIFIER_KEY_CTRL
+	const bool modifier = io.KeyCtrl;
+#elif WORKSPACE_MODIFIER_KEY == WORKSPACE_MODIFIER_KEY_CMD
+	const bool modifier = io.KeySuper;
+#endif /* WORKSPACE_MODIFIER_KEY */
+	const bool zoomOut = shortcuts[0].pressed() || (*cursor > MIN_ZOOM && modifier && io.MouseWheel < 0);
+	const bool zoomIn = shortcuts[1].pressed() || (*cursor < MAX_ZOOM && modifier && io.MouseWheel > 0);
+	if (allowShortcuts && focusingWnd && zoomOut) {
 		result = true;
 
 		if (cursor) {
 			if (--*cursor < 0)
 				*cursor = 3;
 		}
-	} else if (allowShortcuts && focusingWnd && shortcuts[1].pressed()) {
+	} else if (allowShortcuts && focusingWnd && zoomIn) {
 		result = true;
 
 		if (cursor) {

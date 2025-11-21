@@ -991,12 +991,12 @@ Note that when open a file as `Stream.Append`, it always writes data at the end 
 	* `Vec3.new([x, y, z])`: constructs a vector object in 3 dimensions
 * `Vec4`
 	* `Vec4.new([x, y, z, w])`: constructs a vector object in 4 dimensions
+* `Rot`
+	* `Rot.new([s, c])`: constructs a rotation object
 * `Rect`
 	* `Rect.new([x0, y0, x1, y1])`: constructs a rectangle object in real numbers by points
 * `Recti`
 	* `Recti.new([x0, y0, x1, y1])`: constructs a rectangle object in integers by points
-* `Rot`
-	* `Rot.new([s, c])`: constructs a rotation object
 
 **Operators**
 

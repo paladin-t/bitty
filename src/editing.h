@@ -233,7 +233,8 @@ bool image(
 	const Brush* selection = nullptr,
 	Texture* overlay = nullptr,
 	const Math::Vec2i* gridSize = nullptr, bool showGrids = false,
-	bool showTransparentBackbround = true
+	bool showTransparentBackbround = true,
+	int mouseActionButton = 0
 );
 
 /**
@@ -249,7 +250,8 @@ bool image(
 	const Brush* selection = nullptr,
 	Texture* overlay = nullptr,
 	const Math::Vec2i* gridSize = nullptr, bool showGrids = false,
-	bool showTransparentBackbround = true
+	bool showTransparentBackbround = true,
+	int mouseActionButton = 0
 );
 
 /**
@@ -296,7 +298,8 @@ bool map(
 	const Tiler* selection = nullptr,
 	const Math::Vec2i* showGrids = nullptr,
 	bool showTransparentBackbround = true,
-	MapCelGetter getCel = nullptr
+	MapCelGetter getCel = nullptr,
+	int mouseActionButton = 0
 );
 
 /**

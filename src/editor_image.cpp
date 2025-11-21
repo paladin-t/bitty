@@ -162,8 +162,10 @@ private:
 
 		ImVec2 mousePos = ImVec2(-1, -1);
 		ImVec2 mouseDiff = ImVec2(0, 0);
+		int mouseActionButton = ImGuiMouseButton_Left;
 
 		PostHandler post = nullptr;
+		Editing::Tools::Tools postType = Editing::Tools::PENCIL;
 
 		void clear(void) {
 			focused = false;
@@ -178,8 +180,10 @@ private:
 
 			mousePos = ImVec2(-1, -1);
 			mouseDiff = ImVec2(0, 0);
+			mouseActionButton = ImGuiMouseButton_Left;
 
 			post = nullptr;
+			postType = Editing::Tools::PENCIL;
 		}
 	} _tools;
 	Processor _processors[Editing::Tools::COUNT] = {
@@ -625,7 +629,7 @@ public:
 			);
 		}
 
-		shortcuts(wnd, rnd, ws);
+		const bool allowMouseOperations = shortcuts(wnd, rnd, ws);
 
 		if (!_object)
 			return;
@@ -665,7 +669,8 @@ public:
 						_selection.brush.empty() ? nullptr : &_selection.brush,
 						_overlay.texture ? _overlay.texture.get() : nullptr,
 						&_tools.gridUnit, _tools.gridsVisible || ws->settings()->editorAlwaysShowGrids,
-						_tools.transparentBackbroundVisible || ws->settings()->editorAlwaysShowTransparentBackground
+						_tools.transparentBackbroundVisible || ws->settings()->editorAlwaysShowTransparentBackground,
+						_tools.mouseActionButton
 					)
 				);
 				if (
@@ -679,21 +684,23 @@ public:
 				_painting.set(false);
 			}
 
-			if (_painting.down()) {
-				if (_processors[_tools.painting].down)
-					_processors[_tools.painting].down(rnd);
-			}
-			if (_painting && _painting.moved()) {
-				if (_processors[_tools.painting].move)
-					_processors[_tools.painting].move(rnd);
-			}
-			if (_painting.up()) {
-				if (_processors[_tools.painting].up)
-					_processors[_tools.painting].up(rnd);
-			}
-			if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) {
-				if (_processors[_tools.painting].hover)
-					_processors[_tools.painting].hover(rnd);
+			if (allowMouseOperations) {
+				if (_painting.down()) {
+					if (_processors[_tools.painting].down)
+						_processors[_tools.painting].down(rnd);
+				}
+				if (_painting && _painting.moved()) {
+					if (_processors[_tools.painting].move)
+						_processors[_tools.painting].move(rnd);
+				}
+				if (_painting.up()) {
+					if (_processors[_tools.painting].up)
+						_processors[_tools.painting].up(rnd);
+				}
+				if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) {
+					if (_processors[_tools.painting].hover)
+						_processors[_tools.painting].hover(rnd);
+				}
 			}
 
 			if (_binding.skipFrame) {
@@ -855,7 +862,7 @@ public:
 	}
 
 private:
-	void shortcuts(Window* /* wnd */, Renderer* /* rnd */, Workspace* ws) {
+	bool shortcuts(Window* /* wnd */, Renderer* /* rnd */, Workspace* ws) {
 		const Editing::Shortcut caps(SDL_SCANCODE_UNKNOWN, false, false, false, false, true);
 		const Editing::Shortcut num(SDL_SCANCODE_UNKNOWN, false, false, false, true, false);
 		_tools.gridsVisible = caps.pressed();
@@ -867,7 +874,7 @@ private:
 				_tools.post = nullptr;
 			}
 
-			return;
+			return true;
 		}
 
 		const Editing::Shortcut shift(SDL_SCANCODE_UNKNOWN, false, true, false);
@@ -883,13 +890,39 @@ private:
 				_tools.post = [&, prevTool] (void) -> void {
 					_tools.painting = prevTool;
 				};
+				_tools.postType = Editing::Tools::MOVE;
 			}
 
-			return;
+			return true;
+		} else if (ImGui::IsMouseDown(ImGuiMouseButton_Middle)) {
+			if (!_tools.post) {
+				const Editing::Tools::Tools prevTool = _tools.painting;
+
+				_tools.painting = Editing::Tools::MOVE;
+
+				_tools.mouseActionButton = ImGuiMouseButton_Middle;
+
+				_tools.post = [&, prevTool] (void) -> void {
+					if (!ImGui::IsMouseDown(ImGuiMouseButton_Middle)) {
+						_tools.painting = prevTool;
+						_tools.mouseActionButton = ImGuiMouseButton_Left;
+					}
+				};
+				_tools.postType = Editing::Tools::MOVE;
+			}
+
+			return true;
+		} else if (ImGui::IsMouseReleased(ImGuiMouseButton_Middle)) {
+			if (_tools.post && _tools.postType == Editing::Tools::MOVE) {
+				_tools.post();
+				_tools.post = nullptr;
+
+				return false;
+			}
 		} else if (shift.released()) {
 			_tools.gridsVisible = caps.pressed();
 
-			if (_tools.post) {
+			if (_tools.post && _tools.postType == Editing::Tools::MOVE) {
 				_tools.post();
 				_tools.post = nullptr;
 			}
@@ -903,11 +936,12 @@ private:
 				_tools.post = [&, prevTool] (void) -> void {
 					_tools.painting = prevTool;
 				};
+				_tools.postType = Editing::Tools::EYEDROPPER;
 			}
 
-			return;
+			return true;
 		} else if (alt.released()) {
-			if (_tools.post) {
+			if (_tools.post && _tools.postType == Editing::Tools::EYEDROPPER) {
 				_tools.post();
 				_tools.post = nullptr;
 			}
@@ -916,6 +950,8 @@ private:
 		const Editing::Shortcut esc(SDL_SCANCODE_ESCAPE);
 		if (esc.pressed())
 			_selection.clear();
+
+		return true;
 	}
 
 	void context(Window* /* wnd */, Renderer* /* rnd */, Workspace* ws) {
@@ -1070,6 +1106,7 @@ private:
 	}
 	void moveToolUp(Renderer*) {
 		_tools.mouseDiff = ImVec2(0, 0);
+		_tools.mouseActionButton = ImGuiMouseButton_Left;
 	}
 	void moveToolHover(Renderer*) {
 		ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeAll);
