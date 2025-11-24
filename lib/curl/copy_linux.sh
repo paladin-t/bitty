@@ -10,6 +10,9 @@ else
 fi
 
 if [ -d "$BASEDIR/lib/.libs" ]; then
+  if [ ! -d "$BASEDIR/$SUBDIR/" ]; then
+    mkdir -p "$BASEDIR/$SUBDIR/"
+  fi
   cp -f "$BASEDIR/lib/.libs/libcurl.a" "$BASEDIR/$SUBDIR/"
   cp -f "$BASEDIR/lib/.libs/libcurl.la" "$BASEDIR/$SUBDIR/"
   cp -f "$BASEDIR/lib/.libs/libcurl.lai" "$BASEDIR/$SUBDIR/"

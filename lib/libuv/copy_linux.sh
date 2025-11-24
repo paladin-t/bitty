@@ -10,6 +10,9 @@ else
 fi
 
 if [ -d "/usr/local/lib" ]; then
+  if [ ! -d "$BASEDIR/lib/$SUBDIR/" ]; then
+    mkdir -p "$BASEDIR/lib/$SUBDIR/"
+  fi
   cp -f "/usr/local/lib/libuv.a" "$BASEDIR/lib/$SUBDIR/"
   cp -f "/usr/local/lib/libuv.la" "$BASEDIR/lib/$SUBDIR/"
   cp -f "/usr/local/lib/libuv.so.1" "$BASEDIR/lib/$SUBDIR/"
