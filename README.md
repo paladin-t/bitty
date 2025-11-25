@@ -5,20 +5,20 @@
 ![](docs/imgs/floppy.gif) **An itty bitty game engine.**
 
 - [About Bitty Engine](#about-bitty-engine)
-  - [Why Bitty Engine?](#why-bitty-engine)
-  - [Features](#features)
-  - [Technical specifications](#technical-specifications)
+	- [Why Bitty Engine?](#why-bitty-engine)
+	- [Features](#features)
+	- [Technical specifications](#technical-specifications)
 - [Glance](#glance)
-  - [Code](#code)
-  - [Games](#games)
+	- [Code](#code)
+	- [Games](#games)
 - [Redistributing](#redistributing)
 - [Getting Bitty Engine](#getting-bitty-engine)
 - [Compiling from source](#compiling-from-source)
-  - [Startup project](#startup-project)
-  - [Windows](#windows)
-  - [MacOS](#macos)
-  - [Linux](#linux)
-  - [Other platforms](#other-platforms)
+	- [Startup project](#startup-project)
+	- [Windows](#windows)
+	- [MacOS](#macos)
+	- [Linux](#linux)
+	- [Other platforms](#other-platforms)
 - [Community and contributing](#community-and-contributing)
 - [Documentation](#documentation)
 
@@ -39,29 +39,29 @@ It is supposed to be your ultimate 2D game creating software.
 Bitty Engine offers a set of orthogonal features that makes game development comfortable and enjoyable.
 
 * `Resources` API
-  * `Resources.load(...)`, `Resources.unload(...)`
-  * `Resources.wait(...)`, `Resources.collect(...)`
-  * Etc.
+	* `Resources.load(...)`, `Resources.unload(...)`
+	* `Resources.wait(...)`, `Resources.collect(...)`
+	* Etc.
 * Graphics API
-  * Shapes: `plot(...)`, `line(...)`, `circ(...)`, `ellipse(...)`, `rect(...)`, `tri(...)`
-  * Text: `text(...)`, `font(...)`, `measure(...)`
-  * Texture: `tex(...)`
-  * Sprite: `spr(...)`
-  * Map: `map(...)`
-  * `clip(...)`, `camera(...)`
-  * Etc.
+	* Shapes: `plot(...)`, `line(...)`, `circ(...)`, `ellipse(...)`, `rect(...)`, `tri(...)`
+	* Text: `text(...)`, `font(...)`, `measure(...)`
+	* Texture: `tex(...)`
+	* Sprite: `spr(...)`
+	* Map: `map(...)`
+	* `clip(...)`, `camera(...)`
+	* Etc.
 * Input API
-  * Gamepad
-  * Keyboard
-  * Mouse and touch
+	* Gamepad
+	* Keyboard
+	* Mouse and touch
 * Audio API
-  * Supports MP3, OGG, WAV, FLAC, etc.
+	* Supports MP3, OGG, WAV, FLAC, etc.
 * Physics API
-  * `Space`, `Shape`, `Body`, `Arbiter`, etc.
+	* `Space`, `Shape`, `Body`, `Arbiter`, etc.
 * Libraries
-  * Algorithms, `Archive`, `Bytes`, `Color`, `DateTime`, Encoding, `File`, Filesystem, `Image`, `Json`, Math, `Network`, `Platform`, `Web`
+	* Algorithms, `Archive`, `Bytes`, `Color`, `DateTime`, Encoding, `File`, Filesystem, `Image`, `Json`, Math, `Network`, `Platform`, `Web`
 * Application interfaces
-  * `Application`, `Canvas`, `Project`, `Debug`
+	* `Application`, `Canvas`, `Project`, `Debug`
 
 ### Technical specifications
 
@@ -167,13 +167,13 @@ Dependencies: Visual Studio (with C++ development tools installed).
 <summary>Steps</summary>
 
 1. Build SDL2
-  1. Compile from "lib/sdl/VisualC/SDL.sln"
-  2. Execute `lib/sdl/copy_win.cmd`
+	1. Compile from "lib/sdl/VisualC/SDL.sln"
+	2. Execute `lib/sdl/copy_win.cmd`
 2. Build SDL2_mixer
-  1. Compile from "lib/sdl_mixer/VisualC/SDL_mixer.sln" (need to setup SDL2 including and linking paths from previous step manually)
-  2. Execute `lib/sdl_mixer/copy_win.cmd`
+	1. Compile from "lib/sdl_mixer/VisualC/SDL_mixer.sln" (need to setup SDL2 including and linking paths from previous step manually)
+	2. Execute `lib/sdl_mixer/copy_win.cmd`
 3. Build Bitty Engine
-  1. Compile from "bitty.sln"
+	1. Compile from "bitty.sln"
 
 </details>
 
@@ -185,22 +185,22 @@ Dependencies: Xcode.
 <summary>Steps</summary>
 
 1. Build cURL
-  1. Execute:
-    ```sh
-    cd lib/curl
-    ./MacOSX-Framework
-    cd ../..
-    ```
+	1. Execute:
+		```sh
+		cd lib/curl
+		./MacOSX-Framework
+		cd ../..
+		```
 2. Build SDL2
-  1. Compile framework from "lib/sdl/Xcode/SDL/SDL.xcodeproj"
-  2. Reveal "SDL2.framework" in Finder
-  3. Copy "SDL2.framework" to both "lib/sdl/lib/" and "/Library/Frameworks/" (used in following step)
+	1. Compile framework from "lib/sdl/Xcode/SDL/SDL.xcodeproj"
+	2. Reveal "SDL2.framework" in Finder
+	3. Copy "SDL2.framework" to both "lib/sdl/lib/" and "/Library/Frameworks/" (used in following step)
 3. Build SDL2_mixer
-  1. Compile framework from "lib/sdl_mixer/Xcode/SDL_mixer.xcodeproj"
-  2. Reveal "SDL2_mixer.framework" in Finder
-  3. Copy "SDL2_mixer.framework" to "lib/sdl_mixer/lib/"
+	1. Compile framework from "lib/sdl_mixer/Xcode/SDL_mixer.xcodeproj"
+	2. Reveal "SDL2_mixer.framework" in Finder
+	3. Copy "SDL2_mixer.framework" to "lib/sdl_mixer/lib/"
 4. Build Bitty Engine
-  1. Compile from "bitty.xcodeproj"
+	1. Compile from "bitty.xcodeproj"
 
 </details>
 
@@ -212,55 +212,55 @@ Dependencies: CMake, GCC.
 <summary>Steps</summary>
 
 1. Build cURL
-  1. Execute:
-    ```sh
-    cd lib/curl
-    ./configure
-    make
-    cd ../..
-    ```
-  2. Execute `lib/curl/copy_linux.sh`
+	1. Execute:
+		```sh
+		cd lib/curl
+		./configure
+		make
+		cd ../..
+		```
+	2. Execute `lib/curl/copy_linux.sh`
 2. Build libuv
-  1. Execute:
-    ```sh
-    cd lib/libuv
-    sh autogen.sh
-    ./configure
-    make
-    sudo make install
-    cd ../..
-    ```
-  2. Execute `lib/libuv/copy_linux.sh`
+	1. Execute:
+		```sh
+		cd lib/libuv
+		sh autogen.sh
+		./configure
+		make
+		sudo make install
+		cd ../..
+		```
+	2. Execute `lib/libuv/copy_linux.sh`
 3. Build SDL2
-  1. Execute:
-    ```sh
-    cd lib/sdl
-    ./configure
-    make
-    sudo make install
-    cd ../..
-    ```
-  2. Execute `lib/sdl/copy_linux.sh`
+	1. Execute:
+		```sh
+		cd lib/sdl
+		./configure
+		make
+		sudo make install
+		cd ../..
+		```
+	2. Execute `lib/sdl/copy_linux.sh`
 4. Build SDL2_mixer
-  1. Install necessary dependencies to enable extra audio format support, eg. for Ubuntu execute:
-    ```sh
-    sudo apt install libflac-dev libfluidsynth-dev libmodplug-dev libmpg123-dev libopus-dev libopusfile-dev libvorbis-dev
-    ```
-  2. Execute:
-    ```sh
-    cd lib/sdl_mixer
-    ./configure
-    make
-    cd ../..
-    ```
-  3. Execute `lib/sdl_mixer/copy_linux.sh`
+	1. Install necessary dependencies to enable extra audio format support, eg. for Ubuntu execute:
+		```sh
+		sudo apt install libflac-dev libfluidsynth-dev libmodplug-dev libmpg123-dev libopus-dev libopusfile-dev libvorbis-dev
+		```
+	2. Execute:
+		```sh
+		cd lib/sdl_mixer
+		./configure
+		make
+		cd ../..
+		```
+	3. Execute `lib/sdl_mixer/copy_linux.sh`
 5. Build Bitty Engine
-  1. Execute:
-    ```sh
-    cd bitty.linux
-    cmake . && make
-    cd ..
-    ```
+	1. Execute:
+		```sh
+		cd bitty.linux
+		cmake . && make
+		cd ..
+		```
 
 </details>
 
