@@ -346,6 +346,18 @@ public:
 };
 
 //
+// The notify widget compatible with most linux distros
+//
+
+class notify_linux : public internal::dialog
+{
+public:
+    notify_linux(std::string const &title,
+                 std::string const &message,
+                 icon _icon = icon::info);
+};
+
+//
 // The message widget
 //
 
@@ -1572,6 +1584,62 @@ inline notify::notify(std::string const &title,
         command.push_back("-e");
         command.push_back("display notification " + osascript_quote(message) +
                           " with title " + osascript_quote(title));
+    }
+    else if (is_zenity())
+    {
+        command.push_back("--notification");
+        command.push_back("--window-icon");
+        command.push_back(get_icon_name(_icon));
+        command.push_back("--text");
+        command.push_back(title + "\n" + message);
+    }
+    else if (is_kdialog())
+    {
+        command.push_back("--icon");
+        command.push_back(get_icon_name(_icon));
+        command.push_back("--title");
+        command.push_back(title);
+        command.push_back("--passivepopup");
+        command.push_back(message);
+        command.push_back("5");
+    }
+
+    if (flags(flag::is_verbose))
+        std::cerr << "pfd: " << command << std::endl;
+
+    m_async->start_process(command);
+#endif
+}
+
+// notify implementation for linux distros.
+
+inline notify_linux::notify_linux(std::string const &title,
+                                  std::string const &message,
+                                  icon _icon /* = icon::info */)
+{
+    if (_icon == icon::question) // Not supported by notifications
+        _icon = icon::info;
+
+#if _WIN32
+    // Unused.
+#elif __EMSCRIPTEN__
+    // Unused.
+#else
+    auto command = desktop_helper();
+
+    if (is_osascript())
+    {
+        command.push_back("-e");
+        command.push_back("display notification " + osascript_quote(message) +
+                          " with title " + osascript_quote(title));
+    }
+    else if (check_program("notify-send"))
+    {
+        command.clear();
+        command.push_back("notify-send");
+        command.push_back(title);
+        command.push_back(message);
+        command.push_back("--icon=" + get_icon_name(_icon));
     }
     else if (is_zenity())
     {

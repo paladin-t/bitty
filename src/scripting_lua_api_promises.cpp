@@ -1038,7 +1038,11 @@ static int Platform_notify(lua_State* L) {
 		icon_ = pfd::icon::error;
 	else if (icon == "question")
 		icon_ = pfd::icon::question;
+#if defined BITTY_OS_LINUX
+	pfd::notify_linux notify(title, message, icon_);
+#else /* BITTY_OS_LINUX */
 	pfd::notify notify(title, message, icon_);
+#endif /* BITTY_OS_LINUX */
 
 	return 0;
 }
