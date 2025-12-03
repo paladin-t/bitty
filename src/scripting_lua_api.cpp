@@ -28,6 +28,7 @@
 #include "renderer.h"
 #include "scripting_lua.h"
 #include "scripting_lua_api.h"
+#include "text_box.h"
 #include "walker.h"
 #include "web.h"
 #include "window.h"
@@ -9730,6 +9731,38 @@ void open(class Executable* exec) {
 
 	// Primitives.
 	open_Primitives(L);
+}
+
+}
+
+}
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
+** Editor
+*/
+
+namespace Lua {
+
+namespace Editor {
+
+/**< Text editor. */
+
+static void open_TextBox(lua_State* L) {
+	(void)L;
+	// TODO
+}
+
+/**< Categories. */
+
+void open(class Executable* exec) {
+	// Prepare.
+	lua_State* L = (lua_State*)exec->pointer();
+
+	// Text editor.
+	open_TextBox(L);
 }
 
 }

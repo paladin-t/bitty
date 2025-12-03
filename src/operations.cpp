@@ -3523,6 +3523,8 @@ bool Operations::debugSetProgramPointer(Workspace* ws, const class Project* proj
 	if (!editor)
 		return false;
 
+	ws->fillAssetEditorSettings(editor);
+
 	editor->post(Editable::SET_CURSOR, (Variant::Int)ln - 1);
 
 	editor->post(Editable::SET_PROGRAM_POINTER, (Variant::Int)ln - 1);

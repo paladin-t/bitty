@@ -441,6 +441,7 @@ void WorkspaceStudio::require(Executable* exec) {
 		Lua::Libs::open(exec);
 		if (exec->primitives()) {
 			Lua::Engine::open(exec);
+			Lua::Editor::open(exec);
 		}
 		Lua::Invoke::open(exec);
 		Lua::Application::open(exec);

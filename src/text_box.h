@@ -1,0 +1,38 @@
+/*
+** Bitty
+**
+** An itty bitty game engine.
+**
+** Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
+**
+** For the latest info, see https://github.com/paladin-t/bitty/
+*/
+
+#ifndef __TEXT_BOX_H__
+#define __TEXT_BOX_H__
+
+#include "bitty.h"
+#include "object.h"
+
+/*
+** {===========================================================================
+** Text box
+*/
+
+/**
+ * @brief Text box object.
+ */
+class TextBox : public virtual Object {
+public:
+	typedef std::shared_ptr<TextBox> Ptr;
+
+public:
+	BITTY_CLASS_TYPE('T', 'X', 'T', 'B')
+
+	static TextBox* create(void);
+	static void destroy(TextBox* ptr);
+};
+
+/* ===========================================================================} */
+
+#endif /* __TEXT_BOX_H__ */

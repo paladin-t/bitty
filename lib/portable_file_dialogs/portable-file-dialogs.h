@@ -1622,8 +1622,12 @@ inline notify_linux::notify_linux(std::string const &title,
 
 #if _WIN32
     // Unused.
+    (void)title;
+    (void)message;
 #elif __EMSCRIPTEN__
     // Unused.
+    (void)title;
+    (void)message;
 #else
     auto command = desktop_helper();
 
