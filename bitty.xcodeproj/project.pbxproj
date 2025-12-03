@@ -196,6 +196,7 @@
 		038E77722582138100A94374 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 038E77712582138100A94374 /* SDL2.framework */; };
 		03CC1EEB25A6F08F00A73AD3 /* noiser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03CC1EE925A6F08F00A73AD3 /* noiser.cpp */; };
 		03FEADB325C94F13006A5EF0 /* imgui_tables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03FEADB225C94F13006A5EF0 /* imgui_tables.cpp */; };
+		680E68A82EE0638700E789A2 /* text_box.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 680E68A62EE0638600E789A2 /* text_box.cpp */; };
 		6868251C2B56EBAA00D8E3FB /* strscpy.c in Sources */ = {isa = PBXBuildFile; fileRef = 686825092B56EBA700D8E3FB /* strscpy.c */; };
 		6868251D2B56EBAA00D8E3FB /* thread-common.c in Sources */ = {isa = PBXBuildFile; fileRef = 6868250B2B56EBA700D8E3FB /* thread-common.c */; };
 		6868251E2B56EBAA00D8E3FB /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 6868250C2B56EBA700D8E3FB /* timer.c */; };
@@ -755,6 +756,8 @@
 		03CC1EE925A6F08F00A73AD3 /* noiser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = noiser.cpp; path = src/noiser.cpp; sourceTree = "<group>"; };
 		03CC1EEA25A6F08F00A73AD3 /* noiser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = noiser.h; path = src/noiser.h; sourceTree = "<group>"; };
 		03FEADB225C94F13006A5EF0 /* imgui_tables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_tables.cpp; path = lib/imgui/imgui_tables.cpp; sourceTree = "<group>"; };
+		680E68A62EE0638600E789A2 /* text_box.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = text_box.cpp; path = src/text_box.cpp; sourceTree = "<group>"; };
+		680E68A72EE0638700E789A2 /* text_box.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = text_box.h; path = src/text_box.h; sourceTree = "<group>"; };
 		686824F92B56EB7300D8E3FB /* uv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = uv.h; path = lib/libuv/include/uv.h; sourceTree = "<group>"; };
 		686824FB2B56EB8B00D8E3FB /* threadpool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = threadpool.h; path = lib/libuv/include/uv/threadpool.h; sourceTree = "<group>"; };
 		686824FC2B56EB8B00D8E3FB /* tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tree.h; path = lib/libuv/include/uv/tree.h; sourceTree = "<group>"; };
@@ -1120,9 +1123,9 @@
 				038E733725820E3500A94374 /* file_handle.h */,
 				038E73E725820E5100A94374 /* filesystem.cpp */,
 				038E738525820E4400A94374 /* filesystem.h */,
-				031B4EBD25833EB9002EF476 /* interfaces */,
 				038E73B625820E4B00A94374 /* hacks.cpp */,
 				038E739225820E4700A94374 /* hacks.h */,
+				031B4EBD25833EB9002EF476 /* interfaces */,
 				038E739525820E4700A94374 /* json.cpp */,
 				038E735125820E3900A94374 /* json.h */,
 				0359C578258220CB0024E290 /* mathematics.cpp */,
@@ -1139,6 +1142,8 @@
 				038E736A25820E3D00A94374 /* plus.h */,
 				038E737125820E3F00A94374 /* promise.cpp */,
 				038E738125820E4100A94374 /* promise.h */,
+				680E68A62EE0638600E789A2 /* text_box.cpp */,
+				680E68A72EE0638700E789A2 /* text_box.h */,
 				038E73CB25820E4D00A94374 /* text.cpp */,
 				038E739A25820E4800A94374 /* text.h */,
 				031B4EC025833ECC002EF476 /* web */,
@@ -2237,6 +2242,7 @@
 				038E76BB2582111700A94374 /* lauxlib.c in Sources */,
 				038E76BD2582111700A94374 /* ldump.c in Sources */,
 				6868254B2B56EBED00D8E3FB /* poll.c in Sources */,
+				680E68A82EE0638700E789A2 /* text_box.cpp in Sources */,
 				686825502B56EBED00D8E3FB /* getaddrinfo.c in Sources */,
 				687EDADB2EC36401002C82A7 /* command.cpp in Sources */,
 				687EDABC2EC3635F002C82A7 /* scripting_lua_api_plugin.cpp in Sources */,

@@ -1222,6 +1222,9 @@
     <ClCompile Include="studio\main.cpp">
       <Filter>src\application</Filter>
     </ClCompile>
+    <ClCompile Include="src\text_box.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -3139,6 +3142,9 @@
     </ClInclude>
     <ClInclude Include="studio\workspace_studio.h">
       <Filter>src\workspace\studio</Filter>
+    </ClInclude>
+    <ClInclude Include="src\text_box.h">
+      <Filter>src\shared</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

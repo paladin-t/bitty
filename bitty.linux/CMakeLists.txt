@@ -308,6 +308,7 @@ list(
   "../src/plus.cpp"
   "../src/promise.cpp"
   "../src/text.cpp"
+  "../src/text_box.cpp"
   "../src/web.cpp"
 )
 list(

@@ -3025,6 +3025,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClCompile Include="src\scripting_lua_api_plugin.cpp" />
     <ClCompile Include="src\scripting_lua_api_promises.cpp" />
     <ClCompile Include="src\shapes.cpp" />
+    <ClCompile Include="src\text_box.cpp" />
     <ClCompile Include="src\walker.cpp" />
     <ClCompile Include="src\web.cpp" />
     <ClCompile Include="src\web_civetweb.cpp">
@@ -3659,6 +3660,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClInclude Include="src\scripting_lua_api_plugin.h" />
     <ClInclude Include="src\scripting_lua_api_promises.h" />
     <ClInclude Include="src\shapes.h" />
+    <ClInclude Include="src\text_box.h" />
     <ClInclude Include="src\walker.h" />
     <ClInclude Include="src\web.h" />
     <ClInclude Include="src\web_civetweb.h" />
