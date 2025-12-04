@@ -148,8 +148,8 @@ bool ThemeStudio::open(class Renderer* rnd) {
 	styleClassic().builtin[ImGuiCol_ResizeGripHovered]      = ImVec4(0.78f, 0.82f, 1.00f, 0.60f);
 	styleClassic().builtin[ImGuiCol_ResizeGripActive]       = ImVec4(0.78f, 0.82f, 1.00f, 0.90f);
 	styleClassic().builtin[ImGuiCol_Tab]                    = ImVec4(0.21f, 0.30f, 0.43f, 1.00f);
-	styleClassic().builtin[ImGuiCol_TabHovered]             = ImVec4(1.00f, 0.98f, 0.71f, 1.00f);
-	styleClassic().builtin[ImGuiCol_TabActive]              = ImVec4(1.00f, 0.95f, 0.61f, 1.00f);
+	styleClassic().builtin[ImGuiCol_TabHovered]             = ImVec4(0.20f, 0.45f, 0.46f, 1.00f);
+	styleClassic().builtin[ImGuiCol_TabActive]              = ImVec4(0.18f, 0.41f, 0.42f, 1.00f);
 	styleClassic().builtin[ImGuiCol_TabUnfocused]           = ImLerp(styleClassic().builtin[ImGuiCol_Tab],          styleClassic().builtin[ImGuiCol_TitleBg], 0.80f);
 	styleClassic().builtin[ImGuiCol_TabUnfocusedActive]     = ImLerp(styleClassic().builtin[ImGuiCol_TabActive],    styleClassic().builtin[ImGuiCol_TitleBg], 0.40f);
 	styleClassic().builtin[ImGuiCol_PlotLines]              = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
@@ -167,8 +167,8 @@ bool ThemeStudio::open(class Renderer* rnd) {
 	styleClassic().builtin[ImGuiCol_NavWindowingHighlight]  = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
 	styleClassic().builtin[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
 	styleClassic().builtin[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
-	styleClassic().tabTextColor                             = ImGui::GetColorU32(ImVec4(0.60f, 0.60f, 0.60f, 1.00f));
-	styleClassic().tabTextPendingColor                      = ImGui::GetColorU32(ImVec4(0.60f, 0.60f, 0.60f, 1.00f));
+	styleClassic().tabTextColor                             = ImGui::GetColorU32(ImVec4(1.00f, 1.00f, 1.00f, 1.00f));
+	styleClassic().tabTextPendingColor                      = ImGui::GetColorU32(ImVec4(1.00f, 1.00f, 1.00f, 1.00f));
 	styleClassic().tabPendingColor                          = ImGui::GetColorU32(ImVec4(0.26f, 0.59f, 0.98f, 1.00f));
 	styleClassic().tabPendingHoveredColor                   = ImGui::GetColorU32(ImVec4(0.36f, 0.69f, 0.98f, 1.00f));
 	styleClassic().iconColor                                = ImGui::GetColorU32(ImVec4(1.00f, 1.00f, 1.00f, 1.00f));
