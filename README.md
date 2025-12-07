@@ -68,10 +68,10 @@ Bitty Engine offers a set of orthogonal features that makes game development com
 * Display: configurable resolution
 * Code: Lua, supports multiple source files
 * Image: either true-color (PNG, JPG, BMP, TGA) or paletted, up to 1024x1024 pixels per file
-* Palette: 256 colors with transparency support
 * Sprite: up to 1024x1024 pixels per frame, up to 1024 frames per sprite
 * Map: up to 4096x4096 tiles per page
 * Font: supports Bitmap and TrueType
+* Palette: supported
 * Audio: 1 BGM channel, 4 SFX channels; supports MP3, OGG, WAV, FLAC, etc.
 * Gamepad: 6 buttons for each pad (D-Pad + A/B), up to 2 players
 * Keyboard and mouse: supported
