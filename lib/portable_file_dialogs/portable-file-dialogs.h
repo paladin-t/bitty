@@ -1527,11 +1527,15 @@ inline notify::notify(std::string const &title,
     // is no need to memset the structure.
     nid = nullptr;
     nid = std::make_shared<notify_icon_data>();
+    memset(nid.get(), 0, sizeof(notify_icon_data));
+
+    HWND hwnd = GetActiveWindow();
+    if (hwnd == NULL) hwnd = portableFileDialogsActiveWindow;
+    nid->hWnd = hwnd;
 
     // For XP support
     nid->cbSize = NOTIFYICONDATAW_V2_SIZE;
-    nid->hWnd = nullptr;
-    nid->uID = 0;
+    nid->uID = 1;
 
     // Flag Description:
     // - NIF_ICON    The hIcon member is valid.
