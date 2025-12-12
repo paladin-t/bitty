@@ -239,7 +239,7 @@ bool FetchCurl::perform(void) {
 
 		Platform::threadName("WEB");
 
-		Platform::locale("C");
+		Text::locale("C");
 
 		CURLcode res = curl_easy_perform(curl);
 		if (res != CURLE_OK) {
