@@ -243,17 +243,16 @@ std::string Path::absoluteOf(const std::string &path) {
 	uniform(utfstr);
 
 	Text::Array parts = Text::split(utfstr, "/");
-	utfstr.clear();
+	Text::Array finalParts;
 	for (int i = 0; i < (int)parts.size(); ++i) {
-		if (i == (int)parts.size() - 1) {
-			utfstr += parts[i];
-		} else if (parts[i + 1] != "..") {
-			utfstr += parts[i];
-			utfstr += "/";
-		} else /* if (parts[i + 1] == "..") */ {
-			++i;
+		if (parts[i] != "..") {
+			finalParts.push_back(parts[i]);
+		} else /* if (parts[i] == "..") */ {
+			if (!finalParts.empty())
+				finalParts.pop_back();
 		}
 	}
+	utfstr = Text::join(finalParts, "/");
 	if (!path.empty() && (path.back() == '\\' || path.back() == '/'))
 		utfstr.push_back('/');
 
