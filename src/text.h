@@ -115,6 +115,7 @@ public:
 	static std::string remove(const std::string &str, const std::string &charsToRemove);
 	static std::string trim(const std::string &str, const std::string &delims = " \f\n\r\t\v");
 	static std::string replace(const std::string &str, const std::string &from, const std::string &to, bool all = true);
+	static std::string join(const Array &array, const std::string &sep);
 	static Array split(const std::string &str, const std::string &delims, size_t maxSplits = 0);
 	static Array tokenise(const std::string &str, const std::string &singleDelims, const std::string &doubleDelims, size_t maxSplits = 0);
 	/**

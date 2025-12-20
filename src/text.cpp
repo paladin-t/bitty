@@ -423,6 +423,18 @@ std::string Text::replace(const std::string &str, const std::string &from, const
 	return result;
 }
 
+std::string Text::join(const Array &array, const std::string &sep) {
+	std::string result;
+	for (int i = 0; i < (int)array.size(); ++i) {
+		const std::string &str = array[i];
+		result += str;
+		if (i != (int)array.size() - 1)
+			result += sep;
+	}
+
+	return result;
+}
+
 Text::Array Text::split(const std::string &str, const std::string &delims, size_t maxSplits) {
 	// Prepare.
 	Array ret;
