@@ -1215,7 +1215,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 
 		if (!IsReadOnly()) {
 			if (IsKeyPressed(GetKeyIndex(ImGuiKey_Enter)) || OnKeyPressed(ImGuiKey_Enter)) {
-				if (!alt) {
+				if (!ctrl && !alt) {
 					unsigned int c = '\n'; // Insert new line.
 					io.AddInputCharacter((ImWchar)c);
 				}
