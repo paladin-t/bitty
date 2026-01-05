@@ -972,7 +972,11 @@ void NetworkLibuv::doOpen(bool withudp, bool withtcp, bool withws, bool toconn, 
 				_udp->data = this;
 				uv_udp_init(_loop, _udp);
 
+#if UV_VERSION_HEX >= ((1 << 16) | (27 <<  8))
 				ret = uv_udp_connect(_udp, (const struct sockaddr*)&_address);
+#else /* UV_VERSION_HEX >= ((1 << 16) | (27 <<  8)) */
+#	pragma message("WARNING: uv_udp_connect is not available.")
+#endif /* UV_VERSION_HEX >= ((1 << 16) | (27 <<  8)) */
 			} else if (withtcp) {
 				if (!_tcp)
 					_tcp = (uv_tcp_t*)malloc(sizeof(uv_tcp_t));

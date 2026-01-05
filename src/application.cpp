@@ -31,9 +31,6 @@
 #include "../lib/civetweb/include/civetweb.h"
 #include "../lib/imgui_sdl/imgui_sdl.h"
 #include "../lib/jpath/jpath.hpp"
-#if !defined BITTY_OS_HTML
-#	include "../lib/libuv/include/uv.h"
-#endif /* BITTY_OS_HTML */
 #if defined BITTY_CP_VC
 #	pragma warning(push)
 #	pragma warning(disable : 4800)
@@ -47,6 +44,9 @@
 #include "../lib/zlib/zlib.h"
 #if !defined BITTY_OS_HTML
 #	include <curl/curl.h>
+#endif /* BITTY_OS_HTML */
+#if !defined BITTY_OS_HTML
+#	include <uv.h>
 #endif /* BITTY_OS_HTML */
 #include <SDL_mixer.h>
 #if defined BITTY_OS_WIN
@@ -1222,8 +1222,16 @@ class Application* createApplication(class Workspace* workspace, int argc, const
 #else /* BITTY_OS_HTML */
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 		fprintf(stderr, "[SDL warning]: %s\n", SDL_GetError());
-	if (Mix_Init(MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID | MIX_INIT_OPUS) < 0)
+	if (
+		Mix_Init(
+			MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID
+#	if SDL_MIXER_VERSION_ATLEAST(2, 0, 4)
+			| MIX_INIT_OPUS
+#	endif /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
+		) < 0
+	) {
 		fprintf(stderr, "[SDL-Mixer warning]: %s\n", SDL_GetError());
+	}
 	if (Mix_OpenAudio(AUDIO_TARGET_SAMPLE_RATE, AUDIO_TARGET_FORMAT, AUDIO_TARGET_CHANNEL_COUNT, AUDIO_TARGET_CHUNK_SIZE) < 0)
 		fprintf(stderr, "[SDL-Audio warning]: %s\n", SDL_GetError());
 #endif /* BITTY_OS_HTML */

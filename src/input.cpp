@@ -984,6 +984,7 @@ public:
 		return s0[btn] && !s1[btn] ? 1 : 0;
 	}
 	virtual bool rumbleGamepad(int idx, int lowHz, int hiHz, unsigned ms) override {
+#if SDL_VERSION_ATLEAST(2, 0, 9)
 		LockGuard<decltype(_lock)> guard(_lock);
 
 		if (idx < 0 || idx >= (int)_gamepads.size() || idx >= (int)_gamepads.size())
@@ -1004,6 +1005,9 @@ public:
 			return false;
 
 		return SDL_JoystickRumble(js, (Uint16)lowHz, (Uint16)hiHz, ms) == 0;
+#else /* SDL_VERSION_ATLEAST(2, 0, 9) */
+		return false;
+#endif /* SDL_VERSION_ATLEAST(2, 0, 9) */
 	}
 
 	virtual int controllerDown(int btn, int idx) const override {
@@ -1086,6 +1090,7 @@ public:
 		return 0;
 	}
 	virtual bool rumbleController(int idx, int lowHz, int hiHz, unsigned ms) override {
+#if SDL_VERSION_ATLEAST(2, 0, 9)
 		LockGuard<decltype(_lock)> guard(_lock);
 
 		if (idx < 0 || idx >= (int)_controllers.size() || idx >= (int)_controllers.size())
@@ -1097,6 +1102,9 @@ public:
 			return false;
 
 		return SDL_GameControllerRumble(controller, (Uint16)lowHz, (Uint16)hiHz, ms) == 0;
+#else /* SDL_VERSION_ATLEAST(2, 0, 9) */
+		return false;
+#endif /* SDL_VERSION_ATLEAST(2, 0, 9) */
 	}
 
 	virtual bool keyDown(int key) const override {
