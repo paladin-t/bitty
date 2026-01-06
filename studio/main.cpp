@@ -256,12 +256,16 @@ static std::string androidDocumentPathResolve(void) {
 			cstr = SDL_AndroidGetExternalStoragePath();
 	}
 	if (!cstr) {
-		cstr = SDL_GetPrefPath(BASIC8_DOMAIN, BASIC8_TITLE);
-		dir = cstr;
-		SDL_free((void*)cstr);
+		cstr = SDL_GetPrefPath("bitty", "engine");
+		if (cstr) {
+			dir = cstr;
+			SDL_free((void*)cstr);
+			cstr = nullptr;
+		}
 	}
-	if (cstr)
+	if (dir.empty() && cstr) {
 		dir = cstr;
+	}
 
 	return dir;
 }

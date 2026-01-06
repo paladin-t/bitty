@@ -1172,6 +1172,10 @@ private:
 		const std::string writableDir = Unicode::toOs(Path::writableDirectory());
 		const std::string savedGamesDir = Unicode::toOs(Path::savedGamesDirectory());
 
+		if (writableDir.empty()) {
+			Platform::msgbox("Failed to get the path of a writable directory.\nMay not have permissions.", "Warning");
+		}
+
 		fprintf(stdout, "      Executable file: \"%s\".\n", exeFile.c_str());
 		fprintf(stdout, "    Current directory: \"%s\".\n", currentDir.c_str());
 		fprintf(stdout, "   Document directory: \"%s\".\n", docDir.c_str());

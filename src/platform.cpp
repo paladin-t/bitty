@@ -35,6 +35,9 @@ bool Platform::ignore(const char* path) {
 
 std::string Platform::writableDirectory(void) {
 	const char* cstr = SDL_GetPrefPath("bitty", "engine");
+	if (!cstr)
+		return ""; // Fall to blank if failed to get the path.
+
 	const std::string osstr = Unicode::toOs(cstr);
 	SDL_free((void*)cstr);
 
