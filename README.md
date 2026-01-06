@@ -262,6 +262,14 @@ Dependencies: CMake, GCC.
 		cd ..
 		```
 
+Note: If you want to link to the system libraries instead of the local libraries in this repo, refer to the instructions below. You can configure `BITTY_LIB_CURL_USE_LOCAL`, `BITTY_LIB_LIBUV_USE_LOCAL`, and `BITTY_LIB_SDL_USE_LOCAL` to determine the linking strategy respectively for cURL, libuv, and SDL.
+
+```sh
+cd bitty.linux
+cmake . -DBITTY_LIB_CURL_USE_LOCAL=FALSE -DBITTY_LIB_LIBUV_USE_LOCAL=FALSE -DBITTY_LIB_SDL_USE_LOCAL=FALSE && make
+cd ..
+```
+
 </details>
 
 ### Other platforms
