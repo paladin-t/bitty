@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <memory>
 #include <sstream>
+#include <stdint.h>
 #include <string>
 #include <tuple>
 

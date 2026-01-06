@@ -5,49 +5,71 @@ message(STATUS "Build Bitty Engine for Linux...")
 project(bitty)
 
 # Architectures.
-set(BITTY_SPEC no)
-if ("${arch}" STREQUAL "x64")
-  set(BITTY_SPEC 64)
+if (NOT DEFINED BITTY_SPEC)
+  set(BITTY_SPEC ${CMAKE_SYSTEM_PROCESSOR})
 endif ()
-if ("${arch}" STREQUAL "x86")
-  set(BITTY_SPEC 86)
-endif ()
-if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-  message(STATUS "Host arch: x64")
-  set(BITTY_IS_X64 TRUE)
-  set(BITTY_ARCH 64)
+if (${BITTY_SPEC} MATCHES "x86_64|AMD64")
+  message(STATUS "Target arch: x64")
+  set(BITTY_ARCH "x64")
+  set(BITTY_BITS 64)
+elseif (${BITTY_SPEC} MATCHES "i[3456]86|X86")
+  message(STATUS "Target arch: x86")
+  set(BITTY_ARCH "x86")
+  set(BITTY_BITS 32)
+elseif (${BITTY_SPEC} MATCHES "^(aarch64|arm64|ARM64)$")
+  message(STATUS "Target arch: arm64")
+  set(BITTY_ARCH "arm64")
+  set(BITTY_BITS 64)
+elseif (${BITTY_SPEC} MATCHES "^(arm|ARM)")
+  message(STATUS "Target arch: arm32")
+  set(BITTY_ARCH "arm32")
+  set(BITTY_BITS 32)
+elseif (${BITTY_SPEC} MATCHES "mips64")
+  message(STATUS "Target arch: mips64")
+  set(BITTY_ARCH "mips64")
+  set(BITTY_BITS 64)
+elseif (${BITTY_SPEC} MATCHES "mips")
+  message(STATUS "Target arch: mips32")
+  set(BITTY_ARCH "mips32")
+  set(BITTY_BITS 32)
+elseif (${BITTY_SPEC} MATCHES "riscv64")
+  message(STATUS "Target arch: riscv64")
+  set(BITTY_ARCH "riscv64")
+  set(BITTY_BITS 64)
+elseif (${BITTY_SPEC} MATCHES "riscv32")
+  message(STATUS "Target arch: riscv32")
+  set(BITTY_ARCH "riscv32")
+  set(BITTY_BITS 32)
+elseif (${BITTY_SPEC} MATCHES "ppc64le|ppc64|powerpc64")
+  message(STATUS "Target arch: ppc64")
+  set(BITTY_ARCH "ppc64")
   set(BITTY_BITS 64)
 else ()
-  message(STATUS "Host arch: x86")
-  set(BITTY_IS_X64 FALSE)
-  set(BITTY_ARCH 86)
-  set(BITTY_BITS 32)
-endif ()
-if (${BITTY_SPEC} STREQUAL no)
-  message(STATUS "Specified arch: no")
-else ()
-  message(STATUS "Specified arch: " ${BITTY_SPEC})
-  if (${BITTY_SPEC} STREQUAL 64)
-    if (NOT ${BITTY_IS_X64})
-      set(BITTY_IS_X64 TRUE)
-      set(BITTY_ARCH 64)
-      set(BITTY_BITS 64)
-      set(CMAKE_C_FLAGS "-m64")
-      set(CMAKE_CXX_FLAGS "-m64")
-    endif ()
+  if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    message(STATUS "Target arch: unknown64")
+    set(BITTY_ARCH "unknown64")
+    set(BITTY_BITS 64)
+  elseif (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    message(STATUS "Target arch: unknown32")
+    set(BITTY_ARCH "unknown32")
+    set(BITTY_BITS 32)
   else ()
-    if (${BITTY_IS_X64})
-      set(BITTY_IS_X64 FALSE)
-      set(BITTY_ARCH 86)
-      set(BITTY_BITS 32)
-      set(CMAKE_C_FLAGS "-m32")
-      set(CMAKE_CXX_FLAGS "-m32")
-    endif ()
+    message(FATAL_ERROR 
+      "Target arch: unknown\n"
+      "Unsupported architecture detected! "
+      "CMAKE_SIZEOF_VOID_P = ${CMAKE_SIZEOF_VOID_P}. "
+      "Only 32-bit and 64-bit architectures are supported."
+    )
   endif ()
 endif ()
-message(STATUS "Is x64: " ${BITTY_IS_X64})
+if (${BITTY_BITS} EQUAL 64)
+  set(CMAKE_C_FLAGS "-m64")
+  set(CMAKE_CXX_FLAGS "-m64")
+elseif (${BITTY_BITS} EQUAL 32)
+  set(CMAKE_C_FLAGS "-m32")
+  set(CMAKE_CXX_FLAGS "-m32")
+endif ()
 set(BITTY_TEMP ./)
-set(${arch} "")
 
 # Profiles.
 if (NOT CMAKE_BUILD_TYPE)
@@ -73,6 +95,49 @@ endif ()
 find_package(PkgConfig REQUIRED)
 find_package(OpenGL REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+
+# Libs.
+if (NOT DEFINED BITTY_LIB_CURL_USE_LOCAL)
+  set(BITTY_LIB_CURL_USE_LOCAL "TRUE")
+endif ()
+if (${BITTY_LIB_CURL_USE_LOCAL} STREQUAL TRUE)
+  if (EXISTS "../lib/curl/${BITTY_ARCH}/libcurl.a" AND EXISTS "../lib/curl/${BITTY_ARCH}/libcurl.so")
+    message(STATUS "Use local cURL")
+  else ()
+    message(STATUS "Use global cURL")
+    set(BITTY_LIB_CURL_USE_LOCAL "FALSE")
+  endif ()
+else ()
+  message(STATUS "Use global cURL")
+endif ()
+
+if (NOT DEFINED BITTY_LIB_LIBUV_USE_LOCAL)
+  set(BITTY_LIB_LIBUV_USE_LOCAL "TRUE")
+endif ()
+if (${BITTY_LIB_LIBUV_USE_LOCAL} STREQUAL TRUE)
+  if (EXISTS "../lib/libuv/lib/${BITTY_ARCH}/libuv.so.1")
+    message(STATUS "Use local libuv")
+  else ()
+    message(STATUS "Use global libuv")
+    set(BITTY_LIB_LIBUV_USE_LOCAL "FALSE")
+  endif ()
+else ()
+  message(STATUS "Use global libuv")
+endif ()
+
+if (NOT DEFINED BITTY_LIB_SDL_USE_LOCAL)
+  set(BITTY_LIB_SDL_USE_LOCAL "TRUE")
+endif ()
+if (${BITTY_LIB_SDL_USE_LOCAL} STREQUAL TRUE)
+  if (EXISTS "../lib/sdl/lib/${BITTY_ARCH}/libSDL2.a" AND EXISTS "../lib/sdl/lib/${BITTY_ARCH}/libSDL2-2.0.so.0" AND EXISTS "../lib/sdl_mixer/lib/${BITTY_ARCH}/libSDL2_mixer-2.0.so.0")
+    message(STATUS "Use local SDL")
+  else ()
+    message(STATUS "Use global SDL")
+    set(BITTY_LIB_SDL_USE_LOCAL "FALSE")
+  endif ()
+else ()
+  message(STATUS "Use global SDL")
+endif ()
 
 # Sources.
 list(
@@ -391,9 +456,6 @@ list(
   "../lib/civetweb/src"
   "../lib/imgui"
   "../lib/kissfft"
-  "../lib/libuv/include"
-  "../lib/sdl/include"
-  "../lib/sdl_mixer/include"
   "../lib/zlib"
 )
 target_include_directories(bitty PRIVATE ${BITTY_INC})
@@ -434,49 +496,135 @@ add_definitions(${GTK3_CFLAGS_OTHER})
 target_link_libraries(bitty ${GTK3_LIBRARIES})
 
 # cURL.
-include_directories("../lib/curl/include")
-add_library(libcurl SHARED IMPORTED)
-set_target_properties(libcurl PROPERTIES IMPORTED_LOCATION "./libcurl.so")
-target_link_libraries(bitty libcurl)
+if (${BITTY_LIB_CURL_USE_LOCAL} STREQUAL TRUE)
+  include_directories("../lib/curl/include")
+  add_library(libcurl SHARED IMPORTED)
+  set_target_properties(libcurl PROPERTIES IMPORTED_LOCATION "./libcurl.so")
+  target_link_libraries(bitty libcurl)
+else ()
+  find_package(CURL REQUIRED)
+  if (TARGET CURL::libcurl)
+    target_link_libraries(bitty CURL::libcurl)
+  else ()
+    include_directories(${CURL_INCLUDE_DIRS})
+    target_link_libraries(bitty ${CURL_LIBRARIES})
+  endif ()
+endif ()
 
 # libuv.
-include_directories("../lib/libuv/include")
-add_library(libuv SHARED IMPORTED)
-set_target_properties(libuv PROPERTIES IMPORTED_LOCATION "./libuv.so.1")
-target_link_libraries(bitty libuv)
+if (${BITTY_LIB_LIBUV_USE_LOCAL} STREQUAL TRUE)
+  include_directories("../lib/libuv/include")
+  add_library(libuv SHARED IMPORTED)
+  set_target_properties(libuv PROPERTIES IMPORTED_LOCATION "./libuv.so.1")
+  target_link_libraries(bitty libuv)
+else ()
+  pkg_check_modules(LIBUV REQUIRED IMPORTED_TARGET libuv)
+  if (TARGET PkgConfig::LIBUV)
+    target_link_libraries(bitty PkgConfig::LIBUV)
+  else ()
+    include_directories(${LIBUV_INCLUDE_DIRS})
+    target_link_libraries(bitty ${LIBUV_LIBRARIES})
+  endif ()
+endif ()
 
 # SDL.
-include_directories("../lib/sdl/lib/x${BITTY_ARCH}")
-add_library(libsdl SHARED IMPORTED)
-set_target_properties(libsdl PROPERTIES IMPORTED_LOCATION "./libSDL2-2.0.so.0")
-target_link_libraries(bitty libsdl)
-add_library(libsdlmixer SHARED IMPORTED)
-set_target_properties(libsdlmixer PROPERTIES IMPORTED_LOCATION "./libSDL2_mixer-2.0.so.0")
-target_link_libraries(bitty libsdlmixer)
+if (${BITTY_LIB_SDL_USE_LOCAL} STREQUAL TRUE)
+  include_directories("../lib/sdl/include")
+  include_directories("../lib/sdl_mixer/include")
+  add_library(libsdl SHARED IMPORTED)
+  set_target_properties(libsdl PROPERTIES IMPORTED_LOCATION "./libSDL2-2.0.so.0")
+  target_link_libraries(bitty libsdl)
+  add_library(libsdlmixer SHARED IMPORTED)
+  set_target_properties(libsdlmixer PROPERTIES IMPORTED_LOCATION "./libSDL2_mixer-2.0.so.0")
+  target_link_libraries(bitty libsdlmixer)
+else ()
+  find_package(SDL2 REQUIRED)
+  find_package(SDL2_mixer)
+  find_library(SNDIO_LIBRARY NAMES sndio)
+  if (NOT SNDIO_LIBRARY)
+    message(WARNING "sndio library not found, audio may not work properly")
+  endif ()
+  if (TARGET SDL2::SDL2)
+    target_link_libraries(bitty SDL2::SDL2)
+  else ()
+    include_directories(${SDL2_INCLUDE_DIRS})
+    target_link_libraries(bitty ${SDL2_LIBRARIES})
+  endif ()
+  if (TARGET SDL2_mixer::SDL2_mixer)
+    target_link_libraries(bitty SDL2_mixer::SDL2_mixer)
+  else ()
+    if (NOT SDL2_MIXER_INCLUDE_DIRS)
+      set(SDL2_MIXER_INCLUDE_DIRS "/usr/include/SDL2")
+    endif ()
+    if (NOT SDL2_MIXER_LIBRARIES)
+      set(SDL2_MIXER_LIBRARIES "/usr/lib/x86_64-linux-gnu/libSDL2_mixer.so")
+    endif ()
+    include_directories(${SDL2_MIXER_INCLUDE_DIRS})
+    target_link_libraries(bitty ${SDL2_MIXER_LIBRARIES})
+  endif ()
+  if (SNDIO_LIBRARY)
+    target_link_libraries(bitty ${SNDIO_LIBRARY})
+  endif ()
+endif ()
 
 # Prev event.
-add_custom_target(
-  bitty_prev_sdl
-  COMMAND cp "../lib/curl/x${BITTY_ARCH}/libcurl.a" ${BITTY_TEMP}
-  COMMAND cp "../lib/curl/x${BITTY_ARCH}/libcurl.so" ${BITTY_TEMP}
-  COMMAND cp "../lib/libuv/lib/x${BITTY_ARCH}/libuv.so.1" ${BITTY_TEMP}
-  COMMAND cp "../lib/sdl/lib/x${BITTY_ARCH}/libSDL2.a" ${BITTY_TEMP}
-  COMMAND cp "../lib/sdl/lib/x${BITTY_ARCH}/libSDL2-2.0.so.0" ${BITTY_TEMP}
-  COMMAND cp "../lib/sdl_mixer/lib/x${BITTY_ARCH}/libSDL2_mixer-2.0.so.0" ${BITTY_TEMP}
-)
-add_dependencies(bitty bitty_prev_sdl)
+if (${BITTY_LIB_CURL_USE_LOCAL} STREQUAL TRUE)
+  list(
+    APPEND BITTY_PREV_LIB
+    COMMAND cp "../lib/curl/${BITTY_ARCH}/libcurl.a" ${BITTY_TEMP}
+    COMMAND cp "../lib/curl/${BITTY_ARCH}/libcurl.so" ${BITTY_TEMP}
+  )
+endif ()
+if (${BITTY_LIB_LIBUV_USE_LOCAL} STREQUAL TRUE)
+  list(
+    APPEND BITTY_PREV_LIB
+    COMMAND cp "../lib/libuv/lib/${BITTY_ARCH}/libuv.so.1" ${BITTY_TEMP}
+  )
+endif ()
+if (${BITTY_LIB_SDL_USE_LOCAL} STREQUAL TRUE)
+  list(
+    APPEND BITTY_PREV_LIB
+    COMMAND cp "../lib/sdl/lib/${BITTY_ARCH}/libSDL2.a" ${BITTY_TEMP}
+    COMMAND cp "../lib/sdl/lib/${BITTY_ARCH}/libSDL2-2.0.so.0" ${BITTY_TEMP}
+    COMMAND cp "../lib/sdl/lib/${BITTY_ARCH}/libsndio.so.6.1" ${BITTY_TEMP}
+    COMMAND cp "../lib/sdl_mixer/lib/${BITTY_ARCH}/libSDL2_mixer-2.0.so.0" ${BITTY_TEMP}
+  )
+endif ()
+if (${BITTY_LIB_CURL_USE_LOCAL} STREQUAL TRUE OR ${BITTY_LIB_LIBUV_USE_LOCAL} STREQUAL TRUE OR ${BITTY_LIB_SDL_USE_LOCAL} STREQUAL TRUE)
+  add_custom_target(
+    bitty_prev_lib
+    ${BITTY_PREV_LIB}
+  )
+  add_dependencies(bitty bitty_prev_lib)
+endif ()
 
 # Post event.
 add_custom_command(
   TARGET bitty POST_BUILD
   COMMAND file "${BITTY_TEMP}bitty"
-  COMMAND file "${BITTY_TEMP}libcurl.so"
-  COMMAND file "${BITTY_TEMP}libuv.so.1"
-  COMMAND file "${BITTY_TEMP}libSDL2-2.0.so.0"
-  COMMAND file "${BITTY_TEMP}libSDL2_mixer-2.0.so.0"
-  COMMAND cp "${BITTY_TEMP}bitty" "../bitty/x${BITTY_ARCH}_release/"
-  COMMAND cp "${BITTY_TEMP}libcurl.so" "../bitty/x${BITTY_ARCH}_release/"
-  COMMAND cp "${BITTY_TEMP}libuv.so.1" "../bitty/x${BITTY_ARCH}_release/"
-  COMMAND cp "${BITTY_TEMP}libSDL2-2.0.so.0" "../bitty/x${BITTY_ARCH}_release/"
-  COMMAND cp "${BITTY_TEMP}libSDL2_mixer-2.0.so.0" "../bitty/x${BITTY_ARCH}_release/"
+  COMMAND cp "${BITTY_TEMP}bitty" "../bitty/${BITTY_ARCH}_release/"
 )
+if (${BITTY_LIB_CURL_USE_LOCAL} STREQUAL TRUE)
+  add_custom_command(
+    TARGET bitty POST_BUILD
+    COMMAND file "${BITTY_TEMP}libcurl.so"
+    COMMAND cp "${BITTY_TEMP}libcurl.so" "../bitty/${BITTY_ARCH}_release/"
+  )
+endif ()
+if (${BITTY_LIB_LIBUV_USE_LOCAL} STREQUAL TRUE)
+  add_custom_command(
+    TARGET bitty POST_BUILD
+    COMMAND file "${BITTY_TEMP}libuv.so.1"
+    COMMAND cp "${BITTY_TEMP}libuv.so.1" "../bitty/${BITTY_ARCH}_release/"
+  )
+endif ()
+if (${BITTY_LIB_SDL_USE_LOCAL} STREQUAL TRUE)
+  add_custom_command(
+    TARGET bitty POST_BUILD
+    COMMAND file "${BITTY_TEMP}libSDL2-2.0.so.0"
+    COMMAND file "${BITTY_TEMP}libSDL2_mixer-2.0.so.0"
+    COMMAND cp "${BITTY_TEMP}libSDL2-2.0.so.0" "../bitty/${BITTY_ARCH}_release/"
+    COMMAND cp "${BITTY_TEMP}libSDL2_mixer-2.0.so.0" "../bitty/${BITTY_ARCH}_release/"
+    COMMAND cp "${BITTY_TEMP}libsndio.so.6.1" "../bitty/${BITTY_ARCH}_release/"
+  )
+endif ()
