@@ -2189,216 +2189,216 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lapi.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lauxlib.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lbaselib.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lcode.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lcorolib.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lctype.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\ldblib.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\ldebug.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\ldo.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\ldump.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lfunc.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lgc.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\linit.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\liolib.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\llex.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lmathlib.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lmem.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\loadlib.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lobject.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lopcodes.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\loslib.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lparser.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lstate.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lstring.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lstrlib.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\ltable.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\ltablib.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\ltm.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lua.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug|x64'">true</ExcludedFromBuild>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\luac.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='debug|x64'">true</ExcludedFromBuild>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lundump.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lutf8lib.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lvm.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lua\src\lzio.c">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="lib\lz4\lib\lz4.c" />
     <ClCompile Include="lib\lz4\lib\lz4frame.c" />

@@ -1038,14 +1038,16 @@ static int collectgarbage(lua_State* L) {
 	// See: `luaB_collectgarbage` in "./lib/lua/src/lbaselib.c".
 	constexpr const char* const OPTIONS[] = {
 		"stop", "restart", "collect",
-		"count", "step", "setpause", "setstepmul",
+		"count", "step",
 		"isrunning", "generational", "incremental",
+		"param",
 		nullptr
 	};
 	constexpr const int OPTION_VALUES[] = {
 		LUA_GCSTOP, LUA_GCRESTART, LUA_GCCOLLECT,
-		LUA_GCCOUNT, LUA_GCSTEP, LUA_GCSETPAUSE, LUA_GCSETSTEPMUL,
-		LUA_GCISRUNNING, LUA_GCGEN, LUA_GCINC
+		LUA_GCCOUNT, LUA_GCSTEP,
+		LUA_GCISRUNNING, LUA_GCGEN, LUA_GCINC,
+		LUA_GCPARAM
 	};
 	const int opt = OPTION_VALUES[luaL_checkoption(L, 1, "collect", OPTIONS)];
 	switch (opt) {
@@ -1061,32 +1063,42 @@ static int collectgarbage(lua_State* L) {
 
 			return write(L, ret);
 		}
-	case LUA_GCSETPAUSE: // Fall through.
-	case LUA_GCSETSTEPMUL: {
-			const int p = (int)luaL_optinteger(L, 2, 0);
-			const int previous = gc(L, opt, p);
-
-			return write(L, previous);
-		}
 	case LUA_GCISRUNNING: {
 			const bool ret = !!gc(L, opt);
 
 			return write(L, ret);
 		}
 	case LUA_GCGEN: {
-			const int minormul = (int)luaL_optinteger(L, 2, 0);
-			const int majormul = (int)luaL_optinteger(L, 3, 0);
-			const int oldmode = gc(L, opt, minormul, majormul);
+			const int oldmode = gc(L, opt);
+
+			if (oldmode == -1)
+				return write(L, nullptr);
 
 			return write(L, (oldmode == LUA_GCINC) ? "incremental" : "generational");
 		}
 	case LUA_GCINC: {
-			const int pause = (int)luaL_optinteger(L, 2, 0);
-			const int stepmul = (int)luaL_optinteger(L, 3, 0);
-			const int stepsize = (int)luaL_optinteger(L, 4, 0);
-			const int oldmode = gc(L, opt, pause, stepmul, stepsize);
+			const int oldmode = gc(L, opt);
+
+			if (oldmode == -1)
+				return write(L, nullptr);
 
 			return write(L, (oldmode == LUA_GCINC) ? "incremental" : "generational");
+		}
+	case LUA_GCPARAM: {
+			constexpr const char* const PARAMS[] = {
+				"minormul", "majorminor", "minormajor",
+				"pause", "stepmul", "stepsize",
+				nullptr
+			};
+			constexpr const int PARAM_VALUES[] = {
+				LUA_GCPMINORMUL, LUA_GCPMAJORMINOR, LUA_GCPMINORMAJOR,
+				LUA_GCPPAUSE, LUA_GCPSTEPMUL, LUA_GCPSTEPSIZE
+			};
+			const int p = PARAM_VALUES[luaL_checkoption(L, 2, nullptr, PARAMS)];
+			const int val = (int)luaL_optinteger(L, 3, 0);
+			const int previous = gc(L, opt, p, val);
+
+			return write(L, previous);
 		}
 	case LUA_GCSTOP:
 		message(L, "GC stopped.", WARN);

@@ -151,8 +151,8 @@ Function::Function(lua_State* L) {
 }
 
 lua_State* create(lua_Alloc f, void* ud) {
-	lua_State* L = lua_newstate(f, ud);
-	lua_gc(L, LUA_GCGEN, 0, 0);
+	lua_State* L = lua_newstate(f, ud, luaL_makeseed(nullptr));
+	lua_gc(L, LUA_GCGEN);
 
 	return L;
 }
