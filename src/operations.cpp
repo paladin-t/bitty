@@ -535,6 +535,8 @@ promise::Defer Operations::fileOpenFile(class Renderer* rnd, Workspace* ws, cons
 		ws->canvasValidation(Math::Vec2i(0, 0));
 		ws->touchedFile(path_.c_str());
 
+		ws->refreshWindowTitle(prj);
+
 		df.resolve(true);
 
 #if defined BITTY_DEBUG
@@ -661,6 +663,8 @@ promise::Defer Operations::fileOpenDirectory(class Renderer* rnd, Workspace* ws,
 		ws->canvasValidation(Math::Vec2i(0, 0));
 		ws->touchedDirectory(path_.c_str());
 
+		ws->refreshWindowTitle(prj);
+
 		df.resolve(true);
 
 #if defined BITTY_DEBUG
@@ -724,6 +728,8 @@ promise::Defer Operations::fileOpenExample(class Renderer* rnd, Workspace* ws, c
 		ws->canvasScaleMode(canvasScaleMode);
 		ws->canvasValidation(Math::Vec2i(0, 0));
 		ws->touchedExample(path_.c_str());
+
+		ws->refreshWindowTitle(prj);
 
 		df.resolve(true);
 	};
@@ -913,6 +919,8 @@ promise::Defer Operations::fileClose(class Renderer* rnd, Workspace* ws, const c
 							prj->unload();
 							prj->readonly(false);
 						} while (false);
+
+						ws->refreshWindowTitle(nullptr);
 
 						df.resolve(arg);
 					}

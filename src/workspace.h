@@ -260,6 +260,8 @@ protected:
 
 	BITTY_PROPERTY_READONLY(bool, busy)
 
+	BITTY_PROPERTY_READONLY(bool, toRefreshWindowTitle)
+	BITTY_PROPERTY_READONLY(std::string, toRefreshWindowTitleContent)
 	BITTY_PROPERTY_READONLY(unsigned, activeFrameRate)
 	BITTY_PROPERTY_READONLY(int, skipFrameCount)
 
@@ -377,6 +379,7 @@ public:
 	 */
 	virtual class Theme* theme(void) const = 0;
 
+	virtual void refreshWindowTitle(const class Project* project);
 	virtual bool skipping(void);
 	virtual void skipFrame(void);
 	/**

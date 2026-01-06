@@ -391,7 +391,7 @@ unsigned WorkspaceStudio::update(class Window* wnd, class Renderer* rnd, const c
 	unsigned result = 0;
 
 	execute(wnd, rnd, project, exec, primitives, delta, alive);
-	checkAliveness(wnd, rnd, project, exec, primitives);
+	refresh(wnd, rnd, project, exec, primitives);
 
 	prepare(wnd, rnd, project, exec, primitives);
 	shortcuts(wnd, rnd, project, exec, primitives);
@@ -725,13 +725,10 @@ void WorkspaceStudio::unloadProject(const class Project* project, Executable* ex
 	prj->readonly(false);
 }
 
-void WorkspaceStudio::checkAliveness(class Window* wnd, class Renderer*, const class Project*, Executable*, class Primitives*) {
-	if (halting() || !canvasTexture()) {
-#if defined BITTY_DEBUG
-		wnd->title(BITTY_TITLE " v" BITTY_VERSION_STRING " [DEBUG]");
-#else /* BITTY_DEBUG */
-		wnd->title(BITTY_TITLE " v" BITTY_VERSION_STRING);
-#endif /* BITTY_DEBUG */
+void WorkspaceStudio::refresh(class Window* wnd, class Renderer*, const class Project*, Executable*, class Primitives*) {
+	if (toRefreshWindowTitle()) {
+		toRefreshWindowTitle(false);
+		wnd->title(toRefreshWindowTitleContent().c_str());
 	}
 }
 

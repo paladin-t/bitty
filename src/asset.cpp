@@ -80,10 +80,11 @@ bool Asset::States::selected(void) const {
 	return _selected;
 }
 
-void Asset::States::select(void) {
+void Asset::States::select(bool focus) {
 	_selected = true;
 
-	_focusing = true; // Let the workspace to re-focus it again.
+	if (focus)
+		_focusing = true; // Let the workspace to re-focus it again.
 }
 
 void Asset::States::deselect(void) {

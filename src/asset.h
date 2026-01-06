@@ -97,7 +97,7 @@ public:
 		/**
 		 * @brief Sets this asset in a list view as selected.
 		 */
-		void select(void);
+		void select(bool focus = true);
 		/**
 		 * @brief Sets this asset in a list view as not selected.
 		 */

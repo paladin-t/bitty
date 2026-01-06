@@ -368,6 +368,7 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 	// Initialize properties.
 	busy(false);
 
+	toRefreshWindowTitle(false);
 	activeFrameRate(fps);
 	skipFrameCount(0);
 
@@ -545,6 +546,22 @@ bool Workspace::close(class Window* /* wnd */, class Renderer* /* rnd */, const 
 	fprintf(stdout, "Workspace closed.\n");
 
 	return true;
+}
+
+void Workspace::refreshWindowTitle(const class Project* project) {
+#if defined BITTY_DEBUG
+	std::string wndTitle = std::string(BITTY_TITLE " v" BITTY_VERSION_STRING " [DEBUG]");
+#else /* BITTY_DEBUG */
+	std::string wndTitle = std::string(BITTY_TITLE " v" BITTY_VERSION_STRING);
+#endif /* BITTY_DEBUG */
+	if (project) {
+		const std::string abspath = Path::absoluteOf(project->path());
+		wndTitle += std::string("  [") + project->title() + " - " + abspath + std::string("]");
+		// Or use the following line instead to show title only.
+		// wndTitle += std::string("  [") + project->title() + std::string("]");
+	}
+	toRefreshWindowTitle(true);
+	toRefreshWindowTitleContent(wndTitle);
 }
 
 bool Workspace::skipping(void) {
@@ -1827,7 +1844,14 @@ void Workspace::editing(class Window* wnd, class Renderer* rnd, const class Proj
 						if (ImGui::BeginTabItem(asset->entry().name(), &opened, tabItemFlags)) {
 							ImGui::PopStyleColor();
 
-							assetsEditingIndex(index);
+							if (assetsEditingIndex() != index) {
+								assetsEditingIndex(index);
+
+								Asset* prevAsset = prj->get(lastEditing);
+								if (prevAsset)
+									prevAsset->states()->deselect();
+								states->select(false);
+							}
 
 							frontAsset = asset;
 

@@ -108,7 +108,7 @@ protected:
 	virtual void unloadProject(const class Project* project, Executable* exec) override;
 
 private:
-	void checkAliveness(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
+	void refresh(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 
 	void addRecentTouched(StudioSettings::RecentTouched::Types type, const char* path);
 	void openRecentTouched(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, StudioSettings::RecentTouched::Types type, int idx, const char* path);
