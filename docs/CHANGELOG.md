@@ -1,3 +1,24 @@
+### v1.4.1 Aug. 3, 2025
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Improved wordwise forward/backward navigation of the code editor
+* Improved code editor behaviour when input quotes
+* Improved code editor behaviour when delete wordwise or whole line
+* Fixed an unexpected termination bug when a custom splash image is indicated
+* Upgraded Lua from v5.4.7 to v5.4.8
+
+### v1.4.0 Mar. 1, 2025
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added an `Invoke` module for HTML
+* Added a callback mechanism from JavaScript to Lua for HTML
+* Added menu items to toggle transparent background and grids
+* Improved continuous input of newline with indent for the code editor
+* Improved debug behaviour if the debug panel is hidden
+* Fixed a glitch after painting on a paletted image
+
 ### v1.3.2 Feb. 6, 2025
 
 Enhanced modules, improved usability, fixed some bugs.
