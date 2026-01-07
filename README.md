@@ -93,7 +93,7 @@ function update(delta)
 end
 ```
 
-See more in [examples](examples).
+See more in [bitty/examples](bitty/examples).
 
 ### Games
 
