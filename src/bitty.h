@@ -104,16 +104,36 @@
 #		define BITTY_OS "Android"
 #		define BITTY_OS_ANDROID
 #	elif defined __linux__
-#		if defined __x86_64__
-#			define BITTY_OS "Linux [x86_64]"
-#		elif defined __i386__
-#			define BITTY_OS "Linux [x86]"
-#		elif defined __aarch64__
-#			define BITTY_OS "Linux [ARM64]"
-#		elif defined __arm__
-#			define BITTY_OS "Linux [ARM32]"
-#		else
-#			define BITTY_OS "Linux"
+#		if defined __aarch64__ || defined __arm__
+#			if defined __RASPBERRYPI__
+#				if defined __aarch64__
+#					define BITTY_OS "Raspberry Pi [ARM64]"
+#				elif defined __arm__
+#					if __ARM_ARCH == 7
+#						define BITTY_OS "Raspberry Pi [ARMv7]"
+#					elif __ARM_ARCH == 6
+#						define BITTY_OS "Raspberry Pi [ARMv6]"
+#					else
+#						define BITTY_OS "Raspberry Pi [ARM]"
+#					endif
+#				endif
+#				define BITTY_OS_RASPBERRYPI
+#			else
+#				if defined __aarch64__
+#					define BITTY_OS "Linux [ARM64]"
+#				elif defined __arm__
+#					define BITTY_OS "Linux [ARM32]"
+#				endif
+#			endif
+#		endif
+#		ifndef BITTY_OS
+#			if defined __x86_64__
+#				define BITTY_OS "Linux [x86_64]"
+#			elif defined __i386__
+#				define BITTY_OS "Linux [x86]"
+#			else
+#				define BITTY_OS "Linux"
+#			endif
 #		endif
 #		define BITTY_OS_LINUX
 #	elif defined __unix__

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.3)
 message(STATUS "Build Bitty Engine for Linux...")
 
 # Projects.
@@ -62,12 +62,19 @@ else ()
     )
   endif ()
 endif ()
-if (${BITTY_BITS} EQUAL 64)
-  set(CMAKE_C_FLAGS "-m64")
-  set(CMAKE_CXX_FLAGS "-m64")
-elseif (${BITTY_BITS} EQUAL 32)
-  set(CMAKE_C_FLAGS "-m32")
-  set(CMAKE_CXX_FLAGS "-m32")
+if (DEFINED BITTY_ARCH_FLAG)
+  set(CMAKE_C_FLAGS "${BITTY_ARCH_FLAG}")
+  set(CMAKE_CXX_FLAGS "${BITTY_ARCH_FLAG}")
+else ()
+  if (${BITTY_ARCH} MATCHES "^x86|x64$")
+    if (${BITTY_BITS} EQUAL 64)
+      set(CMAKE_C_FLAGS "-m64")
+      set(CMAKE_CXX_FLAGS "-m64")
+    elseif (${BITTY_BITS} EQUAL 32)
+      set(CMAKE_C_FLAGS "-m32")
+      set(CMAKE_CXX_FLAGS "-m32")
+    endif ()
+  endif ()
 endif ()
 set(BITTY_TEMP ./)
 
@@ -461,6 +468,18 @@ list(
 target_include_directories(bitty PRIVATE ${BITTY_INC})
 
 # Compiling.
+execute_process(
+  COMMAND grep -o "Raspberry Pi" /proc/cpuinfo
+  OUTPUT_VARIABLE RPI_DETECT
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+if (RPI_DETECT STREQUAL "Raspberry Pi")
+  message(STATUS "Raspberry Pi detected")
+  list(
+    APPEND BITTY_DEF
+    __RASPBERRYPI__
+  )
+endif ()
 list(
   APPEND BITTY_DEF
   BITTY_TRIAL_ENABLED=0
@@ -557,7 +576,18 @@ else ()
       set(SDL2_MIXER_INCLUDE_DIRS "/usr/include/SDL2")
     endif ()
     if (NOT SDL2_MIXER_LIBRARIES)
-      set(SDL2_MIXER_LIBRARIES "/usr/lib/x86_64-linux-gnu/libSDL2_mixer.so")
+      find_library(SDL2_MIXER_PATH
+        NAMES SDL2_mixer
+        PATHS
+          /usr/lib/x86_64-linux-gnu
+          /usr/lib/i386-linux-gnu
+          /usr/lib/aarch64-linux-gnu
+          /usr/lib/arm-linux-gnueabihf
+          /usr/lib/arm-linux-gnueabi
+          /usr/lib64
+          /usr/lib
+      )
+      set(SDL2_MIXER_LIBRARIES ${SDL2_MIXER_PATH})
     endif ()
     include_directories(${SDL2_MIXER_INCLUDE_DIRS})
     target_link_libraries(bitty ${SDL2_MIXER_LIBRARIES})
@@ -601,6 +631,7 @@ endif ()
 # Post event.
 add_custom_command(
   TARGET bitty POST_BUILD
+  COMMAND mkdir -p "../bitty/${BITTY_ARCH}_release/"
   COMMAND file "${BITTY_TEMP}bitty"
   COMMAND cp "${BITTY_TEMP}bitty" "../bitty/${BITTY_ARCH}_release/"
 )

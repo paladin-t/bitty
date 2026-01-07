@@ -15,6 +15,25 @@
 
 /*
 ** {===========================================================================
+** Macros and constants
+*/
+
+#ifndef AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED
+#	if SDL_MIXER_VERSION_ATLEAST(2, 0, 4)
+#		if !defined BITTY_OS_HTML && !defined BITTY_OS_RASPBERRYPI
+#			define AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED 1
+#		else /* Platform macro. */
+#			define AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED 0
+#		endif /* Platform macro. */
+#	else /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
+#		define AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED 0
+#	endif /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
+#endif /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
 ** Sound
 */
 
@@ -82,15 +101,13 @@ public:
 
 	virtual const char* title(void) const override {
 		if (_title.empty()) {
-#if !defined BITTY_OS_HTML
-#	if SDL_MIXER_VERSION_ATLEAST(2, 0, 4)
+#if AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED
 			if (_music) {
 				const char* tmp = Mix_GetMusicTitle(_music);
 				if (tmp)
 					_title = tmp;
 			}
-#	endif /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
-#endif /* BITTY_OS_HTML */
+#endif /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
 			if (_title.empty()) {
 				Path::split(_path, &_title, nullptr, nullptr);
 			}
@@ -99,76 +116,56 @@ public:
 		return _title.c_str();
 	}
 	virtual const char* artist(void) const override {
-#if defined BITTY_OS_HTML
-		return nullptr;
-#else /* BITTY_OS_HTML */
-#	if SDL_MIXER_VERSION_ATLEAST(2, 0, 4)
+#if AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED
 		if (!_music)
 			return nullptr;
 
 		return Mix_GetMusicArtistTag(_music);
-#	else /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
+#else /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
 		return nullptr;
-#	endif /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
-#endif /* BITTY_OS_HTML */
+#endif /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
 	}
 	virtual const char* album(void) const override {
-#if defined BITTY_OS_HTML
-		return nullptr;
-#else /* BITTY_OS_HTML */
-#	if SDL_MIXER_VERSION_ATLEAST(2, 0, 4)
+#if AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED
 		if (!_music)
 			return nullptr;
 
 		return Mix_GetMusicAlbumTag(_music);
-#	else /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
+#else /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
 		return nullptr;
-#	endif /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
-#endif /* BITTY_OS_HTML */
+#endif /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
 	}
 	virtual const char* copyright(void) const override {
-#if defined BITTY_OS_HTML
-		return nullptr;
-#else /* BITTY_OS_HTML */
-#	if SDL_MIXER_VERSION_ATLEAST(2, 0, 4)
+#if AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED
 		if (!_music)
 			return nullptr;
 
 		return Mix_GetMusicCopyrightTag(_music);
-#	else /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
+#else /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
 		return nullptr;
-#	endif /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
-#endif /* BITTY_OS_HTML */
+#endif /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
 	}
 
 	virtual double length(void) const override {
-#if defined BITTY_OS_HTML
-		return 0;
-#else /* BITTY_OS_HTML */
-#	if SDL_MIXER_VERSION_ATLEAST(2, 0, 4)
+#if AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED
 		if (!_music)
 			return 0;
 
 		return Mix_MusicDuration(_music);
-#	else /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
+#else /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
 		return 0;
-#	endif /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
-#endif /* BITTY_OS_HTML */
+#endif /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
 	}
 
 	virtual double position(void) const override {
-#if defined BITTY_OS_HTML
-		return 0;
-#else /* BITTY_OS_HTML */
-#	if SDL_MIXER_VERSION_ATLEAST(2, 0, 4)
+#if AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED
 		if (!_music)
 			return 0;
 
 		return Mix_GetMusicPosition(_music);
-#	else /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
+#else /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
 		return 0;
-#	endif /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
-#endif /* BITTY_OS_HTML */
+#endif /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
 	}
 	virtual bool position(double pos) override {
 		if (!_music)
@@ -685,29 +682,25 @@ public:
 	}
 
 	virtual double length(void) const override {
-#if defined BITTY_OS_HTML
-		return 0;
-#else /* BITTY_OS_HTML */
+#if AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED
 		if (!_music)
 			return 0;
 
 		return _length;
-#endif /* BITTY_OS_HTML */
+#else /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
+		return 0;
+#endif /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
 	}
 
 	virtual double position(void) const override {
-#if defined BITTY_OS_HTML
-		return 0;
-#else /* BITTY_OS_HTML */
-#	if SDL_MIXER_VERSION_ATLEAST(2, 0, 4)
+#if AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED
 		if (!_music)
 			return 0;
 
 		return Mix_GetMusicPosition(_music);
-#	else /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
+#else /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
 		return 0;
-#	endif /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
-#endif /* BITTY_OS_HTML */
+#endif /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
 	}
 	virtual bool position(double pos) override {
 		if (!_music)
@@ -835,15 +828,11 @@ public:
 		_bytes->poke(0);
 
 		_music = Mix_LoadMUS_RW(SDL_RWFromMem(_bytes->pointer(), (int)_bytes->count()), SDL_TRUE);
-#if defined BITTY_OS_HTML
-		_length = 0.0;
-#else /* BITTY_OS_HTML */
-#	if SDL_MIXER_VERSION_ATLEAST(2, 0, 4)
+#if AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED
 		_length = Mix_MusicDuration(_music);
-#	else /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
+#else /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
 		_length = 0.0;
-#	endif /* SDL_MIXER_VERSION_ATLEAST(2, 0, 4) */
-#endif /* BITTY_OS_HTML */
+#endif /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
 		_playing = false;
 
 		return true;
