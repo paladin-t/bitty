@@ -1820,16 +1820,10 @@
     <ClInclude Include="lib\sdl\include\SDL_config_pandora.h">
       <Filter>lib\sdl\include</Filter>
     </ClInclude>
-    <ClInclude Include="lib\sdl\include\SDL_config_psp.h">
-      <Filter>lib\sdl\include</Filter>
-    </ClInclude>
     <ClInclude Include="lib\sdl\include\SDL_config_windows.h">
       <Filter>lib\sdl\include</Filter>
     </ClInclude>
     <ClInclude Include="lib\sdl\include\SDL_config_winrt.h">
-      <Filter>lib\sdl\include</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\sdl\include\SDL_config_wiz.h">
       <Filter>lib\sdl\include</Filter>
     </ClInclude>
     <ClInclude Include="lib\sdl\include\SDL_copying.h">
@@ -3145,6 +3139,36 @@
     </ClInclude>
     <ClInclude Include="src\text_box.h">
       <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_config_emscripten.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_config_ngage.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_config_os2.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_config_wingdk.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_config_xbox.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_guid.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_hidapi.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_locale.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_metal.h">
+      <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdl\include\SDL_misc.h">
+      <Filter>lib\sdl\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
