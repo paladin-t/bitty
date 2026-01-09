@@ -437,6 +437,41 @@ public:
 		_workspace->load(_window, _renderer, _project, _primitives);
 		_workspace->open(_window, _renderer, _project, _executable, _primitives, fps, options);
 
+		const std::string writableDir = Path::writableDirectory();
+		if (writableDir.empty()) {
+#if defined BITTY_OS_WIN
+			const std::string possiblePath = "\nDesired path: \"%USERPROFILE%\\AppData\\Roaming\\bitty\\engine\".";
+#elif defined BITTY_OS_MAC
+			const std::string possiblePath = "\nDesired path: \"~/Library/Application Support/bitty/engine\"."
+#elif defined BITTY_OS_LINUX
+			const std::string possiblePath = "\nDesired path: \"~/.local/share/bitty/engine\"."
+#else /* Platform macro. */
+			const std::string possiblePath = "";
+#endif /* Platform macro. */
+			const std::string errorMsg = SDL_GetError();
+			const std::string possibleError = "\nError:\n  " + errorMsg;
+			const std::string msg =
+				"Failed to get the path of a writable directory. May not have permissions." +
+				possiblePath +
+				possibleError;
+
+			Promise::Ptr promise(
+				Promise::create(),
+				[] (Promise* promise) -> void {
+					promise->clear();
+
+					Promise::destroy(promise);
+				}
+			);
+			_workspace->msgbox(
+				promise,
+				msg.c_str(),
+				nullptr,
+				nullptr,
+				nullptr
+			);
+		}
+
 		// Initialize the effects.
 		_effects->open(_window, _renderer, _workspace, effectsEnabled);
 
@@ -1171,10 +1206,6 @@ private:
 		const std::string docDir = Unicode::toOs(Path::documentDirectory());
 		const std::string writableDir = Unicode::toOs(Path::writableDirectory());
 		const std::string savedGamesDir = Unicode::toOs(Path::savedGamesDirectory());
-
-		if (writableDir.empty()) {
-			Platform::msgbox("Failed to get the path of a writable directory.\nMay not have permissions.", "Warning");
-		}
 
 		fprintf(stdout, "      Executable file: \"%s\".\n", exeFile.c_str());
 		fprintf(stdout, "    Current directory: \"%s\".\n", currentDir.c_str());
