@@ -442,9 +442,9 @@ public:
 #if defined BITTY_OS_WIN
 			const std::string possiblePath = "\nDesired path: \"%USERPROFILE%\\AppData\\Roaming\\bitty\\engine\".";
 #elif defined BITTY_OS_MAC
-			const std::string possiblePath = "\nDesired path: \"~/Library/Application Support/bitty/engine\"."
+			const std::string possiblePath = "\nDesired path: \"~/Library/Application Support/bitty/engine\".";
 #elif defined BITTY_OS_LINUX
-			const std::string possiblePath = "\nDesired path: \"~/.local/share/bitty/engine\"."
+			const std::string possiblePath = "\nDesired path: \"~/.local/share/bitty/engine\".";
 #else /* Platform macro. */
 			const std::string possiblePath = "";
 #endif /* Platform macro. */
