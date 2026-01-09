@@ -1,3 +1,23 @@
+### v1.4.2 Jan. 9, 2026
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added a "transparent_color" application option to specify transparent color for the application window on Windows 10 and above (experimental)
+* Added support for moving editing area by MMB
+* Added support for zoom with Ctrl+Mouse Wheel
+* Added title and path of the current project to the title bar
+* Added active asset selection in the list view when switching to an asset tab
+* Improved wordwise selection
+* Improved notification handling on Linux
+* Improved tab color of the classic theme
+* Improved stability when failed to get the path of writable directory
+* Fixed a style assigning bug of code editors when they are opened by the debugger
+* Fixed a system notification issue on Windows 11
+* Fixed a potential locale issue for cURL threading
+* Fixed an absolute path resolving bug on Windows
+* Upgraded SDL from v2.0.12 to v2.32.10
+* Upgraded Lua from v5.4.8 to v5.5.0
+
 ### v1.4.1 Aug. 3, 2025
 
 Enhanced modules, improved usability, fixed some bugs.
