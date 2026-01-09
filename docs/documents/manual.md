@@ -2051,8 +2051,8 @@ Click "Project", "Build", then "Windows"/"MacOS"/"Linux" to make an executable f
 
 It might require execution permission to launch an exported desktop binary, to apply that permission:
 
-* For MacOS "xattr -cr bitty_stage.app", then "chmod 777 bitty_stage.app/Contents/MacOS/bitty_stage"
-* For Linux "chmod 777 x64/bitty"
+* For MacOS "xattr -cr bitty_stage.app", then "chmod u+x bitty_stage.app/Contents/MacOS/bitty_stage"
+* For Linux "chmod u+x x64/bitty"
 
 [TOP](#reference-manual)
 
