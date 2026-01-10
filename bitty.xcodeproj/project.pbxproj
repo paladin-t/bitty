@@ -265,6 +265,10 @@
 		687EDAF32EC36454002C82A7 /* scripting_lua_api_studio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 687EDAED2EC36454002C82A7 /* scripting_lua_api_studio.cpp */; settings = {COMPILER_FLAGS = "-Wno-unused-function"; }; };
 		687EDAF42EC36454002C82A7 /* theme_studio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 687EDAEE2EC36454002C82A7 /* theme_studio.cpp */; };
 		687EDAF52EC36454002C82A7 /* workspace_studio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 687EDAF02EC36454002C82A7 /* workspace_studio.cpp */; };
+		68F789312F120C4000000F41 /* database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68F789302F120C3F00000F41 /* database.cpp */; };
+		68F789392F120C8D00000F41 /* sqlite3ppext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68F789372F120C8D00000F41 /* sqlite3ppext.cpp */; };
+		68F7893A2F120C8D00000F41 /* sqlite3pp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68F789382F120C8D00000F41 /* sqlite3pp.cpp */; };
+		68F7893E2F120C9E00000F41 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 68F7893C2F120C9E00000F41 /* sqlite3.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -873,6 +877,15 @@
 		687EDAEE2EC36454002C82A7 /* theme_studio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = theme_studio.cpp; path = studio/theme_studio.cpp; sourceTree = "<group>"; };
 		687EDAEF2EC36454002C82A7 /* widgets_studio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = widgets_studio.h; path = studio/widgets_studio.h; sourceTree = "<group>"; };
 		687EDAF02EC36454002C82A7 /* workspace_studio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = workspace_studio.cpp; path = studio/workspace_studio.cpp; sourceTree = "<group>"; };
+		68F7892F2F120C3900000F41 /* database.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = database.h; path = src/database.h; sourceTree = "<group>"; };
+		68F789302F120C3F00000F41 /* database.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = database.cpp; path = src/database.cpp; sourceTree = "<group>"; };
+		68F789352F120C8C00000F41 /* sqlite3ppext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3ppext.h; path = lib/sqlite3pp/src/sqlite3ppext.h; sourceTree = "<group>"; };
+		68F789362F120C8C00000F41 /* sqlite3pp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3pp.h; path = lib/sqlite3pp/src/sqlite3pp.h; sourceTree = "<group>"; };
+		68F789372F120C8D00000F41 /* sqlite3ppext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sqlite3ppext.cpp; path = lib/sqlite3pp/src/sqlite3ppext.cpp; sourceTree = "<group>"; };
+		68F789382F120C8D00000F41 /* sqlite3pp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sqlite3pp.cpp; path = lib/sqlite3pp/src/sqlite3pp.cpp; sourceTree = "<group>"; };
+		68F7893B2F120C9E00000F41 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = lib/sqlite/sqlite3.h; sourceTree = "<group>"; };
+		68F7893C2F120C9E00000F41 /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = lib/sqlite/sqlite3.c; sourceTree = "<group>"; };
+		68F7893D2F120C9E00000F41 /* sqlite3ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3ext.h; path = lib/sqlite/sqlite3ext.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1113,6 +1126,8 @@
 				038E73F225820E5100A94374 /* bytes.h */,
 				038E73DF25820E5100A94374 /* color.cpp */,
 				038E735F25820E3B00A94374 /* color.h */,
+				68F789302F120C3F00000F41 /* database.cpp */,
+				68F7892F2F120C3900000F41 /* database.h */,
 				038E737F25820E4100A94374 /* datetime.cpp */,
 				038E734425820E3700A94374 /* datetime.h */,
 				038E736025820E3C00A94374 /* either.cpp */,
@@ -1414,6 +1429,8 @@
 				038E746725820EE000A94374 /* promise_cpp */,
 				038E746825820EE500A94374 /* rapidjson */,
 				038E746925820EED00A94374 /* sdl_gfx */,
+				68F789322F120C5800000F41 /* sqlite */,
+				68F789332F120C5E00000F41 /* sqlite3pp */,
 				038E746A25820EF200A94374 /* stb */,
 				038E746B25820EF700A94374 /* zlib */,
 			);
@@ -2075,6 +2092,35 @@
 			name = commands;
 			sourceTree = "<group>";
 		};
+		68F789322F120C5800000F41 /* sqlite */ = {
+			isa = PBXGroup;
+			children = (
+				68F7893C2F120C9E00000F41 /* sqlite3.c */,
+				68F7893B2F120C9E00000F41 /* sqlite3.h */,
+				68F7893D2F120C9E00000F41 /* sqlite3ext.h */,
+			);
+			name = sqlite;
+			sourceTree = "<group>";
+		};
+		68F789332F120C5E00000F41 /* sqlite3pp */ = {
+			isa = PBXGroup;
+			children = (
+				68F789342F120C6500000F41 /* src */,
+			);
+			name = sqlite3pp;
+			sourceTree = "<group>";
+		};
+		68F789342F120C6500000F41 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				68F789382F120C8D00000F41 /* sqlite3pp.cpp */,
+				68F789362F120C8C00000F41 /* sqlite3pp.h */,
+				68F789372F120C8D00000F41 /* sqlite3ppext.cpp */,
+				68F789352F120C8C00000F41 /* sqlite3ppext.h */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2229,6 +2275,7 @@
 				038E745725820E5200A94374 /* editor_code.cpp in Sources */,
 				686825202B56EBAA00D8E3FB /* fs-poll.c in Sources */,
 				038E76B32582111700A94374 /* loslib.c in Sources */,
+				68F7893E2F120C9E00000F41 /* sqlite3.c in Sources */,
 				038E76AB2582111700A94374 /* lgc.c in Sources */,
 				038E76D32582114100A94374 /* lz4.c in Sources */,
 				6868254F2B56EBED00D8E3FB /* darwin-proctitle.c in Sources */,
@@ -2279,6 +2326,7 @@
 				038E743E25820E5200A94374 /* scripting_lua_api.cpp in Sources */,
 				038E776A2582133D00A94374 /* inftrees.c in Sources */,
 				03004C5728BC8BF0008B4476 /* cpGrooveJoint.c in Sources */,
+				68F7893A2F120C8D00000F41 /* sqlite3pp.cpp in Sources */,
 				038E776C2582133D00A94374 /* trees.c in Sources */,
 				686825212B56EBAA00D8E3FB /* uv-common.c in Sources */,
 				038E73F725820E5200A94374 /* editing.cpp in Sources */,
@@ -2320,6 +2368,7 @@
 				03004C4928BC8BF0008B4476 /* cpSpaceStep.c in Sources */,
 				038E76D42582114100A94374 /* lz4frame.c in Sources */,
 				031B4EAA25833CB2002EF476 /* ioapi.c in Sources */,
+				68F789312F120C4000000F41 /* database.cpp in Sources */,
 				038E743125820E5200A94374 /* renderer.cpp in Sources */,
 				03004C5828BC8BF0008B4476 /* cpShape.c in Sources */,
 				038E741525820E5200A94374 /* promise.cpp in Sources */,
@@ -2337,6 +2386,7 @@
 				687EDAF42EC36454002C82A7 /* theme_studio.cpp in Sources */,
 				686825552B56EBED00D8E3FB /* udp.c in Sources */,
 				038E744C25820E5200A94374 /* dispatchable.cpp in Sources */,
+				68F789392F120C8D00000F41 /* sqlite3ppext.cpp in Sources */,
 				03004C4A28BC8BF0008B4476 /* chipmunk.c in Sources */,
 				038E77672582133D00A94374 /* adler32.c in Sources */,
 				03004C5028BC8BF0008B4476 /* cpBBTree.c in Sources */,

@@ -283,6 +283,15 @@ list(
   "../lib/sdl_gfx/SDL2_rotozoom.c"
 )
 list(
+  APPEND BITTY_LIB_SQLITE
+  "../lib/sqlite/sqlite3.c"
+)
+list(
+  APPEND BITTY_LIB_SQLITE3PP
+  "../lib/sqlite3pp/src/sqlite3pp.c"
+  "../lib/sqlite3pp/src/sqlite3ppext.c"
+)
+list(
   APPEND BITTY_LIB_ZLIB
   "../lib/zlib/contrib/minizip/ioapi.c"
   "../lib/zlib/contrib/minizip/mztools.c"
@@ -366,6 +375,7 @@ list(
   "../src/archive.cpp"
   "../src/bytes.cpp"
   "../src/color.cpp"
+  "../src/database.cpp"
   "../src/datetime.cpp"
   "../src/either.cpp"
   "../src/encoding.cpp"
@@ -445,6 +455,8 @@ add_executable(
   ${BITTY_LIB_MICROPATHER}
   ${BITTY_LIB_NETWORK_INFO}
   ${BITTY_LIB_SDL_GFX}
+  ${BITTY_LIB_SQLITE}
+  ${BITTY_LIB_SQLITE3PP}
   ${BITTY_LIB_ZLIB}
   ${BITTY_SRC_APPLICATION}
   ${BITTY_SRC_EXECUTABLE}

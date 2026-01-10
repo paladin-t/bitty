@@ -1225,6 +1225,18 @@
     <ClCompile Include="src\text_box.cpp">
       <Filter>src\shared</Filter>
     </ClCompile>
+    <ClCompile Include="src\database.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\sqlite3pp\src\sqlite3pp.cpp">
+      <Filter>lib\sqlite3pp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\sqlite3pp\src\sqlite3ppext.cpp">
+      <Filter>lib\sqlite3pp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\sqlite\sqlite3.c">
+      <Filter>lib\sqlite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -1481,6 +1493,15 @@
     </Filter>
     <Filter Include="src\workspace\studio">
       <UniqueIdentifier>{f642cdb3-1509-450d-9bb6-2ff382059ada}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\sqlite">
+      <UniqueIdentifier>{cf324125-354c-41bf-8cbd-08532b320b9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\sqlite3pp">
+      <UniqueIdentifier>{451a3e56-8e8c-405e-b458-ca72d1f77e39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\sqlite3pp\src">
+      <UniqueIdentifier>{430b9f6e-2068-4a6e-9d65-2232e20f0fe6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -3169,6 +3190,21 @@
     </ClInclude>
     <ClInclude Include="lib\sdl\include\SDL_misc.h">
       <Filter>lib\sdl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\database.h">
+      <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sqlite3pp\src\sqlite3pp.h">
+      <Filter>lib\sqlite3pp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sqlite3pp\src\sqlite3ppext.h">
+      <Filter>lib\sqlite3pp\src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sqlite\sqlite3.h">
+      <Filter>lib\sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sqlite\sqlite3ext.h">
+      <Filter>lib\sqlite</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

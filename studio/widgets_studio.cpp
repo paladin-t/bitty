@@ -18,6 +18,7 @@
 #include "../lib/chipmunk2d/include/chipmunk/chipmunk.h"
 #include "../lib/civetweb/include/civetweb.h"
 #include "../lib/lua/src/lua.hpp"
+#include "../lib/sqlite/sqlite3.h"
 #include "../lib/zlib/zlib.h"
 #if !defined BITTY_OS_HTML
 #	include <curl/curl.h>
@@ -346,6 +347,7 @@ AboutPopupBox::AboutPopupBox(
 	_specs += "      libuv v" + std::string(uv_version_string()) + "\n";
 	_specs += "       cURL v" LIBCURL_VERSION "\n";
 #endif /* BITTY_OS_HTML */
+	_specs += "     SQLite v" SQLITE_VERSION "\n";
 	_specs += "  RapidJSON v" RAPIDJSON_VERSION_STRING "\n";
 	_specs += "       zlib v" ZLIB_VERSION "\n";
 	_specs += "\n";

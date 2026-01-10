@@ -41,6 +41,7 @@
 #	pragma warning(pop)
 #endif /* BITTY_CP_VC */
 #include "../lib/sdl_gfx/SDL2_gfxPrimitives.h"
+#include "../lib/sqlite/sqlite3.h"
 #include "../lib/zlib/zlib.h"
 #if !defined BITTY_OS_HTML
 #	include <curl/curl.h>
@@ -1196,6 +1197,7 @@ private:
 		fprintf(stdout, "    libuv v%s\n", uv_version_string());
 		fprintf(stdout, "     cURL v" LIBCURL_VERSION "\n");
 #endif /* BITTY_OS_HTML */
+		fprintf(stdout, "   SQLite v" SQLITE_VERSION "\n");
 		fprintf(stdout, "RapidJSON v" RAPIDJSON_VERSION_STRING "\n");
 		fprintf(stdout, "     zlib v" ZLIB_VERSION "\n");
 		fprintf(stdout, "\n");
