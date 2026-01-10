@@ -11,6 +11,7 @@
 #include "archive.h"
 #include "bytes.h"
 #include "code.h"
+#include "database.h"
 #include "datetime.h"
 #include "editable.h"
 #include "effects.h"
@@ -104,6 +105,13 @@ LUA_CHECK(Color)
 LUA_READ(Color)
 LUA_WRITE(Color)
 LUA_WRITE_CONST(Color)
+
+/**< Database. */
+
+LUA_CHECK_OBJ(Database)
+LUA_READ_OBJ(Database)
+LUA_WRITE_OBJ(Database)
+LUA_WRITE_OBJ_CONST(Database)
 
 /**< File. */
 
@@ -3072,9 +3080,107 @@ static void open_Color(lua_State* L) {
 
 /**< Database. */
 
+static int Database_ctor(lua_State* L) {
+	Database::Ptr obj(Database::create());
+	if (!obj)
+		return write(L, nullptr);
+
+	return write(L, &obj);
+}
+
+static int Database_open(lua_State* L) {
+	const int n = getTop(L);
+	Database::Ptr* obj = nullptr;
+	const char* path = nullptr;
+	Enum access = Stream::READ_WRITE;
+	if (n >= 3)
+		read<>(L, obj, path, access);
+	else if (n == 2)
+		read<>(L, obj, path);
+
+	if (obj) {
+		const bool ret = obj->get()->open(path, (Stream::Accesses)access);
+
+		return write(L, ret);
+	} else {
+		error(L, "Database expected.");
+	}
+
+	return 0;
+}
+
+static int Database_close(lua_State* L) {
+	Database::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		const bool ret = obj->get()->close();
+
+		return write(L, ret);
+	} else {
+		error(L, "Database expected.");
+	}
+
+	return 0;
+}
+
+static int Database_query(lua_State* L) {
+	Database::Ptr* obj = nullptr;
+	std::string sql;
+	read<>(L, obj, sql);
+
+	if (obj) {
+		Variant result = nullptr;
+		const int ret = obj->get()->query(result, sql.c_str());
+
+		return write(L, ret, &result);
+	} else {
+		error(L, "Database expected.");
+	}
+
+	return write(L, 0);
+}
+
+static int Database_exec(lua_State* L) {
+	Database::Ptr* obj = nullptr;
+	std::string sql;
+	read<>(L, obj, sql);
+
+	if (obj) {
+		Variant result = nullptr;
+		const int ret = obj->get()->exec(result, sql.c_str());
+
+		return write(L, ret, &result); // Undocumented: secondary value.
+	} else {
+		error(L, "Database expected.");
+	}
+
+	return write(L, 0);
+}
+
 static void open_Database(lua_State* L) {
-	(void)L;
-	// TODO
+	def(
+		L, "Database",
+		LUA_LIB(
+			array(
+				luaL_Reg{ "new", Database_ctor },
+				luaL_Reg{ nullptr, nullptr }
+			)
+		),
+		array(
+			luaL_Reg{ "__gc", __gc<Database::Ptr> },
+			luaL_Reg{ "__tostring", __tostring<Database::Ptr> },
+			luaL_Reg{ nullptr, nullptr }
+		),
+		array(
+			luaL_Reg{ "open", Database_open },
+			luaL_Reg{ "close", Database_close },
+			luaL_Reg{ "query", Database_query },
+			luaL_Reg{ "exec", Database_exec },
+			luaL_Reg{ nullptr, nullptr }
+		),
+		nullptr, nullptr
+	);
 }
 
 /**< Date time. */
