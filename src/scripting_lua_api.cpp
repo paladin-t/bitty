@@ -3984,20 +3984,20 @@ static void open_File(lua_State* L) {
 
 /**< Filesystem. */
 
-static std::string Path_executableFile(lua_State*) {
-	return Path::executableFile();
-}
-
-static std::string Path_documentDirectory(lua_State*) {
-	return Path::documentDirectory();
-}
-
 static std::string Path_writableDirectory(lua_State*) {
 	return Path::writableDirectory();
 }
 
 static std::string Path_savedGamesDirectory(lua_State*) {
 	return Path::savedGamesDirectory();
+}
+
+static std::string Path_documentDirectory(lua_State*) {
+	return Path::documentDirectory();
+}
+
+static std::string Path_executableFile(lua_State*) {
+	return Path::executableFile();
 }
 
 static int Path_combine(lua_State* L) {
@@ -4129,6 +4129,20 @@ static int Path_touchDirectory(lua_State* L) {
 	return write(L, ret);
 }
 
+static int Path_writableDirectoryOf(lua_State* L) {
+	const int n = getTop(L);
+	const char* org = nullptr;
+	const char* app = nullptr;
+	if (n >= 2)
+		read<>(L, org, app);
+
+	const std::string ret = Path::writableDirectory(org, app);
+	if (ret.empty())
+		return write(L, nullptr);
+
+	return write(L, ret);
+}
+
 static void open_Path(lua_State* L) {
 	req(
 		L,
@@ -4149,6 +4163,7 @@ static void open_Path(lua_State* L) {
 						luaL_Reg{ "removeDirectory", Path_removeDirectory },
 						luaL_Reg{ "touchFile", Path_touchFile },
 						luaL_Reg{ "touchDirectory", Path_touchDirectory },
+						luaL_Reg{ "writableDirectoryOf", Path_writableDirectoryOf },
 						luaL_Reg{ nullptr, nullptr }
 					)
 				)
@@ -4160,10 +4175,10 @@ static void open_Path(lua_State* L) {
 	getGlobal(L, "Path");
 	setTable(
 		L,
-		"executableFile", Path_executableFile(L),
-		"documentDirectory", Path_documentDirectory(L),
 		"writableDirectory", Path_writableDirectory(L),
-		"savedGamesDirectory", Path_savedGamesDirectory(L)
+		"savedGamesDirectory", Path_savedGamesDirectory(L),
+		"documentDirectory", Path_documentDirectory(L),
+		"executableFile", Path_executableFile(L)
 	);
 	pop(L);
 }

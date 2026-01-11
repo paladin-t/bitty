@@ -44,6 +44,17 @@ std::string Platform::writableDirectory(void) {
 	return osstr;
 }
 
+std::string Platform::writableDirectory(const char* org, const char* app) {
+	const char* cstr = SDL_GetPrefPath(org, app);
+	if (!cstr)
+		return ""; // Fall to blank if failed to get the path.
+
+	const std::string osstr = Unicode::toOs(cstr);
+	SDL_free((void*)cstr);
+
+	return osstr;
+}
+
 bool Platform::hasClipboardText(void) {
 	return !!SDL_HasClipboardText();
 }

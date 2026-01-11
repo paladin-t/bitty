@@ -97,6 +97,16 @@ std::string Path::writableDirectory(void) {
 	return utfstr;
 }
 
+std::string Path::writableDirectory(const char* org, const char* app) {
+	if (!org || !app)
+		return writableDirectory();
+
+	std::string utfstr = Unicode::fromOs(Platform::writableDirectory(org, app));
+	uniform(utfstr);
+
+	return utfstr;
+}
+
 std::string Path::savedGamesDirectory(void) {
 	std::string utfstr = Unicode::fromOs(Platform::savedGamesDirectory());
 	uniform(utfstr);
