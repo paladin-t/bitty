@@ -278,6 +278,17 @@ LUA_WRITE_OBJ_CONST(Font)
 
 }
 
+namespace Lua { // Editor.
+
+/**< Text editor. */
+
+LUA_CHECK_OBJ(TextBox)
+LUA_READ_OBJ(TextBox)
+LUA_WRITE_OBJ(TextBox)
+LUA_WRITE_OBJ_CONST(TextBox)
+
+}
+
 namespace Lua { // Application.
 
 /**< Canvas. */
@@ -9893,9 +9904,183 @@ namespace Editor {
 
 /**< Text editor. */
 
+static int TextBox_ctor(lua_State* L) {
+	TextBox::Ptr obj(TextBox::create());
+	if (!obj)
+		return write(L, nullptr);
+
+	static int textBoxSeed = 1;
+	const std::string id = "TextBox_" + Text::toString(textBoxSeed++);
+	obj->open(nullptr, id.c_str(), nullptr, nullptr);
+
+	return write(L, &obj);
+}
+
+static int TextBox___gc(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	check<>(L, obj);
+	if (!obj)
+		return 0;
+
+	obj->get()->close(nullptr);
+	obj->~shared_ptr();
+
+	return 0;
+}
+
+static int TextBox_setOption(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	TextBox::Ptr* obj = nullptr;
+	std::string key;
+	read<>(L, obj, key);
+
+	if (key == "show_spaces") {
+		bool val = false;
+		read<3>(L, val);
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				obj->get()->post(Editable::SET_SHOW_SPACES, val);
+			},
+			nullptr,
+			true
+		);
+	} else {
+		error(L, "Invalid option.");
+	}
+
+	return 0;
+}
+
+static int TextBox_get(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		size_t len = 0;
+		const char* text = obj->get()->text(&len);
+		std::string txt;
+		if (text)
+			txt.assign(text, len);
+
+		return write(L, txt);
+	}
+
+	return 0;
+}
+
+static int TextBox_set(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	std::string txt;
+	read<>(L, obj, txt);
+
+	if (obj) {
+		obj->get()->text(txt.c_str(), txt.length());
+
+		return write(L, true);
+	}
+
+	return 0;
+}
+
+static int TextBox_clear(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj)
+		obj->get()->text("", 0);
+
+	return 0;
+}
+
+static int TextBox_update(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	TextBox::Ptr* obj = nullptr;
+	int x0 = 0, y0 = 0, x1 = 0, y1 = 0;
+	read<>(L, obj, x0, y0, x1, y1);
+
+	if (obj) {
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				Window* wnd = impl->primitives()->window();
+				Renderer* rnd = impl->primitives()->renderer();
+				Workspace* ws = impl->primitives()->workspace();
+				const Math::Recti rect(x0, y0, x1, y1);
+				obj->get()->update(wnd, rnd, ws, (float)rect.xMin(), (float)rect.yMin(), (float)rect.width(), (float)rect.height());
+			},
+			nullptr,
+			true
+		);
+	}
+
+	return 0;
+}
+
+static int TextBox___index(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	const char* field = nullptr;
+	read<>(L, obj, field);
+
+	if (!obj || !field)
+		return 0;
+
+	if (strcmp(field, "text") == 0) {
+		size_t len = 0;
+		const char* text = obj->get()->text(&len);
+		std::string ret;
+		if (text)
+			ret.assign(text, len);
+
+		return write(L, ret);
+	} else {
+		return __index(L, field);
+	}
+}
+
+static int TextBox___newindex(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	const char* field = nullptr;
+	read<>(L, obj, field);
+
+	if (!obj || !field)
+		return 0;
+
+	if (strcmp(field, "text") == 0) {
+		std::string val;
+		read<3>(L, val);
+
+		obj->get()->text(val.c_str(), val.length());
+	}
+
+	return 0;
+}
+
 static void open_TextBox(lua_State* L) {
-	(void)L;
-	// TODO
+	def(
+		L, "TextBox",
+		LUA_LIB(
+			array(
+				luaL_Reg{ "new", TextBox_ctor },
+				luaL_Reg{ nullptr, nullptr }
+			)
+		),
+		array(
+			luaL_Reg{ "__gc", TextBox___gc },
+			luaL_Reg{ "__tostring", __tostring<TextBox::Ptr> },
+			luaL_Reg{ nullptr, nullptr }
+		),
+		array(
+			luaL_Reg{ "setOption", TextBox_setOption },
+			luaL_Reg{ "get", TextBox_get },
+			luaL_Reg{ "set", TextBox_set },
+			luaL_Reg{ "clear", TextBox_clear },
+			luaL_Reg{ "update", TextBox_update },
+			luaL_Reg{ nullptr, nullptr }
+		),
+		TextBox___index, TextBox___newindex
+	);
 }
 
 /**< Categories. */

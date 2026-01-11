@@ -421,7 +421,7 @@ public:
 		_resources->open();
 
 		// Initialize the primitives module.
-		_primitives->open(_window, _renderer, _project, _resources, _effects);
+		_primitives->open(_window, _renderer, _workspace, _project, _resources, _effects);
 
 		// Initialize the executable module.
 		const bool effectsEnabled = options.find(WORKSPACE_OPTION_RENDERER_EFFECTS_ENABLED_KEY) != options.end();

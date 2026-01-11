@@ -2704,6 +2704,7 @@ private:
 
 	Window* _window = nullptr; // Foreign.
 	Renderer* _renderer = nullptr; // Foreign.
+	Workspace* _workspace = nullptr; // Foreign.
 	const Project* _project = nullptr; // Foreign.
 	Resources* _resources = nullptr; // Foreign.
 	class Effects* _effects = nullptr; // Foreign.
@@ -2770,13 +2771,14 @@ public:
 		}
 	}
 
-	virtual bool open(class Window* wnd, class Renderer* rnd, const class Project* project, Resources* res, class Effects* effects) override {
+	virtual bool open(class Window* wnd, class Renderer* rnd, class Workspace* ws, const class Project* project, Resources* res, class Effects* effects) override {
 		if (_opened)
 			return false;
 		_opened = true;
 
 		_window = wnd;
 		_renderer = rnd;
+		_workspace = ws;
 		_project = project;
 		_resources = res;
 		_effects = effects;
@@ -2800,6 +2802,7 @@ public:
 		_resources = nullptr;
 		_project = nullptr;
 		_renderer = nullptr;
+		_workspace = nullptr;
 		_window = nullptr;
 
 		fprintf(stdout, "Primitives closed.\n");
@@ -2812,6 +2815,9 @@ public:
 	}
 	virtual class Renderer* renderer(void) override {
 		return _renderer;
+	}
+	virtual class Workspace* workspace(void) override {
+		return _workspace;
 	}
 
 	virtual class Effects* effects(void) override {

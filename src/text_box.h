@@ -12,7 +12,7 @@
 #define __TEXT_BOX_H__
 
 #include "bitty.h"
-#include "object.h"
+#include "editable.h"
 
 /*
 ** {===========================================================================
@@ -22,12 +22,21 @@
 /**
  * @brief Text box object.
  */
-class TextBox : public virtual Object {
+class TextBox : public Editable, public virtual Object {
 public:
 	typedef std::shared_ptr<TextBox> Ptr;
 
 public:
 	BITTY_CLASS_TYPE('T', 'X', 'T', 'B')
+
+	virtual const char* text(size_t* len) const = 0;
+	virtual void text(const char* txt, size_t len = 0) = 0;
+
+	virtual void update(
+		class Window* wnd, class Renderer* rnd,
+		class Workspace* ws,
+		float x, float y, float width, float height
+	) = 0;
 
 	static TextBox* create(void);
 	static void destroy(TextBox* ptr);
