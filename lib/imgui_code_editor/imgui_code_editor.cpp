@@ -1018,6 +1018,7 @@ CodeEditor::CodeEditor() :
 	ScrollY(0.0f),
 	ToSetScrollY(false),
 	WordSelectionMode(false),
+	ColorizationEnabled(true),
 	ColorRangeMin(0),
 	ColorRangeMax(0),
 	InputtedRangedPair(false),
@@ -1081,6 +1082,14 @@ void CodeEditor::SetPalette(const Palette &aValue) {
 
 const CodeEditor::Palette &CodeEditor::GetPalette(void) const {
 	return Plt;
+}
+
+void CodeEditor::SetColorizationEnabled(bool aValue) {
+	ColorizationEnabled = aValue;
+}
+
+bool CodeEditor::IsColorizationEnabled(void) const {
+	return ColorizationEnabled;
 }
 
 void CodeEditor::SetErrorMarkers(const ErrorMarkers &aMarkers) {
@@ -1288,7 +1297,8 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 	}
 
 	// Process colorization.
-	ColorizeInternal();
+	if (ColorizationEnabled)
+		ColorizeInternal();
 
 	// Process the code lines.
 	static std::string buffer; // Shared.

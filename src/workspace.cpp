@@ -470,6 +470,7 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 	consoleTextBox()->SetLanguageDefinition(ImGui::CodeEditor::LanguageDefinition::Text());
 	consoleTextBox()->DisableShortcut(ImGui::CodeEditor::UndoRedo);
 	consoleTextBox()->SetReadOnly(true);
+	consoleTextBox()->SetColorizationEnabled(false);
 	consoleTextBox()->SetShowLineNumbers(false);
 	consoleTextBox()->SetShowWhiteSpaces(false);
 	consoleTextBox()->SetTooltipEnabled(false);

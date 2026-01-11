@@ -26,6 +26,7 @@ public:
 	DatabaseImpl() {
 	}
 	virtual ~DatabaseImpl() override {
+		close();
 	}
 
 	virtual unsigned type(void) const override {
@@ -51,11 +52,20 @@ public:
 
 		int flags = 0;
 		switch (access) {
+		case Stream::Accesses::WRITE: // Fall through.
+		case Stream::Accesses::APPEND: // Fall through.
+			fprintf(stderr, "Unsupported access mode %s, fall to %s.\n", access == Stream::Accesses::WRITE ? "WRITE" : "APPEND", "READ_WRITE");
+
+			// Fall through.
 		case Stream::Accesses::READ_WRITE:
 			flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
 
 			break;
+		case Stream::Accesses::READ: // Fall through.
 		default:
+			if (access != Stream::Accesses::READ)
+				fprintf(stderr, "Unsupported access mode %d, fall to %s.\n", (int)access, "READ");
+
 			flags = SQLITE_OPEN_READONLY | SQLITE_OPEN_CREATE;
 
 			break;
@@ -73,6 +83,7 @@ public:
 			return true;
 
 		_db.disconnect();
+		_path.clear();
 		_opened = false;
 
 		return true;

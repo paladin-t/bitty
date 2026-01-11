@@ -235,6 +235,9 @@ public:
 	void SetPalette(const Palette &aValue);
 	const Palette &GetPalette(void) const;
 
+	void SetColorizationEnabled(bool aValue);
+	bool IsColorizationEnabled(void) const;
+
 	void SetErrorMarkers(const ErrorMarkers &aMarkers);
 	void ClearErrorMarkers(void);
 	void SetBreakpoints(const Breakpoints &aMarkers);
@@ -496,6 +499,7 @@ protected:
 	float ScrollY;
 	bool ToSetScrollY;
 	bool WordSelectionMode;
+	bool ColorizationEnabled;
 	int ColorRangeMin, ColorRangeMax;
 	std::string LastSymbol;
 	PaletteIndex LastSymbolPalette;
