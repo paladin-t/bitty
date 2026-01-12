@@ -288,8 +288,8 @@ list(
 )
 list(
   APPEND BITTY_LIB_SQLITE3PP
-  "../lib/sqlite3pp/src/sqlite3pp.c"
-  "../lib/sqlite3pp/src/sqlite3ppext.c"
+  "../lib/sqlite3pp/src/sqlite3pp.cpp"
+  "../lib/sqlite3pp/src/sqlite3ppext.cpp"
 )
 list(
   APPEND BITTY_LIB_ZLIB
@@ -505,6 +505,26 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNDEBUG")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-format-security -Wno-unused-result -Wno-stringop-overflow")
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+set_source_files_properties("../lib/chipmunk2d/src/cpBBTree.c" PROPERTIES COMPILE_FLAGS "-Wno-alloc-size-larger-than")
+set_source_files_properties("../lib/sqlite/sqlite3.c" PROPERTIES COMPILE_FLAGS "-Wno-stringop-overread")
+set_source_files_properties("../lib/zlib/contrib/minizip/ioapi.c" PROPERTIES COMPILE_FLAGS "-Wno-old-style-definition")
+set_source_files_properties("../lib/zlib/contrib/minizip/mztools.c" PROPERTIES COMPILE_FLAGS "-Wno-old-style-definition")
+set_source_files_properties("../lib/zlib/adler32.c" PROPERTIES COMPILE_FLAGS "-Wno-old-style-definition")
+set_source_files_properties("../lib/zlib/compress.c" PROPERTIES COMPILE_FLAGS "-Wno-old-style-definition")
+set_source_files_properties("../lib/zlib/crc32.c" PROPERTIES COMPILE_FLAGS "-Wno-old-style-definition")
+set_source_files_properties("../lib/zlib/deflate.c" PROPERTIES COMPILE_FLAGS "-Wno-old-style-definition")
+set_source_files_properties("../lib/zlib/gzclose.c" PROPERTIES COMPILE_FLAGS "-Wno-old-style-definition")
+set_source_files_properties("../lib/zlib/gzlib.c" PROPERTIES COMPILE_FLAGS "-Wno-old-style-definition")
+set_source_files_properties("../lib/zlib/gzread.c" PROPERTIES COMPILE_FLAGS "-Wno-old-style-definition")
+set_source_files_properties("../lib/zlib/gzwrite.c" PROPERTIES COMPILE_FLAGS "-Wno-old-style-definition")
+set_source_files_properties("../lib/zlib/infback.c" PROPERTIES COMPILE_FLAGS "-Wno-old-style-definition")
+set_source_files_properties("../lib/zlib/inffast.c" PROPERTIES COMPILE_FLAGS "-Wno-old-style-definition")
+set_source_files_properties("../lib/zlib/inflate.c" PROPERTIES COMPILE_FLAGS "-Wno-old-style-definition")
+set_source_files_properties("../lib/zlib/inftrees.c" PROPERTIES COMPILE_FLAGS "-Wno-old-style-definition")
+set_source_files_properties("../lib/zlib/trees.c" PROPERTIES COMPILE_FLAGS "-Wno-old-style-definition")
+set_source_files_properties("../lib/zlib/uncompr.c" PROPERTIES COMPILE_FLAGS "-Wno-old-style-definition")
+set_source_files_properties("../lib/zlib/zutil.c" PROPERTIES COMPILE_FLAGS "-Wno-old-style-definition")
+set_source_files_properties("../src/noiser.cpp" PROPERTIES COMPILE_FLAGS "-Wno-aggressive-loop-optimizations")
 
 # Linkage.
 list(
