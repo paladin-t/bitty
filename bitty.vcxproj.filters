@@ -1254,9 +1254,6 @@
     <Filter Include="lib\sdl_gfx">
       <UniqueIdentifier>{f1185f1a-b5d3-44c3-9e82-a74fb7f39c74}</UniqueIdentifier>
     </Filter>
-    <Filter Include="res">
-      <UniqueIdentifier>{2cad55a9-59e2-43d5-8242-b6169264e154}</UniqueIdentifier>
-    </Filter>
     <Filter Include="lib\dirent">
       <UniqueIdentifier>{0241aa66-350c-4faf-b278-3170b1bcc378}</UniqueIdentifier>
     </Filter>
@@ -1503,6 +1500,9 @@
     <Filter Include="lib\sqlite3pp\src">
       <UniqueIdentifier>{430b9f6e-2068-4a6e-9d65-2232e20f0fe6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\application\res">
+      <UniqueIdentifier>{2cad55a9-59e2-43d5-8242-b6169264e154}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\sdl_gfx\SDL2_framerate.h">
@@ -1520,8 +1520,8 @@
     <ClInclude Include="lib\sdl_gfx\SDL2_rotozoom.h">
       <Filter>lib\sdl_gfx</Filter>
     </ClInclude>
-    <ClInclude Include="res\resource.h">
-      <Filter>res</Filter>
+    <ClInclude Include="src\win\resource.h">
+      <Filter>src\application\res</Filter>
     </ClInclude>
     <ClInclude Include="lib\micropather\micropather.h">
       <Filter>lib\micropather</Filter>
@@ -3228,13 +3228,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\bitty.ico">
-      <Filter>res</Filter>
+    <Image Include="src\win\bitty.ico">
+      <Filter>src\application\res</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="res\bitty.rc">
-      <Filter>res</Filter>
+    <ResourceCompile Include="src\win\bitty.rc">
+      <Filter>src\application\res</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>

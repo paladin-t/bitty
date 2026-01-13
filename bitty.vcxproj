@@ -3620,7 +3620,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClInclude Include="lib\zlib\zconf.h" />
     <ClInclude Include="lib\zlib\zlib.h" />
     <ClInclude Include="lib\zlib\zutil.h" />
-    <ClInclude Include="res\resource.h" />
+    <ClInclude Include="src\win\resource.h" />
     <ClInclude Include="src\analyser.h" />
     <ClInclude Include="src\archive_txt.h" />
     <ClInclude Include="src\archive_zip.h" />
@@ -3733,10 +3733,10 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <None Include="src\resource\inline_sound.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\bitty.ico" />
+    <Image Include="src\win\bitty.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="res\bitty.rc" />
+    <ResourceCompile Include="src\win\bitty.rc" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="studio\visualizer.natvis" />
