@@ -1701,7 +1701,9 @@ void Workspace::assets(class Window* wnd, class Renderer* rnd, const class Proje
 						}
 						const bool rmb = ImGui::IsItemClicked(ImGuiMouseButton_Right);
 						if (rmb || ImGui::IsItemClicked()) {
-							sel(prj, asset);
+							if (!rmb)
+								sel(prj, asset);
+
 							if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 								states->activate(Asset::States::EDITABLE);
 

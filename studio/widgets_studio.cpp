@@ -328,6 +328,25 @@ AboutPopupBox::AboutPopupBox(
 	_title(title),
 	_confirmHandler(confirm)
 {
+	SDL_version sdlVer = { SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL };
+	SDL_GetVersion(&sdlVer);
+	SDL_version sdlMixVer = { SDL_MIXER_MAJOR_VERSION, SDL_MIXER_MINOR_VERSION, SDL_MIXER_PATCHLEVEL };
+	const SDL_version* sdlMixVerPtr = Mix_Linked_Version();
+	if (sdlMixVerPtr)
+		memcpy(&sdlMixVer, sdlMixVerPtr, sizeof(SDL_version));
+
+	std::string curlVer = LIBCURL_VERSION;
+	const char* curlVerPtr = curl_version();
+	if (curlVerPtr) {
+		curlVer = curlVerPtr;
+		const size_t begin = Text::indexOf(curlVer, "/");
+		if (begin != std::string::npos)
+			curlVer = curlVer.substr(begin + 1);
+		const size_t end = Text::indexOf(curlVer, " ");
+		if (end != std::string::npos)
+			curlVer = curlVer.substr(0, end);
+	}
+
 	_name = BITTY_TITLE;
 	_desc = "v" BITTY_VERSION_STRING " - An itty bitty game engine";
 
@@ -338,14 +357,14 @@ AboutPopupBox::AboutPopupBox(
 
 	_specs += "Libraries:\n";
 	_specs += "        Lua v" LUA_VERSION_MAJOR "." LUA_VERSION_MINOR "." LUA_VERSION_RELEASE "\n";
-	_specs += "        SDL v" + Text::toString(SDL_MAJOR_VERSION) + "." + Text::toString(SDL_MINOR_VERSION) + "." + Text::toString(SDL_PATCHLEVEL) + "\n";
-	_specs += "  SDL mixer v" + Text::toString(SDL_MIXER_MAJOR_VERSION) + "." + Text::toString(SDL_MIXER_MINOR_VERSION) + "." + Text::toString(SDL_MIXER_PATCHLEVEL) + "\n";
+	_specs += "        SDL v" + Text::toString(sdlVer.major) + "." + Text::toString(sdlVer.minor) + "." + Text::toString(sdlVer.patch) + "\n";
+	_specs += "  SDL mixer v" + Text::toString(sdlMixVer.major) + "." + Text::toString(sdlMixVer.minor) + "." + Text::toString(sdlMixVer.patch) + "\n";
 	_specs += "      ImGui v" IMGUI_VERSION "\n";
 	_specs += "   Chipmunk v" + std::string(cpVersionString) +  "\n";
 #if !defined BITTY_OS_HTML
 	_specs += "   CivetWeb v" CIVETWEB_VERSION "\n";
 	_specs += "      libuv v" + std::string(uv_version_string()) + "\n";
-	_specs += "       cURL v" LIBCURL_VERSION "\n";
+	_specs += "       cURL v" + curlVer + "\n";
 #endif /* BITTY_OS_HTML */
 	_specs += "     SQLite v" SQLITE_VERSION "\n";
 	_specs += "  RapidJSON v" RAPIDJSON_VERSION_STRING "\n";
