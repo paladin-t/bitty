@@ -470,6 +470,7 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 	consoleTextBox()->SetLanguageDefinition(ImGui::CodeEditor::LanguageDefinition::Text());
 	consoleTextBox()->DisableShortcut(ImGui::CodeEditor::UndoRedo);
 	consoleTextBox()->SetReadOnly(true);
+	consoleTextBox()->SetColorizationEnabled(false);
 	consoleTextBox()->SetShowLineNumbers(false);
 	consoleTextBox()->SetShowWhiteSpaces(false);
 	consoleTextBox()->SetTooltipEnabled(false);
@@ -1700,7 +1701,9 @@ void Workspace::assets(class Window* wnd, class Renderer* rnd, const class Proje
 						}
 						const bool rmb = ImGui::IsItemClicked(ImGuiMouseButton_Right);
 						if (rmb || ImGui::IsItemClicked()) {
-							sel(prj, asset);
+							if (!rmb)
+								sel(prj, asset);
+
 							if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 								states->activate(Asset::States::EDITABLE);
 

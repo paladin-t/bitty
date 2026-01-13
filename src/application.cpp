@@ -1184,17 +1184,36 @@ private:
 #endif /* Platform macro. */
 	}
 	static void versions(void) {
+		SDL_version sdlVer = { SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL };
+		SDL_GetVersion(&sdlVer);
+		SDL_version sdlMixVer = { SDL_MIXER_MAJOR_VERSION, SDL_MIXER_MINOR_VERSION, SDL_MIXER_PATCHLEVEL };
+		const SDL_version* sdlMixVerPtr = Mix_Linked_Version();
+		if (sdlMixVerPtr)
+			memcpy(&sdlMixVer, sdlMixVerPtr, sizeof(SDL_version));
+
+		std::string curlVer = LIBCURL_VERSION;
+		const char* curlVerPtr = curl_version();
+		if (curlVerPtr) {
+			curlVer = curlVerPtr;
+			const size_t begin = Text::indexOf(curlVer, "/");
+			if (begin != std::string::npos)
+				curlVer = curlVer.substr(begin + 1);
+			const size_t end = Text::indexOf(curlVer, " ");
+			if (end != std::string::npos)
+				curlVer = curlVer.substr(0, end);
+		}
+
 		fprintf(stdout, BITTY_NAME " v" BITTY_VERSION_STRING " - " BITTY_OS ", with %s, " BITTY_CP "\n", Platform::isLittleEndian() ? "little-endian" : "big-endian");
 		fprintf(stdout, "\n");
 		fprintf(stdout, "      Lua v" LUA_VERSION_MAJOR "." LUA_VERSION_MINOR "." LUA_VERSION_RELEASE "\n");
-		fprintf(stdout, "      SDL v%d.%d.%d\n", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
-		fprintf(stdout, "SDL mixer v%d.%d.%d\n", SDL_MIXER_MAJOR_VERSION, SDL_MIXER_MINOR_VERSION, SDL_MIXER_PATCHLEVEL);
+		fprintf(stdout, "      SDL v%d.%d.%d\n", (int)sdlVer.major, (int)sdlVer.minor, (int)sdlVer.patch);
+		fprintf(stdout, "SDL mixer v%d.%d.%d\n", (int)sdlMixVer.major, (int)sdlMixVer.minor, (int)sdlMixVer.patch);
 		fprintf(stdout, "    ImGui v" IMGUI_VERSION "\n");
 		fprintf(stdout, " Chipmunk v%s\n", cpVersionString);
 #if !defined BITTY_OS_HTML
 		fprintf(stdout, " CivetWeb v" CIVETWEB_VERSION "\n");
 		fprintf(stdout, "    libuv v%s\n", uv_version_string());
-		fprintf(stdout, "     cURL v" LIBCURL_VERSION "\n");
+		fprintf(stdout, "     cURL v%s\n", curlVer.c_str());
 #endif /* BITTY_OS_HTML */
 		fprintf(stdout, "RapidJSON v" RAPIDJSON_VERSION_STRING "\n");
 		fprintf(stdout, "     zlib v" ZLIB_VERSION "\n");

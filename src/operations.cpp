@@ -1131,6 +1131,9 @@ promise::Defer Operations::fileSaveAsset(class Renderer* rnd, Workspace* ws, con
 					else
 						ws->touchedDirectory(path.c_str());
 
+					if (asset == prj->info())
+						ws->refreshWindowTitle(prj);
+
 					df.resolve(true);
 				}
 			};
@@ -1264,6 +1267,8 @@ promise::Defer Operations::fileSaveFile(class Renderer* rnd, Workspace* ws, cons
 					canvasScaleMode = Texture::ANISOTROPIC;
 				ws->canvasScaleMode(canvasScaleMode);
 				ws->touchedFile(path.c_str());
+
+				ws->refreshWindowTitle(prj);
 
 				df.resolve(true);
 
@@ -1416,6 +1421,8 @@ promise::Defer Operations::fileSaveDirectory(class Renderer* rnd, Workspace* ws,
 					canvasScaleMode = Texture::ANISOTROPIC;
 				ws->canvasScaleMode(canvasScaleMode);
 				ws->touchedDirectory(path.c_str());
+
+				ws->refreshWindowTitle(prj);
 
 				df.resolve(true);
 
