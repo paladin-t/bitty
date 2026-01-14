@@ -40,6 +40,8 @@ public:
 	virtual bool open(const char* path, Stream::Accesses access) = 0;
 	virtual bool close(void) = 0;
 
+	virtual bool option(const std::string &key, const Variant &val) = 0;
+
 	virtual bool query(Variant &ret, const char* sql) = 0;
 	virtual bool exec(Variant &ret, const char* sql) = 0;
 

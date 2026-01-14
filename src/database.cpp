@@ -8,6 +8,7 @@
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
 
+#include "bytes.h"
 #include "database.h"
 #include "../lib/sqlite3pp/src/sqlite3pp.h"
 
@@ -18,9 +19,16 @@
 
 class DatabaseImpl : public Database {
 private:
-	sqlite3pp::database _db;
-	std::string _path;
+	enum class BlobTypes {
+		STRING,
+		LIST
+	};
+
+private:
 	bool _opened = false;
+	std::string _path;
+	sqlite3pp::database _db;
+	BlobTypes _blobType = BlobTypes::STRING;
 
 public:
 	DatabaseImpl() {
@@ -54,7 +62,7 @@ public:
 		switch (access) {
 		case Stream::Accesses::WRITE: // Fall through.
 		case Stream::Accesses::APPEND: // Fall through.
-			fprintf(stderr, "Unsupported access mode %s, fall to %s.\n", access == Stream::Accesses::WRITE ? "WRITE" : "APPEND", "READ_WRITE");
+			fprintf(stderr, "Unsupported access mode \"%s\", fall to \"%s\".\n", access == Stream::Accesses::WRITE ? "WRITE" : "APPEND", "READ_WRITE");
 
 			// Fall through.
 		case Stream::Accesses::READ_WRITE:
@@ -64,7 +72,7 @@ public:
 		case Stream::Accesses::READ: // Fall through.
 		default:
 			if (access != Stream::Accesses::READ)
-				fprintf(stderr, "Unsupported access mode %d, fall to %s.\n", (int)access, "READ");
+				fprintf(stderr, "Unsupported access mode %d, fall to \"%s\".\n", (int)access, "READ");
 
 			flags = SQLITE_OPEN_READONLY | SQLITE_OPEN_CREATE;
 
@@ -87,6 +95,25 @@ public:
 		_opened = false;
 
 		return true;
+	}
+
+	virtual bool option(const std::string &key, const Variant &val) override {
+		if (key == "blob_as") {
+			const std::string val_ = (std::string)val;
+			if (val_ == "string") {
+				_blobType = BlobTypes::STRING;
+
+				return true;
+			} else if (val_ == "list") {
+				_blobType = BlobTypes::LIST;
+
+				return true;
+			}
+
+			return false;
+		}
+
+		return false;
 	}
 
 	virtual bool query(Variant &ret, const char* sql) override {
@@ -127,7 +154,21 @@ public:
 
 						break;
 					case SQLITE_BLOB: {
-							const Variant val = nullptr;
+							const int n = row.column_bytes(i);
+							const void* ptr = row.get<const void*>(i);
+							Variant val = nullptr;
+							if (_blobType == BlobTypes::STRING) {
+								std::string str;
+								str.assign((const char*)ptr, (size_t)n);
+								val = str;
+							} else /* if (_blobType == BlobTypes::LIST) */ {
+								IList::Ptr lst(List::create());
+								for (int j = 0; j < n; ++j) {
+									const Byte byte = ((const Byte*)ptr)[j];
+									lst->add(Variant((Int)byte));
+								}
+								val = (Object::Ptr)lst;
+							}
 							lstCols->add(val);
 						}
 
@@ -143,13 +184,13 @@ public:
 				lstRows->add((Object::Ptr)lstCols);
 			}
 			ret = (Object::Ptr)lstRows;
-
-			return true;
 		} catch (sqlite3pp::database_error &ex) {
 			ret = ex.what();
+
+			return false; // Failed.
 		}
 
-		return false;
+		return true; // Succeeded.
 	}
 	virtual bool exec(Variant &ret, const char* sql) override {
 		if (!_opened)
@@ -163,13 +204,13 @@ public:
 			const int result = cmd.execute();
 
 			ret = result;
-
-			return true;
 		} catch (sqlite3pp::database_error &ex) {
 			ret = ex.what();
+
+			return false; // Failed.
 		}
 
-		return true;
+		return true; // Succeeded.
 	}
 };
 
