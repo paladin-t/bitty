@@ -3362,6 +3362,10 @@ void Operations::projectStop(class Renderer* rnd, Workspace* ws, const class Pro
 	if (exec)
 		exec->stop();
 
+#if BITTY_BAKE_ENABLED
+	ws->bake();
+#endif /* BITTY_BAKE_ENABLED */
+
 	primitives->reset();
 	primitives->canvas(nullptr);
 

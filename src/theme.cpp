@@ -660,7 +660,7 @@ bool Theme::load(class Renderer* rnd) {
 
 	// Rebuild the font glyphs.
 	if (io.Fonts->TexID) {
-		ImGuiSDL::Texture* texture = static_cast<ImGuiSDL::Texture*>(io.Fonts->TexID);
+		ImGuiSDLHack::Texture* texture = static_cast<ImGuiSDLHack::Texture*>(io.Fonts->TexID);
 		delete texture;
 		io.Fonts->TexID = nullptr;
 	}
@@ -668,7 +668,7 @@ bool Theme::load(class Renderer* rnd) {
 	unsigned char* pixels = nullptr;
 	int width = 0, height = 0;
 	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
-	ImGuiSDL::Texture* texture = new ImGuiSDL::Texture(rnd, pixels, width, height);
+	ImGuiSDLHack::Texture* texture = new ImGuiSDLHack::Texture(rnd, pixels, width, height);
 	io.Fonts->TexID = (void*)texture;
 
 	// Finish.

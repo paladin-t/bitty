@@ -13,7 +13,6 @@
 #include "code.h"
 #include "database.h"
 #include "datetime.h"
-#include "editable.h"
 #include "effects.h"
 #include "encoding.h"
 #include "file_handle.h"
@@ -33,6 +32,7 @@
 #include "walker.h"
 #include "web.h"
 #include "window.h"
+#include "workspace.h"
 #include "resource/inline_resource.h"
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
@@ -362,6 +362,10 @@ bool isPlugin(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
 	return !!impl->editing();
+}
+
+static int warnForMethodCallSymbol(lua_State* L) {
+	return error(L, "  Warning: Did you mean to call a method using \":\" instead of \".\"?");
 }
 
 /**< Variant. */
@@ -1246,6 +1250,9 @@ static int Noiser_setOption(lua_State* L) {
 		const bool ret = obj->get()->option(key, val);
 
 		return write(L, ret);
+	} else {
+		error(L, "Noiser expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -1256,8 +1263,12 @@ static int Noiser_seed(lua_State* L) {
 	int seed = 0;
 	read<>(L, obj, seed);
 
-	if (obj)
+	if (obj) {
 		obj->get()->seed(seed);
+	} else {
+		error(L, "Noiser expected.");
+		warnForMethodCallSymbol(L);
+	}
 
 	return 0;
 }
@@ -1286,6 +1297,9 @@ static int Noiser_get(lua_State* L) {
 
 			return write(L, ret);
 		}
+	} else {
+		error(L, "Noiser expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -1317,6 +1331,9 @@ static int Noiser_domainWarp(lua_State* L) {
 
 			return write(L, &ret);
 		}
+	} else {
+		error(L, "Noiser expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -1369,6 +1386,9 @@ static int Pathfinder_get(lua_State* L) {
 			return write(L, nullptr);
 
 		return write(L, cost);
+	} else {
+		error(L, "Pathfinder expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -1384,6 +1404,9 @@ static int Pathfinder_set(lua_State* L) {
 		const bool ret = obj->get()->set(pos, cost);
 
 		return write(L, ret);
+	} else {
+		error(L, "Pathfinder expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -1393,8 +1416,12 @@ static int Pathfinder_clear(lua_State* L) {
 	Pathfinder::Ptr* obj = nullptr;
 	read<>(L, obj);
 
-	if (obj)
+	if (obj) {
 		obj->get()->clear();
+	} else {
+		error(L, "Pathfinder expected.");
+		warnForMethodCallSymbol(L);
+	}
 
 	return 0;
 }
@@ -1432,6 +1459,9 @@ static int Pathfinder_solve(lua_State* L) {
 			return write(L, path, cost);
 
 		return write(L, path, cost); // Undocumented: secondary value.
+	} else {
+		error(L, "Pathfinder expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -1529,6 +1559,9 @@ static int Random_seed(lua_State* L) {
 			ret = obj->get()->seed();
 
 		return write(L, ret.first, ret.second);
+	} else {
+		error(L, "Random expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -1560,6 +1593,9 @@ static int Random_next(lua_State* L) {
 
 			return write(L, ret);
 		}
+	} else {
+		error(L, "Random expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -1614,8 +1650,12 @@ static int Raycaster_solve(lua_State* L) {
 	else
 		read<4>(L, map);
 
-	if (!obj)
+	if (!obj) {
+		error(L, "Random expected.");
+		warnForMethodCallSymbol(L);
+
 		return 0;
+	}
 
 	if (!rayPos || !rayDir)
 		return 0;
@@ -1768,8 +1808,12 @@ static int Walker_solve(lua_State* L) {
 	else
 		read<4>(L, map);
 
-	if (!obj)
+	if (!obj) {
+		error(L, "Walker expected.");
+		warnForMethodCallSymbol(L);
+
 		return 0;
+	}
 
 	if (!objPos || !expDir)
 		return 0;
@@ -1932,6 +1976,9 @@ static int Archive_open(lua_State* L) {
 			obj->get()->password(password); // Undocumented.
 
 		return write(L, ret);
+	} else {
+		error(L, "Archive expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -1946,7 +1993,8 @@ static int Archive_close(lua_State* L) {
 
 		return write(L, ret);
 	} else {
-		error(L, "Archive expected, did you use \".\" rather than \":\".");
+		error(L, "Archive expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -1962,6 +2010,9 @@ static int Archive_all(lua_State* L) {
 			return 0;
 
 		return write(L, entries);
+	} else {
+		error(L, "Archive expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -1976,6 +2027,9 @@ static int Archive_exists(lua_State* L) {
 		const bool ret = obj->get()->exists(nameInArchive);
 
 		return write(L, ret);
+	} else {
+		error(L, "Archive expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -1990,6 +2044,9 @@ static int Archive_make(lua_State* L) {
 		const bool ret = obj->get()->make(nameInArchive);
 
 		return write(L, ret);
+	} else {
+		error(L, "Archive expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2017,6 +2074,9 @@ static int Archive_toBytes(lua_State* L) {
 		} else {
 			return write(L, nullptr);
 		}
+	} else {
+		error(L, "Archive expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2028,10 +2088,17 @@ static int Archive_fromBytes(lua_State* L) {
 	Bytes::Ptr* bytes = nullptr;
 	read<>(L, obj, nameInArchive, bytes);
 
-	if (obj && bytes) {
-		const bool ret = obj->get()->fromBytes(bytes->get(), nameInArchive);
+	if (obj) {
+		if (bytes) {
+			const bool ret = obj->get()->fromBytes(bytes->get(), nameInArchive);
 
-		return write(L, ret);
+			return write(L, ret);
+		} else {
+			error(L, "Bytes expected.");
+		}
+	} else {
+		error(L, "Archive expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2043,10 +2110,17 @@ static int Archive_toFile(lua_State* L) {
 	const char* path = nullptr;
 	read<>(L, obj, nameInArchive, path);
 
-	if (obj && path) {
-		const bool ret = obj->get()->toFile(path, nameInArchive);
+	if (obj) {
+		if (path) {
+			const bool ret = obj->get()->toFile(path, nameInArchive);
 
-		return write(L, ret);
+			return write(L, ret);
+		} else {
+			error(L, "String expected.");
+		}
+	} else {
+		error(L, "Archive expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2058,10 +2132,17 @@ static int Archive_fromFile(lua_State* L) {
 	const char* path = nullptr;
 	read<>(L, obj, nameInArchive, path);
 
-	if (obj && path) {
-		const bool ret = obj->get()->fromFile(path, nameInArchive);
+	if (obj) {
+		if (path) {
+			const bool ret = obj->get()->fromFile(path, nameInArchive);
 
-		return write(L, ret);
+			return write(L, ret);
+		} else {
+			error(L, "String expected.");
+		}
+	} else {
+		error(L, "Archive expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2072,10 +2153,17 @@ static int Archive_toDirectory(lua_State* L) {
 	const char* dir = nullptr;
 	read<>(L, obj, dir);
 
-	if (obj && dir) {
-		const bool ret = obj->get()->toDirectory(dir);
+	if (obj) {
+		if (dir) {
+			const bool ret = obj->get()->toDirectory(dir);
 
-		return write(L, ret);
+			return write(L, ret);
+		} else {
+			error(L, "String expected.");
+		}
+	} else {
+		error(L, "Archive expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2086,10 +2174,17 @@ static int Archive_fromDirectory(lua_State* L) {
 	const char* dir = nullptr;
 	read<>(L, obj, dir);
 
-	if (obj && dir) {
-		const bool ret = obj->get()->fromDirectory(dir);
+	if (obj) {
+		if (dir) {
+			const bool ret = obj->get()->fromDirectory(dir);
 
-		return write(L, ret);
+			return write(L, ret);
+		} else {
+			error(L, "String expected.");
+		}
+	} else {
+		error(L, "Archive expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2199,6 +2294,7 @@ static int Bytes_peek(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2216,6 +2312,7 @@ static int Bytes_poke(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2231,6 +2328,7 @@ static int Bytes_count(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2246,6 +2344,7 @@ static int Bytes_empty(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2261,6 +2360,7 @@ static int Bytes_endOfStream(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2276,6 +2376,7 @@ static int Bytes_readByte(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2291,6 +2392,7 @@ static int Bytes_readInt16(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2306,6 +2408,7 @@ static int Bytes_readUInt16(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2321,6 +2424,7 @@ static int Bytes_readInt32(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2336,6 +2440,7 @@ static int Bytes_readUInt32(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2351,6 +2456,7 @@ static int Bytes_readInt64(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2366,6 +2472,7 @@ static int Bytes_readSingle(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2381,6 +2488,7 @@ static int Bytes_readDouble(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2425,6 +2533,7 @@ static int Bytes_readBytes(lua_State* L) {
 		}
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2458,6 +2567,7 @@ static int Bytes_readString(lua_State* L) {
 		}
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2474,6 +2584,7 @@ static int Bytes_readLine(lua_State* L) {
 		return write(L, str);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2490,6 +2601,7 @@ static int Bytes_writeByte(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -2506,6 +2618,7 @@ static int Bytes_writeInt16(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -2522,6 +2635,7 @@ static int Bytes_writeUInt16(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -2538,6 +2652,7 @@ static int Bytes_writeInt32(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -2554,6 +2669,7 @@ static int Bytes_writeUInt32(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -2570,6 +2686,7 @@ static int Bytes_writeInt64(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -2586,6 +2703,7 @@ static int Bytes_writeSingle(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -2602,6 +2720,7 @@ static int Bytes_writeDouble(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -2633,6 +2752,7 @@ static int Bytes_writeBytes(lua_State* L) {
 		}
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -2649,6 +2769,7 @@ static int Bytes_writeString(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -2665,6 +2786,7 @@ static int Bytes_writeLine(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -2684,6 +2806,7 @@ static int Bytes_get(lua_State* L) {
 		}
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2701,6 +2824,7 @@ static int Bytes_set(lua_State* L) {
 			obj->get()->set((size_t)index, val);
 	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -2718,10 +2842,12 @@ static int Bytes_resize(lua_State* L) {
 		return 0;
 	}
 
-	if (obj)
+	if (obj) {
 		obj->get()->resize(expSize);
-	else
+	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
+	}
 
 	return 0;
 }
@@ -2730,10 +2856,74 @@ static int Bytes_clear(lua_State* L) {
 	Bytes::Ptr* obj = nullptr;
 	read<>(L, obj);
 
-	if (obj)
+	if (obj) {
 		obj->get()->clear();
-	else
+	} else {
 		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int Bytes_toList(lua_State* L) {
+	Bytes::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		IList::Ptr lst(List::create());
+		const int n = (int)obj->get()->count();
+		for (int i = 0; i < n; ++i) {
+			const Byte byte = obj->get()->get(i);
+			lst->add(Variant((Int)byte));
+		}
+		const Variant ret = (Object::Ptr)lst;
+
+		return write(L, &ret);
+	} else {
+		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int Bytes_fromList(lua_State* L) {
+	Bytes::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		Variant tbl = nullptr;
+		read<2>(L, &tbl);
+
+		Object::Ptr obj_ = (Object::Ptr)tbl;
+		if (!Object::is<IList::Ptr>(obj_)) {
+			error(L, "List expected.");
+
+			return 0;
+		}
+
+		IList::Ptr lst = Object::as<IList::Ptr>(obj_);
+		if (!lst) {
+			error(L, "List expected.");
+
+			return 0;
+		}
+
+		obj->get()->clear();
+		for (int i = 0; i < lst->count(); ++i) {
+			Variant elem = lst->at(i);
+			const Byte byte = (Byte)(Int)elem;
+			obj->get()->writeByte(byte);
+		}
+
+		const int ret = (int)obj->get()->count();
+
+		return write(L, ret);
+	} else {
+		error(L, "Bytes expected.");
+		warnForMethodCallSymbol(L);
+	}
 
 	return 0;
 }
@@ -2743,11 +2933,8 @@ static int Bytes___index(lua_State* L) {
 	const char* field = nullptr;
 	read<>(L, obj, field);
 
-	if (!obj) {
-		error(L, "Bytes expected.");
-
+	if (!obj)
 		return 0;
-	}
 
 	if (isNumber(L, 2)) {
 		int index = 1;
@@ -2771,11 +2958,8 @@ static int Bytes___newindex(lua_State* L) {
 	const char* field = nullptr;
 	read<>(L, obj, field);
 
-	if (!obj) {
-		error(L, "Bytes expected.");
-
+	if (!obj)
 		return 0;
-	}
 
 	if (isNumber(L, 2)) {
 		int index = 1;
@@ -2839,6 +3023,8 @@ static void open_Bytes(lua_State* L) {
 			luaL_Reg{ "set", Bytes_set },
 			luaL_Reg{ "resize", Bytes_resize },
 			luaL_Reg{ "clear", Bytes_clear },
+			luaL_Reg{ "toList", Bytes_toList },
+			luaL_Reg{ "fromList", Bytes_fromList },
 			luaL_Reg{ nullptr, nullptr }
 		),
 		Bytes___index, Bytes___newindex
@@ -2876,13 +3062,18 @@ static int Color___tostring(lua_State* L) {
 	Color* obj = nullptr;
 	check<>(L, obj);
 
-	std::string str;
+	if (obj) {
+		std::string str;
+		str += "Color[0x";
+		str += Text::toHex(obj->toRGBA());
+		str += "]";
 
-	str += "Color[0x";
-	str += Text::toHex(obj->toRGBA());
-	str += "]";
+		return write(L, str);
+	} else {
+		error(L, "Color expected.");
+	}
 
-	return write(L, str);
+	return 0;
 }
 
 static int Color___add(lua_State* L) {
@@ -2894,6 +3085,8 @@ static int Color___add(lua_State* L) {
 		const Color ret = *obj + *other;
 
 		return write(L, &ret);
+	} else {
+		error(L, "Color expected.");
 	}
 
 	return 0;
@@ -2908,6 +3101,8 @@ static int Color___sub(lua_State* L) {
 		const Color ret = *obj - *other;
 
 		return write(L, &ret);
+	} else {
+		error(L, "Color expected.");
 	}
 
 	return 0;
@@ -2951,6 +3146,8 @@ static int Color___mul(lua_State* L) {
 
 			return 0;
 		}
+	} else {
+		error(L, "Color expected.");
 	}
 
 	return 0;
@@ -2964,6 +3161,8 @@ static int Color___unm(lua_State* L) {
 		const Color ret = -*obj;
 
 		return write(L, &ret);
+	} else {
+		error(L, "Color expected.");
 	}
 
 	return 0;
@@ -2978,6 +3177,8 @@ static int Color___eq(lua_State* L) {
 		const bool ret = *obj == *other;
 
 		return write(L, ret);
+	} else {
+		error(L, "Color expected.");
 	}
 
 	return write(L, false);
@@ -2991,6 +3192,9 @@ static int Color_toRGBA(lua_State* L) {
 		const UInt32 ret = obj->toRGBA();
 
 		return write(L, ret);
+	} else {
+		error(L, "Color expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3001,8 +3205,12 @@ static int Color_fromRGBA(lua_State* L) {
 	UInt32 rgba = 0xffffffff;
 	read<>(L, obj, rgba);
 
-	if (obj)
+	if (obj) {
 		obj->fromRGBA(rgba);
+	} else {
+		error(L, "Color expected.");
+		warnForMethodCallSymbol(L);
+	}
 
 	return 0;
 }
@@ -3115,6 +3323,7 @@ static int Database_open(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Database expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3130,6 +3339,26 @@ static int Database_close(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "Database expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int Database_setOption(lua_State* L) {
+	Database::Ptr* obj = nullptr;
+	std::string key;
+	Variant val = nullptr;
+	read<>(L, obj, key);
+	read<3>(L, &val);
+
+	if (obj) {
+		const bool ret = obj->get()->option(key, val);
+
+		return write(L, ret);
+	} else {
+		error(L, "Database expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3147,6 +3376,7 @@ static int Database_query(lua_State* L) {
 		return write(L, ret, &result);
 	} else {
 		error(L, "Database expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -3164,6 +3394,7 @@ static int Database_exec(lua_State* L) {
 		return write(L, ret, &result); // Undocumented: secondary value.
 	} else {
 		error(L, "Database expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -3186,6 +3417,7 @@ static void open_Database(lua_State* L) {
 		array(
 			luaL_Reg{ "open", Database_open },
 			luaL_Reg{ "close", Database_close },
+			luaL_Reg{ "setOption", Database_setOption },
 			luaL_Reg{ "query", Database_query },
 			luaL_Reg{ "exec", Database_exec },
 			luaL_Reg{ nullptr, nullptr }
@@ -3320,6 +3552,8 @@ static int Base64_encode(lua_State* L) {
 		std::string ret;
 		if (Base64::fromBytes(ret, bytes->get()))
 			return write(L, ret);
+	} else {
+		error(L, "Bytes expected.");
 	}
 	
 	return write(L, nullptr);
@@ -3333,6 +3567,8 @@ static int Base64_decode(lua_State* L) {
 		Bytes::Ptr ret(Bytes::create());
 		if (Base64::toBytes(ret.get(), str))
 			return write(L, &ret);
+	} else {
+		error(L, "String expected.");
 	}
 
 	return write(L, nullptr);
@@ -3365,6 +3601,8 @@ static int Lz4_encode(lua_State* L) {
 		Bytes::Ptr ret(Bytes::create());
 		if (Lz4::fromBytes(ret.get(), bytes->get()))
 			return write(L, &ret);
+	} else {
+		error(L, "Bytes expected.");
 	}
 	
 	return write(L, nullptr);
@@ -3378,6 +3616,8 @@ static int Lz4_decode(lua_State* L) {
 		Bytes::Ptr ret(Bytes::create());
 		if (Lz4::toBytes(ret.get(), bytes->get()))
 			return write(L, &ret);
+	} else {
+		error(L, "Bytes expected.");
 	}
 
 	return write(L, nullptr);
@@ -3443,6 +3683,7 @@ static int File_open(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3470,7 +3711,8 @@ static int File_close(lua_State* L) {
 
 		return write(L, ret);
 	} else {
-		error(L, "File expected, did you use \".\" rather than \":\".");
+		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3486,6 +3728,7 @@ static int File_peek(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3497,10 +3740,12 @@ static int File_poke(lua_State* L) {
 	read<>(L, obj, p);
 
 	--p; // 1-based.
-	if (obj)
+	if (obj) {
 		obj->get()->poke((size_t)p);
-	else
+	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
+	}
 
 	return 0;
 }
@@ -3515,6 +3760,7 @@ static int File_count(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3530,6 +3776,7 @@ static int File_empty(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3545,6 +3792,7 @@ static int File_endOfStream(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3560,6 +3808,7 @@ static int File_readByte(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3575,6 +3824,7 @@ static int File_readInt16(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3590,6 +3840,7 @@ static int File_readUInt16(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3605,6 +3856,7 @@ static int File_readInt32(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3620,6 +3872,7 @@ static int File_readUInt32(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3635,6 +3888,7 @@ static int File_readInt64(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3650,6 +3904,7 @@ static int File_readSingle(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3665,6 +3920,7 @@ static int File_readDouble(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3703,6 +3959,7 @@ static int File_readBytes(lua_State* L) {
 		}
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3736,6 +3993,7 @@ static int File_readString(lua_State* L) {
 		}
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3752,6 +4010,7 @@ static int File_readLine(lua_State* L) {
 		return write(L, str);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -3768,6 +4027,7 @@ static int File_writeByte(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -3784,6 +4044,7 @@ static int File_writeInt16(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -3800,6 +4061,7 @@ static int File_writeUInt16(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -3816,6 +4078,7 @@ static int File_writeInt32(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -3832,6 +4095,7 @@ static int File_writeUInt32(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -3848,6 +4112,7 @@ static int File_writeInt64(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -3864,6 +4129,7 @@ static int File_writeSingle(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -3880,6 +4146,7 @@ static int File_writeDouble(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -3905,6 +4172,7 @@ static int File_writeBytes(lua_State* L) {
 		}
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, ret);
@@ -3921,6 +4189,7 @@ static int File_writeString(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -3937,6 +4206,7 @@ static int File_writeLine(lua_State* L) {
 		return write(L, ret);
 	} else {
 		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return write(L, 0);
@@ -4217,6 +4487,9 @@ static int FileInfo_fullPath(lua_State* L) {
 		const std::string &ret = obj->get()->fullPath();
 
 		return write(L, ret);
+	} else {
+		error(L, "FileInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4230,6 +4503,9 @@ static int FileInfo_parentPath(lua_State* L) {
 		const std::string &ret = obj->get()->parentPath();
 
 		return write(L, ret);
+	} else {
+		error(L, "FileInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4243,6 +4519,9 @@ static int FileInfo_fileName(lua_State* L) {
 		const std::string &ret = obj->get()->fileName();
 
 		return write(L, ret);
+	} else {
+		error(L, "FileInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4256,6 +4535,9 @@ static int FileInfo_extName(lua_State* L) {
 		const std::string &ret = obj->get()->extName();
 
 		return write(L, ret);
+	} else {
+		error(L, "FileInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4269,6 +4551,9 @@ static int FileInfo_empty(lua_State* L) {
 		const bool ret = obj->get()->empty();
 
 		return write(L, ret);
+	} else {
+		error(L, "FileInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4282,6 +4567,9 @@ static int FileInfo_exists(lua_State* L) {
 		const bool ret = obj->get()->exists();
 
 		return write(L, ret);
+	} else {
+		error(L, "FileInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4295,6 +4583,9 @@ static int FileInfo_make(lua_State* L) {
 		const bool ret = obj->get()->make();
 
 		return write(L, ret);
+	} else {
+		error(L, "FileInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4309,6 +4600,9 @@ static int FileInfo_copyTo(lua_State* L) {
 		const bool ret = obj->get()->copyTo(newPath);
 
 		return write(L, ret);
+	} else {
+		error(L, "FileInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4323,6 +4617,9 @@ static int FileInfo_moveTo(lua_State* L) {
 		const bool ret = obj->get()->moveTo(newPath);
 
 		return write(L, ret);
+	} else {
+		error(L, "FileInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4341,6 +4638,9 @@ static int FileInfo_remove(lua_State* L) {
 		const bool ret = obj->get()->remove(toTrashBin);
 
 		return write(L, ret);
+	} else {
+		error(L, "FileInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4356,10 +4656,17 @@ static int FileInfo_rename(lua_State* L) {
 	else
 		read<>(L, obj, newName);
 
-	if (obj && newName) {
-		const bool ret = obj->get()->rename(newName, newExt);
+	if (obj) {
+		if (newName) {
+			const bool ret = obj->get()->rename(newName, newExt);
 
-		return write(L, ret);
+			return write(L, ret);
+		} else {
+			error(L, "String expected.");
+		}
+	} else {
+		error(L, "FileInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4373,6 +4680,9 @@ static int FileInfo_parent(lua_State* L) {
 		DirectoryInfo::Ptr parent = obj->get()->parent();
 
 		return write(L, &parent);
+	} else {
+		error(L, "FileInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4386,6 +4696,9 @@ static int FileInfo_readAll(lua_State* L) {
 		const std::string ret = obj->get()->readAll();
 
 		return write(L, ret);
+	} else {
+		error(L, "FileInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4435,6 +4748,8 @@ static int DirectoryInfo_ctor(lua_State* L) {
 			return write(L, nullptr);
 
 		return write(L, &obj);
+	} else {
+		error(L, "String expected.");
 	}
 
 	return 0;
@@ -4448,6 +4763,9 @@ static int DirectoryInfo_fullPath(lua_State* L) {
 		const std::string &ret = obj->get()->fullPath();
 
 		return write(L, ret);
+	} else {
+		error(L, "DirectoryInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4461,6 +4779,9 @@ static int DirectoryInfo_parentPath(lua_State* L) {
 		const std::string &ret = obj->get()->parentPath();
 
 		return write(L, ret);
+	} else {
+		error(L, "DirectoryInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4474,6 +4795,9 @@ static int DirectoryInfo_dirName(lua_State* L) {
 		const std::string &ret = obj->get()->dirName();
 
 		return write(L, ret);
+	} else {
+		error(L, "DirectoryInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4487,6 +4811,9 @@ static int DirectoryInfo_empty(lua_State* L) {
 		const bool ret = obj->get()->empty();
 
 		return write(L, ret);
+	} else {
+		error(L, "DirectoryInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4500,6 +4827,9 @@ static int DirectoryInfo_exists(lua_State* L) {
 		const bool ret = obj->get()->exists();
 
 		return write(L, ret);
+	} else {
+		error(L, "DirectoryInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4513,6 +4843,9 @@ static int DirectoryInfo_make(lua_State* L) {
 		const bool ret = obj->get()->make();
 
 		return write(L, ret);
+	} else {
+		error(L, "DirectoryInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4527,6 +4860,9 @@ static int DirectoryInfo_copyTo(lua_State* L) {
 		const bool ret = obj->get()->copyTo(newPath);
 
 		return write(L, ret);
+	} else {
+		error(L, "DirectoryInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4541,6 +4877,9 @@ static int DirectoryInfo_moveTo(lua_State* L) {
 		const bool ret = obj->get()->moveTo(newPath);
 
 		return write(L, ret);
+	} else {
+		error(L, "DirectoryInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4559,6 +4898,9 @@ static int DirectoryInfo_remove(lua_State* L) {
 		const bool ret = obj->get()->remove(toTrashBin);
 
 		return write(L, ret);
+	} else {
+		error(L, "DirectoryInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4569,10 +4911,17 @@ static int DirectoryInfo_rename(lua_State* L) {
 	const char* newName = nullptr;
 	read<>(L, obj, newName);
 
-	if (obj && newName) {
-		const bool ret = obj->get()->rename(newName);
+	if (obj) {
+		if (newName) {
+			const bool ret = obj->get()->rename(newName);
 
-		return write(L, ret);
+			return write(L, ret);
+		} else {
+			error(L, "String expected.");
+		}
+	} else {
+		error(L, "DirectoryInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4598,6 +4947,9 @@ static int DirectoryInfo_getFiles(lua_State* L) {
 			lst.push_back(subs->get(i));
 
 		return write(L, lst);
+	} else {
+		error(L, "DirectoryInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4620,6 +4972,9 @@ static int DirectoryInfo_getDirectories(lua_State* L) {
 			lst.push_back(subs->get(i));
 
 		return write(L, lst);
+	} else {
+		error(L, "DirectoryInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4633,6 +4988,9 @@ static int DirectoryInfo_parent(lua_State* L) {
 		DirectoryInfo::Ptr parent = obj->get()->parent();
 
 		return write(L, &parent);
+	} else {
+		error(L, "DirectoryInfo expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4701,6 +5059,9 @@ static int Image_resize(lua_State* L) {
 		const bool ret = obj->get()->resize(width, height, stretch);
 
 		return write(L, ret);
+	} else {
+		error(L, "Image expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4723,6 +5084,9 @@ static int Image_get(lua_State* L) {
 
 			return write(L, &col);
 		}
+	} else {
+		error(L, "Image expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4753,6 +5117,9 @@ static int Image_set(lua_State* L) {
 
 			return 0;
 		}
+	} else {
+		error(L, "Image expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4775,6 +5142,9 @@ static int Image_blit(lua_State* L) {
 		const bool ret = obj->get()->blit(other->get(), x, y, w, h, sx, sy);
 
 		return write(L, ret);
+	} else {
+		error(L, "Image expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4789,6 +5159,9 @@ static int Image_fromImage(lua_State* L) {
 		const bool ret = obj->get()->fromImage(other->get());
 
 		return write(L, ret);
+	} else {
+		error(L, "Image expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4808,6 +5181,9 @@ static int Image_fromBlank(lua_State* L) {
 		const bool ret = obj->get()->fromBlank(width, height, paletted);
 
 		return write(L, ret);
+	} else {
+		error(L, "Image expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4836,6 +5212,9 @@ static int Image_toBytes(lua_State* L) {
 			return write(L, val);
 		else
 			return write(L, nullptr);
+	} else {
+		error(L, "Image expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4846,10 +5225,17 @@ static int Image_fromBytes(lua_State* L) {
 	Bytes::Ptr* val = nullptr;
 	read<>(L, obj, val);
 
-	if (obj && val) {
-		const bool ret = obj->get()->fromBytes(val->get());
+	if (obj) {
+		if (val) {
+			const bool ret = obj->get()->fromBytes(val->get());
 
-		return write(L, ret);
+			return write(L, ret);
+		} else {
+			error(L, "Bytes expected.");
+		}
+	} else {
+		error(L, "Image expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4945,6 +5331,9 @@ static int Json_toString(lua_State* L) {
 			return write(L, val);
 
 		return 0;
+	} else {
+		error(L, "Json expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4959,6 +5348,9 @@ static int Json_fromString(lua_State* L) {
 		const bool ret = obj->get()->fromString(val);
 
 		return write(L, ret);
+	} else {
+		error(L, "Json expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4979,6 +5371,9 @@ static int Json_toTable(lua_State* L) {
 			return write_(L, doc, allowNull);
 
 		return 0;
+	} else {
+		error(L, "Json expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -4995,6 +5390,9 @@ static int Json_fromTable(lua_State* L) {
 		const bool ret = obj->get()->fromJson(doc);
 
 		return write(L, ret);
+	} else {
+		error(L, "Json expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -5055,15 +5453,20 @@ static int Vec2___tostring(lua_State* L) {
 	Math::Vec2f* obj = nullptr;
 	check<>(L, obj);
 
-	std::string str;
+	if (obj) {
+		std::string str;
+		str += "Vec2[";
+		str += Text::toString(obj->x, precision);
+		str += ", ";
+		str += Text::toString(obj->y, precision);
+		str += "]";
 
-	str += "Vec2[";
-	str += Text::toString(obj->x, precision);
-	str += ", ";
-	str += Text::toString(obj->y, precision);
-	str += "]";
+		return write(L, str);
+	} else {
+		error(L, "Vec2 expected.");
+	}
 
-	return write(L, str);
+	return 0;
 }
 
 static int Vec2___add(lua_State* L) {
@@ -5075,6 +5478,8 @@ static int Vec2___add(lua_State* L) {
 		const Math::Vec2f ret = *obj + *other;
 
 		return write(L, &ret);
+	} else {
+		error(L, "Vec2 expected.");
 	}
 
 	return 0;
@@ -5089,6 +5494,8 @@ static int Vec2___sub(lua_State* L) {
 		const Math::Vec2f ret = *obj - *other;
 
 		return write(L, &ret);
+	} else {
+		error(L, "Vec2 expected.");
 	}
 
 	return 0;
@@ -5116,6 +5523,8 @@ static int Vec2___mul(lua_State* L) {
 
 			return write(L, &ret);
 		}
+	} else {
+		error(L, "Vec2 expected.");
 	}
 
 	return 0;
@@ -5129,6 +5538,8 @@ static int Vec2___unm(lua_State* L) {
 		const Math::Vec2f ret = -*obj;
 
 		return write(L, &ret);
+	} else {
+		error(L, "Vec2 expected.");
 	}
 
 	return 0;
@@ -5142,6 +5553,8 @@ static int Vec2___len(lua_State* L) {
 		const Real ret = obj->length();
 
 		return write(L, ret);
+	} else {
+		error(L, "Vec2 expected.");
 	}
 
 	return 0;
@@ -5156,6 +5569,8 @@ static int Vec2___eq(lua_State* L) {
 		const bool ret = *obj == *other;
 
 		return write(L, ret);
+	} else {
+		error(L, "Vec2 expected.");
 	}
 
 	return write(L, false);
@@ -5169,6 +5584,9 @@ static int Vec2_normalize(lua_State* L) {
 		const Real ret = obj->normalize();
 
 		return write(L, ret);
+	} else {
+		error(L, "Vec2 expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -5183,6 +5601,9 @@ static int Vec2_distanceTo(lua_State* L) {
 		const Real ret = obj->distanceTo(*other);
 
 		return write(L, ret);
+	} else {
+		error(L, "Vec2 expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -5197,6 +5618,9 @@ static int Vec2_dot(lua_State* L) {
 		const Real ret = obj->dot(*other);
 
 		return write(L, ret);
+	} else {
+		error(L, "Vec2 expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -5224,6 +5648,9 @@ static int Vec2_cross(lua_State* L) {
 
 			return write(L, ret);
 		}
+	} else {
+		error(L, "Vec2 expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -5238,6 +5665,9 @@ static int Vec2_angleTo(lua_State* L) {
 		const Real ret = obj->angleTo(*other);
 
 		return write(L, ret);
+	} else {
+		error(L, "Vec2 expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -5269,6 +5699,9 @@ static int Vec2_rotated(lua_State* L) {
 
 			return write(L, &ret);
 		}
+	} else {
+		error(L, "Vec2 expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -5397,17 +5830,22 @@ static int Vec3___tostring(lua_State* L) {
 	Math::Vec3f* obj = nullptr;
 	check<>(L, obj);
 
-	std::string str;
+	if (obj) {
+		std::string str;
+		str += "Vec3[";
+		str += Text::toString(obj->x, precision);
+		str += ", ";
+		str += Text::toString(obj->y, precision);
+		str += ", ";
+		str += Text::toString(obj->z, precision);
+		str += "]";
 
-	str += "Vec3[";
-	str += Text::toString(obj->x, precision);
-	str += ", ";
-	str += Text::toString(obj->y, precision);
-	str += ", ";
-	str += Text::toString(obj->z, precision);
-	str += "]";
+		return write(L, str);
+	} else {
+		error(L, "Vec3 expected.");
+	}
 
-	return write(L, str);
+	return 0;
 }
 
 static int Vec3___add(lua_State* L) {
@@ -5419,6 +5857,8 @@ static int Vec3___add(lua_State* L) {
 		const Math::Vec3f ret = *obj + *other;
 
 		return write(L, &ret);
+	} else {
+		error(L, "Vec3 expected.");
 	}
 
 	return 0;
@@ -5433,6 +5873,8 @@ static int Vec3___sub(lua_State* L) {
 		const Math::Vec3f ret = *obj - *other;
 
 		return write(L, &ret);
+	} else {
+		error(L, "Vec3 expected.");
 	}
 
 	return 0;
@@ -5460,6 +5902,8 @@ static int Vec3___mul(lua_State* L) {
 
 			return write(L, &ret);
 		}
+	} else {
+		error(L, "Vec3 expected.");
 	}
 
 	return 0;
@@ -5473,6 +5917,8 @@ static int Vec3___unm(lua_State* L) {
 		const Math::Vec3f ret = -*obj;
 
 		return write(L, &ret);
+	} else {
+		error(L, "Vec3 expected.");
 	}
 
 	return 0;
@@ -5486,6 +5932,8 @@ static int Vec3___len(lua_State* L) {
 		const Real ret = obj->length();
 
 		return write(L, ret);
+	} else {
+		error(L, "Vec3 expected.");
 	}
 
 	return 0;
@@ -5500,6 +5948,8 @@ static int Vec3___eq(lua_State* L) {
 		const bool ret = *obj == *other;
 
 		return write(L, ret);
+	} else {
+		error(L, "Vec3 expected.");
 	}
 
 	return write(L, false);
@@ -5513,6 +5963,9 @@ static int Vec3_normalize(lua_State* L) {
 		const Real ret = obj->normalize();
 
 		return write(L, ret);
+	} else {
+		error(L, "Vec3 expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -5527,6 +5980,9 @@ static int Vec3_dot(lua_State* L) {
 		const Real ret = obj->dot(*other);
 
 		return write(L, ret);
+	} else {
+		error(L, "Vec3 expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -5646,19 +6102,24 @@ static int Vec4___tostring(lua_State* L) {
 	Math::Vec4f* obj = nullptr;
 	check<>(L, obj);
 
-	std::string str;
+	if (obj) {
+		std::string str;
+		str += "Vec4[";
+		str += Text::toString(obj->x, precision);
+		str += ", ";
+		str += Text::toString(obj->y, precision);
+		str += ", ";
+		str += Text::toString(obj->z, precision);
+		str += ", ";
+		str += Text::toString(obj->w, precision);
+		str += "]";
 
-	str += "Vec4[";
-	str += Text::toString(obj->x, precision);
-	str += ", ";
-	str += Text::toString(obj->y, precision);
-	str += ", ";
-	str += Text::toString(obj->z, precision);
-	str += ", ";
-	str += Text::toString(obj->w, precision);
-	str += "]";
+		return write(L, str);
+	} else {
+		error(L, "Vec4 expected.");
+	}
 
-	return write(L, str);
+	return 0;
 }
 
 static int Vec4___add(lua_State* L) {
@@ -5670,6 +6131,8 @@ static int Vec4___add(lua_State* L) {
 		const Math::Vec4f ret = *obj + *other;
 
 		return write(L, &ret);
+	} else {
+		error(L, "Vec4 expected.");
 	}
 
 	return 0;
@@ -5684,6 +6147,8 @@ static int Vec4___sub(lua_State* L) {
 		const Math::Vec4f ret = *obj - *other;
 
 		return write(L, &ret);
+	} else {
+		error(L, "Vec4 expected.");
 	}
 
 	return 0;
@@ -5711,6 +6176,8 @@ static int Vec4___mul(lua_State* L) {
 
 			return write(L, &ret);
 		}
+	} else {
+		error(L, "Vec4 expected.");
 	}
 
 	return 0;
@@ -5724,6 +6191,8 @@ static int Vec4___unm(lua_State* L) {
 		const Math::Vec4f ret = -*obj;
 
 		return write(L, &ret);
+	} else {
+		error(L, "Vec4 expected.");
 	}
 
 	return 0;
@@ -5738,6 +6207,8 @@ static int Vec4___eq(lua_State* L) {
 		const bool ret = *obj == *other;
 
 		return write(L, ret);
+	} else {
+		error(L, "Vec4 expected.");
 	}
 
 	return write(L, false);
@@ -5866,19 +6337,24 @@ static int Rect___tostring(lua_State* L) {
 	Math::Rectf* obj = nullptr;
 	check<>(L, obj);
 
-	std::string str;
+	if (obj) {
+		std::string str;
+		str += "Rect[";
+		str += Text::toString(obj->x0, precision);
+		str += ", ";
+		str += Text::toString(obj->y0, precision);
+		str += ", ";
+		str += Text::toString(obj->x1, precision);
+		str += ", ";
+		str += Text::toString(obj->y1, precision);
+		str += "]";
 
-	str += "Rect[";
-	str += Text::toString(obj->x0, precision);
-	str += ", ";
-	str += Text::toString(obj->y0, precision);
-	str += ", ";
-	str += Text::toString(obj->x1, precision);
-	str += ", ";
-	str += Text::toString(obj->y1, precision);
-	str += "]";
+		return write(L, str);
+	} else {
+		error(L, "Rect expected.");
+	}
 
-	return write(L, str);
+	return 0;
 }
 
 static int Rect___eq(lua_State* L) {
@@ -5890,6 +6366,8 @@ static int Rect___eq(lua_State* L) {
 		const bool ret = *obj == *other;
 
 		return write(L, ret);
+	} else {
+		error(L, "Rect expected.");
 	}
 
 	return write(L, false);
@@ -5903,6 +6381,9 @@ static int Rect_xMin(lua_State* L) {
 		const Real ret = obj->xMin();
 
 		return write(L, ret);
+	} else {
+		error(L, "Rect expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -5916,6 +6397,9 @@ static int Rect_yMin(lua_State* L) {
 		const Real ret = obj->yMin();
 
 		return write(L, ret);
+	} else {
+		error(L, "Rect expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -5929,6 +6413,9 @@ static int Rect_xMax(lua_State* L) {
 		const Real ret = obj->xMax();
 
 		return write(L, ret);
+	} else {
+		error(L, "Rect expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -5942,6 +6429,9 @@ static int Rect_yMax(lua_State* L) {
 		const Real ret = obj->yMax();
 
 		return write(L, ret);
+	} else {
+		error(L, "Rect expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -5955,6 +6445,9 @@ static int Rect_width(lua_State* L) {
 		const Real ret = obj->width();
 
 		return write(L, ret);
+	} else {
+		error(L, "Rect expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -5968,6 +6461,9 @@ static int Rect_height(lua_State* L) {
 		const Real ret = obj->height();
 
 		return write(L, ret);
+	} else {
+		error(L, "Rect expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -6086,19 +6582,24 @@ static int Recti___tostring(lua_State* L) {
 	Math::Recti* obj = nullptr;
 	check<>(L, obj);
 
-	std::string str;
+	if (obj) {
+		std::string str;
+		str += "Recti[";
+		str += Text::toString(obj->x0);
+		str += ", ";
+		str += Text::toString(obj->y0);
+		str += ", ";
+		str += Text::toString(obj->x1);
+		str += ", ";
+		str += Text::toString(obj->y1);
+		str += "]";
 
-	str += "Recti[";
-	str += Text::toString(obj->x0);
-	str += ", ";
-	str += Text::toString(obj->y0);
-	str += ", ";
-	str += Text::toString(obj->x1);
-	str += ", ";
-	str += Text::toString(obj->y1);
-	str += "]";
+		return write(L, str);
+	} else {
+		error(L, "Recti expected.");
+	}
 
-	return write(L, str);
+	return 0;
 }
 
 static int Recti___eq(lua_State* L) {
@@ -6110,6 +6611,8 @@ static int Recti___eq(lua_State* L) {
 		const bool ret = *obj == *other;
 
 		return write(L, ret);
+	} else {
+		error(L, "Recti expected.");
 	}
 
 	return write(L, false);
@@ -6123,6 +6626,9 @@ static int Recti_xMin(lua_State* L) {
 		const Int ret = obj->xMin();
 
 		return write(L, ret);
+	} else {
+		error(L, "Recti expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -6136,6 +6642,9 @@ static int Recti_yMin(lua_State* L) {
 		const Int ret = obj->yMin();
 
 		return write(L, ret);
+	} else {
+		error(L, "Recti expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -6149,6 +6658,9 @@ static int Recti_xMax(lua_State* L) {
 		const Int ret = obj->xMax();
 
 		return write(L, ret);
+	} else {
+		error(L, "Recti expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -6162,6 +6674,9 @@ static int Recti_yMax(lua_State* L) {
 		const Int ret = obj->yMax();
 
 		return write(L, ret);
+	} else {
+		error(L, "Recti expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -6175,6 +6690,9 @@ static int Recti_width(lua_State* L) {
 		const Int ret = obj->width();
 
 		return write(L, ret);
+	} else {
+		error(L, "Recti expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -6188,6 +6706,9 @@ static int Recti_height(lua_State* L) {
 		const Int ret = obj->height();
 
 		return write(L, ret);
+	} else {
+		error(L, "Recti expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -6296,15 +6817,20 @@ static int Rot___tostring(lua_State* L) {
 	Math::Rotf* obj = nullptr;
 	check<>(L, obj);
 
-	std::string str;
+	if (obj) {
+		std::string str;
+		str += "Rot[";
+		str += Text::toString(obj->s, precision);
+		str += ", ";
+		str += Text::toString(obj->c, precision);
+		str += "]";
 
-	str += "Rot[";
-	str += Text::toString(obj->s, precision);
-	str += ", ";
-	str += Text::toString(obj->c, precision);
-	str += "]";
+		return write(L, str);
+	} else {
+		error(L, "Rot expected.");
+	}
 
-	return write(L, str);
+	return 0;
 }
 
 static int Rot___add(lua_State* L) {
@@ -6316,6 +6842,8 @@ static int Rot___add(lua_State* L) {
 		const Math::Rotf ret(obj->angle() + other->angle());
 
 		return write(L, &ret);
+	} else {
+		error(L, "Rot expected.");
 	}
 
 	return 0;
@@ -6330,6 +6858,8 @@ static int Rot___sub(lua_State* L) {
 		const Math::Rotf ret(obj->angle() - other->angle());
 
 		return write(L, &ret);
+	} else {
+		error(L, "Rot expected.");
 	}
 
 	return 0;
@@ -6353,6 +6883,8 @@ static int Rot___mul(lua_State* L) {
 
 			return write(L, &ret);
 		}
+	} else {
+		error(L, "Rot expected.");
 	}
 
 	return 0;
@@ -6366,6 +6898,8 @@ static int Rot___unm(lua_State* L) {
 		const Math::Rotf ret(-obj->angle());
 
 		return write(L, &ret);
+	} else {
+		error(L, "Rot expected.");
 	}
 
 	return 0;
@@ -6380,6 +6914,8 @@ static int Rot___eq(lua_State* L) {
 		const bool ret = *obj == *other;
 
 		return write(L, ret);
+	} else {
+		error(L, "Rot expected.");
 	}
 
 	return write(L, false);
@@ -6830,6 +7366,9 @@ static int Network_getOption(lua_State* L) {
 		const std::string ret = obj->get()->option(key); // Undocumented: "interfaces" for desktops.
 
 		return write(L, ret);
+	} else {
+		error(L, "Network expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -6840,8 +7379,12 @@ static int Network_setOption(lua_State* L) {
 	std::string key, val;
 	read<>(L, obj, key, val);
 
-	if (obj)
+	if (obj) {
 		obj->get()->option(key, val);
+	} else {
+		error(L, "Network expected.");
+		warnForMethodCallSymbol(L);
+	}
 
 	return 0;
 }
@@ -6856,17 +7399,24 @@ static int Network_open(lua_State* L) {
 	else
 		read<>(L, obj, addr);
 
-	if (obj && addr) {
-		bool toconn = false, tobind = false;
-		const bool ret = obj->get()->open(
-			addr, (Network::Protocols)protocal,
-			&toconn, &tobind
-		);
+	if (obj) {
+		if (addr) {
+			bool toconn = false, tobind = false;
+			const bool ret = obj->get()->open(
+				addr, (Network::Protocols)protocal,
+				&toconn, &tobind
+			);
 
-		if (toconn && obj->get()->connective())
-			obj->get()->establish();
+			if (toconn && obj->get()->connective())
+				obj->get()->establish();
 
-		return write(L, ret);
+			return write(L, ret);
+		} else {
+			error(L, "String expected.");
+		}
+	} else {
+		error(L, "Network expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -6883,7 +7433,8 @@ static int Network_close(lua_State* L) {
 
 		return write(L, ret);
 	} else {
-		error(L, "Network expected, did you use \".\" rather than \":\".");
+		error(L, "Network expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -6898,8 +7449,12 @@ static int Network_poll(lua_State* L) {
 	else
 		read<>(L, obj);
 
-	if (obj)
-		 obj->get()->poll(timeoutMs);
+	if (obj) {
+		obj->get()->poll(timeoutMs);
+	} else {
+		error(L, "Network expected.");
+		warnForMethodCallSymbol(L);
+	}
 
 	return 0;
 }
@@ -6908,8 +7463,12 @@ static int Network_disconnect(lua_State* L) {
 	Network::Ptr* obj = nullptr;
 	read<>(L, obj);
 
-	if (obj)
-		 obj->get()->disconnect();
+	if (obj) {
+		obj->get()->disconnect();
+	} else {
+		error(L, "Network expected.");
+		warnForMethodCallSymbol(L);
+	}
 
 	return 0;
 }
@@ -6961,6 +7520,9 @@ static int Network_send(lua_State* L) {
 
 			return write(L, ret);
 		}
+	} else {
+		error(L, "Network expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -7014,6 +7576,9 @@ static int Network_broadcast(lua_State* L) {
 
 			return write(L, ret);
 		}
+	} else {
+		error(L, "Network expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -7130,6 +7695,8 @@ static int Platform_surf(lua_State* L) {
 		const std::string osstr = Unicode::toOs(url);
 
 		Platform::surf(osstr.c_str());
+	} else {
+		error(L, "String expected.");
 	}
 
 	return 0;
@@ -7143,6 +7710,8 @@ static int Platform_browse(lua_State* L) {
 		const std::string osstr = Unicode::toOs(dir);
 
 		Platform::browse(osstr.c_str());
+	} else {
+		error(L, "String expected.");
 	}
 
 	return 0;
@@ -7184,6 +7753,8 @@ static int Platform_execute(lua_State* L) {
 		const std::string ret = Platform::execute(osstr.c_str());
 
 		return write(L, ret);
+	} else {
+		error(L, "String expected.");
 	}
 
 	return write(L, nullptr);
@@ -7344,6 +7915,9 @@ static int Web_open(lua_State* L) {
 		const bool ret = obj->get()->open(port, root);
 
 		return write(L, ret);
+	} else {
+		error(L, "Web expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -7358,7 +7932,8 @@ static int Web_close(lua_State* L) {
 
 		return write(L, ret);
 	} else {
-		error(L, "Web expected, did you use \".\" rather than \":\".");
+		error(L, "Web expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -7373,8 +7948,12 @@ static int Web_poll(lua_State* L) {
 	else
 		read<>(L, obj);
 
-	if (obj)
-		 obj->get()->poll(timeoutMs);
+	if (obj) {
+		obj->get()->poll(timeoutMs);
+	} else {
+		error(L, "Web expected.");
+		warnForMethodCallSymbol(L);
+	}
 
 	return 0;
 }
@@ -7477,6 +8056,9 @@ static int Web_respond(lua_State* L) {
 
 			return write(L, ret);
 		}
+	} else {
+		error(L, "Web expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -9904,26 +10486,50 @@ namespace Editor {
 
 /**< Text editor. */
 
+#if BITTY_BAKE_ENABLED
 static int TextBox_ctor(lua_State* L) {
-	TextBox::Ptr obj(TextBox::create());
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	TextBox::Ptr obj(TextBox::create(), [] (TextBox*) -> void { /* Do nothing. */ });
 	if (!obj)
 		return write(L, nullptr);
 
-	static int textBoxSeed = 1;
-	const std::string id = "TextBox_" + Text::toString(textBoxSeed++);
-	obj->open(nullptr, id.c_str(), nullptr, nullptr);
+	impl->primitives()->workspace()->addBake(
+		[=] (const Variant &) -> void {
+			static int textBoxSeed = 1;
+			const std::string id = "TextBox_" + Text::toString(textBoxSeed++);
+			obj->open(nullptr, id.c_str(), nullptr, nullptr);
+		},
+		nullptr
+	);
+
+	while (impl->primitives()->workspace()->hasBake()) { // Make sure the `TextBox` has been created before other Lua operations.
+		constexpr const int STEP = 1;
+		DateTime::sleep(STEP);
+	}
 
 	return write(L, &obj);
 }
 
 static int TextBox___gc(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
 	TextBox::Ptr* obj = nullptr;
 	check<>(L, obj);
 	if (!obj)
 		return 0;
 
-	obj->get()->close(nullptr);
+	TextBox* tb = obj->get();
+
 	obj->~shared_ptr();
+
+	impl->primitives()->workspace()->addBake(
+		[tb] (const Variant &) -> void {
+			tb->close(nullptr);
+			TextBox::destroy(tb);
+		},
+		nullptr
+	);
 
 	return 0;
 }
@@ -9935,19 +10541,26 @@ static int TextBox_setOption(lua_State* L) {
 	std::string key;
 	read<>(L, obj, key);
 
-	if (key == "show_spaces") {
-		bool val = false;
-		read<3>(L, val);
+	if (obj) {
+		TextBox::Ptr ptr = *obj;
 
-		impl->primitives()->function(
-			[=] (const Variant &) -> void {
-				obj->get()->post(Editable::SET_SHOW_SPACES, val);
-			},
-			nullptr,
-			true
-		);
+		if (key == "show_spaces") {
+			bool val = false;
+			read<3>(L, val);
+
+			impl->primitives()->function(
+				[=] (const Variant &) -> void {
+					ptr->post(Editable::SET_SHOW_SPACES, val);
+				},
+				nullptr,
+				true
+			);
+		} else {
+			error(L, "Invalid option.");
+		}
 	} else {
-		error(L, "Invalid option.");
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -9965,6 +10578,9 @@ static int TextBox_get(lua_State* L) {
 			txt.assign(text, len);
 
 		return write(L, txt);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -9979,6 +10595,9 @@ static int TextBox_set(lua_State* L) {
 		obj->get()->text(txt.c_str(), txt.length());
 
 		return write(L, true);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -9988,8 +10607,12 @@ static int TextBox_clear(lua_State* L) {
 	TextBox::Ptr* obj = nullptr;
 	read<>(L, obj);
 
-	if (obj)
+	if (obj) {
 		obj->get()->text("", 0);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
 
 	return 0;
 }
@@ -10002,17 +10625,44 @@ static int TextBox_update(lua_State* L) {
 	read<>(L, obj, x0, y0, x1, y1);
 
 	if (obj) {
-		impl->primitives()->function(
+		TextBox::WeakPtr ptr(*obj);
+
+		impl->primitives()->workspace()->addBake(
 			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				TextBox::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
+
 				Window* wnd = impl->primitives()->window();
 				Renderer* rnd = impl->primitives()->renderer();
 				Workspace* ws = impl->primitives()->workspace();
 				const Math::Recti rect(x0, y0, x1, y1);
-				obj->get()->update(wnd, rnd, ws, (float)rect.xMin(), (float)rect.yMin(), (float)rect.width(), (float)rect.height());
+				ptr_->bake(wnd, rnd, ws, (float)rect.xMin(), (float)rect.yMin(), (float)rect.width(), (float)rect.height());
+			},
+			nullptr
+		);
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				TextBox::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
+
+				Window* wnd = impl->primitives()->window();
+				Renderer* rnd = impl->primitives()->renderer();
+				Workspace* ws = impl->primitives()->workspace();
+				const Math::Recti rect(x0, y0, x1, y1);
+				ptr_->render(wnd, rnd, ws, (float)rect.xMin(), (float)rect.yMin(), (float)rect.width(), (float)rect.height());
 			},
 			nullptr,
 			true
 		);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
 	}
 
 	return 0;
@@ -10082,6 +10732,13 @@ static void open_TextBox(lua_State* L) {
 		TextBox___index, TextBox___newindex
 	);
 }
+#else /* BITTY_BAKE_ENABLED */
+static void open_TextBox(lua_State* L) {
+	(void)L;
+
+	// Do nothing.
+}
+#endif /* BITTY_BAKE_ENABLED */
 
 /**< Categories. */
 
@@ -11419,12 +12076,19 @@ static int Canvas_size(lua_State* L) {
 	CanvasPtr* obj = nullptr;
 	read<>(L, obj);
 
-	if (!obj)
+	if (!obj) {
+		error(L, "Canvas expected.");
+		warnForMethodCallSymbol(L);
+
 		return 0;
+	}
 
 	const Canvas* canvas = obj->get();
-	if (!canvas)
+	if (!canvas) {
+		error(L, "Canvas expected.");
+
 		return 0;
+	}
 
 	Math::Vec2i ret;
 	if (canvas == impl->primitives())
@@ -11440,12 +12104,19 @@ static int Canvas_resize(lua_State* L) {
 	int width = 0, height = 0;
 	read<>(L, obj, width, height);
 
-	if (!obj)
+	if (!obj) {
+		error(L, "Canvas expected.");
+		warnForMethodCallSymbol(L);
+
 		return 0;
+	}
 
 	const Canvas* canvas = obj->get();
-	if (!canvas)
+	if (!canvas) {
+		error(L, "Canvas expected.");
+
 		return 0;
+	}
 
 	bool ret = false;
 	if (canvas == impl->primitives())
@@ -11653,8 +12324,12 @@ static int Project_fullPath(lua_State* L) {
 	ProjectPtr* obj = nullptr;
 	read<>(L, obj);
 
-	if (!obj)
+	if (!obj) {
+		error(L, "Project expected.");
+		warnForMethodCallSymbol(L);
+
 		return write(L, nullptr);
+	}
 
 	const Project* project = obj->get();
 	if (!project)
@@ -11689,8 +12364,12 @@ static int Project_getAssets(lua_State* L) {
 	else
 		read<>(L, obj);
 
-	if (!obj)
+	if (!obj) {
+		error(L, "Project expected.");
+		warnForMethodCallSymbol(L);
+
 		return write(L, nullptr);
+	}
 
 	const Project* project = obj->get();
 	if (!project)
@@ -11729,8 +12408,12 @@ static int Project_load(lua_State* L) {
 	read<>(L, obj, path);
 
 	// Prepare.
-	if (!obj)
+	if (!obj) {
+		error(L, "Project expected.");
+		warnForMethodCallSymbol(L);
+
 		return write(L, false);
+	}
 
 	const Project* main = impl->project();
 	const Project* editing = impl->editing();
@@ -11810,8 +12493,12 @@ static int Project_save(lua_State* L) {
 	read<>(L, obj, path);
 
 	// Prepare.
-	if (!obj)
+	if (!obj) {
+		error(L, "Project expected.");
+		warnForMethodCallSymbol(L);
+
 		return write(L, false);
+	}
 
 	const Project* main = impl->project();
 	const Project* editing = impl->editing();
@@ -11893,8 +12580,12 @@ static int Project_exists(lua_State* L) {
 	std::string name;
 	read<>(L, obj, name);
 
-	if (!obj)
+	if (!obj) {
+		error(L, "Project expected.");
+		warnForMethodCallSymbol(L);
+
 		return write(L, false);
+	}
 
 	const Project* project = obj->get();
 	if (!project)
@@ -11925,8 +12616,12 @@ static int Project_read(lua_State* L) {
 	std::string name;
 	read<>(L, obj, name);
 
-	if (!obj)
+	if (!obj) {
+		error(L, "Project expected.");
+		warnForMethodCallSymbol(L);
+
 		return write(L, nullptr);
+	}
 
 	if (!isPlugin(L)) {
 		if (Text::endsWith(name, "." BITTY_LUA_EXT, true))
@@ -11982,8 +12677,17 @@ static int Project_write(lua_State* L) {
 		read<>(L, obj, name, bytes);
 
 	// Prepare.
-	if (!obj || !bytes)
+	if (!obj) {
+		error(L, "Project expected.");
+		warnForMethodCallSymbol(L);
+
 		return write(L, false);
+	}
+	if (!bytes) {
+		error(L, "Bytes expected.");
+
+		return write(L, false);
+	}
 
 	const Project* main = impl->project();
 	if ((uintptr_t)obj->get() == (uintptr_t)main) {
@@ -12072,8 +12776,12 @@ static int Project_remove(lua_State* L) {
 	read<>(L, obj, name);
 
 	// Prepare.
-	if (!obj)
+	if (!obj) {
+		error(L, "Project expected.");
+		warnForMethodCallSymbol(L);
+
 		return write(L, false);
+	}
 
 	const Project* main = impl->project();
 	const Project* editing = impl->editing();
@@ -12124,8 +12832,12 @@ static int Project_strategies(lua_State* L) {
 	ProjectPtr* obj = nullptr;
 	read<>(L, obj);
 
-	if (!obj)
+	if (!obj) {
+		error(L, "Project expected.");
+		warnForMethodCallSymbol(L);
+
 		return write(L, nullptr);
+	}
 
 	const Project* project = obj->get();
 	if (!project)

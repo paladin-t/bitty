@@ -226,6 +226,11 @@
 #	define BITTY_PROJECT_STRATEGY_MAP_BATCH_ENABLED 0
 #endif /* BITTY_PROJECT_STRATEGY_MAP_BATCH_ENABLED */
 
+// Indicates whether the bake and processing features are enabled.
+#ifndef BITTY_BAKE_ENABLED
+#	define BITTY_BAKE_ENABLED 1
+#endif /* BITTY_BAKE_ENABLED */
+
 /* ===========================================================================} */
 
 /*

@@ -25,6 +25,7 @@
 class TextBox : public Editable, public virtual Object {
 public:
 	typedef std::shared_ptr<TextBox> Ptr;
+	typedef std::weak_ptr<TextBox> WeakPtr;
 
 public:
 	BITTY_CLASS_TYPE('T', 'X', 'T', 'B')
@@ -32,7 +33,12 @@ public:
 	virtual const char* text(size_t* len) const = 0;
 	virtual void text(const char* txt, size_t len = 0) = 0;
 
-	virtual void update(
+	virtual void bake(
+		class Window* wnd, class Renderer* rnd,
+		class Workspace* ws,
+		float x, float y, float width, float height
+	) = 0;
+	virtual void render(
 		class Window* wnd, class Renderer* rnd,
 		class Workspace* ws,
 		float x, float y, float width, float height

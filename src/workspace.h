@@ -219,6 +219,20 @@ public:
 		Settings();
 	};
 
+#if BITTY_BAKE_ENABLED
+	struct Bake {
+		typedef std::function<void(const Variant &)> Handler;
+		typedef std::list<Bake> List;
+
+		Handler handler = nullptr;
+		Variant argument = nullptr;
+
+		Bake();
+		Bake(Handler h);
+		Bake(Handler h, const Variant &a);
+	};
+#endif /* BITTY_BAKE_ENABLED */
+
 protected:
 	typedef Math::Rect<float, 0> Rect;
 
@@ -266,6 +280,14 @@ protected:
 	BITTY_PROPERTY_READONLY(int, skipFrameCount)
 
 	BITTY_PROPERTY_READONLY(Executable::States, currentState)
+
+#if BITTY_BAKE_ENABLED
+#	if BITTY_MULTITHREAD_ENABLED
+	BITTY_PROPERTY(Bake::List, bakes)
+	BITTY_FIELD(Atomic<int>, bakeCount)
+	BITTY_FIELD(Mutex, bakesLock)
+#	endif /* BITTY_MULTITHREAD_ENABLED */
+#endif /* BITTY_BAKE_ENABLED */
 
 	BITTY_PROPERTY_READONLY_PTR(class Recorder, recorder)
 
@@ -421,6 +443,25 @@ public:
 	 * @brief Updates the workspace for one frame.
 	 */
 	virtual unsigned update(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, unsigned fps, bool alive, bool* indicated) = 0;
+
+#if BITTY_BAKE_ENABLED
+	/**
+	 * @brief Gets whether the bake list is empty.
+	 */
+	virtual bool hasBake(void);
+	/**
+	 * @brief Adds a function to the bake list (FIFO).
+	 */
+	virtual void addBake(Bake::Handler func, const Variant &arg /* nullable */);
+	/**
+	 * @brief Clears all the bakes.
+	 */
+	virtual void clearBakes(void);
+	/**
+	 * @brief Bakes the workspace before a frame starts.
+	 */
+	virtual void bake(void);
+#endif /* BITTY_BAKE_ENABLED */
 
 	/**
 	 * @brief Implements `Executable::Observer`. Clears output in the console window.

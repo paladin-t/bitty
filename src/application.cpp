@@ -534,6 +534,7 @@ public:
 	}
 
 	bool update(void) {
+		// Update the context.
 		_context.updatedSeconds += _context.delta;
 		if (++_context.updatedFrameCount >= _context.expectedFrameRate * 3) { // 3 seconds.
 			if (_context.updatedSeconds > 0)
@@ -545,14 +546,21 @@ public:
 			_context.updatedSeconds = 0;
 		}
 
+		// Begin this frame.
 		const long long begin = DateTime::ticks();
-		_context.delta = begin >= _stamp ? DateTime::toSeconds(begin - _stamp) : 0;
+		_context.delta = begin >= _stamp ? DateTime::toSeconds(begin - _stamp) : 0; // Get the delta time for this frame.
 		_stamp = begin;
 
-		const bool alive = updateImGui(_context.delta, _context.mouseCursorIndicated);
+		// Update the frame.
+		const bool alive = updateImGui(_context.delta, _context.mouseCursorIndicated); // Update the ImGui.
+
+#if BITTY_BAKE_ENABLED
+		_workspace->bake(); // Update the bake list.
+#endif /* BITTY_BAKE_ENABLED */
+
+		_effects->prepare(_window, _renderer, _workspace, _context.delta);
 
 		const Color cls(0x2e, 0x32, 0x38, 0xff);
-		_effects->prepare(_window, _renderer, _workspace, _context.delta);
 		_renderer->clip(0, 0, _renderer->width(), _renderer->height());
 		_renderer->clear(&cls);
 		{
@@ -572,19 +580,23 @@ public:
 
 			ImGuiSDL::Render(ImGui::GetDrawData());
 		}
+
 		if (!_workspace->skipping())
 			_effects->finish(_window, _renderer, _workspace);
+
 		_window->update();
 
+		// End this frame.
 		const long long end = DateTime::ticks();
 		const long long diff = end >= begin ? end - begin : 0;
 		const double elapsed = DateTime::toSeconds(diff);
 		const double expected = 1.0 / _context.expectedFrameRate;
 		const double rest = expected - elapsed;
 		if (rest > 0)
-			DateTime::sleep((int)(rest * 1000));
+			DateTime::sleep((int)(rest * 1000)); // Sleep for the rest time of this frame.
 
-		return alive;
+		// Finish.
+		return alive; // Tell whether the current session is still alive.
 	}
 
 private:

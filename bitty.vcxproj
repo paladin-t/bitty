@@ -2465,7 +2465,12 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='release|x64'">Level3</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='debug|x64'">Level3</WarningLevel>
     </ClCompile>
-    <ClCompile Include="lib\sqlite3pp\src\sqlite3pp.cpp" />
+    <ClCompile Include="lib\sqlite3pp\src\sqlite3pp.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4267</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4267</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4267</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4267</DisableSpecificWarnings>
+    </ClCompile>
     <ClCompile Include="lib\sqlite3pp\src\sqlite3ppext.cpp" />
     <ClCompile Include="lib\sqlite\sqlite3.c" />
     <ClCompile Include="lib\stb\stb_vorbis.c">
