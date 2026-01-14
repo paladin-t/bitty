@@ -17,7 +17,7 @@
 ** ImGuiSDL
 */
 
-namespace ImGuiSDL {
+namespace ImGuiSDLHack {
 	
 Texture::Texture(Renderer* rnd, unsigned char* pixels, int width, int height) {
 	SDL_Renderer* renderer = (SDL_Renderer*)rnd->pointer();

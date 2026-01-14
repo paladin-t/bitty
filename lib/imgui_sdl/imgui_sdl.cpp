@@ -15,9 +15,9 @@
 #include <functional>
 #include <unordered_map>
 
-namespace
+namespace ImGuiSDL
 {
-	struct Device* CurrentDevice = nullptr;
+	ImGuiSDL::Device* CurrentDevice = nullptr;
 
 	namespace TupleHash
 	{
@@ -532,6 +532,16 @@ namespace
 
 namespace ImGuiSDL
 {
+	Device* GetCurrentDevice(void)
+	{
+		return CurrentDevice;
+	}
+
+	void SetCurrentDevice(Device* device)
+	{
+		CurrentDevice = device;
+	}
+
 	void Initialize(SDL_Renderer* renderer, int windowWidth, int windowHeight)
 	{
 		ImGuiIO& io = ImGui::GetIO();

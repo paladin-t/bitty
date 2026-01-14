@@ -5,6 +5,11 @@ struct SDL_Renderer;
 
 namespace ImGuiSDL
 {
+	struct Device;
+
+	Device* GetCurrentDevice(void);
+	void SetCurrentDevice(Device* device);
+
 	// Call this to initialize the SDL renderer device that is internally used by the renderer.
 	void Initialize(SDL_Renderer* renderer, int windowWidth, int windowHeight);
 	// Call this before destroying your SDL renderer or ImGui to ensure that proper cleanup is done. This doesn't do anything critically important though,
