@@ -463,6 +463,7 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 	canvasState(&settings()->canvasState);
 	canvasFixRatio(&settings()->canvasFixRatio);
 	canvasValidation(Math::Vec2i(0, 0));
+	canvasClientArea_(Math::Rectf());
 	canvasSize_(Math::Vec2i(BITTY_CANVAS_DEFAULT_WIDTH, BITTY_CANVAS_DEFAULT_HEIGHT));
 	canvasHovering(false);
 	canvasFull(false);
@@ -918,6 +919,10 @@ bool Workspace::resizeApplication(const Math::Vec2i &size) {
 	applicationSize_(size);
 
 	return true;
+}
+
+Math::Rectf Workspace::canvasClientArea(void) {
+	return canvasClientArea_();
 }
 
 Math::Vec2i Workspace::canvasSize(void) {
@@ -1991,12 +1996,13 @@ void Workspace::editing(class Window* wnd, class Renderer* rnd, const class Proj
 								}
 							}
 							if (editor) {
+								const int scale = rnd->scale() / wnd->scale();
 								editor->update(
 									wnd, rnd,
 									this, project, exec,
 									"@Edtr",
 									pos.x, pos.y, size.x, size.y - ImGui::TabBarHeight(),
-									1.0f, 1.0f,
+									scale,
 									pending,
 									delta
 								);
@@ -3073,6 +3079,7 @@ void Workspace::scene(class Window* wnd, class Renderer* rnd, const class Projec
 			std::ceil(dstSize.x), std::ceil(dstSize.y)
 		);
 		const Math::Vec2i canvasSz = srcSize;
+		canvasClientArea_(clientArea);
 
 		const int scale = rnd->scale() / wnd->scale();
 		BITTY_RENDER_TARGET(rnd, canvasTexture().get())

@@ -643,13 +643,21 @@ public:
 		class Workspace* ws, const class Project* project, class Executable* exec,
 		const char* title,
 		float /* x */, float /* y */, float width, float height,
-		float /* scaleX */, float /* scaleY */,
+		int scale,
 		bool pending,
 		double /* delta */
 	) override {
 		ImGuiStyle &style = ImGui::GetStyle();
 
 		shortcuts(wnd, rnd, ws);
+
+		if (!GetImePositionUpdatedHandler()) {
+			SetImePositionUpdatedHandler(
+				[scale] (const ImVec2 &pos) -> ImVec2 {
+					return ImVec2(pos.x * scale, pos.y * scale);
+				}
+			);
+		}
 
 		const float statusBarHeight = ImGui::GetTextLineHeightWithSpacing() + style.FramePadding.y * 2;
 

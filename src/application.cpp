@@ -580,6 +580,7 @@ public:
 
 			ImGuiSDL::Render(ImGui::GetDrawData());
 		}
+		_renderer->clip();
 
 		if (!_workspace->skipping())
 			_effects->finish(_window, _renderer, _workspace);

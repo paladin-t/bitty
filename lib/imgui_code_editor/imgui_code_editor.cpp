@@ -1561,7 +1561,11 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 						if (elapsed > 800)
 							timeStart = timeEnd;
 					}
-					g.PlatformImePos = ImVec2(cstart.x, cstart.y + CharAdv.y);
+
+					if (ImePositionUpdatedHandler)
+						g.PlatformImePos = ImePositionUpdatedHandler(ImVec2(cstart.x, cstart.y + CharAdv.y));
+					else
+						g.PlatformImePos = ImVec2(cstart.x, cstart.y + CharAdv.y);
 				}
 			}
 
@@ -1702,6 +1706,14 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 	PopStyleColor();
 
 	WithinRender = false;
+}
+
+CodeEditor::ImePositionUpdated CodeEditor::GetImePositionUpdatedHandler(void) const {
+	return ImePositionUpdatedHandler;
+}
+
+void CodeEditor::SetImePositionUpdatedHandler(const ImePositionUpdated &aHandler) {
+	ImePositionUpdatedHandler = aHandler;
 }
 
 void CodeEditor::SetKeyPressedHandler(const KeyPressed &aHandler) {

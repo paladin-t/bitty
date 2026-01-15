@@ -346,7 +346,8 @@ protected:
 	BITTY_PROPERTY_READONLY_PTR(unsigned, canvasState)
 	BITTY_PROPERTY_READONLY_PTR(bool, canvasFixRatio)
 	BITTY_PROPERTY(Math::Vec2i, canvasValidation)
-	BITTY_PROPERTY(Math::Vec2i, canvasSize_)
+	BITTY_PROPERTY(Math::Rectf, canvasClientArea_) // Not thread-safe.
+	BITTY_PROPERTY(Math::Vec2i, canvasSize_) // Thread-safe.
 	BITTY_FIELD(Mutex, canvasSizeLock)
 	BITTY_PROPERTY_READONLY(Texture::Ptr, canvasTexture)
 	BITTY_PROPERTY_READONLY(Texture::ScaleModes, canvasScaleMode)
@@ -520,7 +521,11 @@ public:
 	 */
 	virtual bool resizeApplication(const Math::Vec2i &size) override;
 	/**
-	 * @brief Implements `Executable::Observer`. Gets the size of the rendering canvas.
+	 * @brief Implements `Executable::Observer`. Gets the client area of the rendering canvas. Not thread-safe.
+	 */
+	virtual Math::Rectf canvasClientArea(void) override;
+	/**
+	 * @brief Implements `Executable::Observer`. Gets the size of the rendering canvas. Thread-safe.
 	 */
 	virtual Math::Vec2i canvasSize(void) override;
 	/**

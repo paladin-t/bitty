@@ -110,6 +110,10 @@ public:
 		 */
 		virtual bool resizeApplication(const Math::Vec2i &size) = 0;
 		/**
+		 * @brief Gets the client area of the rendering canvas.
+		 */
+		virtual Math::Rectf canvasClientArea(void) = 0;
+		/**
 		 * @brief Gets the size of the rendering canvas.
 		 */
 		virtual Math::Vec2i canvasSize(void) = 0;

@@ -14,6 +14,7 @@
 #include "theme.h"
 #include "window.h"
 #include "workspace.h"
+#include "../lib/imgui/imgui_internal.h"
 #include "../lib/imgui_code_editor/imgui_code_editor.h"
 #include "../lib/imgui_sdl/imgui_sdl.h"
 #include <SDL.h>
@@ -43,10 +44,15 @@ private:
 		}
 	} _cache;
 	mutable RecursiveMutex _lock;
+	struct {
+		bool clearBeforeBaking = false;
+	} _options;
 
 	ImGuiContext* _context = nullptr;
 	ImGuiSDL::Device* _device = nullptr;
 	Texture* _texture = nullptr;
+	ImGuiMouseCursor _mouseCursor = ImGuiMouseCursor_None;
+	ImVec2 _imePosition = ImVec2(-1, -1);
 
 public:
 	TextBoxImpl() {
@@ -117,6 +123,17 @@ public:
 			Texture::destroy(_texture);
 			_texture = nullptr;
 		}
+	}
+
+	virtual bool option(const std::string &key, const Variant &val) override {
+		if (key == "clear_before_baking") {
+			const bool val_ = (bool)val;
+			_options.clearBeforeBaking = val_;
+
+			return true;
+		}
+
+		return false;
 	}
 
 	virtual void flush(void) const override {
@@ -458,10 +475,18 @@ public:
 		class Workspace* ws, const class Project* /* project */, class Executable* /* exec */,
 		const char* title,
 		float x, float y, float width, float height,
-		float /* scaleX */, float /* scaleY */,
+		int scale,
 		bool /* pending */,
 		double /* delta */
 	) override {
+		if (!GetImePositionUpdatedHandler()) {
+			SetImePositionUpdatedHandler(
+				[scale] (const ImVec2 &pos) -> ImVec2 {
+					return ImVec2(pos.x * scale, pos.y * scale);
+				}
+			);
+		}
+
 		if (_acquireFocus) {
 			if (!ws->popupBox()) {
 				_acquireFocus = false;
@@ -496,6 +521,10 @@ public:
 		if (!_opened)
 			return;
 
+		const int scale = rnd->scale() / wnd->scale();
+		const Math::Rectf clientArea = ws->canvasClientArea();
+		const Math::Vec2i canvasSize = ws->canvasSize();
+
 		ImGuiContext* ctx = context(wnd, rnd, (int)width, (int)height);
 		Texture* tex = texture(wnd, rnd, (int)width, (int)height);
 
@@ -503,6 +532,7 @@ public:
 
 		ImGuiContext* oldContext = ImGui::GetCurrentContext();
 		ImGui::SetCurrentContext(ctx);
+		ImGuiContext* context = ImGui::GetCurrentContext();
 
 		ImGuiSDL::Device* oldDevice = ImGuiSDL::GetCurrentDevice();
 		ImGuiSDL::SetCurrentDevice(_device);
@@ -512,7 +542,6 @@ public:
 
 		ImGuiIO &io = ImGui::GetIO();
 		// TODO: optimize.
-		io.DisplaySize                          = oldIo.DisplaySize;
 		io.DeltaTime                            = oldIo.DeltaTime;
 		io.MouseDoubleClickTime                 = oldIo.MouseDoubleClickTime;
 		io.MouseDoubleClickMaxDist              = oldIo.MouseDoubleClickMaxDist;
@@ -550,11 +579,22 @@ public:
 		io.InputQueueSurrogate                  = oldIo.InputQueueSurrogate;
 		io.InputQueueCharacters                 = oldIo.InputQueueCharacters;
 
-		// TODO: translate input.
+		do {
+			io.DisplaySize                      = ImVec2(width, height);
+			io.DisplayFramebufferScale          = oldIo.DisplayFramebufferScale;
+		} while (false);
 
-		//const Color cls(0x2e, 0x32, 0x38, 0xff);
-		//rnd->clip(0, 0, rnd->width(), rnd->height());
-		//rnd->clear(&cls);
+		do {
+			Math::Vec2i pos((int)io.MousePos.x, (int)io.MousePos.y);
+			fromScreenPosition(pos, clientArea, canvasSize, 1); // Translate mouse position from screen space to local space.
+			io.MousePos                         = ImVec2((float)pos.x, (float)pos.y);
+		} while (false);
+
+		if (_options.clearBeforeBaking) {
+			const Color cls(0x2e, 0x32, 0x38, 0xff);
+			rnd->clip(0, 0, rnd->width(), rnd->height());
+			rnd->clear(&cls);
+		}
 		{
 			ImGui::NewFrame();
 
@@ -580,7 +620,7 @@ public:
 					ws, nullptr, nullptr,
 					_id.c_str(),
 					0, 0, width, height,
-					1.0f, 1.0f,
+					scale,
 					false,
 					0.0
 				);
@@ -592,10 +632,20 @@ public:
 
 			ImGuiSDL::Render(ImGui::GetDrawData());
 		}
+		if (_options.clearBeforeBaking) {
+			rnd->clip();
+		}
 
 		rnd->flush();
 
 		rnd->target(oldTarget);
+
+		_mouseCursor = ImGui::GetMouseCursor();
+		do {
+			Math::Vec2i pos((int)context->PlatformImePos.x, (int)context->PlatformImePos.y);
+			toScreenPosition(pos, clientArea, canvasSize, scale); // Translate IME position from local space to screen space.
+			_imePosition = ImVec2((float)pos.x, (float)pos.y);
+		} while (false);
 
 		ImGuiSDL::SetCurrentDevice(oldDevice);
 
@@ -606,6 +656,8 @@ public:
 		class Workspace* /* ws */,
 		float x, float y, float width, float height
 	) override {
+		ImGuiContext* context = ImGui::GetCurrentContext();
+
 		if (!_opened)
 			return;
 
@@ -619,6 +671,12 @@ public:
 			false, false,
 			nullptr, false, false
 		);
+
+		if (_mouseCursor != ImGuiMouseCursor_None && _mouseCursor != ImGuiMouseCursor_Arrow)
+			ImGui::SetMouseCursor(_mouseCursor);
+
+		if (_imePosition.x >= 0 && _imePosition.y >= 0)
+			context->PlatformImePos = _imePosition;
 	}
 
 	virtual void played(class Renderer* /* rnd */, const class Project* /* project */) override {
@@ -752,6 +810,44 @@ private:
 		delete [] pixels;
 
 		return _texture;
+	}
+
+	static bool fromScreenPosition(Math::Vec2i &pos, const Math::Rectf &clientArea, const Math::Vec2i &canvasSize, int scale) {
+		const double dstW = (double)canvasSize.x;
+		const double dstH = (double)canvasSize.y;
+		double fx = 0, fy = 0;
+		if (scale == 1) {
+			fx = (double)(pos.x - clientArea.xMin()) / clientArea.width() * dstW;
+			fy = (double)(pos.y - clientArea.yMin()) / clientArea.height() * dstH;
+		} else {
+			fx = (double)(pos.x / (double)scale - clientArea.xMin()) / clientArea.width() * dstW;
+			fy = (double)(pos.y / (double)scale - clientArea.yMin()) / clientArea.height() * dstH;
+		}
+		if (fx >= 0 && fx < canvasSize.x && fy >= 0 && fy < canvasSize.y) {
+			pos.x = (int)fx;
+			pos.y = (int)fy;
+
+			return true;
+		}
+		pos.x = -1;
+		pos.y = -1;
+
+		return false;
+	}
+	static bool toScreenPosition(Math::Vec2i &pos, const Math::Rectf &clientArea, const Math::Vec2i &canvasSize, int scale) {
+		const double dstW = (double)canvasSize.x;
+		const double dstH = (double)canvasSize.y;
+		double fx = pos.x, fy = pos.y;
+		if (scale == 1) {
+			fx = fx / dstW * clientArea.width() + clientArea.xMin();
+			fy = fy / dstH * clientArea.height() + clientArea.yMin();
+		} else {
+			fx = (fx / dstW * clientArea.width() + clientArea.xMin() * (double)scale);
+			fy = (fy / dstH * clientArea.height() + clientArea.yMin() * (double)scale);
+		}
+		pos = Math::Vec2i((int)fx, (int)fy);
+
+		return true;
 	}
 };
 

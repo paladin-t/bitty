@@ -216,6 +216,7 @@ public:
 	};
 
 	typedef std::function<bool(ImGuiKey)> KeyPressed;
+	typedef std::function<ImVec2(const ImVec2 &)> ImePositionUpdated;
 
 	typedef std::function<void(bool)> Colorized;
 	typedef std::function<void(bool)> Modified;
@@ -247,6 +248,8 @@ public:
 
 	void Render(const char* aTitle, const ImVec2 &aSize = ImVec2(), bool aBorder = false);
 
+	ImePositionUpdated GetImePositionUpdatedHandler(void) const;
+	void SetImePositionUpdatedHandler(const ImePositionUpdated &aHandler);
 	void SetKeyPressedHandler(const KeyPressed &aHandler);
 	void SetColorizedHandler(const Colorized &aHandler);
 	void SetModifiedHandler(const Modified &aHandler);
@@ -475,6 +478,7 @@ protected:
 			record = UndoRecord();
 		}
 	} LastAutoIndent;
+	ImePositionUpdated ImePositionUpdatedHandler;
 	KeyPressed KeyPressedHandler;
 	Colorized ColorizedHandler;
 	Modified ModifiedHandler;

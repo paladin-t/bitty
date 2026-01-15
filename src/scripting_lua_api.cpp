@@ -10542,7 +10542,7 @@ static int TextBox_setOption(lua_State* L) {
 	read<>(L, obj, key);
 
 	if (obj) {
-		TextBox::Ptr ptr = *obj;
+		TextBox::WeakPtr ptr(*obj);
 
 		if (key == "show_spaces") {
 			bool val = false;
@@ -10550,13 +10550,34 @@ static int TextBox_setOption(lua_State* L) {
 
 			impl->primitives()->function(
 				[=] (const Variant &) -> void {
-					ptr->post(Editable::SET_SHOW_SPACES, val);
+					if (ptr.expired())
+						return;
+					TextBox::Ptr ptr_ = ptr.lock();
+					if (!ptr_)
+						return;
+
+					ptr_->post(Editable::SET_SHOW_SPACES, val);
 				},
 				nullptr,
 				true
 			);
 		} else {
-			error(L, "Invalid option.");
+			Variant val = nullptr;
+			read<3>(L, &val);
+
+			impl->primitives()->function(
+				[=] (const Variant &) -> void {
+					if (ptr.expired())
+						return;
+					TextBox::Ptr ptr_ = ptr.lock();
+					if (!ptr_)
+						return;
+
+					ptr_->option(key, val);
+				},
+				nullptr,
+				true
+			);
 		}
 	} else {
 		error(L, "TextBox expected.");
