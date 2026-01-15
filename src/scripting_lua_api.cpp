@@ -10544,41 +10544,22 @@ static int TextBox_setOption(lua_State* L) {
 	if (obj) {
 		TextBox::WeakPtr ptr(*obj);
 
-		if (key == "show_spaces") {
-			bool val = false;
-			read<3>(L, val);
+		Variant val = nullptr;
+		read<3>(L, &val);
 
-			impl->primitives()->function(
-				[=] (const Variant &) -> void {
-					if (ptr.expired())
-						return;
-					TextBox::Ptr ptr_ = ptr.lock();
-					if (!ptr_)
-						return;
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				TextBox::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
 
-					ptr_->post(Editable::SET_SHOW_SPACES, val);
-				},
-				nullptr,
-				true
-			);
-		} else {
-			Variant val = nullptr;
-			read<3>(L, &val);
-
-			impl->primitives()->function(
-				[=] (const Variant &) -> void {
-					if (ptr.expired())
-						return;
-					TextBox::Ptr ptr_ = ptr.lock();
-					if (!ptr_)
-						return;
-
-					ptr_->option(key, val);
-				},
-				nullptr,
-				true
-			);
-		}
+				ptr_->option(key, val);
+			},
+			nullptr,
+			true
+		);
 	} else {
 		error(L, "TextBox expected.");
 		warnForMethodCallSymbol(L);
@@ -10660,7 +10641,7 @@ static int TextBox_update(lua_State* L) {
 				Renderer* rnd = impl->primitives()->renderer();
 				Workspace* ws = impl->primitives()->workspace();
 				const Math::Recti rect(x0, y0, x1, y1);
-				ptr_->bake(wnd, rnd, ws, (float)rect.xMin(), (float)rect.yMin(), (float)rect.width(), (float)rect.height());
+				ptr_->bake(wnd, rnd, ws, (float)rect.width(), (float)rect.height());
 			},
 			nullptr
 		);
@@ -10672,10 +10653,18 @@ static int TextBox_update(lua_State* L) {
 				if (!ptr_)
 					return;
 
+				int camX = 0, camY = 0;
+				impl->primitives()->camera(&camX, &camY);
+				int x0_ = x0;
+				int y0_ = y0;
+				int x1_ = x1;
+				int y1_ = y1;
+				ptr_->translate(x0_, y0_, x1_, y1_, camX, camY);
+
 				Window* wnd = impl->primitives()->window();
 				Renderer* rnd = impl->primitives()->renderer();
 				Workspace* ws = impl->primitives()->workspace();
-				const Math::Recti rect(x0, y0, x1, y1);
+				const Math::Recti rect(x0_, y0_, x1_, y1_);
 				ptr_->render(wnd, rnd, ws, (float)rect.xMin(), (float)rect.yMin(), (float)rect.width(), (float)rect.height());
 			},
 			nullptr,

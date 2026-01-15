@@ -320,6 +320,28 @@ bool Text::fromString(const std::string &str, Double &val) {
 	return convSuc && *convSuc == '\0';
 }
 
+bool Text::fromHexCharacter(char ch, UInt8 &val) {
+	val = 0;
+
+	if (ch >= '0' && ch <= '9') {
+		val = ch - '0';
+
+		return true;
+	}
+	if (ch >= 'a' && ch <= 'f') {
+		val = 10 + ch - 'a';
+
+		return true;
+	}
+	if (ch >= 'A' && ch <= 'F') {
+		val = 10 + ch - 'A';
+
+		return true;
+	}
+
+	return false;
+}
+
 std::string Text::toHex(Int32 val, unsigned short width, char fill, bool toupper) {
 	std::stringstream stream;
 	if (toupper)

@@ -9,6 +9,7 @@
 */
 
 #include "color.h"
+#include "text.h"
 
 /*
 ** {===========================================================================
@@ -149,6 +150,65 @@ void Color::fromARGB(UInt32 argb) {
 	r = (Byte)((argb & 0x0000ff00) >> 8);
 	g = (Byte)((argb & 0x00ff0000) >> 16);
 	b = (Byte)((argb & 0xff000000) >> 24);
+}
+
+std::string Color::toString(void) const {
+	std::string ret = "#";
+	ret += Text::toHex(r, 2, '0', false);
+	ret += Text::toHex(g, 2, '0', false);
+	ret += Text::toHex(b, 2, '0', false);
+	ret += Text::toHex(a, 2, '0', false);
+
+	return ret;
+}
+
+bool Color::fromString(const std::string &str) {
+	std::string hex = str;
+	if (hex[0] != '#')
+		return false;
+
+	hex = hex.substr(1);
+
+	if (hex.length() == 3 || hex.length() == 4) {
+		std::string fullHex;
+		for (char c : hex) {
+			fullHex += c;
+			fullHex += c;
+		}
+		hex = fullHex;
+	}
+
+	if (hex.length() != 6 && hex.length() != 8)
+		return false;
+
+	UInt8 b0 = 0;
+	UInt8 b1 = 0;
+	UInt8 b2 = 0;
+	UInt8 b3 = 0;
+	UInt8 b4 = 0;
+	UInt8 b5 = 0;
+	UInt8 b6 = 0;
+	UInt8 b7 = 0;
+	if (
+		!Text::fromHexCharacter(hex[0], b0) ||
+		!Text::fromHexCharacter(hex[1], b1) ||
+		!Text::fromHexCharacter(hex[2], b2) ||
+		!Text::fromHexCharacter(hex[3], b3) ||
+		!Text::fromHexCharacter(hex[4], b4) ||
+		!Text::fromHexCharacter(hex[5], b5) ||
+		!Text::fromHexCharacter(hex[6], b6) ||
+		!Text::fromHexCharacter(hex[7], b7)
+	) {
+		return false;
+	}
+
+	r = b0 * 16 + b1;
+	g = b2 * 16 + b3;
+	b = b4 * 16 + b5;
+	a = (hex.length() == 8) ?
+		b6 * 16 + b7 : 255;
+
+	return true;
 }
 
 /* ===========================================================================} */

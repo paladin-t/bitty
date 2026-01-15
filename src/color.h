@@ -59,6 +59,9 @@ struct Color {
 
 	void fromRGBA(UInt32 rgba);
 	void fromARGB(UInt32 argb);
+
+	std::string toString(void) const;
+	bool fromString(const std::string &str);
 };
 
 /* ===========================================================================} */

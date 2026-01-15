@@ -103,6 +103,11 @@ public:
 	 */
 	static bool fromString(const std::string &str, Double &val);
 
+	/**
+	 * @param[out] val
+	 */
+	static bool fromHexCharacter(char ch, UInt8 &val);
+
 	static std::string toHex(Int32 val, unsigned short width = sizeof(Int32) * 2, char fill = '0', bool toupper = false);
 	static std::string toHex(UInt32 val, unsigned short width = sizeof(UInt32) * 2, char fill = '0', bool toupper = false);
 	static std::string toHex(Int64 val, unsigned short width = sizeof(Int64) * 2, char fill = '0', bool toupper = false);

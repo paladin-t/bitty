@@ -38,13 +38,15 @@ public:
 	virtual void bake(
 		class Window* wnd, class Renderer* rnd,
 		class Workspace* ws,
-		float x, float y, float width, float height
+		float width, float height
 	) = 0;
 	virtual void render(
 		class Window* wnd, class Renderer* rnd,
 		class Workspace* ws,
 		float x, float y, float width, float height
 	) = 0;
+
+	virtual void translate(int &x0, int &y0, int &x1, int &y1, int camX, int camY) = 0;
 
 	static TextBox* create(void);
 	static void destroy(TextBox* ptr);

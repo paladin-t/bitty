@@ -44,8 +44,20 @@ private:
 		}
 	} _cache;
 	mutable RecursiveMutex _lock;
-	struct {
+	struct Options {
 		bool clearBeforeBaking = false;
+		bool affectedByCamera = true;
+		Math::Vec2i cameraPosition;
+
+		bool toRefreshStyleColor = false;
+		ImVec4 styleColors[ImGuiCol_COUNT];
+		bool styleColorDirty[ImGuiCol_COUNT];
+
+		float styleVarScrollbarSize = -1.0f;
+
+		Options() {
+			memset(styleColorDirty, 0, sizeof(styleColorDirty));
+		}
 	} _options;
 
 	ImGuiContext* _context = nullptr;
@@ -80,6 +92,14 @@ public:
 		_opened = true;
 
 		_id = name;
+
+		SetLanguageDefinition(LanguageDefinition::Text());
+
+		SetShowLineNumbers(false);
+
+		SetShowLineIndicator(false);
+
+		SetShowModificationStatus(false);
 
 		SetTooltipEnabled(false);
 
@@ -126,9 +146,552 @@ public:
 	}
 
 	virtual bool option(const std::string &key, const Variant &val) override {
-		if (key == "clear_before_baking") {
+		if (key == "language_definition") {
+			std::string val_ = (std::string)val;
+			Text::toLowerCase(val_);
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			if (val_ == "text") {
+				SetLanguageDefinition(LanguageDefinition::Text());
+				Colorize();
+
+				return true;
+			} else if (val_ == "json") {
+				SetLanguageDefinition(LanguageDefinition::Json());
+				Colorize();
+
+				return true;
+			} else if (val_ == "c") {
+				SetLanguageDefinition(LanguageDefinition::C());
+				Colorize();
+
+				return true;
+			} else if (val_ == "c++") {
+				SetLanguageDefinition(LanguageDefinition::CPlusPlus());
+				Colorize();
+
+				return true;
+			} else if (val_ == "lua") {
+				SetLanguageDefinition(LanguageDefinition::Lua());
+				Colorize();
+
+				return true;
+			} else if (val_ == "sql") {
+				SetLanguageDefinition(LanguageDefinition::SQL());
+				Colorize();
+
+				return true;
+			}
+
+			return false;
+		} else if (key == "colorization_enabled") {
+			const bool val_ = (bool)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			SetColorizationEnabled(val_);
+			Colorize();
+
+			return true;
+		} else if (key == "cursor_line") {
+			const Int val_ = (Int)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Coordinates pos = GetCursorPosition();
+			pos.Line = val_;
+			SetCursorPosition(pos);
+			EnsureCursorVisible();
+
+			return true;
+		} else if (key == "cursor_column") {
+			const Int val_ = (Int)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Coordinates pos = GetCursorPosition();
+			pos.Column = val_;
+			SetCursorPosition(pos);
+			EnsureCursorVisible();
+
+			return true;
+		} else if (key == "indent_with_tab") {
+			const bool val_ = (bool)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			SetIndentWithTab(val_);
+
+			return true;
+		} else if (key == "tab_size") {
+			const Int val_ = (Int)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			SetTabSize(val_);
+
+			return true;
+		} else if (key == "head_size") {
+			const float val_ = (float)(Double)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			SetHeadSize(val_);
+
+			return true;
+		} else if (key == "overwrite") {
+			const bool val_ = (bool)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			SetOverwrite(val_);
+
+			return true;
+		} else if (key == "readonly") {
+			const bool val_ = (bool)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			SetReadOnly(val_);
+
+			return true;
+		} else if (key == "show_line_numbers") {
+			const bool val_ = (bool)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			SetShowLineNumbers(val_);
+
+			return true;
+		} else if (key == "sticky_line_numbers") {
+			const bool val_ = (bool)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			SetStickyLineNumbers(val_);
+
+			return true;
+		} else if (key == "show_line_indicator") {
+			const bool val_ = (bool)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			SetShowLineIndicator(val_);
+
+			return true;
+		} else if (key == "show_modification_status") {
+			const bool val_ = (bool)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			SetShowModificationStatus(val_);
+
+			return true;
+		} else if (key == "show_scrollbars") {
+			const bool val_ = (bool)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			SetShowScrollBars(val_);
+
+			return true;
+		} else if (key == "show_spaces") {
+			const bool val_ = (bool)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			SetShowWhiteSpaces(val_);
+
+			return true;
+		} else if (key == "column_indicator") {
+			const Int val_ = (Int)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			SetSafeColumnIndicatorOffset(val_);
+
+			return true;
+		}
+
+		if (key == "affected_by_camera") {
+			const bool val_ = (bool)val;
+			_options.affectedByCamera = val_;
+
+			return true;
+		} else if (key == "clear_before_baking") {
 			const bool val_ = (bool)val;
 			_options.clearBeforeBaking = val_;
+
+			return true;
+		}
+
+		if (key == "style_default") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::Default] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_keyword") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::Keyword] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_number") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::Number] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_string") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::String] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_char_literal") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::CharLiteral] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_punctuation") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::Punctuation] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_preprocessor") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::Preprocessor] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_symbol") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::Symbol] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_identifier") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::Identifier] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_known_identifier") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::KnownIdentifier] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_preproc_identifier") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::PreprocIdentifier] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_comment") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::Comment] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_multiline_comment") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::MultiLineComment] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_space") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::Space] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_background") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_ChildBg] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_ChildBg] = true;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::Background] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_cursor") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::Cursor] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_selection") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::Selection] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_line_number") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::LineNumber] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_current_line_fill") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::CurrentLineFill] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_current_line_fill_inactive") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::CurrentLineFillInactive] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_current_line_edge") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::CurrentLineEdge] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_line_edited") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::LineEdited] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_line_edited_saved") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::LineEditedSaved] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_line_edited_reverted") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			Palette plt = GetPalette();
+			plt[(int)PaletteIndex::LineEditedReverted] = col.toRGBA();
+			SetPalette(plt);
+
+			return true;
+		} else if (key == "style_scrollbar_background") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_ScrollbarBg] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_ScrollbarBg] = true;
+
+			return true;
+		} else if (key == "style_scrollbar_grab") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_ScrollbarGrab] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_ScrollbarGrab] = true;
+
+			return true;
+		} else if (key == "style_scrollbar_grab_hovered") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_ScrollbarGrabHovered] = true;
+
+			return true;
+		} else if (key == "style_scrollbar_grab_active") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_ScrollbarGrabActive] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_ScrollbarGrabActive] = true;
+
+			return true;
+		}
+
+		if (key == "style_scrollbar_size") {
+			const float val_ = (float)(Double)val;
+
+			_options.styleVarScrollbarSize = val_;
 
 			return true;
 		}
@@ -516,8 +1079,9 @@ public:
 	virtual void bake(
 		class Window* wnd, class Renderer* rnd,
 		class Workspace* ws,
-		float /* x */, float /* y */, float width, float height
+		float width, float height
 	) override {
+		// Prepare.
 		if (!_opened)
 			return;
 
@@ -525,113 +1089,140 @@ public:
 		const Math::Rectf clientArea = ws->canvasClientArea();
 		const Math::Vec2i canvasSize = ws->canvasSize();
 
-		ImGuiContext* ctx = context(wnd, rnd, (int)width, (int)height);
-		Texture* tex = texture(wnd, rnd, (int)width, (int)height);
+		// Touch the context and texture.
+		ImGuiContext* currentContext = context(wnd, rnd, (int)width, (int)height);
+		Texture* targetTexture = texture(wnd, rnd, (int)width, (int)height);
 
+		// Reserve the old context.
 		const ImGuiIO &oldIo = ImGui::GetIO();
 
 		ImGuiContext* oldContext = ImGui::GetCurrentContext();
-		ImGui::SetCurrentContext(ctx);
-		ImGuiContext* context = ImGui::GetCurrentContext();
-
 		ImGuiSDL::Device* oldDevice = ImGuiSDL::GetCurrentDevice();
+		Texture* oldTarget = rnd->target();
+
+		// Switch to the local context.
+		ImGui::SetCurrentContext(currentContext);
+
 		ImGuiSDL::SetCurrentDevice(_device);
 
-		Texture* oldTarget = rnd->target();
-		rnd->target(tex);
+		rnd->target(targetTexture);
 
+		// Initialize the local context.
 		ImGuiIO &io = ImGui::GetIO();
-		// TODO: optimize.
-		io.DeltaTime                            = oldIo.DeltaTime;
-		io.MouseDoubleClickTime                 = oldIo.MouseDoubleClickTime;
-		io.MouseDoubleClickMaxDist              = oldIo.MouseDoubleClickMaxDist;
-		io.MouseDragThreshold                   = oldIo.MouseDragThreshold;
-		memcpy(io.KeyMap,                         oldIo.KeyMap,                         sizeof(oldIo.KeyMap));
-		io.KeyRepeatDelay                       = oldIo.KeyRepeatDelay;
-		io.KeyRepeatRate                        = oldIo.KeyRepeatRate;
-		io.MousePos                             = oldIo.MousePos;
-		memcpy(io.MouseDown,                      oldIo.MouseDown,                      sizeof(oldIo.MouseDown));
-		io.MouseWheel                           = oldIo.MouseWheel;
-		io.MouseWheelH                          = oldIo.MouseWheelH;
-		io.KeyCtrl                              = oldIo.KeyCtrl;
-		io.KeyShift                             = oldIo.KeyShift;
-		io.KeyAlt                               = oldIo.KeyAlt;
-		io.KeySuper                             = oldIo.KeySuper;
-		memcpy(io.KeysDown,                       oldIo.KeysDown,                       sizeof(oldIo.KeysDown));
-		io.MouseDelta                           = oldIo.MouseDelta;
-		io.KeyMods                              = oldIo.KeyMods;
-		io.KeyModsPrev                          = oldIo.KeyModsPrev;
-		io.MousePosPrev                         = oldIo.MousePosPrev;
-		memcpy(io.MouseClickedPos,                oldIo.MouseClickedPos,                sizeof(oldIo.MouseClickedPos));
-		memcpy(io.MouseClickedTime,               oldIo.MouseClickedTime,               sizeof(oldIo.MouseClickedTime));
-		memcpy(io.MouseClicked,                   oldIo.MouseClicked,                   sizeof(oldIo.MouseClicked));
-		memcpy(io.MouseDoubleClicked,             oldIo.MouseDoubleClicked,             sizeof(oldIo.MouseDoubleClicked));
-		memcpy(io.MouseReleased,                  oldIo.MouseReleased,                  sizeof(oldIo.MouseReleased));
-		memcpy(io.MouseDownOwned,                 oldIo.MouseDownOwned,                 sizeof(oldIo.MouseDownOwned));
-		memcpy(io.MouseDownOwnedUnlessPopupClose, oldIo.MouseDownOwnedUnlessPopupClose, sizeof(oldIo.MouseDownOwnedUnlessPopupClose));
-		memcpy(io.MouseDownWasDoubleClick,        oldIo.MouseDownWasDoubleClick,        sizeof(oldIo.MouseDownWasDoubleClick));
-		memcpy(io.MouseDownDuration,              oldIo.MouseDownDuration,              sizeof(oldIo.MouseDownDuration));
-		memcpy(io.MouseDownDurationPrev,          oldIo.MouseDownDurationPrev,          sizeof(oldIo.MouseDownDurationPrev));
-		memcpy(io.MouseDragMaxDistanceAbs,        oldIo.MouseDragMaxDistanceAbs,        sizeof(oldIo.MouseDragMaxDistanceAbs));
-		memcpy(io.MouseDragMaxDistanceSqr,        oldIo.MouseDragMaxDistanceSqr,        sizeof(oldIo.MouseDragMaxDistanceSqr));
-		memcpy(io.KeysDownDuration,               oldIo.KeysDownDuration,               sizeof(oldIo.KeysDownDuration));
-		memcpy(io.KeysDownDurationPrev,           oldIo.KeysDownDurationPrev,           sizeof(oldIo.KeysDownDurationPrev));
-		io.InputQueueSurrogate                  = oldIo.InputQueueSurrogate;
-		io.InputQueueCharacters                 = oldIo.InputQueueCharacters;
 
 		do {
-			io.DisplaySize                      = ImVec2(width, height);
-			io.DisplayFramebufferScale          = oldIo.DisplayFramebufferScale;
+			io.DeltaTime                            = oldIo.DeltaTime;
+			io.DisplaySize                          = ImVec2(width, height);
+			io.DisplayFramebufferScale              = oldIo.DisplayFramebufferScale;
+
+			io.KeyCtrl                              = oldIo.KeyCtrl;
+			io.KeyShift                             = oldIo.KeyShift;
+			io.KeyAlt                               = oldIo.KeyAlt;
+			io.KeySuper                             = oldIo.KeySuper;
+			memcpy(io.KeysDown,                       oldIo.KeysDown,                       sizeof(oldIo.KeysDown));
+			io.KeyMods                              = oldIo.KeyMods;
+			io.KeyModsPrev                          = oldIo.KeyModsPrev;
 		} while (false);
 
-		do {
-			Math::Vec2i pos((int)io.MousePos.x, (int)io.MousePos.y);
-			fromScreenPosition(pos, clientArea, canvasSize, 1); // Translate mouse position from screen space to local space.
-			io.MousePos                         = ImVec2((float)pos.x, (float)pos.y);
-		} while (false);
-
+		// Prepare for rendering.
 		if (_options.clearBeforeBaking) {
 			const Color cls(0x2e, 0x32, 0x38, 0xff);
 			rnd->clip(0, 0, rnd->width(), rnd->height());
 			rnd->clear(&cls);
 		}
+
+		// Render the edit area.
 		{
 			ImGui::NewFrame();
 
 			ImGuiStyle &style = ImGui::GetStyle();
 
-			VariableGuard<decltype(style.WindowBorderSize)> guardBorderSize(&style.WindowBorderSize, style.WindowBorderSize, 0.0f);
-			VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2());
-
-			const ImGuiWindowFlags flags =
-				ImGuiWindowFlags_NoTitleBar |
-				ImGuiWindowFlags_NoResize |
-				ImGuiWindowFlags_NoMove |
-				ImGuiWindowFlags_NoScrollbar |
-				ImGuiWindowFlags_NoCollapse |
-				ImGuiWindowFlags_NoSavedSettings |
-				ImGuiWindowFlags_NoBringToFrontOnFocus |
-				ImGuiWindowFlags_NoNav;
-			ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-			ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_Always);
-			if (ImGui::Begin(_id.c_str(), nullptr, flags)) {
-				update(
-					wnd, rnd,
-					ws, nullptr, nullptr,
-					_id.c_str(),
-					0, 0, width, height,
-					scale,
-					false,
-					0.0
-				);
-
-				ImGui::End();
+			if (_options.toRefreshStyleColor) {
+				_options.toRefreshStyleColor = false;
+				for (int i = 0; i < ImGuiCol_COUNT; ++i) {
+					if (_options.styleColorDirty[i]) {
+						_options.styleColorDirty[i] = false;
+						style.Colors[i] = _options.styleColors[i];
+					}
+				}
 			}
+
+			io.MouseDoubleClickTime                 = oldIo.MouseDoubleClickTime;
+			io.MouseDoubleClickMaxDist              = oldIo.MouseDoubleClickMaxDist;
+			io.MouseDragThreshold                   = oldIo.MouseDragThreshold;
+			memcpy(io.KeyMap,                         oldIo.KeyMap,                         sizeof(oldIo.KeyMap));
+			io.KeyRepeatDelay                       = oldIo.KeyRepeatDelay;
+			io.KeyRepeatRate                        = oldIo.KeyRepeatRate;
+			io.MousePos                             = oldIo.MousePos;
+			memcpy(io.MouseDown,                      oldIo.MouseDown,                      sizeof(oldIo.MouseDown));
+			io.MouseWheel                           = oldIo.MouseWheel;
+			io.MouseWheelH                          = oldIo.MouseWheelH;
+			io.MouseDelta                           = oldIo.MouseDelta;
+			io.MousePosPrev                         = oldIo.MousePosPrev;
+			memcpy(io.MouseClickedPos,                oldIo.MouseClickedPos,                sizeof(oldIo.MouseClickedPos));
+			memcpy(io.MouseClickedTime,               oldIo.MouseClickedTime,               sizeof(oldIo.MouseClickedTime));
+			memcpy(io.MouseClicked,                   oldIo.MouseClicked,                   sizeof(oldIo.MouseClicked));
+			memcpy(io.MouseDoubleClicked,             oldIo.MouseDoubleClicked,             sizeof(oldIo.MouseDoubleClicked));
+			memcpy(io.MouseReleased,                  oldIo.MouseReleased,                  sizeof(oldIo.MouseReleased));
+			memcpy(io.MouseDownOwned,                 oldIo.MouseDownOwned,                 sizeof(oldIo.MouseDownOwned));
+			memcpy(io.MouseDownOwnedUnlessPopupClose, oldIo.MouseDownOwnedUnlessPopupClose, sizeof(oldIo.MouseDownOwnedUnlessPopupClose));
+			memcpy(io.MouseDownWasDoubleClick,        oldIo.MouseDownWasDoubleClick,        sizeof(oldIo.MouseDownWasDoubleClick));
+			memcpy(io.MouseDownDuration,              oldIo.MouseDownDuration,              sizeof(oldIo.MouseDownDuration));
+			memcpy(io.MouseDownDurationPrev,          oldIo.MouseDownDurationPrev,          sizeof(oldIo.MouseDownDurationPrev));
+			memcpy(io.MouseDragMaxDistanceAbs,        oldIo.MouseDragMaxDistanceAbs,        sizeof(oldIo.MouseDragMaxDistanceAbs));
+			memcpy(io.MouseDragMaxDistanceSqr,        oldIo.MouseDragMaxDistanceSqr,        sizeof(oldIo.MouseDragMaxDistanceSqr));
+			memcpy(io.KeysDownDuration,               oldIo.KeysDownDuration,               sizeof(oldIo.KeysDownDuration));
+			memcpy(io.KeysDownDurationPrev,           oldIo.KeysDownDurationPrev,           sizeof(oldIo.KeysDownDurationPrev));
+			io.InputQueueSurrogate                  = oldIo.InputQueueSurrogate;
+			io.InputQueueCharacters                 = oldIo.InputQueueCharacters;
+
+			do {
+				Math::Vec2i pos((int)io.MousePos.x, (int)io.MousePos.y);
+				fromScreenPosition(pos, clientArea, canvasSize, 1); // Translate mouse position from screen space to local space.
+				if (_options.affectedByCamera) {
+					pos.x += _options.cameraPosition.x;
+					pos.y += _options.cameraPosition.y;
+				}
+				io.MousePos                         = ImVec2((float)pos.x, (float)pos.y);
+			} while (false);
+
+			do {
+				VariableGuard<decltype(style.WindowBorderSize)> guardBorderSize(&style.WindowBorderSize, style.WindowBorderSize, 0.0f);
+				VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2());
+				VariableGuard<decltype(style.ScrollbarSize)> guardScrollbarSize(&style.ScrollbarSize, style.ScrollbarSize, _options.styleVarScrollbarSize);
+
+				const ImGuiWindowFlags flags =
+					ImGuiWindowFlags_NoTitleBar |
+					ImGuiWindowFlags_NoResize |
+					ImGuiWindowFlags_NoMove |
+					ImGuiWindowFlags_NoScrollbar |
+					ImGuiWindowFlags_NoCollapse |
+					ImGuiWindowFlags_NoSavedSettings |
+					ImGuiWindowFlags_NoBringToFrontOnFocus |
+					ImGuiWindowFlags_NoNav;
+				ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+				ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_Always);
+				if (ImGui::Begin(_id.c_str(), nullptr, flags)) {
+					update(
+						wnd, rnd,
+						ws, nullptr, nullptr,
+						_id.c_str(),
+						0, 0, width, height,
+						scale,
+						false,
+						0.0
+					);
+
+					ImGui::End();
+				}
+			} while (false);
 
 			ImGui::Render();
 
 			ImGuiSDL::Render(ImGui::GetDrawData());
 		}
+
+		// Finish rendering.
 		if (_options.clearBeforeBaking) {
 			rnd->clip();
 		}
@@ -640,13 +1231,20 @@ public:
 
 		rnd->target(oldTarget);
 
+		// Save the mouse cursor and IME states for later populating.
 		_mouseCursor = ImGui::GetMouseCursor();
+
 		do {
-			Math::Vec2i pos((int)context->PlatformImePos.x, (int)context->PlatformImePos.y);
+			Math::Vec2i pos((int)currentContext->PlatformImePos.x, (int)currentContext->PlatformImePos.y);
+			if (_options.affectedByCamera) {
+				pos.x -= _options.cameraPosition.x * scale;
+				pos.y -= _options.cameraPosition.y * scale;
+			}
 			toScreenPosition(pos, clientArea, canvasSize, scale); // Translate IME position from local space to screen space.
 			_imePosition = ImVec2((float)pos.x, (float)pos.y);
 		} while (false);
 
+		// Switch to the old context.
 		ImGuiSDL::SetCurrentDevice(oldDevice);
 
 		ImGui::SetCurrentContext(oldContext);
@@ -656,14 +1254,16 @@ public:
 		class Workspace* /* ws */,
 		float x, float y, float width, float height
 	) override {
+		// Prepare.
 		ImGuiContext* context = ImGui::GetCurrentContext();
 
 		if (!_opened)
 			return;
 
 		Texture* tex = texture(wnd, rnd, (int)width, (int)height);
-		const Math::Recti dstRect = Math::Recti::byXYWH((int)x, (int)y, (int)width, (int)height);
 
+		// Render the baked texture to the target.
+		const Math::Recti dstRect = Math::Recti::byXYWH((int)x, (int)y, (int)width, (int)height);
 		rnd->render(
 			tex,
 			nullptr, &dstRect,
@@ -672,11 +1272,22 @@ public:
 			nullptr, false, false
 		);
 
+		// Populate the mouse cursor and IME states.
 		if (_mouseCursor != ImGuiMouseCursor_None && _mouseCursor != ImGuiMouseCursor_Arrow)
 			ImGui::SetMouseCursor(_mouseCursor);
 
 		if (_imePosition.x >= 0 && _imePosition.y >= 0)
 			context->PlatformImePos = _imePosition;
+	}
+
+	virtual void translate(int &x0, int &y0, int &x1, int &y1, int camX, int camY) override {
+		if (_options.affectedByCamera) {
+			_options.cameraPosition = Math::Vec2i(camX, camY);
+			x0 -= camX;
+			y0 -= camY;
+			x1 -= camX;
+			y1 -= camY;
+		}
 	}
 
 	virtual void played(class Renderer* /* rnd */, const class Project* /* project */) override {
@@ -747,16 +1358,21 @@ private:
 	}
 
 	ImGuiContext* context(Window* wnd, Renderer* rnd, int width, int height) {
+		// Prepare.
 		if (_context)
 			return _context;
 
 		const ImGuiIO &oldIo = ImGui::GetIO();
 
+		// Create a new ImGui context.
 		_context = ImGui::CreateContext();
 
+		// Switch to the new context.
 		ImGuiContext* oldContext = ImGui::GetCurrentContext();
 		ImGui::SetCurrentContext(_context);
 		ImGuiSDL::Device* oldDevice = ImGuiSDL::GetCurrentDevice();
+
+		// Setup the new context.
 		{
 			ImGuiStyle &style = ImGui::GetStyle();
 			ImGuiIO &io = ImGui::GetIO();
@@ -765,12 +1381,12 @@ private:
 			style.TabRounding = 0;
 
 			io.IniFilename = nullptr;
-			io.ConfigFlags                          = oldIo.ConfigFlags;
-			io.BackendFlags                         = oldIo.BackendFlags;
+			io.ConfigFlags            = oldIo.ConfigFlags;
+			io.BackendFlags           = oldIo.BackendFlags;
 
-			io.SetClipboardTextFn                   = oldIo.SetClipboardTextFn;
-			io.GetClipboardTextFn                   = oldIo.GetClipboardTextFn;
-			io.ClipboardUserData                    = oldIo.ClipboardUserData;
+			io.SetClipboardTextFn     = oldIo.SetClipboardTextFn;
+			io.GetClipboardTextFn     = oldIo.GetClipboardTextFn;
+			io.ClipboardUserData      = oldIo.ClipboardUserData;
 
 #if defined BITTY_OS_WIN
 			SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
@@ -790,18 +1406,24 @@ private:
 			ImGuiSDL::Initialize((SDL_Renderer*)rnd->pointer(), width, height);
 			_device = ImGuiSDL::GetCurrentDevice();
 		}
+
+		// Switch to the old context.
 		ImGuiSDL::SetCurrentDevice(oldDevice);
 		ImGui::SetCurrentContext(oldContext);
 
+		// Return the new created context.
 		return _context;
 	}
 	Texture* texture(Window* /* wnd */, Renderer* rnd, int width, int height) {
+		// Invalidate the texture if the desired size has been changed.
 		if (_texture && (_texture->width() != width || _texture->height() != height))
 			_texture = nullptr;
 
+		// Reuse the cached texture if possible.
 		if (_texture)
 			return _texture;
 
+		// Create a new texture.
 		_texture = Texture::create();
 		Byte* pixels = new Byte[width * height * sizeof(Color)];
 		memset(pixels, 0, width * height * sizeof(Color));
@@ -809,6 +1431,7 @@ private:
 		_texture->blend(Texture::BLEND);
 		delete [] pixels;
 
+		// Return the new created texture.
 		return _texture;
 	}
 
