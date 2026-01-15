@@ -1916,12 +1916,13 @@ void Workspace::editing(class Window* wnd, class Renderer* rnd, const class Proj
 								}
 							}
 							if (editor) {
+								const int scale = rnd->scale() / wnd->scale();
 								editor->update(
 									wnd, rnd,
 									this, project, exec,
 									"@Edtr",
 									pos.x, pos.y, size.x, size.y - ImGui::TabBarHeight(),
-									1.0f, 1.0f,
+									scale,
 									pending,
 									delta
 								);

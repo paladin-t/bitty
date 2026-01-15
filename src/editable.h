@@ -100,7 +100,7 @@ public:
 		class Workspace* ws, const class Project* project, class Executable* exec,
 		const char* title,
 		float x, float y, float width, float height,
-		float scaleX, float scaleY,
+		int scale,
 		bool pending,
 		double delta
 	) = 0;

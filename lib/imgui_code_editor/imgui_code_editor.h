@@ -216,6 +216,7 @@ public:
 	};
 
 	typedef std::function<bool(ImGuiKey)> KeyPressed;
+	typedef std::function<ImVec2(const ImVec2 &)> ImePositionUpdated;
 
 	typedef std::function<void(bool)> Colorized;
 	typedef std::function<void(bool)> Modified;
@@ -235,6 +236,9 @@ public:
 	void SetPalette(const Palette &aValue);
 	const Palette &GetPalette(void) const;
 
+	void SetColorizationEnabled(bool aValue);
+	bool IsColorizationEnabled(void) const;
+
 	void SetErrorMarkers(const ErrorMarkers &aMarkers);
 	void ClearErrorMarkers(void);
 	void SetBreakpoints(const Breakpoints &aMarkers);
@@ -244,6 +248,8 @@ public:
 
 	void Render(const char* aTitle, const ImVec2 &aSize = ImVec2(), bool aBorder = false);
 
+	ImePositionUpdated GetImePositionUpdatedHandler(void) const;
+	void SetImePositionUpdatedHandler(const ImePositionUpdated &aHandler);
 	void SetKeyPressedHandler(const KeyPressed &aHandler);
 	void SetColorizedHandler(const Colorized &aHandler);
 	void SetModifiedHandler(const Modified &aHandler);
@@ -472,6 +478,7 @@ protected:
 			record = UndoRecord();
 		}
 	} LastAutoIndent;
+	ImePositionUpdated ImePositionUpdatedHandler;
 	KeyPressed KeyPressedHandler;
 	Colorized ColorizedHandler;
 	Modified ModifiedHandler;
@@ -496,6 +503,7 @@ protected:
 	float ScrollY;
 	bool ToSetScrollY;
 	bool WordSelectionMode;
+	bool ColorizationEnabled;
 	int ColorRangeMin, ColorRangeMax;
 	std::string LastSymbol;
 	PaletteIndex LastSymbolPalette;
