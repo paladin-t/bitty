@@ -299,6 +299,15 @@ public:
 	void SetStickyLineNumbers(bool aValue);
 	bool IsStickyLineNumbers(void) const;
 
+	void SetShowLineIndicator(bool aValue);
+	bool IsShowLineIndicator(void) const;
+
+	void SetShowModificationStatus(bool aValue);
+	bool IsShowModificationStatus(void) const;
+
+	void SetShowScrollBars(bool aValue);
+	bool IsShowScrollBars(void) const;
+
 	void SetHeadClickEnabled(bool aValue);
 	bool IsHeadClickEnabled(void) const;
 
@@ -496,6 +505,9 @@ protected:
 	bool ReadOnly;
 	bool ShowLineNumbers;
 	bool StickyLineNumbers;
+	bool ShowLineIndicator;
+	bool ShowModificationStatus;
+	bool ShowScrollBars;
 	bool HeadClickEnabled;
 	ShortcutType ShortcutsEnabled;
 	bool WithinRender;

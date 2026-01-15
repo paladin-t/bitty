@@ -1011,6 +1011,9 @@ CodeEditor::CodeEditor() :
 	ReadOnly(false),
 	ShowLineNumbers(true),
 	StickyLineNumbers(false),
+	ShowLineIndicator(true),
+	ShowModificationStatus(true),
+	ShowScrollBars(true),
 	HeadClickEnabled(false),
 	ShortcutsEnabled(ShortcutType::All),
 	WithinRender(false),
@@ -1141,17 +1144,18 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 			TextStart = 5;
 		++TextStart; // For edited states.
 	} else {
-		TextStart = 1;
+		if (ShowModificationStatus)
+			TextStart = 1;
+		else
+			TextStart = 0;
 	}
 
 	PushStyleColor(ImGuiCol_ChildBg, ColorConvertU32ToFloat4(Plt[(int)PaletteIndex::Background]));
 	PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
-	BeginChild(
-		aTitle, aSize, aBorder,
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar |
-		ImGuiWindowFlags_NoNav
-	);
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoNav;
+	if (ShowScrollBars)
+		flags |= ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar;
+	BeginChild(aTitle, aSize, aBorder, flags);
 
 	PushAllowKeyboardFocus(true);
 
@@ -1489,9 +1493,8 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 
 			// Render the line indicator.
 			if (State.CursorPosition.Line == lineNo) {
-				bool focused = IsEditorFocused();
-
-				if (!IsReadOnly() && !HasSelection()) {
+				if (ShowLineIndicator && !IsReadOnly() && !HasSelection()) {
+					bool focused = IsEditorFocused();
 					const ImVec2 start_ = IsStickyLineNumbers() ?
 						ImVec2(start.x + GetHeadSize(), start.y) :
 						start;
@@ -1586,33 +1589,35 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 			}
 
 			// Render the modification status.
-			switch (line.Changed) {
-			case LineState::None: // Do nothing.
-				break;
-			case LineState::Edited:
-				drawList->AddRectFilled(
-					ImVec2(lineStartX + lineNumberWidth, lineStartScreenPos.y),
-					ImVec2(lineStartX + lineNumberWidth + CharAdv.x * 0.5f, lineStartScreenPos.y + CharAdv.y),
-					Plt[(int)PaletteIndex::LineEdited]
-				);
+			if (ShowModificationStatus) {
+				switch (line.Changed) {
+				case LineState::None: // Do nothing.
+					break;
+				case LineState::Edited:
+					drawList->AddRectFilled(
+						ImVec2(lineStartX + lineNumberWidth, lineStartScreenPos.y),
+						ImVec2(lineStartX + lineNumberWidth + CharAdv.x * 0.5f, lineStartScreenPos.y + CharAdv.y),
+						Plt[(int)PaletteIndex::LineEdited]
+					);
 
-				break;
-			case LineState::EditedSaved:
-				drawList->AddRectFilled(
-					ImVec2(lineStartX + lineNumberWidth, lineStartScreenPos.y),
-					ImVec2(lineStartX + lineNumberWidth + CharAdv.x * 0.5f, lineStartScreenPos.y + CharAdv.y),
-					Plt[(int)PaletteIndex::LineEditedSaved]
-				);
+					break;
+				case LineState::EditedSaved:
+					drawList->AddRectFilled(
+						ImVec2(lineStartX + lineNumberWidth, lineStartScreenPos.y),
+						ImVec2(lineStartX + lineNumberWidth + CharAdv.x * 0.5f, lineStartScreenPos.y + CharAdv.y),
+						Plt[(int)PaletteIndex::LineEditedSaved]
+					);
 
-				break;
-			case LineState::EditedReverted:
-				drawList->AddRectFilled(
-					ImVec2(lineStartX + lineNumberWidth, lineStartScreenPos.y),
-					ImVec2(lineStartX + lineNumberWidth + CharAdv.x * 0.5f, lineStartScreenPos.y + CharAdv.y),
-					Plt[(int)PaletteIndex::LineEditedReverted]
-				);
+					break;
+				case LineState::EditedReverted:
+					drawList->AddRectFilled(
+						ImVec2(lineStartX + lineNumberWidth, lineStartScreenPos.y),
+						ImVec2(lineStartX + lineNumberWidth + CharAdv.x * 0.5f, lineStartScreenPos.y + CharAdv.y),
+						Plt[(int)PaletteIndex::LineEditedReverted]
+					);
 
-				break;
+					break;
+				}
 			}
 
 			// Step one line.
@@ -2058,6 +2063,30 @@ void CodeEditor::SetStickyLineNumbers(bool aValue) {
 
 bool CodeEditor::IsStickyLineNumbers(void) const {
 	return StickyLineNumbers;
+}
+
+void CodeEditor::SetShowLineIndicator(bool aValue) {
+	ShowLineIndicator = aValue;
+}
+
+bool CodeEditor::IsShowLineIndicator(void) const {
+	return ShowLineIndicator;
+}
+
+void CodeEditor::SetShowModificationStatus(bool aValue) {
+	ShowModificationStatus = aValue;
+}
+
+bool CodeEditor::IsShowModificationStatus(void) const {
+	return ShowModificationStatus;
+}
+
+void CodeEditor::SetShowScrollBars(bool aValue) {
+	ShowScrollBars = aValue;
+}
+
+bool CodeEditor::IsShowScrollBars(void) const {
+	return ShowScrollBars;
 }
 
 void CodeEditor::SetHeadClickEnabled(bool aValue) {
