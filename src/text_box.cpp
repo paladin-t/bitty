@@ -8,6 +8,8 @@
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
 
+#include "encoding.h"
+#include "hacks.h"
 #include "platform.h"
 #include "renderer.h"
 #include "text_box.h"
@@ -17,10 +19,43 @@
 #include "../lib/imgui/imgui_internal.h"
 #include "../lib/imgui_code_editor/imgui_code_editor.h"
 #include "../lib/imgui_sdl/imgui_sdl.h"
+#include "../lib/jpath/jpath.hpp"
 #include <SDL.h>
 #if defined BITTY_OS_WIN
 #	include <SDL_syswm.h>
 #endif /* BITTY_OS_WIN */
+
+/*
+** {===========================================================================
+** Macros and constants
+*/
+
+#ifndef TEXT_BOX_FONT_RANGES_DEFAULT_NAME
+#	define TEXT_BOX_FONT_RANGES_DEFAULT_NAME "default"
+#endif /* TEXT_BOX_FONT_RANGES_DEFAULT_NAME */
+#ifndef TEXT_BOX_FONT_RANGES_CHINESE_NAME
+#	define TEXT_BOX_FONT_RANGES_CHINESE_NAME "chinese"
+#endif /* TEXT_BOX_FONT_RANGES_CHINESE_NAME */
+#ifndef TEXT_BOX_FONT_RANGES_JAPANESE_NAME
+#	define TEXT_BOX_FONT_RANGES_JAPANESE_NAME "japanese"
+#endif /* TEXT_BOX_FONT_RANGES_JAPANESE_NAME */
+#ifndef TEXT_BOX_FONT_RANGES_KOREAN_NAME
+#	define TEXT_BOX_FONT_RANGES_KOREAN_NAME "korean"
+#endif /* TEXT_BOX_FONT_RANGES_KOREAN_NAME */
+#ifndef TEXT_BOX_FONT_RANGES_CYRILLIC_NAME
+#	define TEXT_BOX_FONT_RANGES_CYRILLIC_NAME "cyrillic"
+#endif /* TEXT_BOX_FONT_RANGES_CYRILLIC_NAME */
+#ifndef TEXT_BOX_FONT_RANGES_THAI_NAME
+#	define TEXT_BOX_FONT_RANGES_THAI_NAME "thai"
+#endif /* TEXT_BOX_FONT_RANGES_THAI_NAME */
+#ifndef TEXT_BOX_FONT_RANGES_VIETNAMESE_NAME
+#	define TEXT_BOX_FONT_RANGES_VIETNAMESE_NAME "vietnamese"
+#endif /* TEXT_BOX_FONT_RANGES_VIETNAMESE_NAME */
+#ifndef TEXT_BOX_FONT_RANGES_POLISH_NAME
+#	define TEXT_BOX_FONT_RANGES_POLISH_NAME "polish"
+#endif /* TEXT_BOX_FONT_RANGES_POLISH_NAME */
+
+/* ===========================================================================} */
 
 /*
 ** {===========================================================================
@@ -52,8 +87,11 @@ private:
 		bool toRefreshStyleColor = false;
 		ImVec4 styleColors[ImGuiCol_COUNT];
 		bool styleColorDirty[ImGuiCol_COUNT];
+		float styleVarScrollbarSize = 14.0f;
 
-		float styleVarScrollbarSize = -1.0f;
+		bool toRefreshFont = false;
+		rapidjson::Document fontConfig;
+		FontData fontData;
 
 		Options() {
 			memset(styleColorDirty, 0, sizeof(styleColorDirty));
@@ -63,6 +101,7 @@ private:
 	ImGuiContext* _context = nullptr;
 	ImGuiSDL::Device* _device = nullptr;
 	Texture* _texture = nullptr;
+	ImFont* _font = nullptr;
 	ImGuiMouseCursor _mouseCursor = ImGuiMouseCursor_None;
 	ImVec2 _imePosition = ImVec2(-1, -1);
 
@@ -94,6 +133,8 @@ public:
 		_id = name;
 
 		SetLanguageDefinition(LanguageDefinition::Text());
+
+		SetShowWhiteSpaces(false);
 
 		SetShowLineNumbers(false);
 
@@ -691,12 +732,25 @@ public:
 		if (key == "style_scrollbar_size") {
 			const float val_ = (float)(Double)val;
 
-			_options.styleVarScrollbarSize = val_;
+			_options.styleVarScrollbarSize = std::max(val_, 0.0f);
 
 			return true;
 		}
 
 		return false;
+	}
+
+	virtual bool loadFont(const Json::Ptr &json, const FontData &fontData) override {
+		if (!json)
+			return false;
+
+		if (!json->toJson(_options.fontConfig))
+			return false;
+
+		_options.toRefreshFont = true;
+		_options.fontData = fontData;
+
+		return true;
 	}
 
 	virtual void flush(void) const override {
@@ -1057,10 +1111,9 @@ public:
 			}
 		}
 
-		ImFont* fontCode = ws->theme()->fontCode(); // TODO: use font.
-		if (fontCode && fontCode->IsLoaded()) {
-			ImGui::PushFont(fontCode);
-			SetFont(fontCode);
+		if (_font && _font->IsLoaded()) {
+			ImGui::PushFont(_font);
+			SetFont(_font);
 		}
 		ImGui::SetCursorPos(ImVec2(x, y));
 		{
@@ -1068,7 +1121,7 @@ public:
 
 			Render(title, ImVec2(width, height));
 		}
-		if (fontCode && fontCode->IsLoaded()) {
+		if (_font && _font->IsLoaded()) {
 			SetFont(nullptr);
 			ImGui::PopFont();
 		}
@@ -1123,6 +1176,8 @@ public:
 			io.KeyMods                              = oldIo.KeyMods;
 			io.KeyModsPrev                          = oldIo.KeyModsPrev;
 		} while (false);
+
+		refreshFonts(wnd, rnd, io);
 
 		// Prepare for rendering.
 		if (_options.clearBeforeBaking) {
@@ -1434,6 +1489,147 @@ private:
 		// Return the new created texture.
 		return _texture;
 	}
+	bool refreshFonts(Window* /* wnd */, Renderer* rnd, ImGuiIO &io) {
+		auto rebuild = [] (Renderer* rnd, ImGuiIO &io) -> void {
+			if (io.Fonts->TexID) {
+				ImGuiSDLHack::Texture* texture = static_cast<ImGuiSDLHack::Texture*>(io.Fonts->TexID);
+				delete texture;
+				io.Fonts->TexID = nullptr;
+			}
+
+			unsigned char* pixels = nullptr;
+			int width = 0, height = 0;
+			io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
+			ImGuiSDLHack::Texture* texture = new ImGuiSDLHack::Texture(rnd, pixels, width, height);
+			io.Fonts->TexID = (void*)texture;
+		};
+
+		if (!_options.toRefreshFont) {
+			if (!_font) {
+				io.Fonts->Clear();
+				_font = io.Fonts->AddFontDefault();
+
+				rebuild(rnd, io);
+			}
+
+			return true;
+		}
+
+		const rapidjson::Value* fonts = nullptr;
+		Jpath::get(_options.fontConfig, fonts, "fonts");
+		if (fonts && fonts->IsArray()) {
+			for (int i = 0; i < (int)fonts->Capacity(); ++i) {
+				std::string operation = "merge";
+				std::string usage = "generic";
+				std::string path;
+				float size = 0;
+				std::string ranges;
+				Math::Vec2i oversample(0, 0);
+				Math::Vec2f glyphOffset(0, 0);
+
+				Jpath::get(*fonts, operation, i, "operation");
+				Jpath::get(*fonts, usage, i, "usage");
+				Jpath::get(*fonts, path, i, "path");
+				Jpath::get(*fonts, size, i, "size");
+				Jpath::get(*fonts, ranges, i, "ranges");
+				Jpath::get(*fonts, oversample.x, i, "oversample", 0);
+				Jpath::get(*fonts, oversample.y, i, "oversample", 1);
+				Jpath::get(*fonts, glyphOffset.x, i, "glyph_offset", 0);
+				Jpath::get(*fonts, glyphOffset.y, i, "glyph_offset", 1);
+
+				size = Math::clamp(size, 4.0f, 96.0f);
+				oversample.x = Math::clamp(oversample.x, (Int)1, (Int)8);
+				oversample.y = Math::clamp(oversample.y, (Int)1, (Int)8);
+				glyphOffset.x = Math::clamp(glyphOffset.x, (Real)-96, (Real)96);
+				glyphOffset.y = Math::clamp(glyphOffset.y, (Real)-96, (Real)96);
+
+				const ImWchar* glyphRanges = io.Fonts->GetGlyphRangesDefault();
+				ImVector<ImWchar> rangesVector;
+				if (ranges == TEXT_BOX_FONT_RANGES_DEFAULT_NAME) {
+					glyphRanges = io.Fonts->GetGlyphRangesDefault();
+				} else if (ranges == TEXT_BOX_FONT_RANGES_CHINESE_NAME) {
+					glyphRanges = io.Fonts->GetGlyphRangesChineseSimplifiedCommon();
+				} else if (ranges == TEXT_BOX_FONT_RANGES_JAPANESE_NAME) {
+					glyphRanges = io.Fonts->GetGlyphRangesJapanese();
+				} else if (ranges == TEXT_BOX_FONT_RANGES_KOREAN_NAME) {
+					glyphRanges = io.Fonts->GetGlyphRangesKorean();
+				} else if (ranges == TEXT_BOX_FONT_RANGES_CYRILLIC_NAME) {
+					glyphRanges = io.Fonts->GetGlyphRangesCyrillic();
+				} else if (ranges == TEXT_BOX_FONT_RANGES_THAI_NAME) {
+					glyphRanges = io.Fonts->GetGlyphRangesThai();
+				} else if (ranges == TEXT_BOX_FONT_RANGES_VIETNAMESE_NAME) {
+					glyphRanges = io.Fonts->GetGlyphRangesVietnamese();
+				} else if (ranges == TEXT_BOX_FONT_RANGES_POLISH_NAME) {
+					static constexpr const ImWchar RANGES_POLISH[] = {
+						0x0020, 0x00ff, // Basic Latin + Latin supplement.
+						0x0100, 0x017f, // Polish alphabet.
+						0
+					};
+					glyphRanges = RANGES_POLISH;
+				} else if (!ranges.empty()) {
+					const std::wstring wstr = Unicode::toWide(ranges);
+					if (!wstr.empty() && wstr.size() % 2 == 0) {
+						for (int j = 0; j < (int)wstr.length(); j += 2) {
+							const wchar_t ch0 = wstr[j];
+							const wchar_t ch1 = wstr[j + 1];
+							if (ch0 > ch1) {
+								rangesVector.clear();
+
+								break;
+							}
+							rangesVector.push_back(ch0);
+							rangesVector.push_back(ch1);
+						}
+						if (!rangesVector.empty()) {
+							if (rangesVector.back() != 0)
+								rangesVector.push_back(0);
+							glyphRanges = &rangesVector.front();
+						}
+					}
+				}
+
+				ImFontConfig fontCfg;
+				fontCfg.FontDataOwnedByAtlas = false;
+				fontCfg.OversampleH = (int)oversample.x; fontCfg.OversampleV = (int)oversample.y;
+				fontCfg.GlyphOffset = ImVec2((float)glyphOffset.x, (float)glyphOffset.y);
+				fontCfg.MergeMode = operation == "merge";
+				if (operation == "set" || operation == "merge") {
+					const bool setDefault = operation == "set" /* && usage == "generic" */ && glyphRanges == io.Fonts->GetGlyphRangesDefault();
+					if (setDefault)
+						io.Fonts->Clear();
+					do {
+						FontData::iterator it = _options.fontData.find(path);
+						if (it == _options.fontData.end())
+							break;
+
+						const Bytes::Ptr &bytes = it->second;
+						if (!bytes)
+							break;
+
+						ImFont* font = io.Fonts->AddFontFromMemoryTTF(
+							(void*)bytes->pointer(), (int)bytes->count(),
+							size,
+							&fontCfg, glyphRanges
+						);
+						if (setDefault && !font)
+							io.Fonts->AddFontDefault();
+						// if (usage == "code")
+						_font = font;
+					} while (false);
+				} else if (operation == "clear") {
+					io.Fonts->Clear();
+					io.Fonts->AddFontDefault();
+				}
+			}
+		}
+
+		rebuild(rnd, io);
+
+		_options.toRefreshFont = false;
+		_options.fontData.clear();
+
+		return true;
+	}
 
 	static bool fromScreenPosition(Math::Vec2i &pos, const Math::Rectf &clientArea, const Math::Vec2i &canvasSize, int scale) {
 		const double dstW = (double)canvasSize.x;
@@ -1473,6 +1669,38 @@ private:
 		return true;
 	}
 };
+
+bool TextBox::parseFont(const Json::Ptr &json, FontData &fontData, FontResolver resolveFont) {
+	fontData.clear();
+
+	if (!json)
+		return false;
+
+	rapidjson::Document doc;
+	if (!json->toJson(doc))
+		return false;
+
+	const rapidjson::Value* fonts = nullptr;
+	Jpath::get(doc, fonts, "fonts");
+	if (!fonts || !fonts->IsArray())
+		return false;
+
+	for (int i = 0; i < (int)fonts->Capacity(); ++i) {
+		std::string path;
+
+		Jpath::get(*fonts, path, i, "path");
+		if (path.empty())
+			continue;
+
+		Bytes::Ptr bytes = resolveFont(path);
+		if (!bytes)
+			continue;
+
+		fontData[path] = bytes;
+	}
+
+	return true;
+}
 
 TextBox* TextBox::create(void) {
 	TextBoxImpl* result = new TextBoxImpl();

@@ -12,7 +12,10 @@
 #define __TEXT_BOX_H__
 
 #include "bitty.h"
+#include "bytes.h"
 #include "editable.h"
+#include "json.h"
+#include <map>
 
 /*
 ** {===========================================================================
@@ -27,10 +30,15 @@ public:
 	typedef std::shared_ptr<TextBox> Ptr;
 	typedef std::weak_ptr<TextBox> WeakPtr;
 
+	typedef std::map<std::string, Bytes::Ptr> FontData;
+	typedef std::function<Bytes::Ptr(const std::string &)> FontResolver;
+
 public:
 	BITTY_CLASS_TYPE('T', 'X', 'T', 'B')
 
 	virtual bool option(const std::string &key, const Variant &val) = 0;
+
+	virtual bool loadFont(const Json::Ptr &json, const FontData &fontData) = 0;
 
 	virtual const char* text(size_t* len) const = 0;
 	virtual void text(const char* txt, size_t len = 0) = 0;
@@ -47,6 +55,8 @@ public:
 	) = 0;
 
 	virtual void translate(int &x0, int &y0, int &x1, int &y1, int camX, int camY) = 0;
+
+	static bool parseFont(const Json::Ptr &json, FontData &fontData, FontResolver resolveFont);
 
 	static TextBox* create(void);
 	static void destroy(TextBox* ptr);

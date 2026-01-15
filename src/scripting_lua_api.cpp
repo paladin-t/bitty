@@ -9,7 +9,6 @@
 */
 
 #include "archive.h"
-#include "bytes.h"
 #include "code.h"
 #include "database.h"
 #include "datetime.h"
@@ -10568,6 +10567,75 @@ static int TextBox_setOption(lua_State* L) {
 	return 0;
 }
 
+static int TextBox_loadFont(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	TextBox::Ptr* obj = nullptr;
+	Json::Ptr* json = nullptr;
+	read<>(L, obj, json);
+
+	if (obj) {
+		if (!json) {
+			error(L, "Json expected.");
+
+			return 0;
+		}
+
+		TextBox::FontResolver resolveFont = [impl] (const std::string &path) -> Bytes::Ptr {
+			const Project* project = impl->project();
+			if (!project)
+				return nullptr;
+
+			LockGuard<RecursiveMutex>::UniquePtr acquired;
+			Project* prj = project->acquire(acquired);
+			if (!prj)
+				return nullptr;
+
+			Asset* asset = prj->get(path.c_str());
+			if (!asset)
+				return nullptr;
+
+			Bytes::Ptr bytes(Bytes::create());
+			bool saved = asset->toBytes(bytes.get());
+			if (!saved)
+				saved = asset->object(Asset::RUNNING) && asset->save(Asset::RUNNING, bytes.get());
+			if (!saved)
+				return nullptr;
+
+			bytes->poke(bytes->count());
+
+			return bytes;
+		};
+		TextBox::FontData fontData;
+		if (!TextBox::parseFont(*json, fontData, resolveFont)) {
+			error(L, "Json expected.");
+
+			return 0;
+		}
+
+		TextBox::WeakPtr ptr(*obj);
+		Json::Ptr json_(*json);
+
+		impl->primitives()->workspace()->addBake(
+			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				TextBox::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
+
+				ptr_->loadFont(json_, fontData);
+			},
+			nullptr
+		);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
 static int TextBox_get(lua_State* L) {
 	TextBox::Ptr* obj = nullptr;
 	read<>(L, obj);
@@ -10733,6 +10801,7 @@ static void open_TextBox(lua_State* L) {
 		),
 		array(
 			luaL_Reg{ "setOption", TextBox_setOption },
+			luaL_Reg{ "loadFont", TextBox_loadFont },
 			luaL_Reg{ "get", TextBox_get },
 			luaL_Reg{ "set", TextBox_set },
 			luaL_Reg{ "clear", TextBox_clear },
