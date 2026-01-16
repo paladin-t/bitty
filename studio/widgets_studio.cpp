@@ -463,7 +463,7 @@ void AboutPopupBox::update(void) {
 			SameLine();
 			Url("Tony Wang", "https://paladin-t.github.io/");
 			SameLine();
-			TextUnformatted(", 2020 - 2026");
+			TextUnformatted(", 2021 - 2026");
 			NewLine();
 		}
 		Separator();

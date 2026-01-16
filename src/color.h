@@ -45,8 +45,16 @@ struct Color {
 	Color &operator -= (const Color &other);
 	Color &operator *= (const Color &other);
 	Color &operator *= (Real other);
+
 	bool operator == (const Color &other) const;
 	bool operator != (const Color &other) const;
+	bool operator < (const Color &other) const;
+	bool operator > (const Color &other) const;
+
+	int compare(const Color &other) const;
+	bool equals(const Color &other) const;
+
+	int toGray(void) const;
 
 	/**
 	 * @brief 0xAABBGGRR as little-endian.
@@ -56,9 +64,18 @@ struct Color {
 	 * @brief 0xBBGGRRAA as little-endian.
 	 */
 	UInt32 toARGB(void) const;
+	/**
+	 * @brief Extracts HSV from color.
+	 *
+	 * @param[out] h
+	 * @param[out] s
+	 * @param[out] v
+	 */
+	void toHSV(float* h /* nullable */, float* s /* nullable */, float* v /* nullable */, Byte* a = nullptr) const;
 
 	void fromRGBA(UInt32 rgba);
 	void fromARGB(UInt32 argb);
+	void fromHSV(float h, float s, float v, Byte a = 255);
 
 	std::string toString(void) const;
 	bool fromString(const std::string &str);

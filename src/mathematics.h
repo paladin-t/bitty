@@ -121,6 +121,7 @@ template<typename T, typename R = Real> struct Vec2 {
 
 		return *this;
 	}
+
 	bool operator == (const Vec2 &other) const {
 		return equals(other);
 	}
@@ -282,6 +283,7 @@ template<typename T, typename R = Real> struct Vec3 {
 
 		return *this;
 	}
+
 	bool operator == (const Vec3 &other) const {
 		return equals(other);
 	}
@@ -424,6 +426,7 @@ template<typename T> struct Vec4 {
 
 		return *this;
 	}
+
 	bool operator == (const Vec4 &other) const {
 		return equals(other);
 	}
@@ -507,6 +510,7 @@ template<typename T, int S> struct Rect {
 
 		return *this;
 	}
+
 	bool operator == (const Rect &other) const {
 		return equals(other);
 	}
@@ -613,6 +617,7 @@ template<typename T> struct Rot {
 
 		return *this;
 	}
+
 	bool operator == (const Rot &other) const {
 		return s == other.s && c == other.c;
 	}
@@ -743,6 +748,17 @@ template<typename T> inline T radToDeg(T v) {
 }
 template<typename T> inline T degToRad(T v) {
 	return (T)((v / 180.0) * PI());
+}
+
+template<typename T> T wrap(T v, T min, T max) {
+	const float range = max - min;
+	if (range == 0)
+		return min; // Avoid divide-by-zero.
+
+	const float normalized = (v - min) / range;
+	const float wrapped = normalized - std::floor(normalized);
+
+	return min + wrapped * range;
 }
 
 template<typename T> inline T clamp(T v, T lo, T hi) {

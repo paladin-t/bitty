@@ -3183,6 +3183,22 @@ static int Color___eq(lua_State* L) {
 	return write(L, false);
 }
 
+static int Color_toGray(lua_State* L) {
+	Color* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		const int ret = obj->toGray();
+
+		return write(L, ret);
+	} else {
+		error(L, "Color expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
 static int Color_toRGBA(lua_State* L) {
 	Color* obj = nullptr;
 	read<>(L, obj);
@@ -3206,6 +3222,106 @@ static int Color_fromRGBA(lua_State* L) {
 
 	if (obj) {
 		obj->fromRGBA(rgba);
+	} else {
+		error(L, "Color expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int Color_toARGB(lua_State* L) {
+	Color* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		const UInt32 ret = obj->toARGB();
+
+		return write(L, ret);
+	} else {
+		error(L, "Color expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int Color_fromARGB(lua_State* L) {
+	Color* obj = nullptr;
+	UInt32 argb = 0xffffffff;
+	read<>(L, obj, argb);
+
+	if (obj) {
+		obj->fromARGB(argb);
+	} else {
+		error(L, "Color expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int Color_toHSV(lua_State* L) {
+	Color* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		float h = 0, s = 0, v = 0;
+		Byte a = 0;
+		obj->toHSV(&h, &s, &v, &a);
+
+		return write(L, h, s, v, a);
+	} else {
+		error(L, "Color expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int Color_fromHSV(lua_State* L) {
+	const int n = getTop(L);
+	Color* obj = nullptr;
+	float h = 0, s = 0, v = 0;
+	Byte a = 255;
+	if (n >= 5)
+		read<>(L, obj, h, s, v, a);
+	else
+		read<>(L, obj, h, s, v);
+
+	if (obj) {
+		obj->fromHSV(h, s, v, a);
+	} else {
+		error(L, "Color expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int Color_toString(lua_State* L) {
+	Color* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		const std::string ret = obj->toString();
+
+		return write(L, ret);
+	} else {
+		error(L, "Color expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int Color_fromString(lua_State* L) {
+	Color* obj = nullptr;
+	std::string str;
+	read<>(L, obj, str);
+
+	if (obj) {
+		obj->fromString(str);
 	} else {
 		error(L, "Color expected.");
 		warnForMethodCallSymbol(L);
@@ -3288,8 +3404,15 @@ static void open_Color(lua_State* L) {
 			luaL_Reg{ nullptr, nullptr }
 		),
 		array(
+			luaL_Reg{ "toGray", Color_toGray },
 			luaL_Reg{ "toRGBA", Color_toRGBA },
 			luaL_Reg{ "fromRGBA", Color_fromRGBA },
+			luaL_Reg{ "toARGB", Color_toARGB },
+			luaL_Reg{ "fromARGB", Color_fromARGB },
+			luaL_Reg{ "toHSV", Color_toHSV },
+			luaL_Reg{ "fromHSV", Color_fromHSV },
+			luaL_Reg{ "toString", Color_toString },
+			luaL_Reg{ "fromString", Color_fromString },
 			luaL_Reg{ nullptr, nullptr }
 		),
 		Color___index, Color___newindex
@@ -5315,46 +5438,6 @@ static int Json_ctor(lua_State* L) {
 	return write(L, &obj);
 }
 
-static int Json_toString(lua_State* L) {
-	const int n = getTop(L);
-	Json::Ptr* obj = nullptr;
-	bool pretty = true;
-	if (n >= 2)
-		read<>(L, obj, pretty);
-	else
-		read<>(L, obj);
-
-	if (obj) {
-		std::string val;
-		if (obj->get()->toString(val, pretty))
-			return write(L, val);
-
-		return 0;
-	} else {
-		error(L, "Json expected.");
-		warnForMethodCallSymbol(L);
-	}
-
-	return 0;
-}
-
-static int Json_fromString(lua_State* L) {
-	Json::Ptr* obj = nullptr;
-	std::string val;
-	read<>(L, obj, val);
-
-	if (obj) {
-		const bool ret = obj->get()->fromString(val);
-
-		return write(L, ret);
-	} else {
-		error(L, "Json expected.");
-		warnForMethodCallSymbol(L);
-	}
-
-	return 0;
-}
-
 static int Json_toTable(lua_State* L) {
 	const int n = getTop(L);
 	Json::Ptr* obj = nullptr;
@@ -5397,6 +5480,98 @@ static int Json_fromTable(lua_State* L) {
 	return 0;
 }
 
+static int Json_toString(lua_State* L) {
+	const int n = getTop(L);
+	Json::Ptr* obj = nullptr;
+	bool pretty = true;
+	if (n >= 2)
+		read<>(L, obj, pretty);
+	else
+		read<>(L, obj);
+
+	if (obj) {
+		std::string val;
+		if (obj->get()->toString(val, pretty))
+			return write(L, val);
+
+		return 0;
+	} else {
+		error(L, "Json expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int Json_fromString(lua_State* L) {
+	Json::Ptr* obj = nullptr;
+	std::string val;
+	read<>(L, obj, val);
+
+	if (obj) {
+		const bool ret = obj->get()->fromString(val);
+
+		return write(L, ret);
+	} else {
+		error(L, "Json expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int Json_toBytes(lua_State* L) {
+	const int n = getTop(L);
+	Json::Ptr* obj = nullptr;
+	bool pretty = true;
+	if (n >= 2)
+		read<>(L, obj, pretty);
+	else
+		read<>(L, obj);
+
+	if (obj) {
+		std::string str;
+		if (!obj->get()->toString(str, pretty))
+			return 0;
+
+		Bytes::Ptr val(Bytes::create());
+		val->writeString(str);
+
+		return write(L, &val);
+	} else {
+		error(L, "Json expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int Json_fromBytes(lua_State* L) {
+	Json::Ptr* obj = nullptr;
+	Bytes::Ptr* val = nullptr;
+	read<>(L, obj, val);
+
+	if (obj) {
+		if (val) {
+			val->get()->poke(0);
+			std::string str;
+			if (!val->get()->readString(str))
+				return 0;
+
+			const bool ret = obj->get()->fromString(str);
+
+			return write(L, ret);
+		} else {
+			error(L, "Bytes expected.");
+		}
+	} else {
+		error(L, "Json expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
 static void open_Json(lua_State* L) {
 	def(
 		L, "Json",
@@ -5412,10 +5587,12 @@ static void open_Json(lua_State* L) {
 			luaL_Reg{ nullptr, nullptr }
 		),
 		array(
-			luaL_Reg{ "toString", Json_toString },
-			luaL_Reg{ "fromString", Json_fromString },
 			luaL_Reg{ "toTable", Json_toTable },
 			luaL_Reg{ "fromTable", Json_fromTable },
+			luaL_Reg{ "toString", Json_toString },
+			luaL_Reg{ "fromString", Json_fromString },
+			luaL_Reg{ "toBytes", Json_toBytes },
+			luaL_Reg{ "fromBytes", Json_fromBytes },
 			luaL_Reg{ nullptr, nullptr }
 		),
 		nullptr, nullptr

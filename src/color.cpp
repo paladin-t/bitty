@@ -123,11 +123,53 @@ Color &Color::operator *= (Real other) {
 }
 
 bool Color::operator == (const Color &other) const {
-	return r == other.r && g == other.g && b == other.b && a == other.a;
+	return equals(other);
 }
 
 bool Color::operator != (const Color &other) const {
-	return r != other.r || g != other.g || b != other.b || a != other.a;
+	return !equals(other);
+}
+
+bool Color::operator < (const Color &other) const {
+	return compare(other) < 0;
+}
+
+bool Color::operator > (const Color &other) const {
+	return compare(other) > 0;
+}
+
+int Color::compare(const Color &other) const {
+	if (r < other.r)
+		return -1;
+	else if (r > other.r)
+		return 1;
+
+	if (g < other.g)
+		return -1;
+	else if (g > other.g)
+		return 1;
+
+	if (b < other.b)
+		return -1;
+	else if (b > other.b)
+		return 1;
+
+	if (a < other.a)
+		return -1;
+	else if (a > other.a)
+		return 1;
+
+	return 0;
+}
+
+bool Color::equals(const Color &other) const {
+	return r == other.r && g == other.g && b == other.b && a == other.a;
+}
+
+int Color::toGray(void) const {
+	const int y = (int)(r * 0.3 + g * 0.59 + b * 0.11);
+
+	return y;
 }
 
 UInt32 Color::toRGBA(void) const {
@@ -136,6 +178,54 @@ UInt32 Color::toRGBA(void) const {
 
 UInt32 Color::toARGB(void) const {
 	return (a << 0) | (r << 8) | (g << 16) | (b << 24);
+}
+
+void Color::toHSV(float* h_, float* s_, float* v_, Byte* a_) const {
+	if (h_)
+		*h_ = 0.0f;
+	if (s_)
+		*s_ = 0.0f;
+	if (v_)
+		*v_ = 0.0f;
+	if (a_)
+		*a_ = 0;
+
+	const float r_ = r / 255.0f;
+	const float g_ = g / 255.0f;
+	const float b_ = b / 255.0f;
+	
+	const float cmax = std::max(std::max(r_, g_), b_);
+	const float cmin = std::min(std::min(r_, g_), b_);
+	const float delta = cmax - cmin;
+	
+	const float v = cmax;
+	
+	float s = 0.0f;
+	if (cmax < 1e-5f)
+		s = 0;
+	else
+		s = delta / cmax;
+	
+	float h = 0.0f;
+	if (delta < 1e-5f)
+		h = 0;
+	else if (cmax == r_)
+		h = 60 * (float)std::fmod((g_ - b_) / delta, 6);
+	else if (cmax == g_)
+		h = 60 * (((b_ - r_) / delta) + 2);
+	else
+		h = 60 * (((r_ - g_) / delta) + 4);
+	if (h < 0)
+		h += 360;
+
+	if (h_)
+		*h_ = h;
+	if (s_)
+		*s_ = s;
+	if (v_)
+		*v_ = v;
+	if (a_)
+		*a_ = a;
 }
 
 void Color::fromRGBA(UInt32 rgba) {
@@ -150,6 +240,36 @@ void Color::fromARGB(UInt32 argb) {
 	r = (Byte)((argb & 0x0000ff00) >> 8);
 	g = (Byte)((argb & 0x00ff0000) >> 16);
 	b = (Byte)((argb & 0xff000000) >> 24);
+}
+
+void Color::fromHSV(float h, float s, float v, Byte a_) {
+	h = Math::wrap(h, 0.0f, 360.0f);
+	s = Math::clamp(s, 0.0f, 1.0f);
+	v = Math::clamp(v, 0.0f, 1.0f);
+	
+	const float c = v * s;
+	const float x = c * (1 - std::abs((float)std::fmod(h / 60.0f, 2) - 1));
+	const float m = v - c;
+	
+	float r_, g_, b_;
+	if (h < 60) {
+		r_ = c; g_ = x; b_ = 0;
+	} else if (h < 120) {
+		r_ = x; g_ = c; b_ = 0;
+	} else if (h < 180) {
+		r_ = 0; g_ = c; b_ = x;
+	} else if (h < 240) {
+		r_ = 0; g_ = x; b_ = c;
+	} else if (h < 300) {
+		r_ = x; g_ = 0; b_ = c;
+	} else {
+		r_ = c; g_ = 0; b_ = x;
+	}
+	
+	r = (Byte)((r_ + m) * 255);
+	g = (Byte)((g_ + m) * 255);
+	b = (Byte)((b_ + m) * 255);
+	a = a_;
 }
 
 std::string Color::toString(void) const {
