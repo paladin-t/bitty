@@ -54,19 +54,19 @@ public:
 
 	virtual bool open(const char* path, Stream::Accesses access) override {
 		if (_opened)
-			return true;
+			return false;
 
 		_path = path;
 
 		int flags = 0;
 		switch (access) {
 		case Stream::Accesses::WRITE: // Fall through.
-		case Stream::Accesses::APPEND: // Fall through.
-			fprintf(stderr, "Unsupported access mode \"%s\", fall to \"%s\".\n", access == Stream::Accesses::WRITE ? "WRITE" : "APPEND", "READ_WRITE");
-
-			// Fall through.
 		case Stream::Accesses::READ_WRITE:
 			flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
+
+			break;
+		case Stream::Accesses::APPEND:
+			flags = SQLITE_OPEN_READWRITE;
 
 			break;
 		case Stream::Accesses::READ: // Fall through.
@@ -74,7 +74,7 @@ public:
 			if (access != Stream::Accesses::READ)
 				fprintf(stderr, "Unsupported access mode %d, fall to \"%s\".\n", (int)access, "READ");
 
-			flags = SQLITE_OPEN_READONLY | SQLITE_OPEN_CREATE;
+			flags = SQLITE_OPEN_READONLY;
 
 			break;
 		}
@@ -88,7 +88,7 @@ public:
 	}
 	virtual bool close(void) override {
 		if (!_opened)
-			return true;
+			return false;
 
 		_db.disconnect();
 		_path.clear();

@@ -1172,9 +1172,38 @@ public:
 			io.KeyShift                             = oldIo.KeyShift;
 			io.KeyAlt                               = oldIo.KeyAlt;
 			io.KeySuper                             = oldIo.KeySuper;
-			memcpy(io.KeysDown,                       oldIo.KeysDown,                       sizeof(oldIo.KeysDown));
 			io.KeyMods                              = oldIo.KeyMods;
 			io.KeyModsPrev                          = oldIo.KeyModsPrev;
+			memcpy(io.KeysDown,                       oldIo.KeysDown,                       sizeof(oldIo.KeysDown));
+
+			memcpy(io.KeyMap,                         oldIo.KeyMap,                         sizeof(oldIo.KeyMap));
+			io.KeyRepeatDelay                       = oldIo.KeyRepeatDelay;
+			io.KeyRepeatRate                        = oldIo.KeyRepeatRate;
+			memcpy(io.KeysDownDuration,               oldIo.KeysDownDuration,               sizeof(oldIo.KeysDownDuration));
+			memcpy(io.KeysDownDurationPrev,           oldIo.KeysDownDurationPrev,           sizeof(oldIo.KeysDownDurationPrev));
+
+			io.MouseDoubleClickTime                 = oldIo.MouseDoubleClickTime;
+			io.MouseDoubleClickMaxDist              = oldIo.MouseDoubleClickMaxDist;
+			io.MouseDragThreshold                   = oldIo.MouseDragThreshold;
+			io.MouseWheel                           = oldIo.MouseWheel;
+			io.MouseWheelH                          = oldIo.MouseWheelH;
+			io.MouseDelta                           = oldIo.MouseDelta;
+			io.MousePosPrev                         = oldIo.MousePosPrev;
+			memcpy(io.MouseDown,                      oldIo.MouseDown,                      sizeof(oldIo.MouseDown));
+			memcpy(io.MouseClickedPos,                oldIo.MouseClickedPos,                sizeof(oldIo.MouseClickedPos));
+			memcpy(io.MouseClickedTime,               oldIo.MouseClickedTime,               sizeof(oldIo.MouseClickedTime));
+			memcpy(io.MouseClicked,                   oldIo.MouseClicked,                   sizeof(oldIo.MouseClicked));
+			memcpy(io.MouseReleased,                  oldIo.MouseReleased,                  sizeof(oldIo.MouseReleased));
+			memcpy(io.MouseDownOwned,                 oldIo.MouseDownOwned,                 sizeof(oldIo.MouseDownOwned));
+			memcpy(io.MouseDownOwnedUnlessPopupClose, oldIo.MouseDownOwnedUnlessPopupClose, sizeof(oldIo.MouseDownOwnedUnlessPopupClose));
+			memcpy(io.MouseDownWasDoubleClick,        oldIo.MouseDownWasDoubleClick,        sizeof(oldIo.MouseDownWasDoubleClick));
+			memcpy(io.MouseDownDuration,              oldIo.MouseDownDuration,              sizeof(oldIo.MouseDownDuration));
+			memcpy(io.MouseDownDurationPrev,          oldIo.MouseDownDurationPrev,          sizeof(oldIo.MouseDownDurationPrev));
+			memcpy(io.MouseDragMaxDistanceAbs,        oldIo.MouseDragMaxDistanceAbs,        sizeof(oldIo.MouseDragMaxDistanceAbs));
+			memcpy(io.MouseDragMaxDistanceSqr,        oldIo.MouseDragMaxDistanceSqr,        sizeof(oldIo.MouseDragMaxDistanceSqr));
+
+			io.InputQueueSurrogate                  = oldIo.InputQueueSurrogate;
+			io.InputQueueCharacters                 = oldIo.InputQueueCharacters;
 		} while (false);
 
 		refreshFonts(wnd, rnd, io);
@@ -1202,34 +1231,8 @@ public:
 				}
 			}
 
-			io.MouseDoubleClickTime                 = oldIo.MouseDoubleClickTime;
-			io.MouseDoubleClickMaxDist              = oldIo.MouseDoubleClickMaxDist;
-			io.MouseDragThreshold                   = oldIo.MouseDragThreshold;
-			memcpy(io.KeyMap,                         oldIo.KeyMap,                         sizeof(oldIo.KeyMap));
-			io.KeyRepeatDelay                       = oldIo.KeyRepeatDelay;
-			io.KeyRepeatRate                        = oldIo.KeyRepeatRate;
 			io.MousePos                             = oldIo.MousePos;
-			memcpy(io.MouseDown,                      oldIo.MouseDown,                      sizeof(oldIo.MouseDown));
-			io.MouseWheel                           = oldIo.MouseWheel;
-			io.MouseWheelH                          = oldIo.MouseWheelH;
-			io.MouseDelta                           = oldIo.MouseDelta;
-			io.MousePosPrev                         = oldIo.MousePosPrev;
-			memcpy(io.MouseClickedPos,                oldIo.MouseClickedPos,                sizeof(oldIo.MouseClickedPos));
-			memcpy(io.MouseClickedTime,               oldIo.MouseClickedTime,               sizeof(oldIo.MouseClickedTime));
-			memcpy(io.MouseClicked,                   oldIo.MouseClicked,                   sizeof(oldIo.MouseClicked));
 			memcpy(io.MouseDoubleClicked,             oldIo.MouseDoubleClicked,             sizeof(oldIo.MouseDoubleClicked));
-			memcpy(io.MouseReleased,                  oldIo.MouseReleased,                  sizeof(oldIo.MouseReleased));
-			memcpy(io.MouseDownOwned,                 oldIo.MouseDownOwned,                 sizeof(oldIo.MouseDownOwned));
-			memcpy(io.MouseDownOwnedUnlessPopupClose, oldIo.MouseDownOwnedUnlessPopupClose, sizeof(oldIo.MouseDownOwnedUnlessPopupClose));
-			memcpy(io.MouseDownWasDoubleClick,        oldIo.MouseDownWasDoubleClick,        sizeof(oldIo.MouseDownWasDoubleClick));
-			memcpy(io.MouseDownDuration,              oldIo.MouseDownDuration,              sizeof(oldIo.MouseDownDuration));
-			memcpy(io.MouseDownDurationPrev,          oldIo.MouseDownDurationPrev,          sizeof(oldIo.MouseDownDurationPrev));
-			memcpy(io.MouseDragMaxDistanceAbs,        oldIo.MouseDragMaxDistanceAbs,        sizeof(oldIo.MouseDragMaxDistanceAbs));
-			memcpy(io.MouseDragMaxDistanceSqr,        oldIo.MouseDragMaxDistanceSqr,        sizeof(oldIo.MouseDragMaxDistanceSqr));
-			memcpy(io.KeysDownDuration,               oldIo.KeysDownDuration,               sizeof(oldIo.KeysDownDuration));
-			memcpy(io.KeysDownDurationPrev,           oldIo.KeysDownDurationPrev,           sizeof(oldIo.KeysDownDurationPrev));
-			io.InputQueueSurrogate                  = oldIo.InputQueueSurrogate;
-			io.InputQueueCharacters                 = oldIo.InputQueueCharacters;
 
 			do {
 				Math::Vec2i pos((int)io.MousePos.x, (int)io.MousePos.y);
@@ -1528,7 +1531,7 @@ private:
 				Math::Vec2f glyphOffset(0, 0);
 
 				Jpath::get(*fonts, operation, i, "operation");
-				Jpath::get(*fonts, usage, i, "usage");
+				Jpath::get(*fonts, usage, i, "usage"); // Trivial for `TextBox` font.
 				Jpath::get(*fonts, path, i, "path");
 				Jpath::get(*fonts, size, i, "size");
 				Jpath::get(*fonts, ranges, i, "ranges");
