@@ -336,6 +336,7 @@ bool Theme::open(class Renderer* rnd) {
 	windowPreferences_Editor_None("None");
 	windowPreferences_Editor_PackageFormat("Package format");
 	windowPreferences_Editor_Project("Project:");
+	windowPreferences_Editor_ShowRecentOpenedProjects("Show recent opened projects");
 	windowPreferences_Editor_ShowWhiteSpaces("Show white spaces");
 	windowPreferences_Editor_TextEditor("Text editor:");
 	windowPreferences_Graphics_Application("Application:");

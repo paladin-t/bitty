@@ -110,6 +110,7 @@ WorkspaceStudio::StudioSettings &WorkspaceStudio::StudioSettings::operator = (co
 
 	themeStyle = other.themeStyle;
 
+	recentListEnabled = other.recentListEnabled;
 	recentTouched = other.recentTouched;
 
 	return *this;
@@ -182,6 +183,8 @@ bool WorkspaceStudio::StudioSettings::operator != (const StudioSettings &other) 
 	if (themeStyle != other.themeStyle)
 		return true;
 
+	if (recentListEnabled != other.recentListEnabled)
+		return true;
 	// `recentTouched` is ignored here.
 
 	return false;
@@ -526,14 +529,18 @@ bool WorkspaceStudio::load(class Window* wnd, class Renderer* rnd, const class P
 
 	Jpath::get(doc, _settings.themeStyle, "theme", "style");
 
-	_settings.recentTouched.clear();
-	for (int i = 0; i < WORKSPACE_RECENT_FILE_MAX_COUNT; ++i) {
-		unsigned type = 0;
-		std::string path;
-		if (!Jpath::get(doc, type, "file", "recent", i, "type") || !Jpath::get(doc, path, "file", "recent", i, "path"))
-			continue;
+	Jpath::get(doc, _settings.recentListEnabled, "recent", "enabled");
 
-		_settings.recentTouched.push_back(StudioSettings::RecentTouched((StudioSettings::RecentTouched::Types)type, path));
+	_settings.recentTouched.clear();
+	if (_settings.recentListEnabled) {
+		for (int i = 0; i < WORKSPACE_RECENT_FILE_MAX_COUNT; ++i) {
+			unsigned type = 0;
+			std::string path;
+			if (!Jpath::get(doc, type, "recent", "files", i, "type") || !Jpath::get(doc, path, "recent", "files", i, "path"))
+				continue;
+
+			_settings.recentTouched.push_back(StudioSettings::RecentTouched((StudioSettings::RecentTouched::Types)type, path));
+		}
 	}
 
 	return true;
@@ -545,11 +552,15 @@ bool WorkspaceStudio::save(class Window* wnd, class Renderer* rnd, const class P
 
 	Jpath::set(doc, doc, _settings.themeStyle, "theme", "style");
 
-	for (int i = 0; i < WORKSPACE_RECENT_FILE_MAX_COUNT && i < (int)_settings.recentTouched.size(); ++i) {
-		const unsigned type = (unsigned)_settings.recentTouched[i].type;
-		const std::string &path = _settings.recentTouched[i].path;
-		Jpath::set(doc, doc, type, "file", "recent", i, "type");
-		Jpath::set(doc, doc, path, "file", "recent", i, "path");
+	Jpath::set(doc, doc, _settings.recentListEnabled, "recent", "enabled");
+
+	if (_settings.recentListEnabled) {
+		for (int i = 0; i < WORKSPACE_RECENT_FILE_MAX_COUNT && i < (int)_settings.recentTouched.size(); ++i) {
+			const unsigned type = (unsigned)_settings.recentTouched[i].type;
+			const std::string &path = _settings.recentTouched[i].path;
+			Jpath::set(doc, doc, type, "recent", "files", i, "type");
+			Jpath::set(doc, doc, path, "recent", "files", i, "path");
+		}
 	}
 
 	return true;
@@ -655,7 +666,7 @@ void WorkspaceStudio::loadProject(class Window* wnd, class Renderer* rnd, const 
 #endif /* WORKSPACE_AUTORUN_ENABLED */
 
 		// Open the last project.
-		if (!start && _settings.projectLoadLastProjectAtStartup) {
+		if (!start && _settings.projectLoadLastProjectAtStartup && _settings.recentListEnabled) {
 			for (int i = 0; i < WORKSPACE_RECENT_FILE_MAX_COUNT && i < (int)_settings.recentTouched.size(); ++i) {
 				const StudioSettings::RecentTouched::Types type = _settings.recentTouched[i].type;
 				const std::string &path = _settings.recentTouched[i].path;
@@ -733,6 +744,9 @@ void WorkspaceStudio::refresh(class Window* wnd, class Renderer*, const class Pr
 }
 
 void WorkspaceStudio::addRecentTouched(StudioSettings::RecentTouched::Types type, const char* path) {
+	if (!_settings.recentListEnabled)
+		return;
+
 	if (!path)
 		return;
 
@@ -1230,7 +1244,7 @@ void WorkspaceStudio::menu(class Window* wnd, class Renderer* rnd, const class P
 					ImGui::EndMenu();
 				}
 			}
-			if (ImGui::BeginMenu(_theme->menuFile_OpenRecent(), !_settings.recentTouched.empty())) {
+			if (_settings.recentListEnabled && ImGui::BeginMenu(_theme->menuFile_OpenRecent(), !_settings.recentTouched.empty())) {
 				for (int i = 0; i < WORKSPACE_RECENT_FILE_MAX_COUNT && i < (int)_settings.recentTouched.size(); ++i) {
 					const unsigned type = (unsigned)_settings.recentTouched[i].type;
 					const std::string &path = _settings.recentTouched[i].path;
@@ -1700,6 +1714,12 @@ void WorkspaceStudio::showPreferences(class Window* wnd, class Renderer*, const 
 							editor->post(Editable::SET_THEME_STYLE, (Variant::Int)_theme->styleIndex());
 					}
 				);
+			}
+
+			if (sets.recentListEnabled != _settings.recentListEnabled) {
+				_settings.recentListEnabled = sets.recentListEnabled;
+				if (!_settings.recentListEnabled)
+					_settings.recentTouched.clear();
 			}
 
 			if (sets.projectPreference != prj->preference()) {

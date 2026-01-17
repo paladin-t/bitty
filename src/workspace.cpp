@@ -840,11 +840,11 @@ void Workspace::msgbox(Promise::Ptr &promise, const char* msg, const char* confi
 		else
 			popupPromiseConfirmText().clear();
 		if (denyTxt)
-			popupPromiseDenyText(confirmTxt);
+			popupPromiseDenyText(denyTxt);
 		else
 			popupPromiseDenyText().clear();
 		if (cancelTxt)
-			popupPromiseCancelText(confirmTxt);
+			popupPromiseCancelText(cancelTxt);
 		else
 			popupPromiseCancelText().clear();
 	} else {

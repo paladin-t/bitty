@@ -389,37 +389,31 @@ static int waitbox(lua_State* L) {
 static int msgbox(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
-	const bool plug = isPlugin(L);
-
 	const int n = getTop(L);
 	std::string msg;
 	bool withConfirm = false, withDeny = false, withCancel = false;
 	std::string confirmTxt, denyTxt, cancelTxt;
-	if (plug) {
-		if (n >= 4) {
-			withConfirm = true;
-			withDeny = true;
-			withCancel = true;
-			read<>(L, msg, confirmTxt, denyTxt, cancelTxt);
-		} else if (n == 3) {
-			withConfirm = true;
-			withDeny = true;
-			read<>(L, msg, confirmTxt, denyTxt);
-		} else if (n == 2) {
-			withConfirm = true;
-			read<>(L, msg, confirmTxt);
-		} else {
-			read<>(L, msg);
-		}
-		if (withConfirm && confirmTxt.empty())
-			confirmTxt = EXECUTABLE_ANY_NAME;
-		if (withDeny && denyTxt.empty())
-			denyTxt = EXECUTABLE_ANY_NAME;
-		if (withCancel && cancelTxt.empty())
-			cancelTxt = EXECUTABLE_ANY_NAME;
+	if (n >= 4) {
+		withConfirm = true;
+		withDeny = true;
+		withCancel = true;
+		read<>(L, msg, confirmTxt, denyTxt, cancelTxt);
+	} else if (n == 3) {
+		withConfirm = true;
+		withDeny = true;
+		read<>(L, msg, confirmTxt, denyTxt);
+	} else if (n == 2) {
+		withConfirm = true;
+		read<>(L, msg, confirmTxt);
 	} else {
 		read<>(L, msg);
 	}
+	if (withConfirm && confirmTxt.empty())
+		confirmTxt = EXECUTABLE_ANY_NAME;
+	if (withDeny && denyTxt.empty())
+		denyTxt = EXECUTABLE_ANY_NAME;
+	if (withCancel && cancelTxt.empty())
+		cancelTxt = EXECUTABLE_ANY_NAME;
 
 	if (impl->observer()->promising()) {
 		error(L, "Too many pending popups.");
@@ -428,7 +422,7 @@ static int msgbox(lua_State* L) {
 	}
 
 	Promise::Ptr promise = nullptr;
-	const int result = Promise_ctor(L, promise, plug);
+	const int result = Promise_ctor(L, promise, true);
 
 	impl->observer()->msgbox(
 		promise,
@@ -546,7 +540,7 @@ static void open_Standard(lua_State* L) {
 		L,
 		array(
 			luaL_Reg{ "waitbox", waitbox }, // Undocumented. Asynchronized.
-			luaL_Reg{ "msgbox", msgbox }, // Synchronized for main project, asynchronized for plugin.
+			luaL_Reg{ "msgbox", msgbox }, // Asynchronized.
 			luaL_Reg{ "input", input }, // Synchronized for main project, asynchronized for plugin.
 			luaL_Reg{ nullptr, nullptr }
 		)

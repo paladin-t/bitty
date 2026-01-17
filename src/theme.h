@@ -266,6 +266,7 @@ public:
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_None)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_PackageFormat)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_Project)
+	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_ShowRecentOpenedProjects)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_ShowWhiteSpaces)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Editor_TextEditor)
 	BITTY_PROPERTY_READONLY(std::string, windowPreferences_Input_ClickAgainToCancelBackspaceToClear)

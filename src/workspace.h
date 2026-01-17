@@ -186,7 +186,7 @@ public:
 
 		unsigned projectPreference = 0;
 		bool projectIgnoreDotFiles = true;
-		bool projectLoadLastProjectAtStartup = false;
+		bool projectLoadLastProjectAtStartup = true;
 		bool projectAutoBackup = false;
 
 		bool bannerVisible = true;

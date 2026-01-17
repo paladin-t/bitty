@@ -119,7 +119,15 @@ void PreferencesPopupBox::update(void) {
 
 					TextUnformatted(_theme->windowPreferences_NeedToReopen());
 
-					Checkbox(_theme->windowPreferences_Editor_LoadLastProjectAtStartup(), &_settingsShadow.projectLoadLastProjectAtStartup);
+					Checkbox(_theme->windowPreferences_Editor_ShowRecentOpenedProjects(), &_settingsShadow.recentListEnabled);
+
+					if(_settingsShadow.recentListEnabled) {
+						Checkbox(_theme->windowPreferences_Editor_LoadLastProjectAtStartup(), &_settingsShadow.projectLoadLastProjectAtStartup);
+					} else {
+						BeginDisabled();
+						Checkbox(_theme->windowPreferences_Editor_LoadLastProjectAtStartup(), &_settingsShadow.projectLoadLastProjectAtStartup);
+						EndDisabled();
+					}
 
 					Checkbox(_theme->windowPreferences_Editor_AutoBackup(), &_settingsShadow.projectAutoBackup);
 				}

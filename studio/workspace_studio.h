@@ -43,6 +43,7 @@ public:
 
 		int themeStyle = 0;
 
+		bool recentListEnabled = true;
 		RecentTouched::Array recentTouched;
 
 		StudioSettings();
