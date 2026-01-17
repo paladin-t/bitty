@@ -1024,7 +1024,7 @@ CodeEditor::CodeEditor() :
 	ColorizationEnabled(true),
 	ColorRangeMin(0),
 	ColorRangeMax(0),
-	InputtedRangedPair(false),
+	InputtedRangedPair(0),
 	CheckMultilineComments(0),
 	ErrorTipEnabled(true),
 	TooltipEnabled(true),
@@ -1659,7 +1659,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
 				EnsureCursorVisible(false, true);
 				OnLineClicked(State.CursorPosition.Line, false);
-				InputtedRangedPair = false;
+				InputtedRangedPair = (Char)'\0';
 			}
 			if (IsMouseDoubleClicked(ImGuiMouseButton_Left) && !ctrl) {
 				if (dblClkLineNo == -1) {
@@ -1682,7 +1682,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				State.CursorPosition = InteractiveEnd = SanitizeCoordinates(ScreenPosToCoordinates(GetMousePos()));
 				SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
 				EnsureCursorVisible(false, true);
-				InputtedRangedPair = false;
+				InputtedRangedPair = (Char)'\0';
 			}
 		}
 
@@ -2166,7 +2166,7 @@ void CodeEditor::MoveUp(int aAmount, bool aSelect) {
 		EnsureCursorVisible();
 	}
 
-	InputtedRangedPair = false;
+	InputtedRangedPair = (Char)'\0';
 }
 
 void CodeEditor::MoveDown(int aAmount, bool aSelect) {
@@ -2192,7 +2192,7 @@ void CodeEditor::MoveDown(int aAmount, bool aSelect) {
 		EnsureCursorVisible();
 	}
 
-	InputtedRangedPair = false;
+	InputtedRangedPair = (Char)'\0';
 }
 
 void CodeEditor::MoveLeft(int aAmount, bool aSelect, bool aWordMode) {
@@ -2239,7 +2239,7 @@ void CodeEditor::MoveLeft(int aAmount, bool aSelect, bool aWordMode) {
 
 	EnsureCursorVisible();
 
-	InputtedRangedPair = false;
+	InputtedRangedPair = (Char)'\0';
 }
 
 void CodeEditor::MoveRight(int aAmount, bool aSelect, bool aWordMode) {
@@ -2285,7 +2285,7 @@ void CodeEditor::MoveRight(int aAmount, bool aSelect, bool aWordMode) {
 
 	EnsureCursorVisible();
 
-	InputtedRangedPair = false;
+	InputtedRangedPair = (Char)'\0';
 }
 
 void CodeEditor::MoveTop(bool aSelect) {
@@ -2300,7 +2300,7 @@ void CodeEditor::MoveTop(bool aSelect) {
 	}
 	SetSelection(InteractiveStart, InteractiveEnd);
 
-	InputtedRangedPair = false;
+	InputtedRangedPair = (Char)'\0';
 }
 
 void CodeEditor::CodeEditor::MoveBottom(bool aSelect) {
@@ -2315,7 +2315,7 @@ void CodeEditor::CodeEditor::MoveBottom(bool aSelect) {
 	}
 	SetSelection(InteractiveStart, InteractiveEnd);
 
-	InputtedRangedPair = false;
+	InputtedRangedPair = (Char)'\0';
 }
 
 void CodeEditor::MoveHome(bool aSelect) {
@@ -2359,7 +2359,7 @@ void CodeEditor::MoveHome(bool aSelect) {
 	if (State.CursorPosition != oldPos || !aSelect)
 		SetSelection(InteractiveStart, InteractiveEnd);
 
-	InputtedRangedPair = false;
+	InputtedRangedPair = (Char)'\0';
 }
 
 void CodeEditor::MoveEnd(bool aSelect) {
@@ -2387,7 +2387,7 @@ void CodeEditor::MoveEnd(bool aSelect) {
 	if (State.CursorPosition != oldPos || !aSelect)
 		SetSelection(InteractiveStart, InteractiveEnd);
 
-	InputtedRangedPair = false;
+	InputtedRangedPair = (Char)'\0';
 }
 
 std::string CodeEditor::GetWordUnderCursor(Coordinates* aStart, Coordinates* aEnd) const {
@@ -4182,8 +4182,8 @@ void CodeEditor::EnterCharacter(Char aChar) {
 		SetSelection(State.CursorPosition, State.CursorPosition);
 
 		OnChanged(coord, Coordinates(coord.Line + 1, 0), 0, true);
-	} else if (rangedPairEnd && InputtedRangedPair) {
-		InputtedRangedPair = false;
+	} else if (rangedPairEnd && InputtedRangedPair && rangedPairEnd->second == InputtedRangedPair) {
+		InputtedRangedPair = (Char)'\0';
 		Coordinates c = GetCursorPosition();
 		++c.Column;
 		const Char ch = GetCharAt(c);
@@ -4210,7 +4210,7 @@ void CodeEditor::EnterCharacter(Char aChar) {
 		if (u.Overwritten.empty())
 			moveCursor = -1;
 
-		InputtedRangedPair = true;
+		InputtedRangedPair = rangedPairStart->second;
 	} else {
 		append = true;
 	}
@@ -4408,7 +4408,7 @@ void CodeEditor::OnChanged(const Coordinates &aStart, const Coordinates &aEnd, i
 	}
 
 	if (aClearInputtedRangedPair)
-		InputtedRangedPair = false;
+		InputtedRangedPair = (Char)'\0';
 }
 
 bool CodeEditor::OnKeyPressed(ImGuiKey aKey) {

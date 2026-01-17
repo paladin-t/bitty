@@ -519,7 +519,7 @@ protected:
 	int ColorRangeMin, ColorRangeMax;
 	std::string LastSymbol;
 	PaletteIndex LastSymbolPalette;
-	bool InputtedRangedPair;
+	Char InputtedRangedPair;
 	int CheckMultilineComments;
 	bool ErrorTipEnabled;
 	bool TooltipEnabled;
