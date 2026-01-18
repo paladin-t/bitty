@@ -1092,18 +1092,10 @@ public:
 		class Workspace* ws, const class Project* /* project */, class Executable* /* exec */,
 		const char* title,
 		float x, float y, float width, float height,
-		int scale,
+		int /* scale */,
 		bool /* pending */,
 		double /* delta */
 	) override {
-		if (!GetImePositionUpdatedHandler()) {
-			SetImePositionUpdatedHandler(
-				[scale] (const ImVec2 &pos) -> ImVec2 {
-					return ImVec2(pos.x * scale, pos.y * scale);
-				}
-			);
-		}
-
 		if (_acquireFocus) {
 			if (!ws->popupBox()) {
 				_acquireFocus = false;
@@ -1295,10 +1287,10 @@ public:
 		do {
 			Math::Vec2i pos((int)currentContext->PlatformImePos.x, (int)currentContext->PlatformImePos.y);
 			if (_options.affectedByCamera) {
-				pos.x -= _options.cameraPosition.x * scale;
-				pos.y -= _options.cameraPosition.y * scale;
+				pos.x -= _options.cameraPosition.x;
+				pos.y -= _options.cameraPosition.y;
 			}
-			toScreenPosition(pos, clientArea, canvasSize, scale); // Translate IME position from local space to screen space.
+			toScreenPosition(pos, clientArea, canvasSize, 1); // Translate IME position from local space to screen space.
 			_imePosition = ImVec2((float)pos.x, (float)pos.y);
 		} while (false);
 

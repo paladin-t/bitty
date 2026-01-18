@@ -2872,7 +2872,7 @@ void Workspace::plugins(class Window*, class Renderer*, const class Project*, do
 	}
 }
 
-void Workspace::finish(class Window* /* wnd */, class Renderer* /* rnd */, const class Project*) {
+void Workspace::finish(class Window* wnd, class Renderer* rnd, const class Project*) {
 	if (init().begin()) {
 		ImGuiWindow* wnd = ImGui::FindWindowByName("@Ed");
 		if (wnd)
@@ -2880,6 +2880,10 @@ void Workspace::finish(class Window* /* wnd */, class Renderer* /* rnd */, const
 	}
 
 	init().update();
+
+	ImGuiContext* context = ImGui::GetCurrentContext();
+	const int scale = rnd->scale() / wnd->scale();
+	context->PlatformImePos = ImVec2(context->PlatformImePos.x * scale, context->PlatformImePos.y * scale);
 }
 
 void Workspace::waitingPopupBox(

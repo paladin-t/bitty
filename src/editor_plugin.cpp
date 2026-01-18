@@ -490,14 +490,6 @@ public:
 
 		shortcuts(wnd, rnd, ws);
 
-		if (!GetImePositionUpdatedHandler()) {
-			SetImePositionUpdatedHandler(
-				[scale] (const ImVec2 &pos) -> ImVec2 {
-					return ImVec2(pos.x * scale, pos.y * scale);
-				}
-			);
-		}
-
 		const float statusBarHeight = ImGui::GetTextLineHeightWithSpacing() + style.FramePadding.y * 2;
 
 		float toolBarHeight = 0;
