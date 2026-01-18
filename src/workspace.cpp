@@ -1461,6 +1461,25 @@ void Workspace::execute(class Window* /* wnd */, class Renderer* rnd, const clas
 	}
 
 	if (!alive || halting()) {
+		do {
+			LockGuard<decltype(popupPromiseLock())> guard(popupPromiseLock());
+
+			if (popupPromise()) {
+				popupPromise()->reject(nullptr);
+
+				popupPromise(nullptr);
+			}
+
+			popupPromiseType(NONE);
+			popupPromise(nullptr);
+			popupPromiseHandler(nullptr);
+			popupPromiseContent().clear();
+			popupPromiseDefault().clear();
+			popupPromiseConfirmText().clear();
+			popupPromiseDenyText().clear();
+			popupPromiseCancelText().clear();
+		} while (false);
+
 		primitives->forbid();
 
 		exec->stop();
@@ -2874,9 +2893,9 @@ void Workspace::plugins(class Window*, class Renderer*, const class Project*, do
 
 void Workspace::finish(class Window* wnd, class Renderer* rnd, const class Project*) {
 	if (init().begin()) {
-		ImGuiWindow* wnd = ImGui::FindWindowByName("@Ed");
-		if (wnd)
-			ImGui::FocusWindow(wnd);
+		ImGuiWindow* wnd_ = ImGui::FindWindowByName("@Ed");
+		if (wnd_)
+			ImGui::FocusWindow(wnd_);
 	}
 
 	init().update();
