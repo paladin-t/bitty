@@ -46,7 +46,7 @@ public:
 	virtual void bake(
 		class Window* wnd, class Renderer* rnd,
 		class Workspace* ws,
-		float width, float height
+		float x, float y, float width, float height
 	) = 0;
 	virtual void render(
 		class Window* wnd, class Renderer* rnd,

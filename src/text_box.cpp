@@ -1124,7 +1124,7 @@ public:
 	virtual void bake(
 		class Window* wnd, class Renderer* rnd,
 		class Workspace* ws,
-		float width, float height
+		float x, float y, float width, float height
 	) override {
 		// Prepare.
 		if (!_opened)
@@ -1227,7 +1227,7 @@ public:
 			memcpy(io.MouseDoubleClicked,             oldIo.MouseDoubleClicked,             sizeof(oldIo.MouseDoubleClicked));
 
 			do {
-				Math::Vec2i pos((int)io.MousePos.x, (int)io.MousePos.y);
+				Math::Vec2i pos((int)(io.MousePos.x - x), (int)(io.MousePos.y - y));
 				fromScreenPosition(pos, clientArea, canvasSize, 1); // Translate mouse position from screen space to local space.
 				if (_options.affectedByCamera) {
 					pos.x += _options.cameraPosition.x;
@@ -1285,7 +1285,7 @@ public:
 		_mouseCursor = ImGui::GetMouseCursor();
 
 		do {
-			Math::Vec2i pos((int)currentContext->PlatformImePos.x, (int)currentContext->PlatformImePos.y);
+			Math::Vec2i pos((int)(currentContext->PlatformImePos.x + x), (int)(currentContext->PlatformImePos.y + y));
 			if (_options.affectedByCamera) {
 				pos.x -= _options.cameraPosition.x;
 				pos.y -= _options.cameraPosition.y;

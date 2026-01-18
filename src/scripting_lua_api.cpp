@@ -10886,7 +10886,7 @@ static int TextBox_update(lua_State* L) {
 				Renderer* rnd = impl->primitives()->renderer();
 				Workspace* ws = impl->primitives()->workspace();
 				const Math::Recti rect(x0, y0, x1, y1);
-				ptr_->bake(wnd, rnd, ws, (float)rect.width(), (float)rect.height());
+				ptr_->bake(wnd, rnd, ws, (float)rect.xMin(), (float)rect.yMin(), (float)rect.width(), (float)rect.height());
 			},
 			nullptr
 		);
