@@ -515,10 +515,30 @@ void WorkspaceStudio::dropBegan(class Window* wnd, class Renderer* rnd) {
 	_droppedFiles.clear();
 }
 
-void WorkspaceStudio::dropEndded(class Window* wnd, class Renderer* rnd, Executable* exec) {
-	Workspace::dropEndded(wnd, rnd, exec);
+void WorkspaceStudio::dropEndded(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec) {
+	Workspace::dropEndded(wnd, rnd, project, exec);
 
-	exec->fileDropped(_droppedFiles);
+	switch (currentState()) {
+	case Executable::READY: {
+			if (_droppedFiles.empty())
+				break;
+
+			const std::string &path = _droppedFiles.front();
+			if (Path::existsFile(path.c_str()))
+				Operations::fileOpenFile(rnd, this, project, exec, path.c_str());
+			else if (Path::existsDirectory(path.c_str()))
+				Operations::fileOpenDirectory(rnd, this, project, exec, path.c_str());
+		}
+
+		break;
+	case Executable::RUNNING: // Fall through.
+	case Executable::PAUSED:
+		exec->fileDropped(_droppedFiles);
+
+		break;
+	default: // Do nothing.
+		break;
+	}
 
 	_droppedFiles.clear();
 }

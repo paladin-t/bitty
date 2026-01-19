@@ -99,7 +99,7 @@ public:
 
 	virtual void fileDropped(class Window* wnd, class Renderer* rnd, const char* const path) override;
 	virtual void dropBegan(class Window* wnd, class Renderer* rnd) override;
-	virtual void dropEndded(class Window* wnd, class Renderer* rnd, Executable* exec) override;
+	virtual void dropEndded(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec) override;
 
 protected:
 	virtual bool load(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives, const rapidjson::Document &doc) override;

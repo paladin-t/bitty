@@ -1002,7 +1002,7 @@ void Workspace::dropBegan(class Window*, class Renderer*) {
 	// Do nothing.
 }
 
-void Workspace::dropEndded(class Window*, class Renderer*, Executable*) {
+void Workspace::dropEndded(class Window*, class Renderer*, const class Project*, Executable*) {
 	// Do nothing.
 }
 

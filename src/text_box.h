@@ -38,7 +38,7 @@ public:
 
 	virtual bool option(const std::string &key, const Variant &val) = 0;
 
-	virtual bool loadFont(const Json::Ptr &json, const FontData &fontData) = 0;
+	virtual bool useFont(const Json::Ptr &json, const FontData &fontData) = 0;
 
 	virtual const char* text(size_t* len) const = 0;
 	virtual void text(const char* txt, size_t len = 0) = 0;

@@ -810,7 +810,7 @@ private:
 			case SDL_DROPCOMPLETE:
 				fprintf(stdout, "SDL: SDL_DROPCOMPLETE.\n");
 
-				_workspace->dropEndded(_window, _renderer, _executable);
+				_workspace->dropEndded(_window, _renderer, _project, _executable);
 
 				break;
 			case SDL_RENDER_TARGETS_RESET:

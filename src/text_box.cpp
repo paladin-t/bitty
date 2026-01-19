@@ -740,7 +740,7 @@ public:
 		return false;
 	}
 
-	virtual bool loadFont(const Json::Ptr &json, const FontData &fontData) override {
+	virtual bool useFont(const Json::Ptr &json, const FontData &fontData) override {
 		if (!json)
 			return false;
 

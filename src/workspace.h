@@ -576,7 +576,7 @@ public:
 	/**
 	 * @brief Callback when drag&drop ends.
 	 */
-	virtual void dropEndded(class Window* wnd, class Renderer* rnd, Executable* exec);
+	virtual void dropEndded(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec);
 	/**
 	 * @brief Callback when the application is going to quit.
 	 */

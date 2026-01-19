@@ -10744,7 +10744,7 @@ static int TextBox_setOption(lua_State* L) {
 	return 0;
 }
 
-static int TextBox_loadFont(lua_State* L) {
+static int TextBox_useFont(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
 	TextBox::Ptr* obj = nullptr;
@@ -10801,7 +10801,7 @@ static int TextBox_loadFont(lua_State* L) {
 				if (!ptr_)
 					return;
 
-				ptr_->loadFont(json_, fontData);
+				ptr_->useFont(json_, fontData);
 			},
 			nullptr
 		);
@@ -10978,7 +10978,7 @@ static void open_TextBox(lua_State* L) {
 		),
 		array(
 			luaL_Reg{ "setOption", TextBox_setOption },
-			luaL_Reg{ "loadFont", TextBox_loadFont },
+			luaL_Reg{ "useFont", TextBox_useFont },
 			luaL_Reg{ "get", TextBox_get },
 			luaL_Reg{ "set", TextBox_set },
 			luaL_Reg{ "clear", TextBox_clear },

@@ -157,17 +157,25 @@ public:
 							const int n = row.column_bytes(i);
 							const void* ptr = row.get<const void*>(i);
 							Variant val = nullptr;
-							if (_blobType == BlobTypes::STRING) {
-								std::string str;
-								str.assign((const char*)ptr, (size_t)n);
-								val = str;
-							} else /* if (_blobType == BlobTypes::LIST) */ {
-								IList::Ptr lst(List::create());
-								for (int j = 0; j < n; ++j) {
-									const Byte byte = ((const Byte*)ptr)[j];
-									lst->add(Variant((Int)byte));
+							try {
+								if (_blobType == BlobTypes::STRING) {
+									std::string str;
+									str.assign((const char*)ptr, (size_t)n);
+									val = str;
+								} else /* if (_blobType == BlobTypes::LIST) */ {
+									IList::Ptr lst(List::create());
+									for (int j = 0; j < n; ++j) {
+										const Byte byte = ((const Byte*)ptr)[j];
+										lst->add(Variant((Int)byte));
+									}
+									val = (Object::Ptr)lst;
 								}
-								val = (Object::Ptr)lst;
+							} catch (const std::bad_alloc &) {
+								val = std::string("Cannot retrieve BLOB: no enough memory.");
+							} catch (const std::exception &ex) {
+								val = std::string("Cannot retrieve BLOB: ") + ex.what() + std::string(".");
+							} catch (...) {
+								val = std::string("Cannot retrieve BLOB: unknown error.");
 							}
 							lstCols->add(val);
 						}
