@@ -132,6 +132,8 @@ public:
 
 		_id = name;
 
+		SetPalette(ImGui::CodeEditor::GetLightPalette());
+
 		SetLanguageDefinition(LanguageDefinition::Text());
 
 		SetShowWhiteSpaces(false);
@@ -683,6 +685,39 @@ public:
 			SetPalette(plt);
 
 			return true;
+		} else if (key == "style_text") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_Text] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_Text] = true;
+
+			return true;
+		} else if (key == "style_popup_background") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_PopupBg] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_PopupBg] = true;
+
+			return true;
+		} else if (key == "style_border") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_Border] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_Border] = true;
+
+			return true;
 		} else if (key == "style_scrollbar_background") {
 			const std::string val_ = (std::string)val;
 			Color col;
@@ -725,6 +760,50 @@ public:
 			_options.toRefreshStyleColor = true;
 			_options.styleColors[ImGuiCol_ScrollbarGrabActive] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
 			_options.styleColorDirty[ImGuiCol_ScrollbarGrabActive] = true;
+
+			return true;
+		} else if (key == "style_header") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_Header] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_Header] = true;
+
+			return true;
+		} else if (key == "style_header_hovered") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_HeaderHovered] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_HeaderHovered] = true;
+
+			return true;
+		} else if (key == "style_header_active") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_HeaderActive] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_HeaderActive] = true;
+
+			return true;
+		} else if (key == "style_separator") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_Separator] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_Separator] = true;
 
 			return true;
 		}
@@ -1427,16 +1506,70 @@ private:
 			ImGuiStyle &style = ImGui::GetStyle();
 			ImGuiIO &io = ImGui::GetIO();
 
-			style.ScrollbarRounding = 0;
-			style.TabRounding = 0;
+			style.ScrollbarRounding                      = 0;
+			style.TabRounding                            = 0;
 
-			io.IniFilename = nullptr;
-			io.ConfigFlags            = oldIo.ConfigFlags;
-			io.BackendFlags           = oldIo.BackendFlags;
+			style.Colors[ImGuiCol_Text]                  = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
+			style.Colors[ImGuiCol_TextDisabled]          = ImVec4(0.60f, 0.60f, 0.60f, 1.00f);
+			style.Colors[ImGuiCol_WindowBg]              = ImVec4(0.94f, 0.94f, 0.94f, 1.00f);
+			style.Colors[ImGuiCol_ChildBg]               = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+			style.Colors[ImGuiCol_PopupBg]               = ImVec4(1.00f, 1.00f, 1.00f, 0.98f);
+			style.Colors[ImGuiCol_Border]                = ImVec4(0.00f, 0.00f, 0.00f, 0.30f);
+			style.Colors[ImGuiCol_BorderShadow]          = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+			style.Colors[ImGuiCol_FrameBg]               = ImVec4(0.90f, 0.90f, 0.90f, 1.00f);
+			style.Colors[ImGuiCol_FrameBgHovered]        = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
+			style.Colors[ImGuiCol_FrameBgActive]         = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+			style.Colors[ImGuiCol_TitleBg]               = ImVec4(0.96f, 0.96f, 0.96f, 1.00f);
+			style.Colors[ImGuiCol_TitleBgActive]         = ImVec4(0.82f, 0.82f, 0.82f, 1.00f);
+			style.Colors[ImGuiCol_TitleBgCollapsed]      = ImVec4(1.00f, 1.00f, 1.00f, 0.51f);
+			style.Colors[ImGuiCol_MenuBarBg]             = ImVec4(0.86f, 0.86f, 0.86f, 1.00f);
+			style.Colors[ImGuiCol_ScrollbarBg]           = ImVec4(0.98f, 0.98f, 0.98f, 0.53f);
+			style.Colors[ImGuiCol_ScrollbarGrab]         = ImVec4(0.69f, 0.69f, 0.69f, 0.80f);
+			style.Colors[ImGuiCol_ScrollbarGrabHovered]  = ImVec4(0.49f, 0.49f, 0.49f, 0.80f);
+			style.Colors[ImGuiCol_ScrollbarGrabActive]   = ImVec4(0.49f, 0.49f, 0.49f, 1.00f);
+			style.Colors[ImGuiCol_CheckMark]             = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+			style.Colors[ImGuiCol_SliderGrab]            = ImVec4(0.26f, 0.59f, 0.98f, 0.78f);
+			style.Colors[ImGuiCol_SliderGrabActive]      = ImVec4(0.46f, 0.54f, 0.80f, 0.60f);
+			style.Colors[ImGuiCol_Button]                = ImVec4(0.82f, 0.82f, 0.82f, 1.00f);
+			style.Colors[ImGuiCol_ButtonHovered]         = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+			style.Colors[ImGuiCol_ButtonActive]          = ImVec4(0.06f, 0.53f, 0.98f, 1.00f);
+			style.Colors[ImGuiCol_Header]                = ImVec4(0.26f, 0.59f, 0.98f, 0.31f);
+			style.Colors[ImGuiCol_HeaderHovered]         = ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
+			style.Colors[ImGuiCol_HeaderActive]          = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+			style.Colors[ImGuiCol_Separator]             = ImVec4(0.39f, 0.39f, 0.39f, 0.62f);
+			style.Colors[ImGuiCol_SeparatorHovered]      = ImVec4(0.14f, 0.44f, 0.80f, 0.78f);
+			style.Colors[ImGuiCol_SeparatorActive]       = ImVec4(0.14f, 0.44f, 0.80f, 1.00f);
+			style.Colors[ImGuiCol_ResizeGrip]            = ImVec4(0.80f, 0.80f, 0.80f, 0.56f);
+			style.Colors[ImGuiCol_ResizeGripHovered]     = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+			style.Colors[ImGuiCol_ResizeGripActive]      = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+			style.Colors[ImGuiCol_Tab]                   = ImLerp(style.Colors[ImGuiCol_Header],    style.Colors[ImGuiCol_TitleBgActive], 0.90f);
+			style.Colors[ImGuiCol_TabHovered]            = ImVec4(0.00f, 0.48f, 0.80f, 1.00f);
+			style.Colors[ImGuiCol_TabActive]             = ImVec4(0.00f, 0.42f, 0.74f, 1.00f);
+			style.Colors[ImGuiCol_TabUnfocused]          = ImLerp(style.Colors[ImGuiCol_Tab],       style.Colors[ImGuiCol_TitleBg], 0.80f);
+			style.Colors[ImGuiCol_TabUnfocusedActive]    = ImLerp(style.Colors[ImGuiCol_TabActive], style.Colors[ImGuiCol_TitleBg], 0.40f);
+			style.Colors[ImGuiCol_PlotLines]             = ImVec4(0.39f, 0.39f, 0.39f, 1.00f);
+			style.Colors[ImGuiCol_PlotLinesHovered]      = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
+			style.Colors[ImGuiCol_PlotHistogram]         = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
+			style.Colors[ImGuiCol_PlotHistogramHovered]  = ImVec4(1.00f, 0.45f, 0.00f, 1.00f);
+			style.Colors[ImGuiCol_TableHeaderBg]         = ImVec4(0.78f, 0.87f, 0.98f, 1.00f);
+			style.Colors[ImGuiCol_TableBorderStrong]     = ImVec4(0.57f, 0.57f, 0.64f, 1.00f);
+			style.Colors[ImGuiCol_TableBorderLight]      = ImVec4(0.68f, 0.68f, 0.74f, 1.00f);
+			style.Colors[ImGuiCol_TableRowBg]            = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+			style.Colors[ImGuiCol_TableRowBgAlt]         = ImVec4(0.30f, 0.30f, 0.30f, 0.09f);
+			style.Colors[ImGuiCol_TextSelectedBg]        = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
+			style.Colors[ImGuiCol_DragDropTarget]        = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+			style.Colors[ImGuiCol_NavHighlight]          = style.Colors[ImGuiCol_HeaderHovered];
+			style.Colors[ImGuiCol_NavWindowingHighlight] = ImVec4(0.70f, 0.70f, 0.70f, 0.70f);
+			style.Colors[ImGuiCol_NavWindowingDimBg]     = ImVec4(0.20f, 0.20f, 0.20f, 0.20f);
+			style.Colors[ImGuiCol_ModalWindowDimBg]      = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
 
-			io.SetClipboardTextFn     = oldIo.SetClipboardTextFn;
-			io.GetClipboardTextFn     = oldIo.GetClipboardTextFn;
-			io.ClipboardUserData      = oldIo.ClipboardUserData;
+			io.IniFilename                               = nullptr;
+			io.ConfigFlags                               = oldIo.ConfigFlags;
+			io.BackendFlags                              = oldIo.BackendFlags;
+
+			io.SetClipboardTextFn                        = oldIo.SetClipboardTextFn;
+			io.GetClipboardTextFn                        = oldIo.GetClipboardTextFn;
+			io.ClipboardUserData                         = oldIo.ClipboardUserData;
 
 #if defined BITTY_OS_WIN
 			SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
