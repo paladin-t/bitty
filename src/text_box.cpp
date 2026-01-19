@@ -1408,8 +1408,6 @@ public:
 			rnd->clip();
 		}
 
-		rnd->flush();
-
 		rnd->target(oldTarget);
 
 		// Save the mouse cursor and IME states for later populating.
@@ -1780,6 +1778,7 @@ private:
 					const bool setDefault = operation == "set" /* && usage == "generic" */ && glyphRanges == io.Fonts->GetGlyphRangesDefault();
 					if (setDefault)
 						io.Fonts->Clear();
+
 					do {
 						FontData::iterator it = _options.fontData.find(path);
 						if (it == _options.fontData.end())

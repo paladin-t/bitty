@@ -1004,15 +1004,21 @@ void Theme::fromFile(class Renderer* rnd, const char* path_) {
 				const bool setDefault = operation == "set" && usage == "generic" && glyphRanges == io.Fonts->GetGlyphRangesDefault();
 				if (setDefault)
 					io.Fonts->Clear();
-				ImFont* font = io.Fonts->AddFontFromFileTTF(
-					path.c_str(),
-					size,
-					&fontCfg, glyphRanges
-				);
-				if (setDefault && !font)
-					io.Fonts->AddFontDefault();
-				if (usage == "code")
-					fontCode(font);
+
+				do {
+					if (!Path::existsFile(path.c_str()))
+						break;
+
+					ImFont* font = io.Fonts->AddFontFromFileTTF(
+						path.c_str(),
+						size,
+						&fontCfg, glyphRanges
+					);
+					if (setDefault && !font)
+						io.Fonts->AddFontDefault();
+					if (usage == "code")
+						fontCode(font);
+				} while (false);
 			} else if (operation == "clear") {
 				io.Fonts->Clear();
 				io.Fonts->AddFontDefault();

@@ -343,6 +343,7 @@ AboutPopupBox::AboutPopupBox(
 	if (sdlMixVerPtr)
 		memcpy(&sdlMixVer, sdlMixVerPtr, sizeof(SDL_version));
 
+#if !defined BITTY_OS_HTML
 	std::string curlVer = LIBCURL_VERSION;
 	const char* curlVerPtr = curl_version();
 	if (curlVerPtr) {
@@ -354,6 +355,7 @@ AboutPopupBox::AboutPopupBox(
 		if (end != std::string::npos)
 			curlVer = curlVer.substr(0, end);
 	}
+#endif /* BITTY_OS_HTML */
 
 	_name = BITTY_TITLE;
 	_desc = "v" BITTY_VERSION_STRING " - An itty bitty game engine";

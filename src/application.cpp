@@ -1205,6 +1205,7 @@ private:
 		if (sdlMixVerPtr)
 			memcpy(&sdlMixVer, sdlMixVerPtr, sizeof(SDL_version));
 
+#if !defined BITTY_OS_HTML
 		std::string curlVer = LIBCURL_VERSION;
 		const char* curlVerPtr = curl_version();
 		if (curlVerPtr) {
@@ -1216,6 +1217,7 @@ private:
 			if (end != std::string::npos)
 				curlVer = curlVer.substr(0, end);
 		}
+#endif /* BITTY_OS_HTML */
 
 		fprintf(stdout, BITTY_NAME " v" BITTY_VERSION_STRING " - " BITTY_OS ", with %s, " BITTY_CP "\n", Platform::isLittleEndian() ? "little-endian" : "big-endian");
 		fprintf(stdout, "\n");

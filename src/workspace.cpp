@@ -207,7 +207,7 @@ static void workspaceWaitSplash(Window* wnd, Renderer* rnd, Workspace* ws, const
 	ran = true;
 
 	Primitives* primitives = Primitives::create(false);
-	primitives->open(wnd, rnd, project, nullptr, nullptr);
+	primitives->open(wnd, rnd, ws, project, nullptr, nullptr);
 	primitives->autoCls(false);
 	bool pressed = false;
 	while (true) {

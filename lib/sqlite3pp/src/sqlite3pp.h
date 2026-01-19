@@ -37,10 +37,10 @@
 #include <tuple>
 
 #ifdef SQLITE3PP_LOADABLE_EXTENSION
-#include "../sqlite/sqlite3ext.h"
+#include "../../sqlite/sqlite3ext.h"
 SQLITE_EXTENSION_INIT1
 #else
-#  include "../sqlite/sqlite3.h"
+#  include "../../sqlite/sqlite3.h"
 #endif
 
 namespace sqlite3pp
