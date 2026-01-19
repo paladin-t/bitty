@@ -266,9 +266,9 @@
 		687EDAF42EC36454002C82A7 /* theme_studio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 687EDAEE2EC36454002C82A7 /* theme_studio.cpp */; };
 		687EDAF52EC36454002C82A7 /* workspace_studio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 687EDAF02EC36454002C82A7 /* workspace_studio.cpp */; };
 		68F789312F120C4000000F41 /* database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68F789302F120C3F00000F41 /* database.cpp */; };
-		68F789392F120C8D00000F41 /* sqlite3ppext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68F789372F120C8D00000F41 /* sqlite3ppext.cpp */; };
-		68F7893A2F120C8D00000F41 /* sqlite3pp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68F789382F120C8D00000F41 /* sqlite3pp.cpp */; };
-		68F7893E2F120C9E00000F41 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 68F7893C2F120C9E00000F41 /* sqlite3.c */; };
+		68F789392F120C8D00000F41 /* sqlite3ppext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68F789372F120C8D00000F41 /* sqlite3ppext.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
+		68F7893A2F120C8D00000F41 /* sqlite3pp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68F789382F120C8D00000F41 /* sqlite3pp.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
+		68F7893E2F120C9E00000F41 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 68F7893C2F120C9E00000F41 /* sqlite3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
