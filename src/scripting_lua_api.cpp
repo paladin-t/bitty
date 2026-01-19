@@ -10670,6 +10670,7 @@ static int TextBox_ctor(lua_State* L) {
 	if (!obj)
 		return write(L, nullptr);
 
+#	if BITTY_MULTITHREAD_ENABLED
 	impl->primitives()->workspace()->addBake(
 		[=] (const Variant &) -> void {
 			static int textBoxSeed = 1;
@@ -10678,11 +10679,22 @@ static int TextBox_ctor(lua_State* L) {
 		},
 		nullptr
 	);
+#	else /* BITTY_MULTITHREAD_ENABLED */
+	(void)impl;
 
+	static int textBoxSeed = 1;
+	const std::string id = "TextBox_" + Text::toString(textBoxSeed++);
+	obj->open(nullptr, id.c_str(), nullptr, nullptr);
+#	endif /* BITTY_MULTITHREAD_ENABLED */
+
+#	if BITTY_MULTITHREAD_ENABLED
 	while (impl->primitives()->workspace()->hasBake()) { // Make sure the `TextBox` has been created before other Lua operations.
 		constexpr const int STEP = 1;
 		DateTime::sleep(STEP);
 	}
+#	else /* BITTY_MULTITHREAD_ENABLED */
+	// Do nothing.
+#	endif /* BITTY_MULTITHREAD_ENABLED */
 
 	return write(L, &obj);
 }

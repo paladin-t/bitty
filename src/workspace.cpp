@@ -386,9 +386,7 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 	currentState(Executable::READY);
 
 #if BITTY_BAKE_ENABLED
-#	if BITTY_MULTITHREAD_ENABLED
 	bakeCount() = 0;
-#	endif /* BITTY_MULTITHREAD_ENABLED */
 #endif /* BITTY_BAKE_ENABLED */
 
 	pluginsEnabled(options.find(WORKSPACE_OPTION_PLUGIN_DISABLED_KEY) == options.end());
@@ -636,30 +634,21 @@ void Workspace::touchedExample(const char*) {
 
 #if BITTY_BAKE_ENABLED
 bool Workspace::hasBake(void) {
-#	if BITTY_MULTITHREAD_ENABLED
 	return bakeCount() != 0;
-#	else /* BITTY_MULTITHREAD_ENABLED */
-	return false;
-#	endif /* BITTY_MULTITHREAD_ENABLED */
 }
 
 void Workspace::addBake(Bake::Handler func, const Variant &arg) {
 	if (!func)
 		return;
 
-#	if BITTY_MULTITHREAD_ENABLED
 	LockGuard<decltype(bakesLock())> guard(bakesLock());
 
 	bakes().push_back(Bake(func, arg));
 
 	bakeCount() = (int)bakes().size();
-#	else /* BITTY_MULTITHREAD_ENABLED */
-	func(arg);
-#	endif /* BITTY_MULTITHREAD_ENABLED */
 }
 
 void Workspace::clearBakes(void) {
-#	if BITTY_MULTITHREAD_ENABLED
 	if (bakeCount() == 0)
 		return;
 
@@ -668,13 +657,9 @@ void Workspace::clearBakes(void) {
 	bakes().clear();
 
 	bakeCount() = 0;
-#	else /* BITTY_MULTITHREAD_ENABLED */
-	// Do nothing.
-#	endif /* BITTY_MULTITHREAD_ENABLED */
 }
 
 void Workspace::bake(void) {
-#	if BITTY_MULTITHREAD_ENABLED
 	if (bakeCount() == 0)
 		return;
 
@@ -686,9 +671,6 @@ void Workspace::bake(void) {
 	bakes().clear();
 
 	bakeCount() = 0;
-#	else /* BITTY_MULTITHREAD_ENABLED */
-	// Do nothing.
-#	endif /* BITTY_MULTITHREAD_ENABLED */
 }
 #endif /* BITTY_BAKE_ENABLED */
 

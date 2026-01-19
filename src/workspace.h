@@ -282,11 +282,9 @@ protected:
 	BITTY_PROPERTY_READONLY(Executable::States, currentState)
 
 #if BITTY_BAKE_ENABLED
-#	if BITTY_MULTITHREAD_ENABLED
 	BITTY_PROPERTY(Bake::List, bakes)
 	BITTY_FIELD(Atomic<int>, bakeCount)
 	BITTY_FIELD(Mutex, bakesLock)
-#	endif /* BITTY_MULTITHREAD_ENABLED */
 #endif /* BITTY_BAKE_ENABLED */
 
 	BITTY_PROPERTY_READONLY_PTR(class Recorder, recorder)
