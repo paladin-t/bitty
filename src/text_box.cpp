@@ -85,6 +85,7 @@ private:
 		bool clearBeforeBaking = false;
 		bool affectedByCamera = true;
 		Math::Vec2i cameraPosition;
+		bool contextMenuEnabled = true;
 
 		bool toRefreshStyleColor = false;
 		ImVec4 styleColors[ImGuiCol_COUNT];
@@ -359,14 +360,19 @@ public:
 			return true;
 		}
 
-		if (key == "affected_by_camera") {
+		if (key == "clear_before_baking") {
+			const bool val_ = (bool)val;
+			_options.clearBeforeBaking = val_;
+
+			return true;
+		} else if (key == "affected_by_camera") {
 			const bool val_ = (bool)val;
 			_options.affectedByCamera = val_;
 
 			return true;
-		} else if (key == "clear_before_baking") {
+		} else if (key == "context_menu_enabled") {
 			const bool val_ = (bool)val;
-			_options.clearBeforeBaking = val_;
+			_options.contextMenuEnabled = val_;
 
 			return true;
 		}
@@ -1485,6 +1491,9 @@ public:
 
 private:
 	void context(Window* /* wnd */, Renderer* /* rnd */, Workspace* ws) {
+		if (!_options.contextMenuEnabled)
+			return;
+
 		ImGuiStyle &style = ImGui::GetStyle();
 
 		if (ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows) && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
