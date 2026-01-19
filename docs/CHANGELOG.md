@@ -1,3 +1,28 @@
+### v1.5.0 Jan. 19, 2026
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added API of SQLite-based database
+* Added API for using the new `TextBox` module editor in game
+* Added examples of the new `Database` and `TextBox` modules
+* Added a `Path.writableDirectoryOf([org, app])` function to get the writable sub directory path with the specific identifiers
+* Added a pair of `bytes:toList()` and `bytes:fromList(lst)` methods to convert between `Bytes` and Lua list
+* Added `color:toGray()`, `color:toARGB()`, `color:fromARGB(int)`, `color:toHSV()`, `color:fromHSV(h, s, v, a = 255)`, `color:toString()`, `color:fromString(val)` methods
+* Added `json:toBytes(pretty = true)`, `json:fromBytes(bytes)` methods
+* Added a preference option to specify whether to show recent opened files
+* Added support for drag-and-drop to open projects
+* Added an option to use system SDL2 library on Linux
+* Changed to get the versions of some libs dynamically to reflect runtime environment
+* Improved Japanese and Cyrillic character rendering in code editor
+* Improved RMB handling in the assets list
+* Improved error report
+* Improved ranged pair inputting for the code editor
+* Updated the `msgbox` function to support yes-no and yes-no-cancel dialogs
+* Fixed a colorization issue in the output window
+* Fixed a window title refreshing issue after modifying "info.json"
+* Fixed a colorization issue in the output window
+* Fixed an IME window positioning issue
+
 ### v1.4.2 Jan. 9, 2026
 
 Enhanced modules, improved usability, fixed some bugs.

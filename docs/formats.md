@@ -57,7 +57,7 @@ Bitty Engine supports variant audio, image and font types that are widely used. 
 }
 ```
 
-### (Paletted) Image
+### Image (Paletted)
 
 ```js
 {

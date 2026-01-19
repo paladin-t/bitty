@@ -32,6 +32,7 @@
 		- [Archive](#archive)
 		- [Bytes](#bytes)
 		- [Color](#color)
+		- [Database](#database)
 		- [Date Time](#date-time)
 		- [Encoding](#encoding)
 			- [Base64](#base64)
@@ -48,6 +49,7 @@
 		- [Promise](#promise)
 		- [Stream](#stream)
 		- [Web](#web)
+		- [TextBox](#textbox)
 	- [Assets and Resources](#assets-and-resources)
 		- [Resources](#resources)
 		- [Asset](#asset)
@@ -162,7 +164,7 @@ Lua is widely used and validated in the software industry, there are a lot of le
 
 Lua is 1-based for list accessing, Bitty Engine follows the same convention for sequenced structures, like `Bytes`, `File`, etc. Otherwise it is 0-based for coordinates and graphical units, like `Noiser`, `Pathfinder`, `Image`, `Sprite`, `Palette`, `Map`, etc.
 
-This document uses a meta method form to describe operators. Eg. `foo:__len()` denotes `#foo`, `foo:__add(bar)` denotes `foo + bar`, `foo:__unm()` denotes `-foo`, etc. Just write the symbol form `#`, `+`, `-`, etc. in your calculation.
+This document uses a meta method form to describe operators. I.e. `foo:__len()` denotes `#foo`, `foo:__add(bar)` denotes `foo + bar`, `foo:__unm()` denotes `-foo`, etc. Just write the symbol form `#`, `+`, `-`, etc. in your calculation.
 
 Additionally, this is not about the syntax, but for description convenience in this document, optional parameter is described between square brackets `[optional]`; default value is appended after an equal sign `foo = 42`; variadic list is described as `...`.
 
@@ -184,8 +186,35 @@ Bitty Engine offers some handy built-in functions, some are reserved from the or
 * `warn(...)`: outputs some values to the console window as warn, for debugging purposes
 * `error(...)`: outputs some values to the console window as error, and stops execution, for debugging purposes
 
+The following function implements a [Promise](#promise) protocol for simple message and asking dialogs.
+
 * `msgbox(msg)`: popups a message box with the specific content
 	* `msg`: the message string
+	* returns `Promise` object
+* `msgbox(msg[, confirm[, deny[, cancel]]])`: popups a message box with the specific content
+	* `msg`: the message string
+	* `confirm`: optional, the text for the confirm button
+	* `deny`: optional, the text for the deny button
+	* `cancel`: optional, the text for the cancel button
+	* returns `Promise` object
+
+The `thus` handler of the returned `Promise` object takes an invokable object in form of `function (ok) end` which accepts the confirmed/denied state. The `catch` handler of the returned `Promise` object takes an invokable object in form of `function () end` for canceled. The `finally` handler of the returned `Promise` object takes an invokable object in form of `function () end`.
+
+For example:
+
+```lua
+msgbox('How about it?', 'Yes', 'No', 'Cancel')
+  :thus(function (ok)
+    print(ok and 'Yes.' or 'No.')
+  end)
+  :catch(function ()
+    print('Canceled.')
+  end)
+  :finally(function()
+    print('Finished.')
+  end)
+```
+
 * `input(prompt[, default])`: popups an input box
 	* `prompt`: the prompt on the box
 	* `default`: the default content
@@ -569,6 +598,11 @@ Being the same as Lua list, a `Bytes`' index starts from 1. Implements a `Stream
 * `bytes:resize(expSize)`: resizes the `Bytes`
 	* `expSize`: the expected new size
 * `bytes:clear()`: clears all content and resets the cursor
+* `bytes:toList()`: converts all the byte elements in this `Bytes` into Lua list, doesn't moves the cursor
+	* returns a Lua list which holds all the byte values
+* `bytes:fromList(lst)`: converts all the byte elements in the Lua list to this `Bytes`; old content in this `Bytes` will be cleared, and its cursor will be at the end
+	* `lst`: the source Lua list
+	* returns the filled byte count, or `nil` for failure
 
 ### Color
 
@@ -603,8 +637,60 @@ Being the same as Lua list, a `Bytes`' index starts from 1. Implements a `Stream
 
 **Methods**
 
+* `color:toGray()`: gets the gray value of the `Color`
+	* returns the gray value as integer
 * `color:toRGBA()`: converts the `Color` to an RGBA integer in little-endian
+	* returns the RGBA value as integer
 * `color:fromRGBA(int)`: fills the `Color` with an RGBA integer in little-endian
+	* `int`: the RGBA value to be unpacked
+* `color:toARGB()`: converts the `Color` to an ARGB integer in little-endian
+	* returns the ARGB value as integer
+* `color:fromARGB(int)`: fills the `Color` with an ARGB integer in little-endian
+	* `int`: the ARGB value to be unpacked
+* `color:toHSV()`: converts the `Color` to HSV and alpha components
+	* returns four values for H, S, V, A respectively
+* `color:fromHSV(h, s, v, a = 255)`: fills the `Color` with HSV and alpha components
+	* `h`: the hue component
+	* `s`: the saturation component
+	* `v`: the value (brightness) component
+	* `a`: the alpha component
+* `color:toString()`: converts the `Color` to HTML string representation
+	* returns the converted HTML string representation
+* `color:fromString(val)`: fills the `Color` with HTML color string
+	* `val`: the HTML color string, i.e. `"#RGB"`, `"#RGBA"`, `"#RRGGBB"`, `"#RRGGBBAA"`
+
+### Database
+
+This module offers manipulations of SQLite database.
+
+**Constructors**
+
+* `Database.new()`: constructs an database object
+
+**Methods**
+
+* `database:setOption(key, val)`: sets option value of the specific key
+	* `key`: the option key to set
+	* `val`: the value to set
+
+Available options:
+
+| Key       | Value                          | Note                                                          |
+|-----------|--------------------------------|---------------------------------------------------------------|
+| "blob_as" | Can be one in "string", "list" | Specifies how to interpret blobs to Lua, defaults to "string" |
+
+* `database:open(path, access = Stream.ReadWrite)`: opens a `Database` file for reading or writing
+	* `path`: the `Database` file path
+	* `access`: can be one in `Stream.Read`, `Stream.Append`, `Stream.ReadWrite`, for reading, reading/writing without creating new file, reading/writing respectively
+	* returns `true` for success, otherwise `false`
+* `database:close()`: closes an opened `Database`
+	* returns `true` for success, otherwise `false`
+* `database:query(sql)`: executes an SQL query
+	* `sql`: the SQL statement to execute
+	* returns two values for query status and result respectively; for the first value, it would be `true` for success, otherwise `false`
+* `database:exec(sql)`: executes an SQL command
+	* `sql`: the SQL statement to execute
+	* returns `true` for success, otherwise `false`
 
 ### Date Time
 
@@ -792,13 +878,17 @@ Note that when open a file as `Stream.Append`, it always writes data at the end 
 * `Path.touchDirectory(path)`: tries to create a directory at the specific path, will touch its ancestors
 	* `path`: the directory path
 	* returns `true` for success, otherwise `false`
+* `Path.writableDirectoryOf([org, app])`: gets the writable sub directory path with the specific identifiers; same as  `Path.writableDirectory` if both parameters are omitted
+	* `org`: who is requiring the directory
+	* `app`: which app is requiring the directory
+	* returns the obtained path, or `nil` for failure
 
 **Static Variables**
 
-* `Path.executableFile`: readonly, gets the executable file path
-* `Path.documentDirectory`: readonly, gets the documents directory path
 * `Path.writableDirectory`: readonly, gets the writable directory path
 * `Path.savedGamesDirectory`: readonly, gets the "Saved Games" directory path on Windows, or same as `Path.writableDirectory` on other platforms
+* `Path.documentDirectory`: readonly, gets the documents directory path
+* `Path.executableFile`: readonly, gets the executable file path
 
 **Constructors**
 
@@ -867,7 +957,7 @@ Note that when open a file as `Stream.Append`, it always writes data at the end 
 	* `newName`: the new directory name
 	* returns `true` for success, otherwise `false`
 * `directoryInfo:getFiles(pattern = '*.*', recursive = false)`: gets sub-files under the directory represented by the `DirectoryInfo`
-	* `pattern`: lookup pattern, supports wildcards, eg. `"*.txt;*.json"`
+	* `pattern`: lookup pattern, supports wildcards, i.e. `"*.txt;*.json"`
 	* `recursive`: whether lookup its sub-directories
 	* returns a list of `FileInfo` objects
 * `directoryInfo:getDirectories(recursive = false)`: gets sub-directories under the directory represented by the `DirectoryInfo`
@@ -943,17 +1033,23 @@ Note that when open a file as `Stream.Append`, it always writes data at the end 
 
 **Methods**
 
+* `json:toTable(allowNull = false)`: serializes the `Json` to Lua table
+	* `allowNull`: `true` to convert `Json` `null` to `Json.Null`, otherwise to Lua `nil`
+	* returns serialized Lua table
+* `json:fromTable(tbl)`: parses `Json` data from the specific Lua table, ignores incompatible data types
+	* `tbl`: the table to parse
+	* returns `true` for success, otherwise `false`
 * `json:toString(pretty = true)`: serializes the `Json` to string
 	* `pretty`: whether to serialize in a friendly to read format
 	* returns serialized string
 * `json:fromString(txt)`: parses `Json` data from the specific string
 	* `txt`: the text to parse
 	* returns `true` for success, otherwise `false`
-* `json:toTable(allowNull = false)`: serializes the `Json` to Lua table
-	* `allowNull`: `true` to convert `Json` `null` to `Json.Null`, otherwise to Lua `nil`
-	* returns serialized Lua table
-* `json:fromTable(tbl)`: parses `Json` data from the specific Lua table, ignores incompatible data types
-	* `tbl`: the table to parse
+* `json:toBytes(pretty = true)`: serializes the `Json` to `Bytes`; the result content is a JSON string
+	* `pretty`: whether to serialize in a friendly to read format
+	* returns serialized `Bytes`, its cursor will be at the end
+* `json:fromBytes(bytes)`: parses `Json` data from the specific `Bytes`; the source content is a JSON string
+	* `bytes`: the `Bytes` to parse, all its content will be parsed
 	* returns `true` for success, otherwise `false`
 
 ### Math
@@ -1162,11 +1258,11 @@ The callback of disconnected is an invokable in form of `function (addr) end`, w
 	* `key`: the option key to set
 	* `val`: the value to set
 
-Currently there is only one available option:
+Available options:
 
-| Key         | Value                                                                 | Note                                |
-|-------------|-----------------------------------------------------------------------|-------------------------------------|
-| "data_type" | Can be one in "stream", "bytes", "string", "json", defaults to "json" | Data type for transmission/datagram |
+| Key         | Value                                             | Note                                                    |
+|-------------|---------------------------------------------------|---------------------------------------------------------|
+| "data_type" | Can be one in "stream", "bytes", "string", "json" | Data type for transmission/datagram, defaults to "json" |
 
 * `network:open(addr[, protocal])`: opens a `Network` as either server or client
 	* `addr`: the address
@@ -1252,7 +1348,7 @@ For both "string" and "json", the underneath data flow always end up with a zero
 
 * `Platform.openFile([title[, filter[, multiselect]]])`: popups an open-file-dialog
 	* `title`: the title text
-	* `filter`: the file filter, eg. `"Text files (*.txt);*.txt;All files (*.*);*"`
+	* `filter`: the file filter, i.e. `"Text files (*.txt);*.txt;All files (*.*);*"`
 	* `multiselect`: `true` for multiselect, `false` for single file select
 	* returns selected file path or paths, or `nil` for canceled
 * `Platform.saveFile([title[, filter]])`: popups a save-file-dialog
@@ -1313,7 +1409,7 @@ This module contains constants indicating accessibilities for other modules.
 
 **Functions**
 
-Implements a `Promise` protocol for HTTP accessing and manipulating.
+Implements a [Promise](#promise) protocol for HTTP accessing and manipulating.
 
 * `fetch(url[, options])`: requests the specific HTTP resource
 	* `url`: the URL to request
@@ -1350,6 +1446,103 @@ fetch('https://github.com', {
 | `body`                                | Request body                         | Optional. Body data                                                                                       |
 | `hint`                                | "bytes", "string", "json"            | Optional, defaults to "string". Prefers how to interpret respond data                                     |
 | `allow_insecure_connection_for_https` | `true`, `false`                      | Optional, defaults to `false`, for desktop only. Specifies whether to allow insecure connection for HTTPS |
+
+### TextBox
+
+This module shows a multiline text box.
+
+**Constructors**
+
+* `TextBox.new()`: constructs a text box object
+
+**Object Fields**
+
+* `textBox.text`: gets or sets the text content of the widget
+* `textBox.focused`: gets whether the `TextBox` has input focus
+
+**Methods**
+
+* `textBox.setOption(key, ...)`: sets option value of the specific key
+	* `key`: the option key to set
+
+Available options:
+
+| Key                                | Value                                                  | Note                                                                            |
+|------------------------------------|--------------------------------------------------------|---------------------------------------------------------------------------------|
+| "language_definition"              | Can be one in "text", "json", "c", "c++", "lua", "sql" | Sets the specific language definition for text colorization, defaults to "text" |
+| "colorization_enabled"             | Boolean                                                | Indicates whether to do colorization, defaults to `true`                        |
+| "cursor_line"                      | Integer                                                | Sets the line number of the cursor                                              |
+| "cursor_column"                    | Integer                                                | Sets the column number of the cursor                                            |
+| "indent_with_tab"                  | Boolean                                                | Indicates whether to indent with tab                                            |
+| "tab_size"                         | Integer                                                | Sets the tab size                                                               |
+| "head_size"                        | Double                                                 | Sets the size of the head area                                                  |
+| "overwrite"                        | Boolean                                                | Indicates whether to behave as overwrite mode                                   |
+| "readonly"                         | Boolean                                                | Indicates whether to behave as readonly mode                                    |
+| "show_line_numbers"                | Boolean                                                | Indicates whether to show line numbers                                          |
+| "sticky_line_numbers"              | Boolean                                                | Indicates whether to stick line numbers                                         |
+| "show_line_indicator"              | Boolean                                                | Indicates whether to show line indicator                                        |
+| "show_modification_status"         | Boolean                                                | Indicates whether to show modification status                                   |
+| "show_scrollbars"                  | Boolean                                                | Indicates whether to show scrollbars                                            |
+| "show_spaces"                      | Boolean                                                | Indicates whether to show spaces                                                |
+| "column_indicator"                 | Integer                                                | Sets the column number of the column indicator                                  |
+| "clear_before_baking"              | Boolean                                                | Indicates whether to clear the render target before baking                      |
+| "affected_by_camera"               | Boolean                                                | Indicates whether the rendering is affected by camera                           |
+| "context_menu_enabled"             | Boolean                                                | Indicates whether the context menu is enabled                                   |
+| "style_default"                    | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the default tokens for colorization                   |
+| "style_keyword"                    | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the keyword tokens for colorization                   |
+| "style_number"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the number tokens for colorization                    |
+| "style_string"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the string tokens for colorization                    |
+| "style_char_literal"               | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the literal-character tokens for colorization         |
+| "style_punctuation"                | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the punctuation tokens for colorization               |
+| "style_preprocessor"               | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the preprocessor tokens for colorization              |
+| "style_symbol"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the symbol tokens for colorization                    |
+| "style_identifier"                 | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the identifier tokens for colorization                |
+| "style_known_identifier"           | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the known identifier tokens for colorization          |
+| "style_preproc_identifier"         | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the preproc identifier tokens for colorization        |
+| "style_comment"                    | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the comment tokens for colorization                   |
+| "style_multiline_comment"          | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the multiline comment tokens for colorization         |
+| "style_space"                      | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the space tokens for colorization                     |
+| "style_background"                 | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the background for colorization                       |
+| "style_cursor"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the cursor for colorization                           |
+| "style_selection"                  | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the selection for colorization                        |
+| "style_line_number"                | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the line number for colorization                      |
+| "style_current_line_fill"          | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the current line filling for colorization             |
+| "style_current_line_fill_inactive" | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the current line inactive filling for colorization    |
+| "style_current_line_edge"          | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the current line edge for colorization                |
+| "style_line_edited"                | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the line edited status for colorization               |
+| "style_line_edited_saved"          | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the line edited and saved status for colorization     |
+| "style_line_edited_reverted"       | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the line edited and reverted status for colorization  |
+| "style_text"                       | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the text                                               |
+| "style_popup_background"           | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the popup background                                   |
+| "style_border"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the border                                             |
+| "style_scrollbar_background"       | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the scrollbar background                               |
+| "style_scrollbar_grab"             | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the scrollbar grab                                     |
+| "style_scrollbar_grab_hovered"     | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the hovered scrollbar grab                             |
+| "style_scrollbar_grab_active"      | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the active scrollbar grab                              |
+| "style_scrollbar_size"             | Double                                                 | Sets the scrollbar size                                                         |
+| "style_header"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the header                                             |
+| "style_header_hovered"             | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the hovered header                                     |
+| "style_header_active"              | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the active header                                      |
+| "style_separator"                  | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the seperator                                          |
+
+* `textBox:useFont(json)`: uses the specific font as the `TextBox`'s active font
+	* `json`: the font config
+* `textBox:focus()`: sets the input focus to the `TextBox`
+* `textBox:selectAll()`: selects all text content of the `TextBox`
+* `textBox:get()`: gets the text content of the widget
+	* returns the text content
+* `textBox:set(txt)`: sets the text content to the widget
+	* `txt`: the specific text to set
+* `textBox:clear()`: clears the text content of the widget
+* `textBox:copy()`: copies selected text of the `TextBox` to clipboard
+* `textBox:cut()`: cuts selected text of the `TextBox` to clipboard
+* `textBox:paste()`: deletes selected text of the `TextBox` and pastes new content from clipboard
+* `textBox:delete()`: deletes selected text of the `TextBox`
+* `textBox:update(x0, y0, x1, y1)`: updates the `TextBox` at the specific area
+	* `x0`: the first x position
+	* `y0`: the first y position
+	* `x1`: the second x position
+	* `y1`: the second y position
 
 [TOP](#reference-manual)
 
@@ -1471,7 +1664,7 @@ Can be loaded by `Resources.load(...)`.
 	* `size`: can be either a number for TrueType, or a `Vec2` for Bitmap
 	* `permeation`: indicates how to blur glyph edges with the alpha channel, with range of values from 0 to 255
 * `Font.new(img, size = Vec2.new(8, 8), permeation = 1)`: constructs a font object from the specific (Bitmap) `Image` with the specific size and permeation
-	* `img`: the `Image` to load
+	* `img`: the `Image` to load; note that the required type here is `Image`, not `Texture`
 	* `size`: the size as `Vec2` for a character
 	* `permeation`: indicates how to blur glyph edges with the alpha channel, with range of values from 0 to 255
 * `Font.new(nil, size = 14, permeation = 1)`: constructs a font object from the default font with the specific size and permeation
@@ -1877,9 +2070,18 @@ Available options:
 _The "transparent_color" option is an experimental feature, it supports Windows 10 and above. Note that it affects the whole application window._
 
 * `Application.setCursor(img[, x, y])`: sets the mouse cursor
-	* `img`: the specific `Image` to set, `nil` to reset
+	* `img`: the specific `Image` to set, `nil` to reset; note that the required type here is `Image`, not `Texture`
 	* `x`: the spot x, with range of values from 0.0 to 1.0
 	* `y`: the spot y, with range of values from 0.0 to 1.0
+
+Use the following code to set mouse cursor, for example:
+
+```lua
+local img = Image.new()
+img:fromBytes(Project.main:read('cursor.png'))
+Application.setCursor(img)
+```
+
 * `Application.size()`: gets the application window size
 	* returns `width`, `height`
 * `Application.resize(w, h)`: resizes the application window; use `canvas:resize(...)` to resize canvas (the rendering area)
@@ -1890,6 +2092,8 @@ _The "transparent_color" option is an experimental feature, it supports Windows 
 * `Application.raise()`: raises the application window
 
 ### Canvas
+
+In the following description, `Canvas.foo` (with capital C) indicates that `Canvas` is a type object and the expression is a constant or static function; `canvas.foo` or `canvas:foo()` (with lowercase c) indicates that `canvas` is an instance object and the expression is a member property or method. In practice, a `canvas` instance can be obtained from `local canvas = Canvas.main`.
 
 **Constants**
 
@@ -1947,7 +2151,7 @@ _The "transparent_color" option is an experimental feature, it supports Windows 
 
 ### Project
 
-Project accepts strategies, add a "strategies" field in "info.json" to enable specific options, eg.
+Project accepts strategies, add a "strategies" field in "info.json" to enable specific options, i.e.
 
 ```json
 {
@@ -1965,6 +2169,8 @@ Currently there is only one available strategy, change and try if it's needed:
 | "batch_map"          | Hints to batch map for better rendering performance, but occupies more memory | Always on for HTML build |
 | "linear_canvas"      | Hints to set canvas filtering as linear                                       |                          |
 | "anisotropic_canvas" | Hints to set canvas filtering as anisotropic                                  |                          |
+
+In the following description, `Project.foo` (with capital C) indicates that `Project` is a type object and the expression is a constant or static function; `project.foo` or `project:foo()` (with lowercase c) indicates that `project` is an instance object and the expression is a member property or method. In practice, a `project` instance can be obtained from `local project = Project.main`.
 
 **Constants**
 
