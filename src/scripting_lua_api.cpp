@@ -10813,6 +10813,70 @@ static int TextBox_useFont(lua_State* L) {
 	return 0;
 }
 
+static int TextBox_focus(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		TextBox::WeakPtr ptr(*obj);
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				TextBox::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
+
+				ptr_->focus();
+			},
+			nullptr,
+			true
+		);
+
+		return write(L, true);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int TextBox_selectAll(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		TextBox::WeakPtr ptr(*obj);
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				TextBox::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
+
+				ptr_->selectAll();
+			},
+			nullptr,
+			true
+		);
+
+		return write(L, true);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
 static int TextBox_get(lua_State* L) {
 	TextBox::Ptr* obj = nullptr;
 	read<>(L, obj);
@@ -10856,6 +10920,134 @@ static int TextBox_clear(lua_State* L) {
 
 	if (obj) {
 		obj->get()->text("", 0);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int TextBox_copy(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		TextBox::WeakPtr ptr(*obj);
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				TextBox::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
+
+				ptr_->copy();
+			},
+			nullptr,
+			true
+		);
+
+		return write(L, true);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int TextBox_cut(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		TextBox::WeakPtr ptr(*obj);
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				TextBox::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
+
+				ptr_->cut();
+			},
+			nullptr,
+			true
+		);
+
+		return write(L, true);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int TextBox_paste(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		TextBox::WeakPtr ptr(*obj);
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				TextBox::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
+
+				ptr_->paste();
+			},
+			nullptr,
+			true
+		);
+
+		return write(L, true);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int TextBox_delete(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		TextBox::WeakPtr ptr(*obj);
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				TextBox::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
+
+				ptr_->del();
+			},
+			nullptr,
+			true
+		);
+
+		return write(L, true);
 	} else {
 		error(L, "TextBox expected.");
 		warnForMethodCallSymbol(L);
@@ -10939,6 +11131,10 @@ static int TextBox___index(lua_State* L) {
 			ret.assign(text, len);
 
 		return write(L, ret);
+	} else if (strcmp(field, "focused") == 0) {
+		const bool ret = obj->get()->focused();
+
+		return write(L, ret);
 	} else {
 		return __index(L, field);
 	}
@@ -10979,9 +11175,15 @@ static void open_TextBox(lua_State* L) {
 		array(
 			luaL_Reg{ "setOption", TextBox_setOption },
 			luaL_Reg{ "useFont", TextBox_useFont },
+			luaL_Reg{ "focus", TextBox_focus },
+			luaL_Reg{ "selectAll", TextBox_selectAll },
 			luaL_Reg{ "get", TextBox_get },
 			luaL_Reg{ "set", TextBox_set },
 			luaL_Reg{ "clear", TextBox_clear },
+			luaL_Reg{ "copy", TextBox_copy },
+			luaL_Reg{ "cut", TextBox_cut },
+			luaL_Reg{ "paste", TextBox_paste },
+			luaL_Reg{ "delete", TextBox_delete },
 			luaL_Reg{ "update", TextBox_update },
 			luaL_Reg{ nullptr, nullptr }
 		),

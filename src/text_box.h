@@ -40,6 +40,11 @@ public:
 
 	virtual bool useFont(const Json::Ptr &json, const FontData &fontData) = 0;
 
+	virtual bool focused(void) const = 0;
+	virtual void focus(void) = 0;
+
+	virtual void selectAll(void) = 0;
+
 	virtual const char* text(size_t* len) const = 0;
 	virtual void text(const char* txt, size_t len = 0) = 0;
 

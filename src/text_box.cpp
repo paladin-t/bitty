@@ -69,6 +69,8 @@ private:
 	std::string _id;
 
 	bool _acquireFocus = false;
+	bool _isFocused = false; // By the Lua, graphics threads.
+	bool _toColorize = false;
 	mutable struct {
 		std::string text;
 		bool overdue = true;
@@ -77,7 +79,7 @@ private:
 			text.clear();
 			overdue = true;
 		}
-	} _cache;
+	} _cache; // By the Lua, graphics threads.
 	mutable RecursiveMutex _lock;
 	struct Options {
 		bool clearBeforeBaking = false;
@@ -197,32 +199,32 @@ public:
 
 			if (val_ == "text") {
 				SetLanguageDefinition(LanguageDefinition::Text());
-				Colorize();
+				_toColorize = true;
 
 				return true;
 			} else if (val_ == "json") {
 				SetLanguageDefinition(LanguageDefinition::Json());
-				Colorize();
+				_toColorize = true;
 
 				return true;
 			} else if (val_ == "c") {
 				SetLanguageDefinition(LanguageDefinition::C());
-				Colorize();
+				_toColorize = true;
 
 				return true;
 			} else if (val_ == "c++") {
 				SetLanguageDefinition(LanguageDefinition::CPlusPlus());
-				Colorize();
+				_toColorize = true;
 
 				return true;
 			} else if (val_ == "lua") {
 				SetLanguageDefinition(LanguageDefinition::Lua());
-				Colorize();
+				_toColorize = true;
 
 				return true;
 			} else if (val_ == "sql") {
 				SetLanguageDefinition(LanguageDefinition::SQL());
-				Colorize();
+				_toColorize = true;
 
 				return true;
 			}
@@ -234,7 +236,7 @@ public:
 			LockGuard<decltype(_lock)> guard(_lock);
 
 			SetColorizationEnabled(val_);
-			Colorize();
+			_toColorize = true;
 
 			return true;
 		} else if (key == "cursor_line") {
@@ -380,6 +382,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::Default] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_keyword") {
@@ -393,6 +396,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::Keyword] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_number") {
@@ -406,6 +410,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::Number] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_string") {
@@ -419,6 +424,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::String] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_char_literal") {
@@ -432,6 +438,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::CharLiteral] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_punctuation") {
@@ -445,6 +452,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::Punctuation] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_preprocessor") {
@@ -458,6 +466,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::Preprocessor] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_symbol") {
@@ -471,6 +480,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::Symbol] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_identifier") {
@@ -484,6 +494,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::Identifier] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_known_identifier") {
@@ -497,6 +508,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::KnownIdentifier] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_preproc_identifier") {
@@ -510,6 +522,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::PreprocIdentifier] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_comment") {
@@ -523,6 +536,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::Comment] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_multiline_comment") {
@@ -536,6 +550,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::MultiLineComment] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_space") {
@@ -549,6 +564,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::Space] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_background") {
@@ -566,6 +582,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::Background] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_cursor") {
@@ -579,6 +596,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::Cursor] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_selection") {
@@ -592,6 +610,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::Selection] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_line_number") {
@@ -605,6 +624,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::LineNumber] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_current_line_fill") {
@@ -618,6 +638,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::CurrentLineFill] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_current_line_fill_inactive") {
@@ -631,6 +652,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::CurrentLineFillInactive] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_current_line_edge") {
@@ -644,6 +666,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::CurrentLineEdge] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_line_edited") {
@@ -657,6 +680,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::LineEdited] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_line_edited_saved") {
@@ -670,6 +694,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::LineEditedSaved] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_line_edited_reverted") {
@@ -683,6 +708,7 @@ public:
 			Palette plt = GetPalette();
 			plt[(int)PaletteIndex::LineEditedReverted] = col.toRGBA();
 			SetPalette(plt);
+			_toColorize = true;
 
 			return true;
 		} else if (key == "style_text") {
@@ -830,6 +856,19 @@ public:
 		_options.fontData = fontData;
 
 		return true;
+	}
+
+	virtual bool focused(void) const override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
+		return _isFocused;
+	}
+	virtual void focus(void) override {
+		_acquireFocus = true;
+	}
+
+	virtual void selectAll(void) override {
+		SelectAll();
 	}
 
 	virtual void flush(void) const override {
@@ -1178,8 +1217,13 @@ public:
 		if (_acquireFocus) {
 			if (!ws->popupBox()) {
 				_acquireFocus = false;
+				EditorFocused = true;
 				ImGui::SetNextWindowFocus();
 			}
+		}
+		if (_toColorize) {
+			_toColorize = false;
+			Colorize();
 		}
 
 		if (_font && _font->IsLoaded()) {
@@ -1189,6 +1233,8 @@ public:
 		ImGui::SetCursorPos(ImVec2(x, y));
 		{
 			LockGuard<decltype(_lock)> guard(_lock);
+
+			_isFocused = IsEditorFocused();
 
 			Render(title, ImVec2(width, height));
 		}
