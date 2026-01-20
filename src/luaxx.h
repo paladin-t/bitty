@@ -94,6 +94,8 @@ public:
 
 	bool valid(void) const;
 
+	void detach(void);
+
 private:
 	Ref(lua_State* L);
 };
@@ -122,6 +124,8 @@ public:
 	operator int (void) const;
 
 	bool valid(void) const;
+
+	void detach(void);
 
 private:
 	Function(lua_State* L);

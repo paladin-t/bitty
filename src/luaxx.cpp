@@ -112,6 +112,10 @@ bool Ref::valid(void) const {
 	return _handle != LUA_NOREF;
 }
 
+void Ref::detach(void) {
+	_L = nullptr;
+}
+
 Ref::Ref(lua_State* L) {
 	_handle = luaL_ref(L, LUA_REGISTRYINDEX);
 }
@@ -144,6 +148,10 @@ Function::operator int (void) const {
 
 bool Function::valid(void) const {
 	return _handle != LUA_NOREF;
+}
+
+void Function::detach(void) {
+	_L = nullptr;
 }
 
 Function::Function(lua_State* L) {

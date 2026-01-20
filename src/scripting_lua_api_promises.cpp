@@ -113,7 +113,9 @@ static int Promise_ctor(lua_State* L, Promise::Ptr &promise, bool write_) {
 		[impl] (Promise* promise) -> void {
 			impl->removeUpdatable(promise);
 
-			promise->clear();
+			const bool isRunning = impl->current() == Executable::States::RUNNING || impl->current() == Executable::States::PAUSED;
+			if (isRunning)
+				promise->clear();
 
 			Promise::destroy(promise);
 		}
@@ -195,6 +197,8 @@ static int Promise_call(lua_State* L, Function::Ptr* ptr, const Variant &arg) {
 }
 
 static int Promise_thus(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
 	Promise::Ptr* obj = nullptr;
 	Function::Ptr callback = nullptr;
 	read<>(L, obj, callback);
@@ -214,8 +218,16 @@ static int Promise_thus(lua_State* L) {
 		);
 		Any ud(
 			new PromisePair(callback, ref),
-			[] (void* ptr) -> void {
+			[=] (void* ptr) -> void {
+				const bool isRunning = impl->current() == Executable::States::RUNNING || impl->current() == Executable::States::PAUSED;
+
 				PromisePair* pair = (PromisePair*)ptr;
+				if (!isRunning) {
+					if (pair->first)
+						pair->first->detach();
+					if (pair->second)
+						pair->second->detach();
+				}
 				pair->first = nullptr;
 				pair->second = nullptr;
 				delete pair;
@@ -230,6 +242,8 @@ static int Promise_thus(lua_State* L) {
 }
 
 static int Promise_catch(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
 	Promise::Ptr* obj = nullptr;
 	Function::Ptr callback = nullptr;
 	read<>(L, obj, callback);
@@ -249,8 +263,16 @@ static int Promise_catch(lua_State* L) {
 		);
 		Any ud(
 			new PromisePair(callback, ref),
-			[] (void* ptr) -> void {
+			[=] (void* ptr) -> void {
+				const bool isRunning = impl->current() == Executable::States::RUNNING || impl->current() == Executable::States::PAUSED;
+
 				PromisePair* pair = (PromisePair*)ptr;
+				if (!isRunning) {
+					if (pair->first)
+						pair->first->detach();
+					if (pair->second)
+						pair->second->detach();
+				}
 				pair->first = nullptr;
 				pair->second = nullptr;
 				delete pair;
@@ -265,6 +287,8 @@ static int Promise_catch(lua_State* L) {
 }
 
 static int Promise_finally(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
 	Promise::Ptr* obj = nullptr;
 	Function::Ptr callback = nullptr;
 	read<>(L, obj, callback);
@@ -284,8 +308,16 @@ static int Promise_finally(lua_State* L) {
 		);
 		Any ud(
 			new PromisePair(callback, ref),
-			[] (void* ptr) -> void {
+			[=] (void* ptr) -> void {
+				const bool isRunning = impl->current() == Executable::States::RUNNING || impl->current() == Executable::States::PAUSED;
+
 				PromisePair* pair = (PromisePair*)ptr;
+				if (!isRunning) {
+					if (pair->first)
+						pair->first->detach();
+					if (pair->second)
+						pair->second->detach();
+				}
 				pair->first = nullptr;
 				pair->second = nullptr;
 				delete pair;
