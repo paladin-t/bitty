@@ -52,6 +52,7 @@
 
 static_assert(sizeof(ImDrawIdx) == sizeof(unsigned int), "Wrong ImDrawIdx size.");
 
+const char* WORKSPACE_PREFERENCES_DIR = nullptr;
 const char* WORKSPACE_PREFERENCES_NAME = "preferences";
 
 /* ===========================================================================} */

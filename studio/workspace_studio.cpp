@@ -346,7 +346,9 @@ void WorkspaceStudio::touchedExample(const char* path) {
 }
 
 bool WorkspaceStudio::load(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives) {
-	const std::string pref = Path::writableDirectory();
+	std::string pref = Path::writableDirectory();
+	if (pref.empty() && WORKSPACE_PREFERENCES_DIR)
+		pref = WORKSPACE_PREFERENCES_DIR;
 	const std::string fn = std::string(WORKSPACE_PREFERENCES_NAME) + std::string("." BITTY_JSON_EXT);
 	const std::string path = Path::combine(pref.c_str(), fn.c_str());
 
@@ -373,7 +375,9 @@ bool WorkspaceStudio::save(class Window* wnd, class Renderer* rnd, const class P
 	if (!save(wnd, rnd, project, primitives, doc))
 		return false;
 
-	const std::string pref = Path::writableDirectory();
+	std::string pref = Path::writableDirectory();
+	if (pref.empty() && WORKSPACE_PREFERENCES_DIR)
+		pref = WORKSPACE_PREFERENCES_DIR;
 	const std::string fn = std::string(WORKSPACE_PREFERENCES_NAME) + std::string("." BITTY_JSON_EXT);
 	const std::string path = Path::combine(pref.c_str(), fn.c_str());
 	File::Ptr file(File::create());

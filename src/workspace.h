@@ -132,6 +132,7 @@ constexpr const ImGuiWindowFlags WORKSPACE_WND_FLAGS_FLOAT =
 	ImGuiWindowFlags_NoSavedSettings |
 	ImGuiWindowFlags_NoNav;
 
+extern const char* WORKSPACE_PREFERENCES_DIR;
 extern const char* WORKSPACE_PREFERENCES_NAME;
 
 /* ===========================================================================} */
