@@ -2027,6 +2027,8 @@ void Workspace::editing(class Window* wnd, class Renderer* rnd, const class Proj
 							assetsEditingIndex(-1);
 
 							frontAsset = nullptr;
+						} else if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+							states->activate(Asset::States::EDITABLE);
 						}
 
 						if (pending) {

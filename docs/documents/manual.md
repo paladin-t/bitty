@@ -1467,66 +1467,106 @@ This module shows a multiline text box.
 
 Available options:
 
-| Key                                | Value                                                  | Note                                                                            |
-|------------------------------------|--------------------------------------------------------|---------------------------------------------------------------------------------|
-| "language_definition"              | Can be one in "text", "json", "c", "c++", "lua", "sql" | Sets the specific language definition for text colorization, defaults to "text" |
-| "colorization_enabled"             | Boolean                                                | Indicates whether to do colorization, defaults to `true`                        |
-| "cursor_line"                      | Integer                                                | Sets the line number of the cursor                                              |
-| "cursor_column"                    | Integer                                                | Sets the column number of the cursor                                            |
-| "indent_with_tab"                  | Boolean                                                | Indicates whether to indent with tab                                            |
-| "tab_size"                         | Integer                                                | Sets the tab size                                                               |
-| "head_size"                        | Double                                                 | Sets the size of the head area                                                  |
-| "overwrite"                        | Boolean                                                | Indicates whether to behave as overwrite mode                                   |
-| "readonly"                         | Boolean                                                | Indicates whether to behave as readonly mode                                    |
-| "show_line_numbers"                | Boolean                                                | Indicates whether to show line numbers                                          |
-| "sticky_line_numbers"              | Boolean                                                | Indicates whether to stick line numbers                                         |
-| "show_line_indicator"              | Boolean                                                | Indicates whether to show line indicator                                        |
-| "show_modification_status"         | Boolean                                                | Indicates whether to show modification status                                   |
-| "show_scrollbars"                  | Boolean                                                | Indicates whether to show scrollbars                                            |
-| "show_spaces"                      | Boolean                                                | Indicates whether to show spaces                                                |
-| "column_indicator"                 | Integer                                                | Sets the column number of the column indicator                                  |
-| "clear_before_baking"              | Boolean                                                | Indicates whether to clear the render target before baking                      |
-| "affected_by_camera"               | Boolean                                                | Indicates whether the rendering is affected by camera                           |
-| "context_menu_enabled"             | Boolean                                                | Indicates whether the context menu is enabled                                   |
-| "style_default"                    | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the default tokens for colorization                   |
-| "style_keyword"                    | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the keyword tokens for colorization                   |
-| "style_number"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the number tokens for colorization                    |
-| "style_string"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the string tokens for colorization                    |
-| "style_char_literal"               | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the literal-character tokens for colorization         |
-| "style_punctuation"                | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the punctuation tokens for colorization               |
-| "style_preprocessor"               | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the preprocessor tokens for colorization              |
-| "style_symbol"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the symbol tokens for colorization                    |
-| "style_identifier"                 | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the identifier tokens for colorization                |
-| "style_known_identifier"           | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the known identifier tokens for colorization          |
-| "style_preproc_identifier"         | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the preproc identifier tokens for colorization        |
-| "style_comment"                    | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the comment tokens for colorization                   |
-| "style_multiline_comment"          | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the multiline comment tokens for colorization         |
-| "style_space"                      | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the space tokens for colorization                     |
-| "style_background"                 | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the background for colorization                       |
-| "style_cursor"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the cursor for colorization                           |
-| "style_selection"                  | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the selection for colorization                        |
-| "style_line_number"                | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the line number for colorization                      |
-| "style_current_line_fill"          | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the current line filling for colorization             |
-| "style_current_line_fill_inactive" | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the current line inactive filling for colorization    |
-| "style_current_line_edge"          | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the current line edge for colorization                |
-| "style_line_edited"                | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the line edited status for colorization               |
-| "style_line_edited_saved"          | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the line edited and saved status for colorization     |
-| "style_line_edited_reverted"       | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the line edited and reverted status for colorization  |
-| "style_text"                       | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the text                                               |
-| "style_popup_background"           | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the popup background                                   |
-| "style_border"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the border                                             |
-| "style_scrollbar_background"       | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the scrollbar background                               |
-| "style_scrollbar_grab"             | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the scrollbar grab                                     |
-| "style_scrollbar_grab_hovered"     | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the hovered scrollbar grab                             |
-| "style_scrollbar_grab_active"      | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the active scrollbar grab                              |
-| "style_scrollbar_size"             | Double                                                 | Sets the scrollbar size                                                         |
-| "style_header"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the header                                             |
-| "style_header_hovered"             | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the hovered header                                     |
-| "style_header_active"              | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the active header                                      |
-| "style_separator"                  | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the seperator                                          |
+| Key                                | Value                                                  | Note                                                                                            |
+|------------------------------------|--------------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| "language_definition"              | Can be one in "text", "json", "c", "c++", "lua", "sql" | Sets the specific language definition for text colorization, defaults to "text"                 |
+| "colorization_enabled"             | Boolean                                                | Indicates whether to do colorization, defaults to `true`                                        |
+| "cursor_line"                      | Integer                                                | Sets the line number of the cursor                                                              |
+| "cursor_column"                    | Integer                                                | Sets the column number of the cursor                                                            |
+| "indent_with_tab"                  | Boolean                                                | Indicates whether to indent with tab, defaults to `false`                                       |
+| "tab_size"                         | Integer                                                | Sets the tab size, defaults to 4                                                                |
+| "head_size"                        | Double                                                 | Sets the size of the head area                                                                  |
+| "overwrite"                        | Boolean                                                | Indicates whether to behave as overwrite mode, defaults to `false`                              |
+| "readonly"                         | Boolean                                                | Indicates whether to behave as readonly mode, defaults to `false`                               |
+| "show_line_numbers"                | Boolean                                                | Indicates whether to show line numbers, defaults to `false`                                     |
+| "sticky_line_numbers"              | Boolean                                                | Indicates whether to stick line numbers, defaults to `false`                                    |
+| "show_line_indicator"              | Boolean                                                | Indicates whether to show line indicator, defaults to `false`                                   |
+| "show_modification_status"         | Boolean                                                | Indicates whether to show modification status, defaults to `false`                              |
+| "show_scrollbars"                  | Boolean                                                | Indicates whether to show scrollbars, defaults to `true`                                        |
+| "show_spaces"                      | Boolean                                                | Indicates whether to show spaces, defaults to `false`                                           |
+| "column_indicator"                 | Integer                                                | Sets the column number of the column indicator                                                  |
+| "clear_before_baking"              | Boolean                                                | Trivial option. Indicates whether to clear the render target before baking, defaults to `false` |
+| "affected_by_camera"               | Boolean                                                | Indicates whether the rendering is affected by camera, defaults to `true`                       |
+| "context_menu_enabled"             | Boolean                                                | Indicates whether the context menu is enabled, defaults to `true`                               |
+| "style_default"                    | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the default tokens for colorization                                   |
+| "style_keyword"                    | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the keyword tokens for colorization                                   |
+| "style_number"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the number tokens for colorization                                    |
+| "style_string"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the string tokens for colorization                                    |
+| "style_char_literal"               | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the literal-character tokens for colorization                         |
+| "style_punctuation"                | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the punctuation tokens for colorization                               |
+| "style_preprocessor"               | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the preprocessor tokens for colorization                              |
+| "style_symbol"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the symbol tokens for colorization                                    |
+| "style_identifier"                 | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the identifier tokens for colorization                                |
+| "style_known_identifier"           | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the known identifier tokens for colorization                          |
+| "style_preproc_identifier"         | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the preproc identifier tokens for colorization                        |
+| "style_comment"                    | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the comment tokens for colorization                                   |
+| "style_multiline_comment"          | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the multiline comment tokens for colorization                         |
+| "style_space"                      | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the space tokens for colorization                                     |
+| "style_background"                 | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the background for colorization                                       |
+| "style_cursor"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the cursor for colorization                                           |
+| "style_selection"                  | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the selection for colorization                                        |
+| "style_line_number"                | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the line number for colorization                                      |
+| "style_current_line_fill"          | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the current line filling for colorization                             |
+| "style_current_line_fill_inactive" | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the current line inactive filling for colorization                    |
+| "style_current_line_edge"          | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the current line edge for colorization                                |
+| "style_line_edited"                | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the line edited status for colorization                               |
+| "style_line_edited_saved"          | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the line edited and saved status for colorization                     |
+| "style_line_edited_reverted"       | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the line edited and reverted status for colorization                  |
+| "style_text"                       | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the text                                                               |
+| "style_popup_background"           | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the popup background                                                   |
+| "style_border"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the border                                                             |
+| "style_scrollbar_background"       | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the scrollbar background                                               |
+| "style_scrollbar_grab"             | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the scrollbar grab                                                     |
+| "style_scrollbar_grab_hovered"     | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the hovered scrollbar grab                                             |
+| "style_scrollbar_grab_active"      | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the active scrollbar grab                                              |
+| "style_scrollbar_size"             | Double                                                 | Sets the scrollbar size                                                                         |
+| "style_header"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the header                                                             |
+| "style_header_hovered"             | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the hovered header                                                     |
+| "style_header_active"              | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the active header                                                      |
+| "style_separator"                  | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the seperator                                                          |
 
 * `textBox:useFont(json)`: uses the specific font as the `TextBox`'s active font
 	* `json`: the font config
+
+Most fonts work well with a plain text editor, but only a monospaced font is suitable for code editors. Consider choosing a proper font to use a code editor with the `'language_definition'` option.
+
+The following configuration serves as an example to set the default ASCII font for a `TextBox`, with similar configurations for different writing systems.
+
+```json
+{
+  "fonts": [
+    {
+      "operation": "set",
+      "path": "fonts/LanaPixel.ttf",
+      "size": 13,
+      "ranges": "default",
+      "glyph_offset": [ 1, -1 ]
+    },
+    {
+      "operation": "merge",
+      "path": "fonts/LanaPixel.ttf",
+      "size": 13,
+      "ranges": "chinese",
+      "glyph_offset": [ 1, -1 ]
+    },
+    {
+      "operation": "merge",
+      "path": "fonts/LanaPixel.ttf",
+      "size": 13,
+      "ranges": "japanese",
+      "glyph_offset": [ 1, -1 ]
+    },
+    {
+      "operation": "merge",
+      "path": "fonts/LanaPixel.ttf",
+      "size": 13,
+      "ranges": "cyrillic",
+      "glyph_offset": [ 1, -1 ]
+    }
+  ]
+}
+```
+
 * `textBox:focus()`: sets the input focus to the `TextBox`
 * `textBox:selectAll()`: selects all text content of the `TextBox`
 * `textBox:get()`: gets the text content of the widget
