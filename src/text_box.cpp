@@ -95,6 +95,7 @@ private:
 		bool toRefreshFont = false;
 		rapidjson::Document fontConfig;
 		FontData fontData;
+		ImVector<ImWchar> customFontRanges;
 
 		Options() {
 			memset(styleColorDirty, 0, sizeof(styleColorDirty));
@@ -1725,7 +1726,6 @@ private:
 				glyphOffset.y = Math::clamp(glyphOffset.y, (Real)-96, (Real)96);
 
 				const ImWchar* glyphRanges = io.Fonts->GetGlyphRangesDefault();
-				ImVector<ImWchar> rangesVector;
 				if (ranges == TEXT_BOX_FONT_RANGES_DEFAULT_NAME) {
 					glyphRanges = io.Fonts->GetGlyphRangesDefault();
 				} else if (ranges == TEXT_BOX_FONT_RANGES_CHINESE_NAME) {
@@ -1750,21 +1750,23 @@ private:
 				} else if (!ranges.empty()) {
 					const std::wstring wstr = Unicode::toWide(ranges);
 					if (!wstr.empty() && wstr.size() % 2 == 0) {
+						if (!_options.customFontRanges.empty())
+							_options.customFontRanges.pop_back();
 						for (int j = 0; j < (int)wstr.length(); j += 2) {
 							const wchar_t ch0 = wstr[j];
 							const wchar_t ch1 = wstr[j + 1];
 							if (ch0 > ch1) {
-								rangesVector.clear();
+								_options.customFontRanges.clear();
 
 								break;
 							}
-							rangesVector.push_back(ch0);
-							rangesVector.push_back(ch1);
+							_options.customFontRanges.push_back(ch0);
+							_options.customFontRanges.push_back(ch1);
 						}
-						if (!rangesVector.empty()) {
-							if (rangesVector.back() != 0)
-								rangesVector.push_back(0);
-							glyphRanges = &rangesVector.front();
+						if (!_options.customFontRanges.empty()) {
+							if (_options.customFontRanges.back() != 0)
+								_options.customFontRanges.push_back(0);
+							glyphRanges = &_options.customFontRanges.front();
 						}
 					}
 				}

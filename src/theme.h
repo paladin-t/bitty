@@ -441,6 +441,8 @@ public:
 	BITTY_PROPERTY_PTR(struct ImFont, fontBlock_Italic)
 	BITTY_PROPERTY_PTR(struct ImFont, fontBlock_BoldItalic)
 
+	BITTY_PROPERTY(ImVector<ImWchar>, customFontRanges)
+
 private:
 	bool _opened = false;
 

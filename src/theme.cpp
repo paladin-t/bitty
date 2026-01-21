@@ -952,7 +952,6 @@ void Theme::fromFile(class Renderer* rnd, const char* path_) {
 			glyphOffset.y = Math::clamp(glyphOffset.y, (Real)-96, (Real)96);
 
 			const ImWchar* glyphRanges = io.Fonts->GetGlyphRangesDefault();
-			ImVector<ImWchar> rangesVector;
 			if (ranges == THEME_FONT_RANGES_DEFAULT_NAME) {
 				glyphRanges = io.Fonts->GetGlyphRangesDefault();
 			} else if (ranges == THEME_FONT_RANGES_CHINESE_NAME) {
@@ -977,21 +976,23 @@ void Theme::fromFile(class Renderer* rnd, const char* path_) {
 			} else if (!ranges.empty()) {
 				const std::wstring wstr = Unicode::toWide(ranges);
 				if (!wstr.empty() && wstr.size() % 2 == 0) {
+					if (!customFontRanges().empty())
+						customFontRanges().pop_back();
 					for (int j = 0; j < (int)wstr.length(); j += 2) {
 						const wchar_t ch0 = wstr[j];
 						const wchar_t ch1 = wstr[j + 1];
 						if (ch0 > ch1) {
-							rangesVector.clear();
+							customFontRanges().clear();
 
 							break;
 						}
-						rangesVector.push_back(ch0);
-						rangesVector.push_back(ch1);
+						customFontRanges().push_back(ch0);
+						customFontRanges().push_back(ch1);
 					}
-					if (!rangesVector.empty()) {
-						if (rangesVector.back() != 0)
-							rangesVector.push_back(0);
-						glyphRanges = &rangesVector.front();
+					if (!customFontRanges().empty()) {
+						if (customFontRanges().back() != 0)
+							customFontRanges().push_back(0);
+						glyphRanges = &customFontRanges().front();
 					}
 				}
 			}
