@@ -26,7 +26,7 @@ private:
 	Variant _error = nullptr;
 	bool _finished = false;
 
-	mutable Mutex _lock;
+	mutable RecursiveMutex _lock;
 
 public:
 	PromiseImpl() {
@@ -39,23 +39,23 @@ public:
 	}
 
 	virtual States state(void) const override {
-		LockGuard<Mutex> guard(_lock);
+		LockGuard<decltype(_lock)> guard(_lock);
 
 		return _state;
 	}
 	virtual Variant value(void) const override {
-		LockGuard<Mutex> guard(_lock);
+		LockGuard<decltype(_lock)> guard(_lock);
 
 		return _value;
 	}
 	virtual Variant error(void) const override {
-		LockGuard<Mutex> guard(_lock);
+		LockGuard<decltype(_lock)> guard(_lock);
 
 		return _error;
 	}
 
 	virtual Promise* then(const ThenHandler &cb) override {
-		LockGuard<Mutex> guard(_lock);
+		LockGuard<decltype(_lock)> guard(_lock);
 
 		_then = cb;
 
@@ -67,7 +67,7 @@ public:
 		return this;
 	}
 	virtual Promise* fail(const FailHandler &cb) override {
-		LockGuard<Mutex> guard(_lock);
+		LockGuard<decltype(_lock)> guard(_lock);
 
 		_fail = cb;
 
@@ -79,7 +79,7 @@ public:
 		return this;
 	}
 	virtual Promise* always(const AlwaysHandler &cb) override {
-		LockGuard<Mutex> guard(_lock);
+		LockGuard<decltype(_lock)> guard(_lock);
 
 		_always = cb;
 
@@ -92,14 +92,14 @@ public:
 	}
 
 	virtual void resolve(const Variant &val) override {
-		LockGuard<Mutex> guard(_lock);
+		LockGuard<decltype(_lock)> guard(_lock);
 
 		_state = RESOLVED;
 		_value = val;
 		_error = nullptr;
 	}
 	virtual void reject(const Variant &val) override {
-		LockGuard<Mutex> guard(_lock);
+		LockGuard<decltype(_lock)> guard(_lock);
 
 		_state = REJECTED;
 		_value = nullptr;
@@ -107,7 +107,7 @@ public:
 	}
 
 	virtual void clear(void) override {
-		LockGuard<Mutex> guard(_lock);
+		LockGuard<decltype(_lock)> guard(_lock);
 
 		_state = PENDING;
 		_then.clear();
@@ -120,7 +120,7 @@ public:
 	}
 
 	virtual bool update(double) override {
-		LockGuard<Mutex> guard(_lock);
+		LockGuard<decltype(_lock)> guard(_lock);
 
 		if (_finished)
 			return false;
