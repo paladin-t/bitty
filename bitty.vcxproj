@@ -2471,7 +2471,12 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4267</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4267</DisableSpecificWarnings>
     </ClCompile>
-    <ClCompile Include="lib\sqlite3pp\src\sqlite3ppext.cpp" />
+    <ClCompile Include="lib\sqlite3pp\src\sqlite3ppext.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4267</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4267</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|x64'">4267</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4267</DisableSpecificWarnings>
+    </ClCompile>
     <ClCompile Include="lib\sqlite\sqlite3.c" />
     <ClCompile Include="lib\stb\stb_vorbis.c">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
