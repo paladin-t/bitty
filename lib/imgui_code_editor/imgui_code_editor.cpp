@@ -2,7 +2,6 @@
 #include "../imgui/imgui_internal.h"
 #include <SDL.h>
 #include <algorithm>
-#include <chrono>
 #include <regex>
 
 namespace ImGui {
@@ -998,6 +997,8 @@ void CodeEditor::Line::Revert(void) {
 	Changed = LineState::EditedReverted;
 }
 
+std::chrono::time_point<std::chrono::system_clock> CodeEditor::SharedCursorTick = std::chrono::system_clock::now();
+
 CodeEditor::CodeEditor() :
 	LineSpacing(1.0f),
 	UndoIndex(0),
@@ -1030,6 +1031,7 @@ CodeEditor::CodeEditor() :
 	TooltipEnabled(true),
 	ShowWhiteSpaces(true),
 	SafeColumnIndicatorOffset(0),
+	ForceMonospaceEnabled(false),
 	EditorFocused(false),
 	ProgramPointer(-1)
 {
@@ -1305,8 +1307,6 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 		ColorizeInternal();
 
 	// Process the code lines.
-	static std::string buffer; // Shared.
-	static std::list<Glyph> glyphs; // Shared.
 	ImVec2 contentSize = GetWindowContentRegionMax();
 	ImDrawList* drawList = GetWindowDrawList();
 	int appendIndex = 0;
@@ -1511,6 +1511,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 
 			int width = 0;
 			int offset = 0;
+			int nonAsciiCount = 0;
 			for (Glyph &glyph : line.Glyphs) {
 				unsigned color = glyph.MultiLineComment ? (ImU32)PaletteIndex::MultiLineComment : glyph.ColorIndex;
 
@@ -1519,25 +1520,26 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 						color == (unsigned)PaletteIndex::Default && prevColor == (unsigned)PaletteIndex::Identifier) ||
 						((prevGlyph && prevGlyph->Codepoint > 255) &&
 							color == (unsigned)PaletteIndex::Identifier && prevColor == (unsigned)PaletteIndex::Default);
-				if (!sameColor && !buffer.empty()) {
+				if (!sameColor && !TextBuffer.empty()) {
 					const ImU32 targetColor = prevColor >= (ImU32)PaletteIndex::Max ? prevColor : Plt[(int)prevColor];
-					RenderText(offset, textScreenPos, prevColor, targetColor, buffer.c_str(), glyphs, width);
+					RenderText(offset, textScreenPos, prevColor, targetColor, TextBuffer.c_str(), GlyphBuffer, width, nonAsciiCount);
 					textScreenPos.x += CharAdv.x * width;
-					buffer.clear();
-					glyphs.clear();
+					TextBuffer.clear();
+					GlyphBuffer.clear();
 					prevColor = color;
 					width = 0;
+					nonAsciiCount = 0;
 				}
-				appendIndex = AppendBuffer(buffer, glyphs, glyph, appendIndex, width);
+				appendIndex = AppendBuffer(TextBuffer, GlyphBuffer, glyph, appendIndex, width, nonAsciiCount);
 				++columnNo;
 				prevGlyph = &glyph;
 			}
 
-			if (!buffer.empty()) {
+			if (!TextBuffer.empty()) {
 				const ImU32 targetColor = prevColor >= (ImU32)PaletteIndex::Max ? prevColor : Plt[(int)prevColor];
-				RenderText(offset, textScreenPos, prevColor, targetColor, buffer.c_str(), glyphs, width);
-				buffer.clear();
-				glyphs.clear();
+				RenderText(offset, textScreenPos, prevColor, targetColor, TextBuffer.c_str(), GlyphBuffer, width, nonAsciiCount);
+				TextBuffer.clear();
+				GlyphBuffer.clear();
 			}
 
 			// Render the line cursor.
@@ -1547,9 +1549,8 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				int cx = TextDistanceToLineStart(State.CursorPosition);
 
 				if (focused) {
-					static auto timeStart = std::chrono::system_clock::now(); // Shared.
 					auto timeEnd = std::chrono::system_clock::now();
-					auto diff = timeEnd - timeStart;
+					auto diff = timeEnd - SharedCursorTick;
 					auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();
 					const ImVec2 cstart(
 						lineStartScreenPos.x + CharAdv.x * (cx + TextStart),
@@ -1562,7 +1563,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 						);
 						drawList->AddRectFilled(cstart, cend, Plt[(int)PaletteIndex::Cursor]);
 						if (elapsed > 800)
-							timeStart = timeEnd;
+							SharedCursorTick = timeEnd;
 					}
 
 					if (ImePositionUpdatedHandler)
@@ -1579,7 +1580,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 
 			// Render the line number.
 			if (IsShowLineNumbers()) {
-				static char buf[16]; // Shared.
+				char buf[16];
 				switch (TextStart - 1) {
 				case 5: snprintf(buf, countof(buf), "%4d", lineNo + 1); break;
 				case 6: snprintf(buf, countof(buf), "%5d", lineNo + 1); break;
@@ -2139,6 +2140,14 @@ void CodeEditor::SetSafeColumnIndicatorOffset(int aValue) {
 
 int CodeEditor::GetSafeColumnIndicatorOffset(void) const {
 	return SafeColumnIndicatorOffset;
+}
+
+void CodeEditor::SetForceMonospaceEnabled(bool aValue) {
+	ForceMonospaceEnabled = aValue;
+}
+
+bool CodeEditor::IsForceMonospaceEnabled(void) const {
+	return ForceMonospaceEnabled;
 }
 
 bool CodeEditor::IsEditorFocused(void) const {
@@ -3306,13 +3315,15 @@ const CodeEditor::Palette &CodeEditor::GetRetroBluePalette(void) {
 	return plt;
 }
 
-void CodeEditor::RenderText(int &aOffset, const ImVec2 &aPosition, ImU32 aPalette, ImU32 aColor, const char* aText, const std::list<Glyph> &aGlyphs, int aWidth) {
+void CodeEditor::RenderText(int &aOffset, const ImVec2 &aPosition, ImU32 aPalette, ImU32 aColor, const char* aText, const std::list<Glyph> &aGlyphs, int aWidth, int aNonAsciiCount) {
 	ImDrawList* drawList = GetWindowDrawList();
 
-	bool procSpaces =
+	const bool procSpaces =
 		(aPalette == (ImU32)PaletteIndex::Default) ||
 		(aPalette == (ImU32)PaletteIndex::String) ||
-		(aPalette != (ImU32)PaletteIndex::MultiLineComment && (*aText == '\t' || *aText == ' '));
+		(aPalette == (ImU32)PaletteIndex::Comment && aNonAsciiCount > 0) ||
+		(aPalette != (ImU32)PaletteIndex::MultiLineComment && (*aText == '\t' || *aText == ' ')) ||
+		ForceMonospaceEnabled;
 	if (procSpaces) {
 		ImVec2 step = aPosition;
 		std::list<Glyph>::const_iterator it = aGlyphs.begin();
@@ -3771,12 +3782,14 @@ std::string CodeEditor::GetText(const Coordinates &aStart, const Coordinates &aE
 	return result;
 }
 
-int CodeEditor::AppendBuffer(std::string &aBuffer, std::list<Glyph> &aGlyphs, Glyph &aGlyph, int aIndex, int &aWidth) {
+int CodeEditor::AppendBuffer(std::string &aBuffer, std::list<Glyph> &aGlyphs, Glyph &aGlyph, int aIndex, int &aWidth, int &aNonAsciiCount) {
 	const Char chr = aGlyph.Character;
 
 	int num = aGlyph.Width;
 	if (num) {
-		ImTextAppendUtf8ToStdStr(aBuffer, chr);
+		const int n = ImTextAppendUtf8ToStdStr(aBuffer, chr);
+		if (n > 1)
+			++aNonAsciiCount;
 
 		aWidth += num;
 		aGlyphs.push_back(aGlyph);
@@ -3807,6 +3820,9 @@ int CodeEditor::AppendBuffer(std::string &aBuffer, std::list<Glyph> &aGlyphs, Gl
 			num = 1;
 		else
 			num = GetCharacterWidth(aGlyph);
+
+		if (num > 1)
+			++aNonAsciiCount;
 
 		aGlyph.Width = num;
 		aWidth += num;

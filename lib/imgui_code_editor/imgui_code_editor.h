@@ -3,6 +3,7 @@
 
 #include "../imgui/imgui.h"
 #include <array>
+#include <chrono>
 #include <functional>
 #include <list>
 #include <map>
@@ -327,6 +328,9 @@ public:
 	void SetSafeColumnIndicatorOffset(int aValue);
 	int GetSafeColumnIndicatorOffset(void) const;
 
+	void SetForceMonospaceEnabled(bool aValue);
+	bool IsForceMonospaceEnabled(void) const;
+
 	bool IsEditorFocused(void) const;
 
 	void MoveUp(int aAmount = 1, bool aSelect = false);
@@ -426,7 +430,7 @@ protected:
 
 	typedef std::vector<UndoRecord> UndoBuffer;
 
-	void RenderText(int &aOffset, const ImVec2 &aPosition, ImU32 aPalette, ImU32 aColor, const char* aText, const std::list<Glyph> &aGlyphs, int aWidth);
+	void RenderText(int &aOffset, const ImVec2 &aPosition, ImU32 aPalette, ImU32 aColor, const char* aText, const std::list<Glyph> &aGlyphs, int aWidth, int aNonAsciiCount);
 	void Colorize(int aFromLine = 0, int aCount = -1);
 	void ColorizeRange(int aFromLine = 0, int aToLine = 0);
 	bool ColorizeMultilineComments(void);
@@ -441,7 +445,7 @@ protected:
 	bool IsOnWordBoundary(const Coordinates &aAt) const;
 	void AddUndo(UndoRecord &aValue);
 	std::string GetText(const Coordinates &aStart, const Coordinates &aEnd, const char* aNewline) const;
-	int AppendBuffer(std::string &aBuffer, std::list<Glyph> &aGlyphs, Glyph &aGlyph, int aIndex, int &aWidth);
+	int AppendBuffer(std::string &aBuffer, std::list<Glyph> &aGlyphs, Glyph &aGlyph, int aIndex, int &aWidth, int &aNonAsciiCount);
 	int InsertTextAt(Coordinates &aWhere, const char* aValue);
 	void DeleteRange(const Coordinates &aStart, const Coordinates &aEnd);
 	void DeleteSelection(void);
@@ -467,6 +471,8 @@ protected:
 	void OnLineClicked(int aLine, bool aDoubleClicked) const;
 
 	Lines CodeLines;
+	std::string TextBuffer;
+	std::list<Glyph> GlyphBuffer;
 	float LineSpacing;
 	EditorState State;
 	UndoBuffer UndoBuf;
@@ -525,6 +531,7 @@ protected:
 	bool TooltipEnabled;
 	bool ShowWhiteSpaces;
 	int SafeColumnIndicatorOffset;
+	bool ForceMonospaceEnabled;
 	ImVec2 CursorScreenPos;
 	bool EditorFocused;
 
@@ -536,6 +543,8 @@ protected:
 	Palette Plt;
 	LanguageDefinition LangDef;
 	RegexList Regexes;
+
+	static std::chrono::time_point<std::chrono::system_clock> SharedCursorTick;
 
 };
 

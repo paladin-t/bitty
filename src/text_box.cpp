@@ -359,6 +359,14 @@ public:
 			SetSafeColumnIndicatorOffset(val_);
 
 			return true;
+		} else if (key == "force_monospace") {
+			const bool val_ = (bool)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			SetForceMonospaceEnabled(val_);
+
+			return true;
 		}
 
 		if (key == "clear_before_baking") {
