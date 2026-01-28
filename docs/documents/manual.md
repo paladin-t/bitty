@@ -1473,7 +1473,7 @@ This module shows a multiline text box.
 
 **Methods**
 
-* `textBox.setOption(key, ...)`: sets option value of the specific key
+* `textBox:setOption(key, ...)`: sets option value of the specific key
 	* `key`: the option key to set
 
 Available options:
