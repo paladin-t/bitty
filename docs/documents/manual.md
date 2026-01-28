@@ -239,7 +239,7 @@ end
 Define another `quit` function to run code on execution termination:
 
 ```lua
-function quit()
+function quit() -- For desktop only.
 end
 ```
 
@@ -1226,6 +1226,8 @@ Both shape parameters can be:
 
 ### Network
 
+This module is for desktop only.
+
 **Constants**
 
 * `Network.None`
@@ -1346,14 +1348,23 @@ For both "string" and "json", the underneath data flow always end up with a zero
 * `Platform.execute(cmd)`: executes the specific system command; this function invokes native command on desktops, and JavaScript function in browser
 	* `cmd`: the command to execute
 
-* `Platform.openFile([title[, filter[, multiselect]]])`: popups an open-file-dialog
+The following filesystem-related dialogs are for desktop only.
+
+* `Platform.openFile([title[, filter[, default[, multiselect]]]])`: popups an open-file-dialog
 	* `title`: the title text
 	* `filter`: the file filter, i.e. `"Text files (*.txt);*.txt;All files (*.*);*"`
+	* `default`: the default file name
 	* `multiselect`: `true` for multiselect, `false` for single file select
 	* returns selected file path or paths, or `nil` for canceled
-* `Platform.saveFile([title[, filter]])`: popups a save-file-dialog
+* `Platform.openFile([title[, filter[, default]]])`: popups an open-file-dialog
+	* `title`: the title text
+	* `filter`: the file filter, i.e. `"Text files (*.txt);*.txt;All files (*.*);*"`
+	* `default`: the default file name
+	* returns selected file path or paths, or `nil` for canceled
+* `Platform.saveFile([title[, filter[, default]]])`: popups a save-file-dialog
 	* `title`: the title text
 	* `filter`: the file filter
+	* `default`: the default file name
 	* returns specified file path, or `nil` for canceled
 * `Platform.selectDirectory([title])`: popups a select-directory-dialog
 	* `title`: the title text
