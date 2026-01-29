@@ -276,6 +276,10 @@ list(
   "../lib/network_info/cbits/network-unix.c"
 )
 list(
+  APPEND BITTY_LIB_PORTABLE_FILE_DIALOGS
+  "../lib/portable_file_dialogs/portable-file-dialogs.cpp"
+)
+list(
   APPEND BITTY_LIB_SDL_GFX
   "../lib/sdl_gfx/SDL2_framerate.c"
   "../lib/sdl_gfx/SDL2_gfxPrimitives.c"
@@ -454,6 +458,7 @@ add_executable(
   ${BITTY_LIB_MD4C}
   ${BITTY_LIB_MICROPATHER}
   ${BITTY_LIB_NETWORK_INFO}
+  ${BITTY_LIB_PORTABLE_FILE_DIALOGS}
   ${BITTY_LIB_SDL_GFX}
   ${BITTY_LIB_SQLITE}
   ${BITTY_LIB_SQLITE3PP}
