@@ -621,6 +621,16 @@ bool Workspace::canSaveTo(const char* path) const {
 	return true;
 }
 
+void Workspace::fillAssetEditorSettings(Editable* editor) const {
+	editor->post(Editable::SET_THEME_STYLE, (Variant::Int)theme()->styleIndex());
+
+	editor->post(Editable::SET_INDENT_RULE, (Variant::Int)settings()->editorIndentRule);
+
+	editor->post(Editable::SET_COLUMN_INDICATOR, (Variant::Int)settings()->editorColumnIndicator);
+
+	editor->post(Editable::SET_SHOW_SPACES, settings()->editorShowWhiteSpaces);
+}
+
 void Workspace::touchedFile(const char*) {
 	// Do nothing.
 }
@@ -1890,6 +1900,10 @@ void Workspace::editing(class Window* wnd, class Renderer* rnd, const class Proj
 							Asset::States* states = asset->states();
 							states->activate(Asset::States::INSPECTABLE);
 							states->focus();
+
+							Editable* editor = asset->editor();
+							if (editor)
+								fillAssetEditorSettings(editor);
 						}
 					}
 				);
@@ -3366,16 +3380,6 @@ int Workspace::withEditingAsset(const class Project* project, EditorHandler hand
 		handler(asset, editor);
 
 	return 1;
-}
-
-void Workspace::fillAssetEditorSettings(Editable* editor) const {
-	editor->post(Editable::SET_THEME_STYLE, (Variant::Int)theme()->styleIndex());
-
-	editor->post(Editable::SET_INDENT_RULE, (Variant::Int)settings()->editorIndentRule);
-
-	editor->post(Editable::SET_COLUMN_INDICATOR, (Variant::Int)settings()->editorColumnIndicator);
-
-	editor->post(Editable::SET_SHOW_SPACES, settings()->editorShowWhiteSpaces);
 }
 
 void Workspace::showAssetContextMenu(class Window*, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {

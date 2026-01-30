@@ -774,6 +774,8 @@ public:
 						if (!editor)
 							break;
 
+						ws->fillAssetEditorSettings(editor);
+
 						const Coordinates begin(_tools.marker.begin.line, _tools.marker.begin.column);
 						const Coordinates end(_tools.marker.end.line, _tools.marker.end.column);
 

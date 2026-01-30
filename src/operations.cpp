@@ -2058,6 +2058,10 @@ promise::Defer Operations::editResolveRefs(class Renderer*, Workspace* ws, const
 				asset->prepare(Asset::EDITING, false);
 				states->activate(activity);
 
+				Editable* editor = asset->editor();
+				if (editor)
+					ws->fillAssetEditorSettings(editor);
+
 				++count;
 			}
 

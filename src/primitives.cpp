@@ -2801,8 +2801,8 @@ public:
 		_effects = nullptr;
 		_resources = nullptr;
 		_project = nullptr;
-		_renderer = nullptr;
 		_workspace = nullptr;
+		_renderer = nullptr;
 		_window = nullptr;
 
 		fprintf(stdout, "Primitives closed.\n");

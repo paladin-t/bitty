@@ -416,6 +416,10 @@ public:
 	 * @brief Gets whether it's possible to save to a specific path.
 	 */
 	bool canSaveTo(const char* path) const;
+	/**
+	 * @brief Fills settings into an asset editor.
+	 */
+	void fillAssetEditorSettings(Editable* editor) const;
 
 	/**
 	 * @brief Handles on project file touched.
@@ -685,7 +689,6 @@ protected:
 		const char** undoable /* nullable */, const char** redoable /* nullable */
 	) const;
 	int withEditingAsset(const class Project* project, EditorHandler handler) const;
-	void fillAssetEditorSettings(Editable* editor) const;
 	void showAssetContextMenu(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 	void filterAssets(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec);
 	void resizeAsset(class Window* wnd, class Renderer* rnd, const class Project* project, Asset::List::Index index);

@@ -367,6 +367,29 @@ static int warnForMethodCallSymbol(lua_State* L) {
 	return error(L, "  Warning: Did you mean to call a method using \":\" instead of \".\"?");
 }
 
+static void bake(Workspace* workspace, Workspace::Bake::Handler bake, const Variant &arg, bool await) {
+	if (!await) {
+		workspace->addBake(bake, arg);
+
+		return;
+	}
+
+#	if BITTY_MULTITHREAD_ENABLED
+	workspace->addBake(bake, arg);
+#	else /* BITTY_MULTITHREAD_ENABLED */
+	bake(arg);
+#	endif /* BITTY_MULTITHREAD_ENABLED */
+
+#	if BITTY_MULTITHREAD_ENABLED
+	while (workspace->hasBake()) { // Make sure the `TextBox` has been created before other Lua operations.
+		constexpr const int STEP = 1;
+		DateTime::sleep(STEP);
+	}
+#	else /* BITTY_MULTITHREAD_ENABLED */
+	// Do nothing.
+#	endif /* BITTY_MULTITHREAD_ENABLED */
+}
+
 /**< Variant. */
 
 static void checkOrRead(lua_State* L, Variant* ret, Index idx, References &refs, bool check, int level, const TableOptions &options) {
@@ -10670,31 +10693,16 @@ static int TextBox_ctor(lua_State* L) {
 	if (!obj)
 		return write(L, nullptr);
 
-#	if BITTY_MULTITHREAD_ENABLED
-	impl->primitives()->workspace()->addBake(
+	bake(
+		impl->primitives()->workspace(),
 		[=] (const Variant &) -> void {
 			static int textBoxSeed = 1;
 			const std::string id = "TextBox_" + Text::toString(textBoxSeed++);
 			obj->open(nullptr, id.c_str(), nullptr, nullptr);
 		},
-		nullptr
+		nullptr,
+		true
 	);
-#	else /* BITTY_MULTITHREAD_ENABLED */
-	(void)impl;
-
-	static int textBoxSeed = 1;
-	const std::string id = "TextBox_" + Text::toString(textBoxSeed++);
-	obj->open(nullptr, id.c_str(), nullptr, nullptr);
-#	endif /* BITTY_MULTITHREAD_ENABLED */
-
-#	if BITTY_MULTITHREAD_ENABLED
-	while (impl->primitives()->workspace()->hasBake()) { // Make sure the `TextBox` has been created before other Lua operations.
-		constexpr const int STEP = 1;
-		DateTime::sleep(STEP);
-	}
-#	else /* BITTY_MULTITHREAD_ENABLED */
-	// Do nothing.
-#	endif /* BITTY_MULTITHREAD_ENABLED */
 
 	return write(L, &obj);
 }
@@ -10711,12 +10719,14 @@ static int TextBox___gc(lua_State* L) {
 
 	obj->~shared_ptr();
 
-	impl->primitives()->workspace()->addBake(
-		[tb] (const Variant &) -> void {
+	bake(
+		impl->primitives()->workspace(),
+		[=] (const Variant &) -> void {
 			tb->close(nullptr);
 			TextBox::destroy(tb);
 		},
-		nullptr
+		nullptr,
+		false
 	);
 
 	return 0;
@@ -10805,7 +10815,8 @@ static int TextBox_useFont(lua_State* L) {
 		TextBox::WeakPtr ptr(*obj);
 		Json::Ptr json_(*json);
 
-		impl->primitives()->workspace()->addBake(
+		bake(
+			impl->primitives()->workspace(),
 			[=] (const Variant &) -> void {
 				if (ptr.expired())
 					return;
@@ -10815,7 +10826,8 @@ static int TextBox_useFont(lua_State* L) {
 
 				ptr_->useFont(json_, fontData);
 			},
-			nullptr
+			nullptr,
+			false
 		);
 	} else {
 		error(L, "TextBox expected.");
@@ -11078,7 +11090,8 @@ static int TextBox_update(lua_State* L) {
 	if (obj) {
 		TextBox::WeakPtr ptr(*obj);
 
-		impl->primitives()->workspace()->addBake(
+		bake(
+			impl->primitives()->workspace(),
 			[=] (const Variant &) -> void {
 				if (ptr.expired())
 					return;
@@ -11092,7 +11105,8 @@ static int TextBox_update(lua_State* L) {
 				const Math::Recti rect(x0, y0, x1, y1);
 				ptr_->bake(wnd, rnd, ws, (float)rect.xMin(), (float)rect.yMin(), (float)rect.width(), (float)rect.height());
 			},
-			nullptr
+			nullptr,
+			false
 		);
 		impl->primitives()->function(
 			[=] (const Variant &) -> void {
