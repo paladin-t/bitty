@@ -778,9 +778,9 @@ promise::Defer Operations::fileCloseAsset(class Renderer* rnd, Workspace* ws, co
 					states->deactivate();
 					states->deselect();
 
-					asset->finish(Asset::EDITING, false);
+					asset->finish((Asset::Usages)(Asset::RUNNING | Asset::EDITING), false); // Invalidate assets for both running and editing.
 
-					prj->cleanup(Asset::EDITING);
+					prj->cleanup((Asset::Usages)(Asset::RUNNING | Asset::EDITING));
 
 					df.resolve(false);
 
@@ -2210,6 +2210,21 @@ promise::Defer Operations::projectAddAsset(class Renderer* rnd, Workspace* ws, c
 						return;
 					}
 
+					const std::string nameExtToBeValidated = Text::remove(name, "/");
+					const std::string nameExtSanitized = Text::sanitizeFilename(nameExtToBeValidated);
+					if (nameExtToBeValidated != nameExtSanitized) {
+						df.reject();
+
+						ws->messagePopupBox(
+							ws->theme()->dialogPrompt_InvalidName(),
+							nullptr,
+							nullptr,
+							nullptr
+						);
+
+						return;
+					}
+
 					if (!ref && (type == Sprite::TYPE() || type == Map::TYPE())) {
 						ImGui::PopupBox::Ptr prev = ws->popupBox();
 						ImGui::MessagePopupBox::ConfirmHandler confirm(
@@ -2536,10 +2551,73 @@ promise::Defer Operations::projectRenameAsset(class Renderer* rnd, Workspace* ws
 					nameExt += ext;
 					Path::uniform(nameExt);
 
+					bool valid = Path::isValid(nameExt.c_str());
+					if (valid) {
+						const Text::Array parts = Text::split(nameExt, "/");
+						valid &= std::find_if(
+							parts.begin(), parts.end(),
+							[] (const std::string &str) -> bool {
+								return std::find_if(
+									str.begin(), str.end(),
+									[] (char ch) -> bool {
+										return ch != '.';
+									}
+								) == str.end();
+							}
+						) == parts.end();
+					}
+					if (!valid) {
+						df.reject();
+
+						ws->messagePopupBox(
+							ws->theme()->dialogPrompt_InvalidName(),
+							nullptr,
+							nullptr,
+							nullptr
+						);
+
+						return;
+					}
+
+					const std::string nameExtToBeValidated = Text::remove(nameExt, "/");
+					const std::string nameExtSanitized = Text::sanitizeFilename(nameExtToBeValidated);
+					if (nameExtToBeValidated != nameExtSanitized) {
+						df.reject();
+
+						ws->messagePopupBox(
+							ws->theme()->dialogPrompt_InvalidName(),
+							nullptr,
+							nullptr,
+							nullptr
+						);
+
+						return;
+					}
+
+					if (Text::indexOf(nameExt, "//") != std::string::npos) {
+						df.reject();
+
+						ws->messagePopupBox(
+							ws->theme()->dialogPrompt_InvalidPath(),
+							nullptr,
+							nullptr,
+							nullptr
+						);
+
+						return;
+					}
+
 					LockGuard<RecursiveMutex>::UniquePtr acquired;
 					Project* prj = project->acquire(acquired);
 					if (!prj) {
 						df.reject();
+
+						ws->messagePopupBox(
+							ws->theme()->dialogPrompt_InvalidProject(),
+							nullptr,
+							nullptr,
+							nullptr
+						);
 
 						return;
 					}
@@ -2562,11 +2640,25 @@ promise::Defer Operations::projectRenameAsset(class Renderer* rnd, Workspace* ws
 					if (!asset) {
 						df.reject();
 
+						ws->messagePopupBox(
+							ws->theme()->dialogPrompt_InvalidAsset(),
+							nullptr,
+							nullptr,
+							nullptr
+						);
+
 						return;
 					}
 
 					if (!asset->rename(nameExt.c_str())) {
 						df.reject();
+
+						ws->messagePopupBox(
+							ws->theme()->dialogPrompt_CannotRenameAsset(),
+							nullptr,
+							nullptr,
+							nullptr
+						);
 
 						return;
 					}

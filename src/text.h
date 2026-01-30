@@ -117,6 +117,8 @@ public:
 	static std::string toHex(Int64 val, bool toupper);
 	static std::string toHex(UInt64 val, bool toupper);
 
+	static std::string sanitizeFilename(const std::string &str, char replacementChar = '_');
+
 	static std::string remove(const std::string &str, const std::string &charsToRemove);
 	static std::string trim(const std::string &str, const std::string &delims = " \f\n\r\t\v");
 	static std::string replace(const std::string &str, const std::string &from, const std::string &to, bool all = true);

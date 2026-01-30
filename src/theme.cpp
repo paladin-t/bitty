@@ -261,6 +261,7 @@ bool Theme::open(class Renderer* rnd) {
 	dialogPrompt_CannotAddMoreFrame("Cannot add more frame.");
 	dialogPrompt_CannotLoadProject("Cannot load project.");
 	dialogPrompt_CannotReadFromCurrentProject("Cannot read from current project.");
+	dialogPrompt_CannotRenameAsset("Cannot rename asset.");
 	dialogPrompt_CannotSaveToReadonlyLocations("Cannot save to readonly locations.");
 	dialogPrompt_CannotSaveToNonemptyDirectory("Cannot save to nonempty directory.");
 	dialogPrompt_CannotWriteToCurrentProject("Cannot write to current project.");
@@ -268,6 +269,7 @@ bool Theme::open(class Renderer* rnd) {
 	dialogPrompt_InvalidArea("Invalid area.");
 	dialogPrompt_InvalidAsset("Invalid asset.");
 	dialogPrompt_InvalidName("Invalid name.");
+	dialogPrompt_InvalidPath("Invalid path.");
 	dialogPrompt_InvalidProject("Invalid project.");
 	dialogPrompt_InvalidRef("Invalid ref.");
 	dialogPrompt_NotUndoable("(Not undoable)");

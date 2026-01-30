@@ -1231,10 +1231,10 @@ bool Asset::rename(const char* newNameExt) {
 		return true;
 	} else {
 		if (!fileInfo()->exists()) {
-			std::string path = fileInfo()->parentPath();
-			path = Path::combine(path.c_str(), newNameExt);
+			std::string newPath = directoryInfo()->fullPath();
+			newPath = Path::combine(newPath.c_str(), newNameExt);
 			FileInfo::destroy(fileInfo());
-			fileInfo(FileInfo::create(path.c_str()));
+			fileInfo(FileInfo::create(newPath.c_str()));
 
 			entry(newNameExt);
 
@@ -1247,8 +1247,10 @@ bool Asset::rename(const char* newNameExt) {
 		if (newEntry.parts().size() > 1) {
 			FileInfo::Ptr fileInfo(FileInfo::make(newPath.c_str()));
 			const std::string dirPath = fileInfo->parentPath();
-			if (!Path::existsDirectory(dirPath.c_str()))
-				Path::touchDirectory(dirPath.c_str());
+			if (!Path::existsDirectory(dirPath.c_str())) {
+				if (!Path::touchDirectory(dirPath.c_str()))
+					return false;
+			}
 		}
 
 		if (!fileInfo()->moveTo(newPath.c_str()))

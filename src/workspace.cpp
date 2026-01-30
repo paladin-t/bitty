@@ -2072,11 +2072,11 @@ void Workspace::editing(class Window* wnd, class Renderer* rnd, const class Proj
 							states->deactivate();
 							states->deselect();
 
-							asset->finish(Asset::EDITING, false);
+							asset->finish((Asset::Usages)(Asset::RUNNING | Asset::EDITING), false); // Invalidate assets for both running and editing.
 						},
 						true
 					);
-					prj->cleanup(Asset::EDITING);
+					prj->cleanup((Asset::Usages)(Asset::RUNNING | Asset::EDITING));
 
 					prj->bringToFront(frontAsset);
 					const Asset::List::Index index = prj->indexOf(frontAsset, true);

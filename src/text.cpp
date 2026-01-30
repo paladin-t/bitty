@@ -10,6 +10,7 @@
 
 #include "encoding.h"
 #include "text.h"
+#include <cctype>
 #include <cfloat>
 #include <iomanip>
 #include <sstream>
@@ -408,6 +409,105 @@ std::string Text::toHex(Int64 val, bool toupper) {
 
 std::string Text::toHex(UInt64 val, bool toupper) {
 	return toHex(val, sizeof(decltype(val)) * 2, '0', toupper);
+}
+
+std::string Text::sanitizeFilename(const std::string &str, char replacementChar) {
+	// Prepare.
+	std::wstring wresult = Unicode::toWide(str);
+
+	// Define illegal characters.
+	std::wstring illegalChars = L"/\\?%*:|\"<>";
+
+#if defined BITTY_OS_WIN
+	illegalChars += L"&$!';`";
+#elif defined BITTY_OS_MAC
+	// Do nothing.
+#elif defined BITTY_OS_LINUX
+	// Do nothing.
+#endif /* Platform macro. */
+
+	// Replace illegal characters.
+	for (wchar_t &c : wresult) {
+		if (illegalChars.find(c) != std::wstring::npos) {
+			c = replacementChar;
+		}
+	}
+
+	// Replace control characters.
+	for (wchar_t &c : wresult) {
+		if (std::iscntrl(static_cast<unsigned char>(c))) {
+			c = replacementChar;
+		}
+	}
+
+	// Replace reserved names.
+#if defined BITTY_OS_WIN
+	constexpr const wchar_t* WINDOWS_RESERVED_NAMES[] = {
+		L"CON", L"PRN", L"AUX", L"NUL",
+		L"COM1", L"COM2", L"COM3", L"COM4", L"COM5", L"COM6", L"COM7", L"COM8", L"COM9",
+		L"LPT1", L"LPT2", L"LPT3", L"LPT4", L"LPT5", L"LPT6", L"LPT7", L"LPT8", L"LPT9"
+	};
+
+	std::wstring upperStr = wresult;
+	std::transform(upperStr.begin(), upperStr.end(), upperStr.begin(), ::toupper);
+
+	for (const wchar_t* reserved : WINDOWS_RESERVED_NAMES) {
+		if (upperStr == reserved) {
+			wresult = L"_" + wresult;
+
+			break;
+		}
+
+		const size_t dotPos = upperStr.find(L'.');
+		if (dotPos != std::wstring::npos) {
+			const std::wstring nameOnly = upperStr.substr(0, dotPos);
+			if (nameOnly == reserved) {
+				wresult = L"_" + wresult;
+
+				break;
+			}
+		}
+	}
+#endif /* Platform macro. */
+
+	// Remove if ends with dot.
+	if (!wresult.empty() && (wresult.back() == L'.' || wresult.back() == L' ')) {
+		wresult.back() = replacementChar;
+	}
+
+	size_t pos = 0;
+	while ((pos = wresult.find(L"..", pos)) != std::wstring::npos) {
+		wresult.replace(pos, 2, std::wstring(2, replacementChar));
+		pos += 2;
+	}
+
+	// Ensure it's not empty.
+	if (wresult.empty()) {
+		wresult = L"Unnamed";
+	}
+
+	// Limit the length.
+	const size_t maxLen = 255; // Safe for most operating systems.
+	if (wresult.length() > maxLen) {
+		const size_t lastDot = wresult.find_last_of(L'.');
+		if (lastDot != std::wstring::npos && lastDot > wresult.length() - 10) {
+			const std::wstring ext = wresult.substr(lastDot);
+			const std::wstring name = wresult.substr(0, lastDot);
+
+			const size_t keepLen = maxLen - ext.length();
+			if (keepLen > 0)
+				wresult = name.substr(0, keepLen) + ext;
+			else
+				wresult = name.substr(0, maxLen);
+		} else {
+			wresult = wresult.substr(0, maxLen);
+		}
+	}
+
+	// Finish.
+	const std::string result = Unicode::fromWide(wresult);
+
+	return result;
 }
 
 std::string Text::remove(const std::string &str, const std::string &charsToRemove) {
