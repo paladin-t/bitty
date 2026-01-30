@@ -7,19 +7,20 @@
 - [About Bitty Engine](#about-bitty-engine)
 	- [Why Bitty Engine?](#why-bitty-engine)
 	- [Features](#features)
-	- [Technical specifications](#technical-specifications)
+	- [Technical Specifications](#technical-specifications)
 - [Glance](#glance)
 	- [Code](#code)
+	- [Engine](#engine)
 	- [Games](#games)
 - [Redistributing](#redistributing)
 - [Getting Bitty Engine](#getting-bitty-engine)
-- [Compiling from source](#compiling-from-source)
-	- [Startup project](#startup-project)
+- [Compiling from Source](#compiling-from-source)
+	- [Startup Project](#startup-project)
 	- [Windows](#windows)
 	- [MacOS](#macos)
 	- [Linux](#linux)
-	- [Other platforms](#other-platforms)
-- [Community and contributing](#community-and-contributing)
+	- [Other Platforms](#other-platforms)
+- [Community and Contributing](#community-and-contributing)
 - [Documentation](#documentation)
 
 ## About Bitty Engine
@@ -59,11 +60,11 @@ Bitty Engine offers a set of orthogonal features that makes game development com
 * Physics API
 	* `Space`, `Shape`, `Body`, `Arbiter`, etc.
 * Libraries
-	* Algorithms, `Archive`, `Bytes`, `Color`, `DateTime`, Encoding, `File`, Filesystem, `Image`, `Json`, Math, `Network`, `Platform`, `Web`
+	* Algorithms, `Archive`, `Bytes`, `Color`, `Database`, `DateTime`, Encoding, `File`, Filesystem, `Image`, `Json`, Math, `Network`, `Platform`, `Web`, `TextBox`
 * Application interfaces
 	* `Application`, `Canvas`, `Project`, `Debug`
 
-### Technical specifications
+### Technical Specifications
 
 * Display: configurable resolution
 * Code: Lua, supports multiple source files
@@ -95,7 +96,26 @@ end
 
 See more in [bitty/examples](bitty/examples).
 
+### Engine
+
+![](docs/imgs/screenshot1_edit_code.png)
+
+![](docs/imgs/screenshot2_edit_sprite.png)
+
+![](docs/imgs/screenshot3_edit_map.png)
+
+![](docs/imgs/screenshot4_edit_image.png)
+
+![](docs/imgs/screenshot5_view_sound.png)
+
+![](docs/imgs/screenshot6_view_font.png)
+
+![](docs/imgs/screenshot7_play.png)
+
 ### Games
+
+<details>
+<summary>Details</summary>
 
 ![](docs/imgs/game1_2048.png)
 
@@ -110,6 +130,8 @@ See more in [bitty/examples](bitty/examples).
 ![](docs/imgs/game6_rpg.png)
 
 ![](docs/imgs/game7_racing.png)
+
+</details>
 
 ## Redistributing
 
@@ -127,7 +149,7 @@ The pre-built binary is available on [Steam](https://store.steampowered.com/app/
 
 [![](docs/imgs/steam.png)](https://store.steampowered.com/app/1386180/) [![](docs/imgs/itch.png)](https://tonywang.itch.io/bitty)
 
-## Compiling from source
+## Compiling from Source
 
 A C++14 capable compiler is required, any compiler came after 2014 should be ok. You need to get this repository before build:
 
@@ -153,7 +175,7 @@ There are some customizable macros:
 
 </details>
 
-### Startup project
+### Startup Project
 
 Once you have setup and built a binary, it loads from "../data" or "../data.bit" automatically as startup project. Otherwise it shows a programmable workspace.
 
@@ -270,7 +292,7 @@ cd ..
 
 </details>
 
-### Other platforms
+### Other Platforms
 
 <details>
 <summary>Details</summary>
@@ -283,7 +305,7 @@ Note the file dialog library is only usable on desktop builds, make your own ada
 
 </details>
 
-## Community and contributing
+## Community and Contributing
 
 * [Discord](https://discord.gg/372vb8ct2H)
 * [GitHub Discussions](https://github.com/paladin-t/bitty/discussions)
