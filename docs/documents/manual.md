@@ -1496,6 +1496,7 @@ Available options:
 | "show_scrollbars"                  | Boolean                                                | Indicates whether to show scrollbars, defaults to `true`                                        |
 | "show_spaces"                      | Boolean                                                | Indicates whether to show spaces, defaults to `false`                                           |
 | "column_indicator"                 | Integer                                                | Sets the column number of the column indicator                                                  |
+| "force_monospace"                  | Boolean                                                | Sets whether to force the editor to presume that it is under monospace mode                     |
 | "clear_before_baking"              | Boolean                                                | Trivial option. Indicates whether to clear the render target before baking, defaults to `false` |
 | "affected_by_camera"               | Boolean                                                | Indicates whether the rendering is affected by camera, defaults to `true`                       |
 | "context_menu_enabled"             | Boolean                                                | Indicates whether the context menu is enabled, defaults to `true`                               |
