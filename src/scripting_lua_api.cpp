@@ -367,6 +367,7 @@ static int warnForMethodCallSymbol(lua_State* L) {
 	return error(L, "  Warning: Did you mean to call a method using \":\" instead of \".\"?");
 }
 
+#if BITTY_BAKE_ENABLED
 static void bake(Workspace* workspace, Workspace::Bake::Handler bake, const Variant &arg, bool await) {
 	if (!await) {
 		workspace->addBake(bake, arg);
@@ -376,19 +377,16 @@ static void bake(Workspace* workspace, Workspace::Bake::Handler bake, const Vari
 
 #	if BITTY_MULTITHREAD_ENABLED
 	workspace->addBake(bake, arg);
-#	else /* BITTY_MULTITHREAD_ENABLED */
-	bake(arg);
-#	endif /* BITTY_MULTITHREAD_ENABLED */
 
-#	if BITTY_MULTITHREAD_ENABLED
 	while (workspace->hasBake()) { // Make sure the `TextBox` has been created before other Lua operations.
 		constexpr const int STEP = 1;
 		DateTime::sleep(STEP);
 	}
 #	else /* BITTY_MULTITHREAD_ENABLED */
-	// Do nothing.
+	bake(arg);
 #	endif /* BITTY_MULTITHREAD_ENABLED */
 }
+#endif /* BITTY_BAKE_ENABLED */
 
 /**< Variant. */
 
@@ -11217,10 +11215,29 @@ static void open_TextBox(lua_State* L) {
 	);
 }
 #else /* BITTY_BAKE_ENABLED */
-static void open_TextBox(lua_State* L) {
-	(void)L;
+static int TextBox_ctor(lua_State* L) {
+	error(L, "The \"TextBox\" module is not available.");
 
-	// Do nothing.
+	return 0;
+}
+
+static void open_TextBox(lua_State* L) {
+	def(
+		L, "TextBox",
+		LUA_LIB(
+			array(
+				luaL_Reg{ "new", TextBox_ctor },
+				luaL_Reg{ nullptr, nullptr }
+			)
+		),
+		array(
+			luaL_Reg{ nullptr, nullptr }
+		),
+		array(
+			luaL_Reg{ nullptr, nullptr }
+		),
+		nullptr, nullptr
+	);
 }
 #endif /* BITTY_BAKE_ENABLED */
 
