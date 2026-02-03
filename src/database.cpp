@@ -220,6 +220,19 @@ public:
 
 		return true; // Succeeded.
 	}
+
+	virtual long long lastInsertedRowId(void) const override {
+		if (!_opened)
+			return false;
+
+		try {
+			return _db.last_insert_rowid();
+		} catch (sqlite3pp::database_error &) {
+			return -1;
+		}
+
+		return -1;
+	}
 };
 
 Database* Database::create(void) {

@@ -45,6 +45,8 @@ public:
 	virtual bool query(Variant &ret, const char* sql) = 0;
 	virtual bool exec(Variant &ret, const char* sql) = 0;
 
+	virtual long long lastInsertedRowId(void) const = 0;
+
 	static Database* create(void);
 	static void destroy(Database* ptr);
 };

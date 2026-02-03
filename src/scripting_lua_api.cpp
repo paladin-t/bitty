@@ -3543,6 +3543,34 @@ static int Database_exec(lua_State* L) {
 	return write(L, 0);
 }
 
+static int Database___index(lua_State* L) {
+	Database::Ptr* obj = nullptr;
+	const char* field = nullptr;
+	read<>(L, obj, field);
+
+	if (!obj || !field)
+		return 0;
+
+	if (strcmp(field, "lastInsertedRowId") == 0) {
+		const long long ret = obj->get()->lastInsertedRowId();
+
+		return write(L, ret);
+	} else {
+		return __index(L, field);
+	}
+}
+
+static int Database___newindex(lua_State* L) {
+	Database::Ptr* obj = nullptr;
+	const char* field = nullptr;
+	read<>(L, obj, field);
+
+	if (!obj || !field)
+		return 0;
+
+	return 0;
+}
+
 static void open_Database(lua_State* L) {
 	def(
 		L, "Database",
@@ -3565,7 +3593,7 @@ static void open_Database(lua_State* L) {
 			luaL_Reg{ "exec", Database_exec },
 			luaL_Reg{ nullptr, nullptr }
 		),
-		nullptr, nullptr
+		Database___index, Database___newindex
 	);
 }
 
