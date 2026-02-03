@@ -247,7 +247,7 @@ public:
 			LockGuard<decltype(_lock)> guard(_lock);
 
 			Coordinates pos = GetCursorPosition();
-			pos.Line = val_;
+			pos.Line = val_ - 1; // 1-based.
 			SetCursorPosition(pos);
 			EnsureCursorVisible();
 
@@ -258,7 +258,7 @@ public:
 			LockGuard<decltype(_lock)> guard(_lock);
 
 			Coordinates pos = GetCursorPosition();
-			pos.Column = val_;
+			pos.Column = val_ - 1; // 1-based.
 			SetCursorPosition(pos);
 			EnsureCursorVisible();
 
@@ -858,6 +858,29 @@ public:
 		}
 
 		return false;
+	}
+
+	virtual bool cursorPosition(int &ln, int &col) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
+		const Coordinates pos = GetCursorPosition();
+		ln = pos.Line + 1; // 1-based.
+		col = pos.Column + 1;
+
+		return true;
+	}
+	virtual bool selectionPositions(int &ln0, int &col0, int &ln1, int &col1) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
+		Coordinates start;
+		Coordinates end;
+		GetSelection(start, end);
+		ln0 = start.Line + 1; // 1-based.
+		col0 = start.Column + 1;
+		ln1 = end.Line + 1;
+		col1 = end.Column + 1;
+
+		return true;
 	}
 
 	virtual bool useFont(const Json::Ptr &json, const FontData &fontData) override {

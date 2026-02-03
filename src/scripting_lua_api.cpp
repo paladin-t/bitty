@@ -10792,6 +10792,44 @@ static int TextBox_setOption(lua_State* L) {
 	return 0;
 }
 
+static int TextBox_cursorPosition(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		int ln = 0;
+		int col = 0;
+		obj->get()->cursorPosition(ln, col);
+
+		return write(L, ln, col);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int TextBox_selectionPositions(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		int ln0 = 0;
+		int col0 = 0;
+		int ln1 = 0;
+		int col1 = 0;
+		obj->get()->selectionPositions(ln0, col0, ln1, col1);
+
+		return write(L, ln0, col0, ln1, col1);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
 static int TextBox_useFont(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
@@ -11226,6 +11264,8 @@ static void open_TextBox(lua_State* L) {
 		),
 		array(
 			luaL_Reg{ "setOption", TextBox_setOption },
+			luaL_Reg{ "cursorPosition", TextBox_cursorPosition },
+			luaL_Reg{ "selectionPositions", TextBox_selectionPositions },
 			luaL_Reg{ "useFont", TextBox_useFont },
 			luaL_Reg{ "focus", TextBox_focus },
 			luaL_Reg{ "selectAll", TextBox_selectAll },

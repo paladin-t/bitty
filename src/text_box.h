@@ -38,6 +38,9 @@ public:
 
 	virtual bool option(const std::string &key, const Variant &val) = 0;
 
+	virtual bool cursorPosition(int &ln, int &col) = 0;
+	virtual bool selectionPositions(int &ln0, int &col0, int &ln1, int &col1) = 0;
+
 	virtual bool useFont(const Json::Ptr &json, const FontData &fontData) = 0;
 
 	virtual bool focused(void) const = 0;
