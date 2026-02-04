@@ -10830,6 +10830,38 @@ static int TextBox_selectionPositions(lua_State* L) {
 	return 0;
 }
 
+static int TextBox_hasUnsavedChanges(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		const bool ret = obj->get()->hasUnsavedChanges();
+
+		return write(L, ret);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int TextBox_markChangesSaved(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		obj->get()->markChangesSaved(nullptr);
+
+		return 0;
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
 static int TextBox_useFont(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
@@ -11266,6 +11298,8 @@ static void open_TextBox(lua_State* L) {
 			luaL_Reg{ "setOption", TextBox_setOption },
 			luaL_Reg{ "cursorPosition", TextBox_cursorPosition },
 			luaL_Reg{ "selectionPositions", TextBox_selectionPositions },
+			luaL_Reg{ "hasUnsavedChanges", TextBox_hasUnsavedChanges },
+			luaL_Reg{ "markChangesSaved", TextBox_markChangesSaved },
 			luaL_Reg{ "useFont", TextBox_useFont },
 			luaL_Reg{ "focus", TextBox_focus },
 			luaL_Reg{ "selectAll", TextBox_selectAll },

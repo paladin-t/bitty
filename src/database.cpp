@@ -228,7 +228,7 @@ public:
 		try {
 			return _db.last_insert_rowid();
 		} catch (sqlite3pp::database_error &) {
-			return -1;
+			// Do nothing.
 		}
 
 		return -1;
