@@ -883,6 +883,32 @@ void Workspace::input(Promise::Ptr &promise, const char* prompt, const char* def
 	popupPromiseInit().reset();
 }
 
+void Workspace::setCursor(const std::string &name) {
+	if (!canvasHovering())
+		return;
+
+	if (name == "none")
+		ImGui::SetMouseCursor(ImGuiMouseCursor_None);
+	else if (name == "arrow")
+		ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
+	else if (name == "text_input")
+		ImGui::SetMouseCursor(ImGuiMouseCursor_TextInput);
+	else if (name == "resize_all")
+		ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeAll);
+	else if (name == "resize_ns")
+		ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
+	else if (name == "resize_ew")
+		ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
+	else if (name == "resize_nesw")
+		ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNESW);
+	else if (name == "resize_nwse")
+		ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNWSE);
+	else if (name == "hand")
+		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+	else if (name == "not_allowed")
+		ImGui::SetMouseCursor(ImGuiMouseCursor_NotAllowed);
+}
+
 bool Workspace::focus(const char* src, int ln) {
 	debugProgramPointer().set(src, ln); // 1-based.
 

@@ -504,6 +504,10 @@ public:
 	 */
 	virtual void input(Promise::Ptr &promise, const char* prompt, const char* default_) override;
 	/**
+	 * @brief Implements `Executable::Observer`. Sets the mouse cursor by name.
+	 */
+	virtual void setCursor(const std::string &name) override;
+	/**
 	 * @brief Implements `Executable::Observer`. Sets focus to a specific source file and line.
 	 */
 	virtual bool focus(const char* src, int ln) override;

@@ -12373,14 +12373,33 @@ static int Application_setCursor(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
 	const int n = getTop(L);
+	std::string str;
 	Image::Ptr* img = nullptr;
 	float x = 0, y = 0;
-	if (n >= 3)
-		read<>(L, img, x, y);
-	else
-		read<>(L, img);
+	const int y_ = typeOf(L, 1);
+	switch (y_) {
+	case LUA_TSTRING:
+		read<>(L, str);
 
-	if (img && *img) {
+		break;
+	default:
+		if (n >= 3)
+			read<>(L, img, x, y);
+		else
+			read<>(L, img);
+
+		break;
+	}
+
+	if (!str.empty()) {
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				impl->observer()->setCursor(str);
+			},
+			nullptr,
+			false
+		);
+	} else if (img && *img) {
 		constexpr const int MAX_SIZE = 256;
 		if (img->get()->paletted()) {
 			error(L, "True-color image expected.");

@@ -90,6 +90,10 @@ public:
 		 */
 		virtual void input(Promise::Ptr &promise /* nullable */, const char* prompt /* nullable */, const char* default_ /* nullable */) = 0;
 		/**
+		 * @brief Sets the mouse cursor by name.
+		 */
+		virtual void setCursor(const std::string &name) = 0;
+		/**
 		 * @brief Sets focus to a specific source file and line.
 		 */
 		virtual bool focus(const char* src, int ln) = 0;
