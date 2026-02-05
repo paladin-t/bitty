@@ -400,7 +400,11 @@ public:
 	 */
 	virtual bool mouse(int btn, int* x /* nullable */, int* y /* nullable */, bool* b0 /* nullable */, bool* b1 /* nullable */, bool* b2 /* nullable */, int* wheelX /* nullable */, int* wheelY /* nullable */) const = 0;
 	/**
-	 * @brief Sets the mouse cursor indicator.
+	 * @brief Sets the mouse cursor indicator with a function.
+	 */
+	virtual void cursor(Function func) const = 0;
+	/**
+	 * @brief Sets the mouse cursor indicator with an `Image`.
 	 */
 	virtual void cursor(Image::Ptr img /* nullable */, float x, float y) const = 0;
 	/**
@@ -459,7 +463,13 @@ public:
 	 */
 	virtual Image::Ptr indicator(float* x /* nullable */, float* y /* nullable */) const = 0;
 	/**
-	 * @brief Sets the mouse cursor indicator.
+	 * @brief Sets the mouse cursor indicator with a function.
+	 *
+	 * @note By the graphics thread.
+	 */
+	virtual void indicator(Function func) = 0;
+	/**
+	 * @brief Sets the mouse cursor indicator with an `Image`.
 	 *
 	 * @note By the graphics thread.
 	 */

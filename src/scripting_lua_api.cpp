@@ -12392,12 +12392,10 @@ static int Application_setCursor(lua_State* L) {
 	}
 
 	if (!str.empty()) {
-		impl->primitives()->function(
+		impl->primitives()->cursor(
 			[=] (const Variant &) -> void {
 				impl->observer()->setCursor(str);
-			},
-			nullptr,
-			false
+			}
 		);
 	} else if (img && *img) {
 		constexpr const int MAX_SIZE = 256;

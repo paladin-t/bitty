@@ -1852,6 +1852,7 @@ public:
 
 class CmdCursor : public Cmd {
 private:
+	Primitives::Function _function = nullptr;
 	Image::Ptr _image = nullptr;
 	float _x = 0;
 	float _y = 0;
@@ -1863,6 +1864,15 @@ public:
 			CmdCursor* self = reinterpret_cast<CmdCursor*>(cmd);
 			self->~CmdCursor();
 		};
+	}
+	CmdCursor(Primitives::Function func) {
+		type = CURSOR;
+		dtor = [] (Cmd* cmd) -> void {
+			CmdCursor* self = reinterpret_cast<CmdCursor*>(cmd);
+			self->~CmdCursor();
+		};
+
+		_function = func;
 	}
 	CmdCursor(Image::Ptr img, float x, float y) {
 		type = CURSOR;
@@ -1877,7 +1887,10 @@ public:
 	}
 
 	void run(Primitives* primitives) {
-		primitives->indicator(_image, _x, _y);
+		if (_function)
+			primitives->indicator(_function);
+		else
+			primitives->indicator(_image, _x, _y);
 	}
 };
 
@@ -2722,6 +2735,7 @@ private:
 	float _indicatorX = 0;
 	float _indicatorY = 0;
 	SDL_Cursor* _indicatorCursor = nullptr;
+	Function _indicatorFunction = nullptr;
 
 	Color _clsColor = Color(30, 30, 30, 255);
 	bool _autoCls = true;
@@ -3373,6 +3387,12 @@ public:
 	virtual bool mouse(int btn, int* x, int* y, bool* b0, bool* b1, bool* b2, int* wheelX, int* wheelY) const override {
 		return _input->mouse(btn, x, y, b0, b1, b2, wheelX, wheelY);
 	}
+	virtual void cursor(Function func) const override {
+		CmdVariant var;
+		new (&var.cursor) CmdCursor(func);
+
+		commit(var, nullptr, true);
+	}
 	virtual void cursor(Image::Ptr img, float x, float y) const override {
 		CmdVariant var;
 		new (&var.cursor) CmdCursor(img, x, y);
@@ -3588,7 +3608,22 @@ public:
 
 		return _indicatorImage;
 	}
+	virtual void indicator(Function func) override {
+		if (_indicatorImage) {
+			_indicatorImage = nullptr;
+			_indicatorX = 0;
+			_indicatorY = 0;
+		}
+		if (_indicatorCursor) {
+			SDL_FreeCursor(_indicatorCursor);
+			_indicatorCursor = nullptr;
+		}
+
+		_indicatorFunction = func;
+	}
 	virtual void indicator(Image::Ptr img, float x, float y) override {
+		_indicatorFunction = nullptr;
+
 		_indicatorImage = nullptr;
 		_indicatorX = 0;
 		_indicatorY = 0;
@@ -3632,6 +3667,7 @@ public:
 			SDL_FreeCursor(_indicatorCursor);
 			_indicatorCursor = nullptr;
 		}
+		_indicatorFunction = nullptr;
 
 		_clsColor = Color(30, 30, 30, 255);
 		_autoCls = true;
@@ -3691,8 +3727,12 @@ public:
 
 		if (indicated)
 			*indicated = !!_indicatorCursor;
-		if (hovering && _indicatorCursor)
-			SDL_SetCursor(_indicatorCursor);
+		if (hovering) {
+			if (_indicatorFunction)
+				_indicatorFunction(nullptr);
+			else if (_indicatorCursor)
+				SDL_SetCursor(_indicatorCursor);
+		}
 
 #if BITTY_MULTITHREAD_ENABLED
 		saveStates();
