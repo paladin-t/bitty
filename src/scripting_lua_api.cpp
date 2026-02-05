@@ -11204,6 +11204,8 @@ static int TextBox_update(lua_State* L) {
 			nullptr,
 			false
 		);
+		int camX = 0, camY = 0;
+		const bool camChanged = impl->primitives()->camera(&camX, &camY);
 		impl->primitives()->function(
 			[=] (const Variant &) -> void {
 				if (ptr.expired())
@@ -11212,13 +11214,12 @@ static int TextBox_update(lua_State* L) {
 				if (!ptr_)
 					return;
 
-				int camX = 0, camY = 0;
-				impl->primitives()->camera(&camX, &camY);
 				int x0_ = x0;
 				int y0_ = y0;
 				int x1_ = x1;
 				int y1_ = y1;
-				ptr_->translate(x0_, y0_, x1_, y1_, camX, camY);
+				if (camChanged)
+					ptr_->translate(x0_, y0_, x1_, y1_, camX, camY);
 
 				Window* wnd = impl->primitives()->window();
 				Renderer* rnd = impl->primitives()->renderer();
@@ -11227,7 +11228,7 @@ static int TextBox_update(lua_State* L) {
 				ptr_->render(wnd, rnd, ws, (float)rect.xMin(), (float)rect.yMin(), (float)rect.width(), (float)rect.height());
 			},
 			nullptr,
-			true
+			false
 		);
 	} else {
 		error(L, "TextBox expected.");
