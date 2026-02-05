@@ -12375,12 +12375,16 @@ static int Application_setCursor(lua_State* L) {
 
 	const int n = getTop(L);
 	std::string str;
+	bool retain = true;
 	Image::Ptr* img = nullptr;
 	float x = 0, y = 0;
 	const int y_ = typeOf(L, 1);
 	switch (y_) {
 	case LUA_TSTRING:
-		read<>(L, str);
+		if (n >= 2)
+			read<>(L, str, retain);
+		else
+			read<>(L, str);
 
 		break;
 	default:
@@ -12393,11 +12397,21 @@ static int Application_setCursor(lua_State* L) {
 	}
 
 	if (!str.empty()) {
-		impl->primitives()->cursor(
-			[=] (const Variant &) -> void {
-				impl->observer()->setCursor(str);
-			}
-		);
+		if (retain) {
+			impl->primitives()->cursor(
+				[=] (const Variant &) -> void {
+					impl->observer()->setCursor(str);
+				}
+			);
+		} else {
+			impl->primitives()->function(
+				[=] (const Variant &) -> void {
+					impl->observer()->setCursor(str);
+				},
+				nullptr,
+				false
+			);
+		}
 	} else if (img && *img) {
 		constexpr const int MAX_SIZE = 256;
 		if (img->get()->paletted()) {
