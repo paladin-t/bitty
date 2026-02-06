@@ -40,6 +40,9 @@ public:
 
 	virtual bool useFont(const Json::Ptr &json, const FontData &fontData) = 0;
 
+	virtual void paste(const char* txt) = 0;
+	using Editable::paste;
+
 	virtual bool focused(void) const = 0;
 	virtual void focus(void) = 0;
 

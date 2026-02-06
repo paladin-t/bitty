@@ -175,6 +175,15 @@ public:
 			ImGuiSDL::Device* oldDevice = ImGuiSDL::GetCurrentDevice();
 			ImGuiSDL::SetCurrentDevice(_device);
 			{
+				ImGuiIO &io = ImGui::GetIO();
+				if (io.Fonts->TexID) {
+					ImGuiSDLHack::Texture* texture = static_cast<ImGuiSDLHack::Texture*>(io.Fonts->TexID);
+					delete texture;
+					io.Fonts->TexID = nullptr;
+				}
+				io.Fonts->Clear();
+				_font = nullptr;
+
 				ImGuiSDL::Deinitialize();
 
 				_device = nullptr;
@@ -1018,6 +1027,14 @@ public:
 			return;
 
 		Paste();
+	}
+	virtual void paste(const char* txt) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
+		if (ReadOnly)
+			return;
+
+		Paste(txt);
 	}
 	virtual void del(void) override {
 		LockGuard<decltype(_lock)> guard(_lock);

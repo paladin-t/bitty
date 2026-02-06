@@ -10771,7 +10771,8 @@ static int TextBox_setOption(lua_State* L) {
 		Variant val = nullptr;
 		read<3>(L, &val);
 
-		impl->primitives()->function(
+		bake(
+			impl->primitives()->workspace(),
 			[=] (const Variant &) -> void {
 				if (ptr.expired())
 					return;
@@ -10872,7 +10873,8 @@ static int TextBox_focus(lua_State* L) {
 	if (obj) {
 		TextBox::WeakPtr ptr(*obj);
 
-		impl->primitives()->function(
+		bake(
+			impl->primitives()->workspace(),
 			[=] (const Variant &) -> void {
 				if (ptr.expired())
 					return;
@@ -10976,7 +10978,8 @@ static int TextBox_selectAll(lua_State* L) {
 	if (obj) {
 		TextBox::WeakPtr ptr(*obj);
 
-		impl->primitives()->function(
+		bake(
+			impl->primitives()->workspace(),
 			[=] (const Variant &) -> void {
 				if (ptr.expired())
 					return;
@@ -11005,9 +11008,9 @@ static int TextBox_lineAt(lua_State* L) {
 	read<>(L, obj, ln);
 
 	if (obj) {
-		obj->get()->lineAt(ln);
+		const std::string ret = obj->get()->lineAt(ln);
 
-		return 0;
+		return write(L, ret);
 	} else {
 		error(L, "TextBox expected.");
 		warnForMethodCallSymbol(L);
@@ -11076,7 +11079,8 @@ static int TextBox_copy(lua_State* L) {
 	if (obj) {
 		TextBox::WeakPtr ptr(*obj);
 
-		impl->primitives()->function(
+		bake(
+			impl->primitives()->workspace(),
 			[=] (const Variant &) -> void {
 				if (ptr.expired())
 					return;
@@ -11108,7 +11112,8 @@ static int TextBox_cut(lua_State* L) {
 	if (obj) {
 		TextBox::WeakPtr ptr(*obj);
 
-		impl->primitives()->function(
+		bake(
+			impl->primitives()->workspace(),
 			[=] (const Variant &) -> void {
 				if (ptr.expired())
 					return;
@@ -11134,13 +11139,19 @@ static int TextBox_cut(lua_State* L) {
 static int TextBox_paste(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
+	const int n = getTop(L);
 	TextBox::Ptr* obj = nullptr;
-	read<>(L, obj);
+	const char* txt = nullptr;
+	if (n >= 2)
+		read<>(L, obj, txt);
+	else
+		read<>(L, obj);
 
 	if (obj) {
 		TextBox::WeakPtr ptr(*obj);
 
-		impl->primitives()->function(
+		bake(
+			impl->primitives()->workspace(),
 			[=] (const Variant &) -> void {
 				if (ptr.expired())
 					return;
@@ -11148,7 +11159,10 @@ static int TextBox_paste(lua_State* L) {
 				if (!ptr_)
 					return;
 
-				ptr_->paste();
+				if (txt)
+					ptr_->paste(txt);
+				else
+					ptr_->paste();
 			},
 			nullptr,
 			true
@@ -11172,7 +11186,8 @@ static int TextBox_delete(lua_State* L) {
 	if (obj) {
 		TextBox::WeakPtr ptr(*obj);
 
-		impl->primitives()->function(
+		bake(
+			impl->primitives()->workspace(),
 			[=] (const Variant &) -> void {
 				if (ptr.expired())
 					return;
@@ -11204,7 +11219,8 @@ static int TextBox_indent(lua_State* L) {
 	if (obj) {
 		TextBox::WeakPtr ptr(*obj);
 
-		impl->primitives()->function(
+		bake(
+			impl->primitives()->workspace(),
 			[=] (const Variant &) -> void {
 				if (ptr.expired())
 					return;
@@ -11236,7 +11252,8 @@ static int TextBox_unindent(lua_State* L) {
 	if (obj) {
 		TextBox::WeakPtr ptr(*obj);
 
-		impl->primitives()->function(
+		bake(
+			impl->primitives()->workspace(),
 			[=] (const Variant &) -> void {
 				if (ptr.expired())
 					return;
@@ -11268,7 +11285,8 @@ static int TextBox_undo(lua_State* L) {
 	if (obj) {
 		TextBox::WeakPtr ptr(*obj);
 
-		impl->primitives()->function(
+		bake(
+			impl->primitives()->workspace(),
 			[=] (const Variant &) -> void {
 				if (ptr.expired())
 					return;
@@ -11300,7 +11318,8 @@ static int TextBox_redo(lua_State* L) {
 	if (obj) {
 		TextBox::WeakPtr ptr(*obj);
 
-		impl->primitives()->function(
+		bake(
+			impl->primitives()->workspace(),
 			[=] (const Variant &) -> void {
 				if (ptr.expired())
 					return;
