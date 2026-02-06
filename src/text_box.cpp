@@ -1735,8 +1735,10 @@ private:
 	}
 	Texture* texture(Window* /* wnd */, Renderer* rnd, int width, int height) {
 		// Invalidate the texture if the desired size has been changed.
-		if (_texture && (_texture->width() != width || _texture->height() != height))
+		if (_texture && (_texture->width() != width || _texture->height() != height)) {
+			Texture::destroy(_texture);
 			_texture = nullptr;
+		}
 
 		// Reuse the cached texture if possible.
 		if (_texture)
