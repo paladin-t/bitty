@@ -10792,76 +10792,6 @@ static int TextBox_setOption(lua_State* L) {
 	return 0;
 }
 
-static int TextBox_cursorPosition(lua_State* L) {
-	TextBox::Ptr* obj = nullptr;
-	read<>(L, obj);
-
-	if (obj) {
-		int ln = 0;
-		int col = 0;
-		obj->get()->cursorPosition(ln, col);
-
-		return write(L, ln, col);
-	} else {
-		error(L, "TextBox expected.");
-		warnForMethodCallSymbol(L);
-	}
-
-	return 0;
-}
-
-static int TextBox_selectionPositions(lua_State* L) {
-	TextBox::Ptr* obj = nullptr;
-	read<>(L, obj);
-
-	if (obj) {
-		int ln0 = 0;
-		int col0 = 0;
-		int ln1 = 0;
-		int col1 = 0;
-		obj->get()->selectionPositions(ln0, col0, ln1, col1);
-
-		return write(L, ln0, col0, ln1, col1);
-	} else {
-		error(L, "TextBox expected.");
-		warnForMethodCallSymbol(L);
-	}
-
-	return 0;
-}
-
-static int TextBox_hasUnsavedChanges(lua_State* L) {
-	TextBox::Ptr* obj = nullptr;
-	read<>(L, obj);
-
-	if (obj) {
-		const bool ret = obj->get()->hasUnsavedChanges();
-
-		return write(L, ret);
-	} else {
-		error(L, "TextBox expected.");
-		warnForMethodCallSymbol(L);
-	}
-
-	return 0;
-}
-
-static int TextBox_markChangesSaved(lua_State* L) {
-	TextBox::Ptr* obj = nullptr;
-	read<>(L, obj);
-
-	if (obj) {
-		obj->get()->markChangesSaved(nullptr);
-
-		return 0;
-	} else {
-		error(L, "TextBox expected.");
-		warnForMethodCallSymbol(L);
-	}
-
-	return 0;
-}
-
 static int TextBox_useFont(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
@@ -10965,6 +10895,78 @@ static int TextBox_focus(lua_State* L) {
 	return 0;
 }
 
+static int TextBox_location(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		int ln = 0;
+		int col = 0;
+		obj->get()->location(ln, col);
+
+		return write(L, ln, col);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int TextBox_locate(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	int ln = -1, col = -1;
+	read<>(L, obj, ln, col);
+
+	if (obj) {
+		obj->get()->locate(ln, col);
+
+		return 0;
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int TextBox_selection(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		int ln0 = 0;
+		int col0 = 0;
+		int ln1 = 0;
+		int col1 = 0;
+		obj->get()->selection(ln0, col0, ln1, col1);
+
+		return write(L, ln0, col0, ln1, col1);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int TextBox_selectRange(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	int ln0 = -1, col0 = -1, ln1 = -1, col1 = -1;
+	read<>(L, obj, ln0, col0, ln1, col1);
+
+	if (obj) {
+		obj->get()->selectRange(ln0, col0, ln1, col1);
+
+		return 0;
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
 static int TextBox_selectAll(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
@@ -10989,6 +10991,23 @@ static int TextBox_selectAll(lua_State* L) {
 		);
 
 		return write(L, true);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int TextBox_lineAt(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	int ln = -1;
+	read<>(L, obj, ln);
+
+	if (obj) {
+		obj->get()->lineAt(ln);
+
+		return 0;
 	} else {
 		error(L, "TextBox expected.");
 		warnForMethodCallSymbol(L);
@@ -11176,6 +11195,150 @@ static int TextBox_delete(lua_State* L) {
 	return 0;
 }
 
+static int TextBox_indent(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		TextBox::WeakPtr ptr(*obj);
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				TextBox::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
+
+				ptr_->indent();
+			},
+			nullptr,
+			true
+		);
+
+		return write(L, true);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int TextBox_unindent(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		TextBox::WeakPtr ptr(*obj);
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				TextBox::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
+
+				ptr_->unindent();
+			},
+			nullptr,
+			true
+		);
+
+		return write(L, true);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int TextBox_undo(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		TextBox::WeakPtr ptr(*obj);
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				TextBox::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
+
+				ptr_->undo(nullptr);
+			},
+			nullptr,
+			true
+		);
+
+		return write(L, true);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int TextBox_redo(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		TextBox::WeakPtr ptr(*obj);
+
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				TextBox::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
+
+				ptr_->redo(nullptr);
+			},
+			nullptr,
+			true
+		);
+
+		return write(L, true);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int TextBox_markChangesSaved(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		obj->get()->markChangesSaved(nullptr);
+
+		return 0;
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
 static int TextBox_update(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
@@ -11258,6 +11421,22 @@ static int TextBox___index(lua_State* L) {
 		const bool ret = obj->get()->focused();
 
 		return write(L, ret);
+	} else if (strcmp(field, "lineCount") == 0) {
+		const int ret = obj->get()->lineCount();
+
+		return write(L, ret);
+	} else if (strcmp(field, "undoable") == 0) {
+		const bool ret = !!obj->get()->undoable();
+
+		return write(L, ret);
+	} else if (strcmp(field, "redoable") == 0) {
+		const bool ret = !!obj->get()->redoable();
+
+		return write(L, ret);
+	} else if (strcmp(field, "hasUnsavedChanges") == 0) {
+		const bool ret = obj->get()->hasUnsavedChanges();
+
+		return write(L, ret);
 	} else {
 		return __index(L, field);
 	}
@@ -11297,13 +11476,14 @@ static void open_TextBox(lua_State* L) {
 		),
 		array(
 			luaL_Reg{ "setOption", TextBox_setOption },
-			luaL_Reg{ "cursorPosition", TextBox_cursorPosition },
-			luaL_Reg{ "selectionPositions", TextBox_selectionPositions },
-			luaL_Reg{ "hasUnsavedChanges", TextBox_hasUnsavedChanges },
-			luaL_Reg{ "markChangesSaved", TextBox_markChangesSaved },
 			luaL_Reg{ "useFont", TextBox_useFont },
 			luaL_Reg{ "focus", TextBox_focus },
+			luaL_Reg{ "location", TextBox_location },
+			luaL_Reg{ "locate", TextBox_locate },
+			luaL_Reg{ "selection", TextBox_selection },
+			luaL_Reg{ "selectRange", TextBox_selectRange },
 			luaL_Reg{ "selectAll", TextBox_selectAll },
+			luaL_Reg{ "lineAt", TextBox_lineAt },
 			luaL_Reg{ "get", TextBox_get },
 			luaL_Reg{ "set", TextBox_set },
 			luaL_Reg{ "clear", TextBox_clear },
@@ -11311,6 +11491,11 @@ static void open_TextBox(lua_State* L) {
 			luaL_Reg{ "cut", TextBox_cut },
 			luaL_Reg{ "paste", TextBox_paste },
 			luaL_Reg{ "delete", TextBox_delete },
+			luaL_Reg{ "indent", TextBox_indent },
+			luaL_Reg{ "unindent", TextBox_unindent },
+			luaL_Reg{ "undo", TextBox_undo },
+			luaL_Reg{ "redo", TextBox_redo },
+			luaL_Reg{ "markChangesSaved", TextBox_markChangesSaved },
 			luaL_Reg{ "update", TextBox_update },
 			luaL_Reg{ nullptr, nullptr }
 		),

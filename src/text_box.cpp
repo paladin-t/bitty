@@ -860,29 +860,6 @@ public:
 		return false;
 	}
 
-	virtual bool cursorPosition(int &ln, int &col) override {
-		LockGuard<decltype(_lock)> guard(_lock);
-
-		const Coordinates pos = GetCursorPosition();
-		ln = pos.Line + 1; // 1-based.
-		col = pos.Column + 1;
-
-		return true;
-	}
-	virtual bool selectionPositions(int &ln0, int &col0, int &ln1, int &col1) override {
-		LockGuard<decltype(_lock)> guard(_lock);
-
-		Coordinates start;
-		Coordinates end;
-		GetSelection(start, end);
-		ln0 = start.Line + 1; // 1-based.
-		col0 = start.Column + 1;
-		ln1 = end.Line + 1;
-		col1 = end.Column + 1;
-
-		return true;
-	}
-
 	virtual bool useFont(const Json::Ptr &json, const FontData &fontData) override {
 		if (!json)
 			return false;
@@ -905,12 +882,69 @@ public:
 		_acquireFocus = true;
 	}
 
+	virtual bool location(int &ln, int &col) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
+		const Coordinates pos = GetCursorPosition();
+		ln = pos.Line + 1; // 1-based.
+		col = pos.Column + 1; // 1-based.
+
+		return true;
+	}
+	virtual void locate(int ln, int col) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
+		const Coordinates pos(ln - 1, col - 1); // 1-based.
+		SetCursorPosition(pos);
+	}
+	virtual bool selection(int &ln0, int &col0, int &ln1, int &col1) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
+		Coordinates start;
+		Coordinates end;
+		GetSelection(start, end);
+		ln0 = start.Line + 1; // 1-based.
+		col0 = start.Column + 1; // 1-based.
+		ln1 = end.Line + 1; // 1-based.
+		col1 = end.Column + 1; // 1-based.
+
+		return true;
+	}
+	virtual void selectRange(int ln0, int col0, int ln1, int col1) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
+		const Coordinates pos0(ln0 - 1, col0 - 1); // 1-based.
+		const Coordinates pos1(ln1 - 1, col1 - 1); // 1-based.
+		SetSelection(pos0, pos1, false);
+	}
 	virtual void selectAll(void) override {
 		SelectAll();
 	}
 
 	virtual void flush(void) const override {
 		// Do nothing.
+	}
+
+	virtual int lineCount(void) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
+		return GetTotalLines();
+	}
+	virtual std::string lineAt(int ln) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
+		return GetTextLine(ln - 1); // 1-based.
+	}
+
+	virtual void indent(void) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
+		Indent(false);
+	}
+	virtual void unindent(void) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
+		Unindent(false);
 	}
 
 	virtual const char* text(size_t* len) const override {
