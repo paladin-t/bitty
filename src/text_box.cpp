@@ -1794,7 +1794,7 @@ private:
 				if (ranges == TEXT_BOX_FONT_RANGES_DEFAULT_NAME) {
 					glyphRanges = io.Fonts->GetGlyphRangesDefault();
 				} else if (ranges == TEXT_BOX_FONT_RANGES_CHINESE_NAME) {
-					glyphRanges = io.Fonts->GetGlyphRangesChineseSimplifiedCommon();
+					glyphRanges = io.Fonts->GetGlyphRangesChineseFull();
 				} else if (ranges == TEXT_BOX_FONT_RANGES_JAPANESE_NAME) {
 					glyphRanges = io.Fonts->GetGlyphRangesJapanese();
 				} else if (ranges == TEXT_BOX_FONT_RANGES_KOREAN_NAME) {
