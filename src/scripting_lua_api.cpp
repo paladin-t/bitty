@@ -12627,6 +12627,20 @@ static int Application_raise(lua_State* L) {
 	return 0;
 }
 
+static int Application_skipFrame(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	impl->primitives()->function(
+		[=] (const Variant &) -> void {
+			impl->primitives()->workspace()->skipFrame();
+		},
+		nullptr,
+		true
+	);
+
+	return 0;
+}
+
 #if BITTY_EFFECTS_ENABLED
 static int Application_setEffect(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
@@ -12772,6 +12786,7 @@ static void open_Application(lua_State* L) {
 								luaL_Reg{ "size", Application_size }, // Frame synchronized.
 								luaL_Reg{ "resize", Application_resize }, // Frame synchronized.
 								luaL_Reg{ "raise", Application_raise }, // Frame synchronized.
+								luaL_Reg{ "skipFrame", Application_skipFrame }, // Frame synchronized.
 #if BITTY_EFFECTS_ENABLED
 								luaL_Reg{ "setEffect", Application_setEffect }, // Undocumented. Frame synchronized.
 								luaL_Reg{ "setEffectUniform", Application_setEffectUniform }, // Undocumented. Frame synchronized.
@@ -12801,6 +12816,7 @@ static void open_Application(lua_State* L) {
 								luaL_Reg{ "size", Application_size }, // Frame synchronized.
 								luaL_Reg{ "resize", Application_resize }, // Frame synchronized.
 								luaL_Reg{ "raise", Application_raise }, // Frame synchronized.
+								luaL_Reg{ "skipFrame", Application_skipFrame }, // Frame synchronized.
 								luaL_Reg{ nullptr, nullptr }
 							)
 						);
