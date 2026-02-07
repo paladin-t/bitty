@@ -46,17 +46,20 @@ public:
 	virtual bool focused(void) const = 0;
 	virtual void focus(void) = 0;
 
-	virtual bool location(int &ln, int &col) = 0;
+	virtual bool location(int &ln, int &col) const = 0;
 	virtual void locate(int ln, int col) = 0;
-	virtual bool selection(int &ln0, int &col0, int &ln1, int &col1) = 0;
+	virtual bool selection(int &ln0, int &col0, int &ln1, int &col1) const = 0;
 	virtual void selectRange(int ln0, int col0, int ln1, int col1) = 0;
 	virtual void selectAll(void) = 0;
 
-	virtual int lineCount(void) = 0;
-	virtual std::string lineAt(int ln) = 0;
+	virtual int lineCount(void) const = 0;
+	virtual std::string lineAt(int ln) const = 0;
+	virtual int columnsAt(int ln) const = 0;
 
 	virtual void indent(void) = 0;
 	virtual void unindent(void) = 0;
+
+	virtual void ensureCursorVisible(bool forceAbove, bool slowMode) = 0;
 
 	virtual const char* text(size_t* len) const = 0;
 	virtual void text(const char* txt, size_t len = 0) = 0;

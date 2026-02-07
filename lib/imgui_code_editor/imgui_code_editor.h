@@ -351,7 +351,7 @@ public:
 	void SelectAll(void);
 	bool HasSelection(void) const;
 	void ClearSelection(void);
-	void GetSelection(Coordinates &aStart, Coordinates &aEnd);
+	void GetSelection(Coordinates &aStart, Coordinates &aEnd) const;
 	std::string GetSelectionText(const char* aNewline = "\n") const;
 	int GetSelectionLines(void) const;
 	int GetNonEmptySelectionLines(void) const;

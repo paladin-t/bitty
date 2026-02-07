@@ -11019,6 +11019,23 @@ static int TextBox_lineAt(lua_State* L) {
 	return 0;
 }
 
+static int TextBox_columnsAt(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	int ln = -1;
+	read<>(L, obj, ln);
+
+	if (obj) {
+		const int ret = obj->get()->columnsAt(ln);
+
+		return write(L, ret);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
 static int TextBox_get(lua_State* L) {
 	TextBox::Ptr* obj = nullptr;
 	read<>(L, obj);
@@ -11358,6 +11375,30 @@ static int TextBox_markChangesSaved(lua_State* L) {
 	return 0;
 }
 
+static int TextBox_ensureCursorVisible(lua_State* L) {
+	const int n = getTop(L);
+	TextBox::Ptr* obj = nullptr;
+	bool forceAbove = false;
+	bool slowMode = false;
+	if (n >= 3)
+		read<>(L, obj, forceAbove, slowMode);
+	else if (n >= 2)
+		read<>(L, obj, forceAbove);
+	else
+		read<>(L, obj);
+
+	if (obj) {
+		obj->get()->ensureCursorVisible(forceAbove, slowMode);
+
+		return 0;
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
 static int TextBox_update(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
@@ -11503,6 +11544,7 @@ static void open_TextBox(lua_State* L) {
 			luaL_Reg{ "selectRange", TextBox_selectRange },
 			luaL_Reg{ "selectAll", TextBox_selectAll },
 			luaL_Reg{ "lineAt", TextBox_lineAt },
+			luaL_Reg{ "columnsAt", TextBox_columnsAt },
 			luaL_Reg{ "get", TextBox_get },
 			luaL_Reg{ "set", TextBox_set },
 			luaL_Reg{ "clear", TextBox_clear },
@@ -11515,6 +11557,7 @@ static void open_TextBox(lua_State* L) {
 			luaL_Reg{ "undo", TextBox_undo },
 			luaL_Reg{ "redo", TextBox_redo },
 			luaL_Reg{ "markChangesSaved", TextBox_markChangesSaved },
+			luaL_Reg{ "ensureCursorVisible", TextBox_ensureCursorVisible },
 			luaL_Reg{ "update", TextBox_update },
 			luaL_Reg{ nullptr, nullptr }
 		),

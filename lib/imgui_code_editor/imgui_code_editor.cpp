@@ -2455,7 +2455,7 @@ void CodeEditor::ClearSelection(void) {
 	State.SelectionEnd = State.SelectionStart;
 }
 
-void CodeEditor::GetSelection(Coordinates &aStart, Coordinates &aEnd) {
+void CodeEditor::GetSelection(Coordinates &aStart, Coordinates &aEnd) const {
 	aStart = State.SelectionStart;
 	aEnd = State.SelectionEnd;
 }

@@ -891,7 +891,7 @@ public:
 		_acquireFocus = true;
 	}
 
-	virtual bool location(int &ln, int &col) override {
+	virtual bool location(int &ln, int &col) const override {
 		LockGuard<decltype(_lock)> guard(_lock);
 
 		const Coordinates pos = GetCursorPosition();
@@ -906,7 +906,7 @@ public:
 		const Coordinates pos(ln - 1, col - 1); // 1-based.
 		SetCursorPosition(pos);
 	}
-	virtual bool selection(int &ln0, int &col0, int &ln1, int &col1) override {
+	virtual bool selection(int &ln0, int &col0, int &ln1, int &col1) const override {
 		LockGuard<decltype(_lock)> guard(_lock);
 
 		Coordinates start;
@@ -934,15 +934,20 @@ public:
 		// Do nothing.
 	}
 
-	virtual int lineCount(void) override {
+	virtual int lineCount(void) const override {
 		LockGuard<decltype(_lock)> guard(_lock);
 
 		return GetTotalLines();
 	}
-	virtual std::string lineAt(int ln) override {
+	virtual std::string lineAt(int ln) const override {
 		LockGuard<decltype(_lock)> guard(_lock);
 
 		return GetTextLine(ln - 1); // 1-based.
+	}
+	virtual int columnsAt(int ln) const override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
+		return GetColumnsAt(ln - 1) + 1; // 1-based.
 	}
 
 	virtual void indent(void) override {
@@ -954,6 +959,12 @@ public:
 		LockGuard<decltype(_lock)> guard(_lock);
 
 		Unindent(false);
+	}
+
+	virtual void ensureCursorVisible(bool forceAbove, bool slowMode) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
+		EnsureCursorVisible(forceAbove, slowMode);
 	}
 
 	virtual const char* text(size_t* len) const override {
