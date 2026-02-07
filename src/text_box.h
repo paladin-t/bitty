@@ -36,6 +36,9 @@ public:
 public:
 	BITTY_CLASS_TYPE('T', 'X', 'T', 'B')
 
+	virtual void lock(void) = 0;
+	virtual void unlock(void) = 0;
+
 	virtual bool option(const std::string &key, const Variant &val) = 0;
 
 	virtual bool useFont(const Json::Ptr &json, const FontData &fontData) = 0;

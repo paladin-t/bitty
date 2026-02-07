@@ -68,9 +68,9 @@ private:
 
 	std::string _id;
 
-	bool _acquireFocus = false;
-	bool _isFocused = false; // By the Lua, graphics threads.
-	bool _toColorize = false;
+	bool _acquireFocus = false;                            // By the Lua, graphics threads.
+	bool _isFocused = false;                               // By the Lua, graphics threads.
+	bool _toColorize = false;                              // By the graphics thread.
 	mutable struct {
 		std::string text;
 		bool overdue = true;
@@ -79,7 +79,7 @@ private:
 			text.clear();
 			overdue = true;
 		}
-	} _cache; // By the Lua, graphics threads.
+	} _cache;                                              // By the Lua, graphics threads.
 	mutable RecursiveMutex _lock;
 	struct Options {
 		bool clearBeforeBaking = false;
@@ -100,14 +100,14 @@ private:
 		Options() {
 			memset(styleColorDirty, 0, sizeof(styleColorDirty));
 		}
-	} _options;
+	} _options;                                            // By the graphics thread.
 
-	ImGuiContext* _context = nullptr;
-	ImGuiSDL::Device* _device = nullptr;
-	Texture* _texture = nullptr;
-	ImFont* _font = nullptr;
-	ImGuiMouseCursor _mouseCursor = ImGuiMouseCursor_None;
-	ImVec2 _imePosition = ImVec2(-1, -1);
+	ImGuiContext* _context = nullptr;                      // By the graphics thread.
+	ImGuiSDL::Device* _device = nullptr;                   // By the graphics thread.
+	Texture* _texture = nullptr;                           // By the graphics thread.
+	ImFont* _font = nullptr;                               // By the graphics thread.
+	ImGuiMouseCursor _mouseCursor = ImGuiMouseCursor_None; // By the graphics thread.
+	ImVec2 _imePosition = ImVec2(-1, -1);                  // By the graphics thread.
 
 public:
 	TextBoxImpl() {
@@ -199,6 +199,13 @@ public:
 			Texture::destroy(_texture);
 			_texture = nullptr;
 		}
+	}
+
+	virtual void lock(void) override {
+		_lock.lock();
+	}
+	virtual void unlock(void) override {
+		_lock.unlock();
 	}
 
 	virtual bool option(const std::string &key, const Variant &val) override {
@@ -888,6 +895,8 @@ public:
 		return _isFocused;
 	}
 	virtual void focus(void) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
 		_acquireFocus = true;
 	}
 
@@ -927,6 +936,8 @@ public:
 		SetSelection(pos0, pos1, false);
 	}
 	virtual void selectAll(void) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
 		SelectAll();
 	}
 
@@ -1314,25 +1325,27 @@ public:
 		bool /* pending */,
 		double /* delta */
 	) override {
-		if (_acquireFocus) {
-			if (!ws->popupBox()) {
-				_acquireFocus = false;
-				EditorFocused = true;
-				ImGui::SetNextWindowFocus();
-			}
-		}
-		if (_toColorize) {
-			_toColorize = false;
-			Colorize();
-		}
+		ImGui::SetCursorPos(ImVec2(x, y));
 
 		if (_font && _font->IsLoaded()) {
 			ImGui::PushFont(_font);
 			SetFont(_font);
 		}
-		ImGui::SetCursorPos(ImVec2(x, y));
 		{
 			LockGuard<decltype(_lock)> guard(_lock);
+
+			if (_toColorize) {
+				_toColorize = false;
+				Colorize();
+			}
+
+			if (_acquireFocus) {
+				if (!ws->popupBox()) {
+					_acquireFocus = false;
+					EditorFocused = true;
+					ImGui::SetNextWindowFocus();
+				}
+			}
 
 			_isFocused = IsEditorFocused();
 
@@ -1589,6 +1602,8 @@ private:
 		ImGuiStyle &style = ImGui::GetStyle();
 
 		if (ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows) && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+			LockGuard<decltype(_lock)> guard(_lock);
+
 			if (!HasSelection())
 				SelectWordUnderMouse();
 
@@ -1599,6 +1614,8 @@ private:
 		VariableGuard<decltype(style.ItemSpacing)> guardItemSpacing(&style.ItemSpacing, style.ItemSpacing, ImVec2(8, 4));
 
 		if (ImGui::BeginPopup("@Ed/Ctx")) {
+			LockGuard<decltype(_lock)> guard(_lock);
+
 			if (ImGui::MenuItem(ws->theme()->menuEdit_Cut(), nullptr, nullptr, HasSelection())) {
 				cut();
 			}

@@ -10758,6 +10758,38 @@ static int TextBox___gc(lua_State* L) {
 	return 0;
 }
 
+static int TextBox_lock(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		obj->get()->lock();
+
+		return 0;
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int TextBox_unlock(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		obj->get()->unlock();
+
+		return 0;
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
 static int TextBox_setOption(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
@@ -10865,28 +10897,11 @@ static int TextBox_useFont(lua_State* L) {
 }
 
 static int TextBox_focus(lua_State* L) {
-	ScriptingLua* impl = ScriptingLua::instanceOf(L);
-
 	TextBox::Ptr* obj = nullptr;
 	read<>(L, obj);
 
 	if (obj) {
-		TextBox::WeakPtr ptr(*obj);
-
-		bake(
-			impl->primitives()->workspace(),
-			[=] (const Variant &) -> void {
-				if (ptr.expired())
-					return;
-				TextBox::Ptr ptr_ = ptr.lock();
-				if (!ptr_)
-					return;
-
-				ptr_->focus();
-			},
-			nullptr,
-			true
-		);
+		obj->get()->focus();
 
 		return write(L, true);
 	} else {
@@ -10970,28 +10985,11 @@ static int TextBox_selectRange(lua_State* L) {
 }
 
 static int TextBox_selectAll(lua_State* L) {
-	ScriptingLua* impl = ScriptingLua::instanceOf(L);
-
 	TextBox::Ptr* obj = nullptr;
 	read<>(L, obj);
 
 	if (obj) {
-		TextBox::WeakPtr ptr(*obj);
-
-		bake(
-			impl->primitives()->workspace(),
-			[=] (const Variant &) -> void {
-				if (ptr.expired())
-					return;
-				TextBox::Ptr ptr_ = ptr.lock();
-				if (!ptr_)
-					return;
-
-				ptr_->selectAll();
-			},
-			nullptr,
-			true
-		);
+		obj->get()->selectAll();
 
 		return write(L, true);
 	} else {
@@ -11088,28 +11086,11 @@ static int TextBox_clear(lua_State* L) {
 }
 
 static int TextBox_copy(lua_State* L) {
-	ScriptingLua* impl = ScriptingLua::instanceOf(L);
-
 	TextBox::Ptr* obj = nullptr;
 	read<>(L, obj);
 
 	if (obj) {
-		TextBox::WeakPtr ptr(*obj);
-
-		bake(
-			impl->primitives()->workspace(),
-			[=] (const Variant &) -> void {
-				if (ptr.expired())
-					return;
-				TextBox::Ptr ptr_ = ptr.lock();
-				if (!ptr_)
-					return;
-
-				ptr_->copy();
-			},
-			nullptr,
-			true
-		);
+		obj->get()->copy();
 
 		return write(L, true);
 	} else {
@@ -11121,28 +11102,11 @@ static int TextBox_copy(lua_State* L) {
 }
 
 static int TextBox_cut(lua_State* L) {
-	ScriptingLua* impl = ScriptingLua::instanceOf(L);
-
 	TextBox::Ptr* obj = nullptr;
 	read<>(L, obj);
 
 	if (obj) {
-		TextBox::WeakPtr ptr(*obj);
-
-		bake(
-			impl->primitives()->workspace(),
-			[=] (const Variant &) -> void {
-				if (ptr.expired())
-					return;
-				TextBox::Ptr ptr_ = ptr.lock();
-				if (!ptr_)
-					return;
-
-				ptr_->cut();
-			},
-			nullptr,
-			true
-		);
+		obj->get()->cut();
 
 		return write(L, true);
 	} else {
@@ -11154,8 +11118,6 @@ static int TextBox_cut(lua_State* L) {
 }
 
 static int TextBox_paste(lua_State* L) {
-	ScriptingLua* impl = ScriptingLua::instanceOf(L);
-
 	const int n = getTop(L);
 	TextBox::Ptr* obj = nullptr;
 	const char* txt = nullptr;
@@ -11165,25 +11127,10 @@ static int TextBox_paste(lua_State* L) {
 		read<>(L, obj);
 
 	if (obj) {
-		TextBox::WeakPtr ptr(*obj);
-
-		bake(
-			impl->primitives()->workspace(),
-			[=] (const Variant &) -> void {
-				if (ptr.expired())
-					return;
-				TextBox::Ptr ptr_ = ptr.lock();
-				if (!ptr_)
-					return;
-
-				if (txt)
-					ptr_->paste(txt);
-				else
-					ptr_->paste();
-			},
-			nullptr,
-			true
-		);
+		if (txt)
+			obj->get()->paste(txt);
+		else
+			obj->get()->paste();
 
 		return write(L, true);
 	} else {
@@ -11195,28 +11142,11 @@ static int TextBox_paste(lua_State* L) {
 }
 
 static int TextBox_delete(lua_State* L) {
-	ScriptingLua* impl = ScriptingLua::instanceOf(L);
-
 	TextBox::Ptr* obj = nullptr;
 	read<>(L, obj);
 
 	if (obj) {
-		TextBox::WeakPtr ptr(*obj);
-
-		bake(
-			impl->primitives()->workspace(),
-			[=] (const Variant &) -> void {
-				if (ptr.expired())
-					return;
-				TextBox::Ptr ptr_ = ptr.lock();
-				if (!ptr_)
-					return;
-
-				ptr_->del();
-			},
-			nullptr,
-			true
-		);
+		obj->get()->del();
 
 		return write(L, true);
 	} else {
@@ -11228,28 +11158,11 @@ static int TextBox_delete(lua_State* L) {
 }
 
 static int TextBox_indent(lua_State* L) {
-	ScriptingLua* impl = ScriptingLua::instanceOf(L);
-
 	TextBox::Ptr* obj = nullptr;
 	read<>(L, obj);
 
 	if (obj) {
-		TextBox::WeakPtr ptr(*obj);
-
-		bake(
-			impl->primitives()->workspace(),
-			[=] (const Variant &) -> void {
-				if (ptr.expired())
-					return;
-				TextBox::Ptr ptr_ = ptr.lock();
-				if (!ptr_)
-					return;
-
-				ptr_->indent();
-			},
-			nullptr,
-			true
-		);
+		obj->get()->indent();
 
 		return write(L, true);
 	} else {
@@ -11261,28 +11174,11 @@ static int TextBox_indent(lua_State* L) {
 }
 
 static int TextBox_unindent(lua_State* L) {
-	ScriptingLua* impl = ScriptingLua::instanceOf(L);
-
 	TextBox::Ptr* obj = nullptr;
 	read<>(L, obj);
 
 	if (obj) {
-		TextBox::WeakPtr ptr(*obj);
-
-		bake(
-			impl->primitives()->workspace(),
-			[=] (const Variant &) -> void {
-				if (ptr.expired())
-					return;
-				TextBox::Ptr ptr_ = ptr.lock();
-				if (!ptr_)
-					return;
-
-				ptr_->unindent();
-			},
-			nullptr,
-			true
-		);
+		obj->get()->unindent();
 
 		return write(L, true);
 	} else {
@@ -11294,28 +11190,11 @@ static int TextBox_unindent(lua_State* L) {
 }
 
 static int TextBox_undo(lua_State* L) {
-	ScriptingLua* impl = ScriptingLua::instanceOf(L);
-
 	TextBox::Ptr* obj = nullptr;
 	read<>(L, obj);
 
 	if (obj) {
-		TextBox::WeakPtr ptr(*obj);
-
-		bake(
-			impl->primitives()->workspace(),
-			[=] (const Variant &) -> void {
-				if (ptr.expired())
-					return;
-				TextBox::Ptr ptr_ = ptr.lock();
-				if (!ptr_)
-					return;
-
-				ptr_->undo(nullptr);
-			},
-			nullptr,
-			true
-		);
+		obj->get()->undo(nullptr);
 
 		return write(L, true);
 	} else {
@@ -11327,28 +11206,11 @@ static int TextBox_undo(lua_State* L) {
 }
 
 static int TextBox_redo(lua_State* L) {
-	ScriptingLua* impl = ScriptingLua::instanceOf(L);
-
 	TextBox::Ptr* obj = nullptr;
 	read<>(L, obj);
 
 	if (obj) {
-		TextBox::WeakPtr ptr(*obj);
-
-		bake(
-			impl->primitives()->workspace(),
-			[=] (const Variant &) -> void {
-				if (ptr.expired())
-					return;
-				TextBox::Ptr ptr_ = ptr.lock();
-				if (!ptr_)
-					return;
-
-				ptr_->redo(nullptr);
-			},
-			nullptr,
-			true
-		);
+		obj->get()->redo(nullptr);
 
 		return write(L, true);
 	} else {
@@ -11535,6 +11397,8 @@ static void open_TextBox(lua_State* L) {
 			luaL_Reg{ nullptr, nullptr }
 		),
 		array(
+			luaL_Reg{ "lock", TextBox_lock }, // Undocumented.
+			luaL_Reg{ "unlock", TextBox_unlock }, // Undocumented.
 			luaL_Reg{ "setOption", TextBox_setOption },
 			luaL_Reg{ "useFont", TextBox_useFont },
 			luaL_Reg{ "focus", TextBox_focus },
