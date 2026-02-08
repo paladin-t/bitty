@@ -107,6 +107,9 @@ private:
 	Texture* _texture = nullptr;                           // By the graphics thread.
 	ImFont* _font = nullptr;                               // By the graphics thread.
 	ImGuiMouseCursor _mouseCursor = ImGuiMouseCursor_None; // By the graphics thread.
+#if BITTY_BAKE_ENABLED
+	unsigned _inputCharacterFrame = 0;                     // By the graphics thread.
+#endif /* BITTY_BAKE_ENABLED */
 	ImVec2 _imePosition = ImVec2(-1, -1);                  // By the graphics thread.
 
 public:
@@ -170,9 +173,9 @@ public:
 		_id.clear();
 
 		if (_context) {
-			ImGuiContext* oldContext = ImGui::GetCurrentContext();
+			ImGuiContext* mainContext = ImGui::GetCurrentContext();
 			ImGui::SetCurrentContext(_context);
-			ImGuiSDL::Device* oldDevice = ImGuiSDL::GetCurrentDevice();
+			ImGuiSDL::Device* mainDevice = ImGuiSDL::GetCurrentDevice();
 			ImGuiSDL::SetCurrentDevice(_device);
 			{
 				ImGuiIO &io = ImGui::GetIO();
@@ -188,8 +191,8 @@ public:
 
 				_device = nullptr;
 			}
-			ImGuiSDL::SetCurrentDevice(oldDevice);
-			ImGui::SetCurrentContext(oldContext);
+			ImGuiSDL::SetCurrentDevice(mainDevice);
+			ImGui::SetCurrentContext(mainContext);
 
 			ImGui::DestroyContext(_context);
 			_context = nullptr;
@@ -1376,12 +1379,12 @@ public:
 		ImGuiContext* currentContext = context(wnd, rnd, (int)width, (int)height);
 		Texture* targetTexture = texture(wnd, rnd, (int)width, (int)height);
 
-		// Reserve the old context.
-		const ImGuiIO &oldIo = ImGui::GetIO();
+		// Reserve the main context.
+		const ImGuiIO &mainIo = ImGui::GetIO();
 
-		ImGuiContext* oldContext = ImGui::GetCurrentContext();
-		ImGuiSDL::Device* oldDevice = ImGuiSDL::GetCurrentDevice();
-		Texture* oldTarget = rnd->target();
+		ImGuiContext* mainContext = ImGui::GetCurrentContext();
+		ImGuiSDL::Device* mainDevice = ImGuiSDL::GetCurrentDevice();
+		Texture* mainTarget = rnd->target();
 
 		// Switch to the local context.
 		ImGui::SetCurrentContext(currentContext);
@@ -1394,46 +1397,27 @@ public:
 		ImGuiIO &io = ImGui::GetIO();
 
 		do {
-			io.DeltaTime                            = oldIo.DeltaTime;
-			io.DisplaySize                          = ImVec2(width, height);
-			io.DisplayFramebufferScale              = oldIo.DisplayFramebufferScale;
+			io.DeltaTime               = mainIo.DeltaTime;
+			io.DisplaySize             = ImVec2(width, height);
+			io.DisplayFramebufferScale = mainIo.DisplayFramebufferScale;
 
-			io.KeyCtrl                              = oldIo.KeyCtrl;
-			io.KeyShift                             = oldIo.KeyShift;
-			io.KeyAlt                               = oldIo.KeyAlt;
-			io.KeySuper                             = oldIo.KeySuper;
-			io.KeyMods                              = oldIo.KeyMods;
-			io.KeyModsPrev                          = oldIo.KeyModsPrev;
-			memcpy(io.KeysDown,                       oldIo.KeysDown,                       sizeof(oldIo.KeysDown));
+			io.KeyCtrl                 = mainIo.KeyCtrl;
+			io.KeyShift                = mainIo.KeyShift;
+			io.KeyAlt                  = mainIo.KeyAlt;
+			io.KeySuper                = mainIo.KeySuper;
+			memcpy(io.KeysDown,          mainIo.KeysDown,  sizeof(mainIo.KeysDown));
 
-			memcpy(io.KeyMap,                         oldIo.KeyMap,                         sizeof(oldIo.KeyMap));
-			io.KeyRepeatDelay                       = oldIo.KeyRepeatDelay;
-			io.KeyRepeatRate                        = oldIo.KeyRepeatRate;
-			memcpy(io.KeysDownDuration,               oldIo.KeysDownDuration,               sizeof(oldIo.KeysDownDuration));
-			memcpy(io.KeysDownDurationPrev,           oldIo.KeysDownDurationPrev,           sizeof(oldIo.KeysDownDurationPrev));
+			io.MouseWheel              = mainIo.MouseWheel;
+			io.MouseWheelH             = mainIo.MouseWheelH;
+			memcpy(io.MouseDown,         mainIo.MouseDown, sizeof(mainIo.MouseDown));
 
-			io.MouseDoubleClickTime                 = oldIo.MouseDoubleClickTime;
-			io.MouseDoubleClickMaxDist              = oldIo.MouseDoubleClickMaxDist;
-			io.MouseDragThreshold                   = oldIo.MouseDragThreshold;
-			io.MouseWheel                           = oldIo.MouseWheel;
-			io.MouseWheelH                          = oldIo.MouseWheelH;
-			io.MouseDelta                           = oldIo.MouseDelta;
-			io.MousePosPrev                         = oldIo.MousePosPrev;
-			memcpy(io.MouseDown,                      oldIo.MouseDown,                      sizeof(oldIo.MouseDown));
-			memcpy(io.MouseClickedPos,                oldIo.MouseClickedPos,                sizeof(oldIo.MouseClickedPos));
-			memcpy(io.MouseClickedTime,               oldIo.MouseClickedTime,               sizeof(oldIo.MouseClickedTime));
-			memcpy(io.MouseClicked,                   oldIo.MouseClicked,                   sizeof(oldIo.MouseClicked));
-			memcpy(io.MouseReleased,                  oldIo.MouseReleased,                  sizeof(oldIo.MouseReleased));
-			memcpy(io.MouseDownOwned,                 oldIo.MouseDownOwned,                 sizeof(oldIo.MouseDownOwned));
-			memcpy(io.MouseDownOwnedUnlessPopupClose, oldIo.MouseDownOwnedUnlessPopupClose, sizeof(oldIo.MouseDownOwnedUnlessPopupClose));
-			memcpy(io.MouseDownWasDoubleClick,        oldIo.MouseDownWasDoubleClick,        sizeof(oldIo.MouseDownWasDoubleClick));
-			memcpy(io.MouseDownDuration,              oldIo.MouseDownDuration,              sizeof(oldIo.MouseDownDuration));
-			memcpy(io.MouseDownDurationPrev,          oldIo.MouseDownDurationPrev,          sizeof(oldIo.MouseDownDurationPrev));
-			memcpy(io.MouseDragMaxDistanceAbs,        oldIo.MouseDragMaxDistanceAbs,        sizeof(oldIo.MouseDragMaxDistanceAbs));
-			memcpy(io.MouseDragMaxDistanceSqr,        oldIo.MouseDragMaxDistanceSqr,        sizeof(oldIo.MouseDragMaxDistanceSqr));
-
-			io.InputQueueSurrogate                  = oldIo.InputQueueSurrogate;
-			io.InputQueueCharacters                 = oldIo.InputQueueCharacters;
+#if BITTY_BAKE_ENABLED
+			ws->takeBakeDataSince(_inputCharacterFrame, io.InputQueueCharacters);
+			_inputCharacterFrame = ws->bakeFrame() + 1;
+#else /* BITTY_BAKE_ENABLED */
+			for (ImWchar ch : mainIo.InputQueueCharacters)
+				io.InputQueueCharacters.push_back(ch);
+#endif /* BITTY_BAKE_ENABLED */
 		} while (false);
 
 		refreshFonts(wnd, rnd, io);
@@ -1461,8 +1445,7 @@ public:
 				}
 			}
 
-			io.MousePos                             = oldIo.MousePos;
-			memcpy(io.MouseDoubleClicked,             oldIo.MouseDoubleClicked,             sizeof(oldIo.MouseDoubleClicked));
+			io.MousePos                = mainIo.MousePos;
 
 			do {
 				Math::Vec2i pos((int)(io.MousePos.x - x), (int)(io.MousePos.y - y));
@@ -1471,7 +1454,7 @@ public:
 					pos.x += _options.cameraPosition.x;
 					pos.y += _options.cameraPosition.y;
 				}
-				io.MousePos                         = ImVec2((float)pos.x, (float)pos.y);
+				io.MousePos            = ImVec2((float)pos.x, (float)pos.y);
 			} while (false);
 
 			do {
@@ -1515,7 +1498,7 @@ public:
 			rnd->clip();
 		}
 
-		rnd->target(oldTarget);
+		rnd->target(mainTarget);
 
 		// Save the mouse cursor and IME states for later populating.
 		_mouseCursor = ImGui::GetMouseCursor();
@@ -1530,10 +1513,10 @@ public:
 			_imePosition = ImVec2((float)pos.x, (float)pos.y);
 		} while (false);
 
-		// Switch to the old context.
-		ImGuiSDL::SetCurrentDevice(oldDevice);
+		// Switch to the main context.
+		ImGuiSDL::SetCurrentDevice(mainDevice);
 
-		ImGui::SetCurrentContext(oldContext);
+		ImGui::SetCurrentContext(mainContext);
 	}
 	virtual void render(
 		class Window* wnd, class Renderer* rnd,
@@ -1655,15 +1638,15 @@ private:
 		if (_context)
 			return _context;
 
-		const ImGuiIO &oldIo = ImGui::GetIO();
+		const ImGuiIO &mainIo = ImGui::GetIO();
 
 		// Create a new ImGui context.
 		_context = ImGui::CreateContext();
 
 		// Switch to the new context.
-		ImGuiContext* oldContext = ImGui::GetCurrentContext();
+		ImGuiContext* mainContext = ImGui::GetCurrentContext();
 		ImGui::SetCurrentContext(_context);
-		ImGuiSDL::Device* oldDevice = ImGuiSDL::GetCurrentDevice();
+		ImGuiSDL::Device* mainDevice = ImGuiSDL::GetCurrentDevice();
 
 		// Setup the new context.
 		{
@@ -1728,12 +1711,20 @@ private:
 			style.Colors[ImGuiCol_ModalWindowDimBg]      = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
 
 			io.IniFilename                               = nullptr;
-			io.ConfigFlags                               = oldIo.ConfigFlags;
-			io.BackendFlags                              = oldIo.BackendFlags;
+			io.ConfigFlags                               = mainIo.ConfigFlags;
+			io.BackendFlags                              = mainIo.BackendFlags;
 
-			io.SetClipboardTextFn                        = oldIo.SetClipboardTextFn;
-			io.GetClipboardTextFn                        = oldIo.GetClipboardTextFn;
-			io.ClipboardUserData                         = oldIo.ClipboardUserData;
+			io.SetClipboardTextFn                        = mainIo.SetClipboardTextFn;
+			io.GetClipboardTextFn                        = mainIo.GetClipboardTextFn;
+			io.ClipboardUserData                         = mainIo.ClipboardUserData;
+
+			memcpy(io.KeyMap,                              mainIo.KeyMap, sizeof(mainIo.KeyMap));
+			io.KeyRepeatDelay                            = mainIo.KeyRepeatDelay;
+			io.KeyRepeatRate                             = mainIo.KeyRepeatRate;
+
+			io.MouseDoubleClickTime                      = mainIo.MouseDoubleClickTime;
+			io.MouseDoubleClickMaxDist                   = mainIo.MouseDoubleClickMaxDist;
+			io.MouseDragThreshold                        = mainIo.MouseDragThreshold;
 
 #if defined BITTY_OS_WIN
 			SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
@@ -1754,9 +1745,9 @@ private:
 			_device = ImGuiSDL::GetCurrentDevice();
 		}
 
-		// Switch to the old context.
-		ImGuiSDL::SetCurrentDevice(oldDevice);
-		ImGui::SetCurrentContext(oldContext);
+		// Switch to the main context.
+		ImGuiSDL::SetCurrentDevice(mainDevice);
+		ImGui::SetCurrentContext(mainContext);
 
 		// Return the new created context.
 		return _context;

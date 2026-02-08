@@ -369,6 +369,10 @@ static int warnForMethodCallSymbol(lua_State* L) {
 
 #if BITTY_BAKE_ENABLED
 static void bake(Workspace* workspace, Workspace::Bake::Handler bake, const Variant &arg, bool await) {
+#	if !BITTY_MULTITHREAD_ENABLED
+	workspace->touchBake();
+#	endif /* BITTY_MULTITHREAD_ENABLED */
+
 	if (!await) {
 		workspace->addBake(bake, arg);
 

@@ -46,6 +46,16 @@
 #	endif /* WORKSPACE_SPLASH_FILE */
 #endif /* BITTY_OS_HTML */
 
+#ifndef WORKSPACE_BAKE_COOLDOWN_FRAME_MAX_COUNT
+#	define WORKSPACE_BAKE_COOLDOWN_FRAME_MAX_COUNT 15
+#endif /* WORKSPACE_BAKE_COOLDOWN_FRAME_MAX_COUNT */
+#ifndef WORKSPACE_BAKE_INPUT_CHARACTER_TIMEOUT_FRAME_COUNT
+#	define WORKSPACE_BAKE_INPUT_CHARACTER_TIMEOUT_FRAME_COUNT 15
+#endif /* WORKSPACE_BAKE_INPUT_CHARACTER_TIMEOUT_FRAME_COUNT */
+#ifndef WORKSPACE_BAKE_INPUT_CHARACTER_MAX_COUNT
+#	define WORKSPACE_BAKE_INPUT_CHARACTER_MAX_COUNT 16
+#endif /* WORKSPACE_BAKE_INPUT_CHARACTER_MAX_COUNT */
+
 #if !defined IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 #	error "IMGUI_DISABLE_OBSOLETE_FUNCTIONS not defined."
 #endif /* IMGUI_DISABLE_OBSOLETE_FUNCTIONS */
@@ -327,6 +337,12 @@ Workspace::Bake::Bake(Handler h) : handler(h) {
 
 Workspace::Bake::Bake(Handler h, const Variant &a) : handler(h), argument(a) {
 }
+
+Workspace::InputCharacter::InputCharacter() {
+}
+
+Workspace::InputCharacter::InputCharacter(unsigned f, ImWchar ch) : frame(f), character(ch) {
+}
 #endif /* BITTY_BAKE_ENABLED */
 
 Workspace::SourcePosition::SourcePosition() {
@@ -388,6 +404,8 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 
 #if BITTY_BAKE_ENABLED
 	bakeCount() = 0;
+	bakeCooldown(0);
+	bakeFrame(0);
 #endif /* BITTY_BAKE_ENABLED */
 
 	pluginsEnabled(options.find(WORKSPACE_OPTION_PLUGIN_DISABLED_KEY) == options.end());
@@ -644,6 +662,11 @@ void Workspace::touchedExample(const char*) {
 }
 
 #if BITTY_BAKE_ENABLED
+#	if !BITTY_MULTITHREAD_ENABLED
+void Workspace::touchBake(void) {
+	bakeCooldown(WORKSPACE_BAKE_COOLDOWN_FRAME_MAX_COUNT);
+}
+#	endif /* BITTY_MULTITHREAD_ENABLED */
 bool Workspace::hasBake(void) {
 	return bakeCount() != 0;
 }
@@ -670,10 +693,51 @@ void Workspace::clearBakes(void) {
 	bakeCount() = 0;
 }
 
-void Workspace::bake(void) {
-	if (bakeCount() == 0)
-		return;
+bool Workspace::bake(void) {
+	// Check if currently in bake cooldown period (cooldown timer > 0).
+	const bool result = bakeCooldown() > 0;
+	if (result)
+		bakeCooldown(bakeCooldown() - 1); // If in cooldown, decrement frame by 1.
 
+	// Cache input characters if in bake cooldown period.
+	if (result) {
+		const ImGuiIO &io = ImGui::GetIO();
+
+		if (bakeFrame() == std::numeric_limits<unsigned>::max()) {
+			bakeFrame(0);
+			bakeInputCharacters().clear();
+		} else {
+			bakeFrame(bakeFrame() + 1);
+		}
+
+		InputCharacter::Array::iterator it = std::find_if(
+			bakeInputCharacters().begin(), bakeInputCharacters().end(),
+			[currentFrame = bakeFrame()] (const InputCharacter &ich) -> bool {
+				return ich.frame + WORKSPACE_BAKE_INPUT_CHARACTER_TIMEOUT_FRAME_COUNT < currentFrame;
+			}
+		);
+		if (it != bakeInputCharacters().end())
+			bakeInputCharacters().erase(bakeInputCharacters().begin(), it + 1);
+
+		for (ImWchar ch : io.InputQueueCharacters) {
+			if (bakeInputCharacters().size() >= WORKSPACE_BAKE_INPUT_CHARACTER_MAX_COUNT)
+				break;
+
+			const InputCharacter ich(bakeFrame(), ch);
+			bakeInputCharacters().push_back(ich);
+		}
+	}
+
+	// If there are no pending bake tasks, return instantly.
+	if (bakeCount() == 0)
+		return result;
+
+	// Reset the bake cooldown timer to the preset cooldown frames.
+#	if BITTY_MULTITHREAD_ENABLED
+	bakeCooldown(WORKSPACE_BAKE_COOLDOWN_FRAME_MAX_COUNT);
+#	endif /* BITTY_MULTITHREAD_ENABLED */
+
+	// Process bake tasks.
 	LockGuard<decltype(bakesLock())> guard(bakesLock());
 
 	for (const Bake &bake : bakes())
@@ -682,6 +746,16 @@ void Workspace::bake(void) {
 	bakes().clear();
 
 	bakeCount() = 0;
+
+	// Finish.
+	return result;
+}
+
+void Workspace::takeBakeDataSince(unsigned frame, ImVector<ImWchar> &buf) const {
+	for (const InputCharacter &ich : bakeInputCharacters()) {
+		if (ich.frame >= frame)
+			buf.push_back(ich.character);
+	}
 }
 #endif /* BITTY_BAKE_ENABLED */
 

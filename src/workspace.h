@@ -232,6 +232,16 @@ public:
 		Bake(Handler h);
 		Bake(Handler h, const Variant &a);
 	};
+
+	struct InputCharacter {
+		typedef std::vector<InputCharacter> Array;
+
+		unsigned frame = 0;
+		ImWchar character = 0;
+
+		InputCharacter();
+		InputCharacter(unsigned f, ImWchar ch);
+	};
 #endif /* BITTY_BAKE_ENABLED */
 
 protected:
@@ -286,6 +296,9 @@ protected:
 	BITTY_PROPERTY(Bake::List, bakes)
 	BITTY_FIELD(Atomic<int>, bakeCount)
 	BITTY_FIELD(Mutex, bakesLock)
+	BITTY_PROPERTY_READONLY(unsigned, bakeCooldown)
+	BITTY_PROPERTY_READONLY(unsigned, bakeFrame)
+	BITTY_PROPERTY(InputCharacter::Array, bakeInputCharacters)
 #endif /* BITTY_BAKE_ENABLED */
 
 	BITTY_PROPERTY_READONLY_PTR(class Recorder, recorder)
@@ -449,22 +462,32 @@ public:
 	virtual unsigned update(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, unsigned fps, bool alive, bool* indicated) = 0;
 
 #if BITTY_BAKE_ENABLED
+#	if !BITTY_MULTITHREAD_ENABLED
+	/**
+	 * @brief Touches the bake states.
+	 */
+	void touchBake(void);
+#	endif /* BITTY_MULTITHREAD_ENABLED */
 	/**
 	 * @brief Gets whether the bake list is empty.
 	 */
-	virtual bool hasBake(void);
+	bool hasBake(void);
 	/**
 	 * @brief Adds a function to the bake list (FIFO).
 	 */
-	virtual void addBake(Bake::Handler func, const Variant &arg /* nullable */);
+	void addBake(Bake::Handler func, const Variant &arg /* nullable */);
 	/**
 	 * @brief Clears all the bakes.
 	 */
-	virtual void clearBakes(void);
+	void clearBakes(void);
 	/**
 	 * @brief Bakes the workspace before a frame starts.
 	 */
-	virtual void bake(void);
+	bool bake(void);
+	/**
+	 * @brief Takes input characters since the specific frame.
+	 */
+	void takeBakeDataSince(unsigned frame, ImVector<ImWchar> &buf) const;
 #endif /* BITTY_BAKE_ENABLED */
 
 	/**
