@@ -204,6 +204,7 @@ public:
 	virtual void resume(void) = 0;
 	virtual void rewind(void) = 0;
 	virtual bool stop(const int* fadeOutMs /* nullable */) = 0;
+	virtual bool finished(void) const = 0;
 
 	virtual void clear(void) = 0;
 

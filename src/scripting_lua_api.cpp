@@ -9513,6 +9513,92 @@ static int ResourceMusic___len(lua_State* L) {
 	return 0;
 }
 
+static int ResourceMusic_play(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	const int n = getTop(L);
+	Resources::Music::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj && *obj) {
+		bool loop = false;
+		float fade = -1;
+		double pos = 0.0;
+		if (n >= 4)
+			read<2>(L, loop, fade, pos);
+		else if (n == 3)
+			read<2>(L, loop, fade);
+		else if (n == 2)
+			read<2>(L, loop);
+
+		const int fadeMs = fade >= 0 ? (int)fade * 1000 : -1;
+		impl->primitives()->play(*obj, loop, fadeMs > 0 ? &fadeMs : nullptr, n >= 4 && pos != 0.0 ? &pos : nullptr);
+
+		return 0;
+	}
+
+	error(L, "Music resource expected.");
+
+	return 0;
+}
+
+static int ResourceMusic_pause(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	Resources::Music::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj && *obj) {
+		impl->primitives()->pause(*obj);
+
+		return 0;
+	}
+
+	error(L, "Music resource expected.");
+
+	return 0;
+}
+
+static int ResourceMusic_resume(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	Resources::Music::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj && *obj) {
+		impl->primitives()->resume(*obj);
+
+		return 0;
+	}
+
+	error(L, "Music resource expected.");
+
+	return 0;
+}
+
+static int ResourceMusic_stop(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	const int n = getTop(L);
+	Resources::Music::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj && *obj) {
+		float fade = -1;
+		if (n >= 2)
+			read<2>(L, fade);
+
+		const int fadeMs = fade >= 0 ? (int)fade * 1000 : -1;
+		impl->primitives()->stop(*obj, &fadeMs);
+
+		return 0;
+	}
+
+	error(L, "Sound resource expected.");
+
+	return 0;
+}
+
 static int ResourceMusic___index(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
@@ -9523,7 +9609,7 @@ static int ResourceMusic___index(lua_State* L) {
 	if (!obj || !*obj || !field)
 		return 0;
 
-	if (strcmp(field, "length") == 0) { // Undocumented.
+	if (strcmp(field, "length") == 0) {
 		Music::Ptr ptr = Resources_waitUntilProcessed<Music::Ptr>(impl, impl->primitives(), *obj, nullptr);
 		if (!ptr)
 			return write(L, nullptr);
@@ -9533,7 +9619,7 @@ static int ResourceMusic___index(lua_State* L) {
 		const double ret = ptr->length();
 
 		return write(L, ret);
-	} else if (strcmp(field, "isPlaying") == 0) { // Undocumented.
+	} else if (strcmp(field, "isPlaying") == 0) {
 		Music::Ptr ptr = Resources_waitUntilProcessed<Music::Ptr>(impl, impl->primitives(), *obj, nullptr);
 		if (!ptr)
 			return write(L, nullptr);
@@ -9543,18 +9629,63 @@ static int ResourceMusic___index(lua_State* L) {
 		const bool ret = ptr->playing();
 
 		return write(L, ret);
+	} else if (strcmp(field, "isPaused") == 0) {
+		Music::Ptr ptr = Resources_waitUntilProcessed<Music::Ptr>(impl, impl->primitives(), *obj, nullptr);
+		if (!ptr)
+			return write(L, nullptr);
+
+		LockGuard<Mutex> guard(obj->get()->lock);
+
+		const bool ret = ptr->paused();
+
+		return write(L, ret);
+	} else if (strcmp(field, "position") == 0) {
+		Music::Ptr ptr = Resources_waitUntilProcessed<Music::Ptr>(impl, impl->primitives(), *obj, nullptr);
+		if (!ptr)
+			return write(L, nullptr);
+
+		LockGuard<Mutex> guard(obj->get()->lock);
+
+		const double ret = ptr->position();
+
+		return write(L, ret);
+	} else if (strcmp(field, "finished") == 0) {
+		Music::Ptr ptr = Resources_waitUntilProcessed<Music::Ptr>(impl, impl->primitives(), *obj, nullptr);
+		if (!ptr)
+			return write(L, nullptr);
+
+		LockGuard<Mutex> guard(obj->get()->lock);
+
+		const bool ret = ptr->finished();
+
+		return write(L, ret);
 	} else {
 		return __index(L, field);
 	}
 }
 
 static int ResourceMusic___newindex(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
 	Resources::Music::Ptr* obj = nullptr;
 	const char* field = nullptr;
 	read<>(L, obj, field);
 
 	if (!obj || !*obj || !field)
 		return 0;
+
+	if (strcmp(field, "position") == 0) {
+		double val = 0.0;
+		read<3>(L, val);
+
+		Music::Ptr ptr = Resources_waitUntilProcessed<Music::Ptr>(impl, impl->primitives(), *obj, nullptr);
+		if (!ptr)
+			return write(L, nullptr);
+
+		LockGuard<Mutex> guard(obj->get()->lock);
+
+		ptr->position(val);
+	}
 
 	return 0;
 }
@@ -9568,10 +9699,16 @@ static void open_ResourceMusic(lua_State* L) {
 		array(
 			luaL_Reg{ "__gc", Resource___gc<Resources::Music::Ptr> },
 			luaL_Reg{ "__tostring", __tostring<Resources::Music::Ptr> },
-			luaL_Reg{ "__len", ResourceMusic___len }, // Undocumented.
+			luaL_Reg{ "__len", ResourceMusic___len },
 			luaL_Reg{ nullptr, nullptr }
 		),
-		array<luaL_Reg>(),
+		array(
+			luaL_Reg{ "play", ResourceMusic_play },
+			luaL_Reg{ "pause", ResourceMusic_pause },
+			luaL_Reg{ "resume", ResourceMusic_resume },
+			luaL_Reg{ "stop", ResourceMusic_stop },
+			luaL_Reg{ nullptr, nullptr }
+		),
 		ResourceMusic___index, ResourceMusic___newindex
 	);
 

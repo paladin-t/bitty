@@ -781,6 +781,18 @@ public:
 
 		return true;
 	}
+	virtual bool finished(void) const override {
+#if AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED
+		if (!_music)
+			return 0;
+
+		const double pos = Mix_GetMusicPosition(_music);
+
+		return pos >= _length;
+#else /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
+		return false;
+#endif /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
+	}
 
 	virtual void clear(void) override {
 		if (_playing)
