@@ -182,6 +182,8 @@ public:
 		}
 		Editing::Data::toCheckpoint(project, _name.c_str(), _checkpoint);
 
+		SetStickyLineNumbers(true);
+
 		SetHeadClickEnabled(true);
 
 		DisableShortcut((ShortcutType)(UndoRedo | CopyCutPasteDelete | IndentUnindent));

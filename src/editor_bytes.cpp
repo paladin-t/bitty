@@ -75,6 +75,8 @@ public:
 			SetText(content);
 		}
 
+		SetStickyLineNumbers(true);
+
 		DisableShortcut(All);
 
 		SetTooltipEnabled(false);
