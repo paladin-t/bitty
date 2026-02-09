@@ -1448,8 +1448,9 @@ public:
 			io.MousePos                = mainIo.MousePos;
 
 			do {
-				Math::Vec2i pos((int)(io.MousePos.x - x), (int)(io.MousePos.y - y));
+				Math::Vec2i pos((Int)io.MousePos.x, (Int)io.MousePos.y);
 				fromScreenPosition(pos, clientArea, canvasSize, 1); // Translate mouse position from screen space to local space.
+				pos -= Math::Vec2i((Int)x, (Int)y);
 				if (_options.affectedByCamera) {
 					pos.x += _options.cameraPosition.x;
 					pos.y += _options.cameraPosition.y;
