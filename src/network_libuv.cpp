@@ -73,7 +73,7 @@ static std::string networkGetInterfaces(void) {
 	rapidjson::Value jarr;
 	jarr.SetArray();
 
-#if defined BITTY_OS_WIN || defined BITTY_OS_MAC || defined BITTY_OS_LINUX
+#if defined BITTY_OS_WIN || defined BITTY_OS_LINUX
 	constexpr const size_t BYTE_COUNT = std::min(sizeof(ipv4), (size_t)4);
 	static_assert(BYTE_COUNT >= 4, "Wrong size.");
 	union {
