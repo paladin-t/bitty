@@ -10907,7 +10907,7 @@ static int TextBox_focus(lua_State* L) {
 	if (obj) {
 		obj->get()->focus();
 
-		return write(L, true);
+		return 0;
 	} else {
 		error(L, "TextBox expected.");
 		warnForMethodCallSymbol(L);
@@ -10995,7 +10995,7 @@ static int TextBox_selectAll(lua_State* L) {
 	if (obj) {
 		obj->get()->selectAll();
 
-		return write(L, true);
+		return 0;
 	} else {
 		error(L, "TextBox expected.");
 		warnForMethodCallSymbol(L);
@@ -11066,7 +11066,7 @@ static int TextBox_set(lua_State* L) {
 	if (obj) {
 		obj->get()->text(txt.c_str(), txt.length());
 
-		return write(L, true);
+		return 0;
 	} else {
 		error(L, "TextBox expected.");
 		warnForMethodCallSymbol(L);
@@ -11081,6 +11081,8 @@ static int TextBox_clear(lua_State* L) {
 
 	if (obj) {
 		obj->get()->text("", 0);
+
+		return 0;
 	} else {
 		error(L, "TextBox expected.");
 		warnForMethodCallSymbol(L);
@@ -11096,7 +11098,7 @@ static int TextBox_copy(lua_State* L) {
 	if (obj) {
 		obj->get()->copy();
 
-		return write(L, true);
+		return 0;
 	} else {
 		error(L, "TextBox expected.");
 		warnForMethodCallSymbol(L);
@@ -11112,7 +11114,7 @@ static int TextBox_cut(lua_State* L) {
 	if (obj) {
 		obj->get()->cut();
 
-		return write(L, true);
+		return 0;
 	} else {
 		error(L, "TextBox expected.");
 		warnForMethodCallSymbol(L);
@@ -11136,7 +11138,7 @@ static int TextBox_paste(lua_State* L) {
 		else
 			obj->get()->paste();
 
-		return write(L, true);
+		return 0;
 	} else {
 		error(L, "TextBox expected.");
 		warnForMethodCallSymbol(L);
@@ -11152,7 +11154,7 @@ static int TextBox_delete(lua_State* L) {
 	if (obj) {
 		obj->get()->del();
 
-		return write(L, true);
+		return 0;
 	} else {
 		error(L, "TextBox expected.");
 		warnForMethodCallSymbol(L);
@@ -11168,7 +11170,7 @@ static int TextBox_indent(lua_State* L) {
 	if (obj) {
 		obj->get()->indent();
 
-		return write(L, true);
+		return 0;
 	} else {
 		error(L, "TextBox expected.");
 		warnForMethodCallSymbol(L);
@@ -11184,7 +11186,7 @@ static int TextBox_unindent(lua_State* L) {
 	if (obj) {
 		obj->get()->unindent();
 
-		return write(L, true);
+		return 0;
 	} else {
 		error(L, "TextBox expected.");
 		warnForMethodCallSymbol(L);
@@ -11200,7 +11202,7 @@ static int TextBox_undo(lua_State* L) {
 	if (obj) {
 		obj->get()->undo(nullptr);
 
-		return write(L, true);
+		return 0;
 	} else {
 		error(L, "TextBox expected.");
 		warnForMethodCallSymbol(L);
@@ -11216,7 +11218,7 @@ static int TextBox_redo(lua_State* L) {
 	if (obj) {
 		obj->get()->redo(nullptr);
 
-		return write(L, true);
+		return 0;
 	} else {
 		error(L, "TextBox expected.");
 		warnForMethodCallSymbol(L);

@@ -1146,7 +1146,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 			TextStart = 5;
 		++TextStart; // For edited states.
 	} else {
-		if (ShowModificationStatus)
+		if (IsShowModificationStatus())
 			TextStart = 1;
 		else
 			TextStart = 0;
@@ -1171,7 +1171,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 	// Process shortcuts.
 	if (IsEditorFocused()) {
 		do {
-			const float margin = 12.0f;
+			const float margin = (!IsShowLineNumbers() && !IsShowModificationStatus()) ? 0.0f : 12.0f;
 			const ImVec2 start(GetWindowPos().x + margin, GetWindowPos().y);
 			const ImVec2 end(start.x + GetWindowWidth() - margin * 2, start.y + GetWindowHeight());
 			if (IsMouseHoveringRect(start, end))
@@ -1323,6 +1323,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 	ScrollY = scrollY;
 
 	int dblClkLineNo = -1;
+	int clkLineNo = -1;
 	int lineNo = (int)floor(scrollY / CharAdv.y);
 	const int lineMax = std::max(0, std::min((int)CodeLines.size() - 1, lineNo + (int)ceil((scrollY + contentSize.y) / CharAdv.y)));
 	if (!CodeLines.empty()) {
@@ -1398,6 +1399,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 						dblClkLineNo = lineNo;
 						OnHeadClicked(lineNo, true);
 					} else if (IsMouseClicked(ImGuiMouseButton_Left)) {
+						clkLineNo = lineNo;
 						OnHeadClicked(lineNo, false);
 					}
 				}
@@ -1590,7 +1592,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 			}
 
 			// Render the modification status.
-			if (ShowModificationStatus) {
+			if (IsShowModificationStatus()) {
 				switch (line.Changed) {
 				case LineState::None: // Do nothing.
 					break;
@@ -1658,7 +1660,8 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 				if (ctrl)
 					WordSelectionMode = true;
 				SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
-				EnsureCursorVisible(false, true);
+				if (dblClkLineNo == -1 && clkLineNo == -1)
+					EnsureCursorVisible(false, true);
 				OnLineClicked(State.CursorPosition.Line, false);
 				InputtedRangedPair = (Char)'\0';
 			}
@@ -1667,7 +1670,8 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 					State.CursorPosition = InteractiveStart = InteractiveEnd = SanitizeCoordinates(ScreenPosToCoordinates(GetMousePos()));
 					WordSelectionMode = true;
 					SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
-					EnsureCursorVisible(false, true);
+					if (dblClkLineNo == -1 && clkLineNo == -1)
+						EnsureCursorVisible(false, true);
 					State.CursorPosition = State.SelectionEnd;
 					OnLineClicked(State.CursorPosition.Line, true);
 				}
@@ -1971,33 +1975,40 @@ void CodeEditor::EnsureCursorVisible(bool aForceAbove, bool aSlowMode) {
 		return;
 	}
 
-	float scrollX = GetScrollX();
-	float scrollY = GetScrollY();
+	const bool thinMode = !IsShowLineNumbers() && !IsShowModificationStatus();
 
-	float width = GetWindowWidth();
-	float height = GetWindowHeight();
+	const float scrollX = GetScrollX();
+	const float scrollY = GetScrollY();
 
-	int top = 1 + (int)ceil(scrollY / CharAdv.y);
-	int bottom = (int)ceil((scrollY + height) / CharAdv.y);
+	const float width = GetWindowWidth();
+	const float height = GetWindowHeight();
 
-	int left = (int)ceil(scrollX / CharAdv.x);
-	int right = (int)ceil((scrollX + width) / CharAdv.x);
+	const int top = (int)ceil(scrollY / CharAdv.y) + 1;
+	const int bottom = (int)ceil((scrollY + height) / CharAdv.y);
 
-	Coordinates pos = GetActualCursorCoordinates();
-	int len = TextDistanceToLineStart(pos);
+	const int left = (int)ceil(scrollX / CharAdv.x) + (thinMode ? 1 : 0);
+	const int right = (int)ceil((scrollX + width) / CharAdv.x);
+
+	const Coordinates pos = GetActualCursorCoordinates();
+	const int len = TextDistanceToLineStart(pos);
 
 	const int stepUp = 1;
 	const int stepDown = aSlowMode ? 2 : 4;
 	const int stepRight = aSlowMode ? 3 : 4;
 
-	if (pos.Line < top || aForceAbove)
+	if (pos.Line < top || aForceAbove) {
 		SetScrollY(std::max(0.0f, (pos.Line - stepUp) * CharAdv.y));
-	else if (pos.Line > bottom - stepDown)
+	} else if (pos.Line > bottom - stepDown) {
 		SetScrollY(std::max(0.0f, (pos.Line + stepDown) * CharAdv.y - height));
-	if (len < left)
-		SetScrollX(std::max(0.0f, len * CharAdv.x));
-	else if (len + TextStart > right - stepRight)
+	}
+	if (len < left) {
+		if (thinMode)
+			SetScrollX(std::max(0.0f, (len - 1) * CharAdv.x));
+		else
+			SetScrollX(std::max(0.0f, len * CharAdv.x));
+	} else if (len + TextStart > right - stepRight) {
 		SetScrollX(std::max(0.0f, (len + TextStart + stepRight) * CharAdv.x - width));
+	}
 }
 
 float CodeEditor::GetScrollPositionY(void) {
