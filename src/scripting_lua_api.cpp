@@ -9609,7 +9609,47 @@ static int ResourceMusic___index(lua_State* L) {
 	if (!obj || !*obj || !field)
 		return 0;
 
-	if (strcmp(field, "length") == 0) {
+	if (strcmp(field, "title") == 0) { // Undocumented.
+		Music::Ptr ptr = Resources_waitUntilProcessed<Music::Ptr>(impl, impl->primitives(), *obj, nullptr);
+		if (!ptr)
+			return write(L, nullptr);
+
+		LockGuard<Mutex> guard(obj->get()->lock);
+
+		const char* ret = ptr->title();
+
+		return write(L, ret);
+	} else if (strcmp(field, "artist") == 0) { // Undocumented.
+		Music::Ptr ptr = Resources_waitUntilProcessed<Music::Ptr>(impl, impl->primitives(), *obj, nullptr);
+		if (!ptr)
+			return write(L, nullptr);
+
+		LockGuard<Mutex> guard(obj->get()->lock);
+
+		const char* ret = ptr->artist();
+
+		return write(L, ret);
+	} else if (strcmp(field, "album") == 0) { // Undocumented.
+		Music::Ptr ptr = Resources_waitUntilProcessed<Music::Ptr>(impl, impl->primitives(), *obj, nullptr);
+		if (!ptr)
+			return write(L, nullptr);
+
+		LockGuard<Mutex> guard(obj->get()->lock);
+
+		const char* ret = ptr->album();
+
+		return write(L, ret);
+	} else if (strcmp(field, "copyright") == 0) { // Undocumented.
+		Music::Ptr ptr = Resources_waitUntilProcessed<Music::Ptr>(impl, impl->primitives(), *obj, nullptr);
+		if (!ptr)
+			return write(L, nullptr);
+
+		LockGuard<Mutex> guard(obj->get()->lock);
+
+		const char* ret = ptr->copyright();
+
+		return write(L, ret);
+	} else if (strcmp(field, "length") == 0) {
 		Music::Ptr ptr = Resources_waitUntilProcessed<Music::Ptr>(impl, impl->primitives(), *obj, nullptr);
 		if (!ptr)
 			return write(L, nullptr);

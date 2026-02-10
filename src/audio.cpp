@@ -681,6 +681,47 @@ public:
 		return false;
 	}
 
+	virtual const char* title(void) const override {
+#if AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED
+		if (!_music)
+			return nullptr;
+
+		return Mix_GetMusicTitle(_music);
+#else /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
+		return nullptr;
+#endif /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
+	}
+	virtual const char* artist(void) const override {
+#if AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED
+		if (!_music)
+			return nullptr;
+
+		return Mix_GetMusicArtistTag(_music);
+#else /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
+		return nullptr;
+#endif /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
+	}
+	virtual const char* album(void) const override {
+#if AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED
+		if (!_music)
+			return nullptr;
+
+		return Mix_GetMusicAlbumTag(_music);
+#else /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
+		return nullptr;
+#endif /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
+	}
+	virtual const char* copyright(void) const override {
+#if AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED
+		if (!_music)
+			return nullptr;
+
+		return Mix_GetMusicCopyrightTag(_music);
+#else /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
+		return nullptr;
+#endif /* AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED */
+	}
+
 	virtual double length(void) const override {
 #if AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED
 		if (!_music)

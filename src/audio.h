@@ -192,6 +192,11 @@ public:
 public:
 	BITTY_CLASS_TYPE('M', 'U', 'S', 'A')
 
+	virtual const char* title(void) const = 0;
+	virtual const char* artist(void) const = 0;
+	virtual const char* album(void) const = 0;
+	virtual const char* copyright(void) const = 0;
+
 	virtual double length(void) const = 0;
 
 	virtual double position(void) const = 0;
