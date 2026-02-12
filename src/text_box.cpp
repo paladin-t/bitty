@@ -210,6 +210,9 @@ public:
 	virtual void unlock(void) override {
 		_lock.unlock();
 	}
+	virtual bool tryLock(void) override {
+		return _lock.tryLock();
+	}
 
 	virtual bool option(const std::string &key, const Variant &val) override {
 		if (key == "language_definition") {
@@ -1030,7 +1033,7 @@ public:
 		LockGuard<decltype(_lock)> guard(_lock);
 
 		if (ReadOnly) {
-			copy();
+			Copy();
 
 			return;
 		}

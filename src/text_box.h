@@ -38,6 +38,7 @@ public:
 
 	virtual void lock(void) = 0;
 	virtual void unlock(void) = 0;
+	virtual bool tryLock(void) = 0;
 
 	virtual bool option(const std::string &key, const Variant &val) = 0;
 

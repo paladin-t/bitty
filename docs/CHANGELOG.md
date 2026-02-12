@@ -1,3 +1,34 @@
+### v1.6.0 Feb. 12, 2026
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added a `__len()` operator to `Music` resource
+* Added `length`, `isPlaying`, `isPaused`, `position`, `finished` properties to `Music` resource
+* Added `play(...)`, `pause()`, `resume()`, `stop(...)` methods to `Music` resource
+* Added a "force_monospace" option to the `TextBox` module
+* Added a `lastInsertedRowId` field to the `Database` module
+* Added `lineCount`, `undoable`, `redoable`, `hasUnsavedChanges` properties to the `TextBox` module
+* Added `location()`, `locate(...)`, `selection()`, `selectRange(...)`, `lineAt(...)`, `columnsAt(...)`,  `indent()`, `unindent()`, `undo()`, `redo()`, `markChangesSaved()`, `ensureCursorVisible(...)` methods to the `TextBox` module
+* Added a `txt` parameter to the `paste(...)` method of the `TextBox` module
+* Added an `Application.setCursor(name)` function to set cursor with string
+* Added an `Application.skipFrame()` function to skip one frame for flushing the application window
+* Improved custom font range support
+* Improved non-ASCII code rendering
+* Improved handling of character input across multiple threads
+* Improved scroll behaviour of `TextBox` when mouse is moving at edges
+* Updated to allow activating assets for editing by double click on the editor tabs
+* Updated the "TextBox" example to use selected fonts
+* Updated the text-based editors to use sticky line numbers
+* Fixed a crash bug when use `Promise` without an `update` function
+* Fixed a thread locking bug of nested `Promise`s
+* Fixed a style assigning bug of code editors when they are opened by text lookup
+* Fixed some potential issues during renaming assets
+* Fixed an asset validation bug after removing its reference asset
+* Fixed base of the "cursor_line" and "cursor_column" options to 1 for the `TextBox` module
+* Fixed a camera handling bug with the `TextBox` module
+* Fixed an async operation issue with the `TextBox` module
+* Fixed a memory leak within the `TextBox` module
+
 ### v1.5.0 Jan. 19, 2026
 
 Enhanced modules, improved usability, fixed some bugs.

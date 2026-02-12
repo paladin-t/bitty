@@ -10971,6 +10971,22 @@ static int TextBox_unlock(lua_State* L) {
 	return 0;
 }
 
+static int TextBox_tryLock(lua_State* L) {
+	TextBox::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		const bool ret = obj->get()->tryLock();
+
+		return write(L, ret);
+	} else {
+		error(L, "TextBox expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
 static int TextBox_setOption(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
@@ -11582,6 +11598,7 @@ static void open_TextBox(lua_State* L) {
 		array(
 			luaL_Reg{ "lock", TextBox_lock }, // Undocumented.
 			luaL_Reg{ "unlock", TextBox_unlock }, // Undocumented.
+			luaL_Reg{ "tryLock", TextBox_tryLock }, // Undocumented.
 			luaL_Reg{ "setOption", TextBox_setOption },
 			luaL_Reg{ "useFont", TextBox_useFont },
 			luaL_Reg{ "focus", TextBox_focus },

@@ -667,6 +667,10 @@ This module offers manipulations of SQLite database.
 
 * `Database.new()`: constructs an database object
 
+**Object Fields**
+
+* `database.lastInsertedRowId`: gets the last inserted row ID
+
 **Methods**
 
 * `database:setOption(key, val)`: sets option value of the specific key
@@ -1470,6 +1474,10 @@ This module shows a multiline text box.
 
 * `textBox.text`: gets or sets the text content of the widget
 * `textBox.focused`: gets whether the `TextBox` has input focus
+* `textBox.lineCount`: gets the total line count
+* `textBox.undoable`: gets whether has undoable records
+* `textBox.redoable`: gets whether has redoable records
+* `textBox.hasUnsavedChanges`: gets whether the `TextBox` has unsaved changes
 
 **Methods**
 
@@ -1549,24 +1557,24 @@ The following configuration serves as an example to set the default ASCII font f
   "fonts": [
     {
       "operation": "set",
-      "path": "fonts/LanaPixel.ttf",
+      "path": "fonts/ProggyClean.ttf",
       "size": 13,
       "ranges": "default",
-      "glyph_offset": [ 1, -1 ]
+      "glyph_offset": [ 0, 0 ]
     },
     {
       "operation": "merge",
-      "path": "fonts/LanaPixel.ttf",
-      "size": 13,
+      "path": "fonts/Cubic11.ttf",
+      "size": 14,
       "ranges": "chinese",
-      "glyph_offset": [ 1, -1 ]
+      "glyph_offset": [ 0, 0 ]
     },
     {
       "operation": "merge",
-      "path": "fonts/LanaPixel.ttf",
-      "size": 13,
+      "path": "fonts/Cubic11.ttf",
+      "size": 14,
       "ranges": "japanese",
-      "glyph_offset": [ 1, -1 ]
+      "glyph_offset": [ 0, 0 ]
     },
     {
       "operation": "merge",
@@ -1580,7 +1588,28 @@ The following configuration serves as an example to set the default ASCII font f
 ```
 
 * `textBox:focus()`: sets the input focus to the `TextBox`
+* `textBox:location()`: gets the current cursor position of the `TextBox`
+	* returns two values for line and column respectively
+* `textBox:locate(ln, col)`: sets the current cursor position of the `TextBox`
+	* `ln`: the line to put the cursor
+	* `col`: the column to put the cursor
+* `textBox:selection()`: gets the current selection positions of the `TextBox`
+	* returns four values for line 1 and column 1, line 2 and column 2 respectively
+* `textBox:selectRange(ln1, col1, ln2, col2)`: selects a range of text of the `TextBox`
+	* `ln1`: the first line to set the selection
+	* `col1`: the first column to set the selection
+	* `ln2`: the second line to set the selection
+	* `col2`: the second column to set the selection
 * `textBox:selectAll()`: selects all text content of the `TextBox`
+* `textBox:lineAt(ln)`: gets the text at the specific line
+	* `ln`: the line index
+	* returns the text at the line
+* `textBox:columnsAt(ln)`: gets the column count at the specific line
+	* `ln`: the line index
+	* returns the column count
+
+The position values of a `TextBox` start from 1.
+
 * `textBox:get()`: gets the text content of the widget
 	* returns the text content
 * `textBox:set(txt)`: sets the text content to the widget
@@ -1590,6 +1619,14 @@ The following configuration serves as an example to set the default ASCII font f
 * `textBox:cut()`: cuts selected text of the `TextBox` to clipboard
 * `textBox:paste()`: deletes selected text of the `TextBox` and pastes new content from clipboard
 * `textBox:delete()`: deletes selected text of the `TextBox`
+* `textBox:indent()`: performs an indent operation
+* `textBox:unindent()`: performs an unindent operation
+* `textBox:undo()`: performs an undo operation
+* `textBox:redo()`: performs a redo operation
+* `textBox:markChangesSaved()`: marks the `TextBox`'s changes as saved
+* `textBox:ensureCursorVisible(forceAbove = false, slowMode = false)`: ensures the cursor is visible within the `TextBox`
+	* `forceAbove`: if `true`, forces the cursor to be positioned in the upper part of the viewport
+	* `slowMode`: whether to scroll slowly
 * `textBox:update(x0, y0, x1, y1)`: updates the `TextBox` at the specific area
 	* `x0`: the first x position
 	* `y0`: the first y position
@@ -1793,6 +1830,29 @@ Can be loaded by `Resources.load(...)`.
 ### Music Asset
 
 Can be loaded by `Resources.load(...)`.
+
+**Operators**
+
+* `music:__len()`: gets the length in seconds, for desktop only
+
+**Object Fields**
+
+* `music.length`: readonly, gets the `Music` length in seconds, for desktop only
+* `music.isPlaying`: readonly, gets whether the `Music` is playing
+* `music.isPaused`: readonly, gets whether the `Music` is paused
+* `music.position`: gets or sets the playing position of the `Music`, for desktop only
+* `music.finished`: readonly, gets whether the `Music` has finished playing, for desktop only
+
+**Methods**
+
+* `music:play(loop = false[, fade[, pos]])`: plays the `Music` resource, this operation is identical to `play(music, ...)`
+	* `loop`: `true` for loop, otherwise plays once
+	* `fade`: the fade in time in seconds
+	* `pos`: real number, the specific position in seconds to start from; affects MP3, OGG, WAV, FLAC, and some MOD formats
+* `music:pause()`: pauses `Music` playing
+* `music:resume()`: resumes `Music` playing
+* `music:stop([fade])`: stops `Music` playing, this operation is identical to `stop(music, ...)`
+	* `fade`: the fade out time in seconds
 
 [TOP](#reference-manual)
 
@@ -2121,7 +2181,10 @@ Available options:
 
 _The "transparent_color" option is an experimental feature, it supports Windows 10 and above. Note that it affects the whole application window._
 
-* `Application.setCursor(img[, x, y])`: sets the mouse cursor
+* `Application.setCursor(name, retain = true)`: sets the mouse cursor with a string
+	* `name`: cursor name, can be one in "none", "arrow", "text_input", "resize_all", "resize_ns", "resize_ew", "resize_nesw", "resize_nwse", "hand", "not_allowed"
+	* `retain`: the cursor state will be retained if set to `true`
+* `Application.setCursor(img[, x, y])`: sets the mouse cursor with an `Image`
 	* `img`: the specific `Image` to set, `nil` to reset; note that the required type here is `Image`, not `Texture`
 	* `x`: the spot x, with range of values from 0.0 to 1.0
 	* `y`: the spot y, with range of values from 0.0 to 1.0
@@ -2142,6 +2205,7 @@ Application.setCursor(img)
 * `Application.resize(size)`: resizes the application window
 	* `size`: can be one in "fullscreen", "windowed"
 * `Application.raise()`: raises the application window
+* `Application.skipFrame()`: skips one frame for flushing the application window, the primitives and other things keep running normally
 
 ### Canvas
 
