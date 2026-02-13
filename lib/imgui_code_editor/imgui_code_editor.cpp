@@ -2718,12 +2718,12 @@ void CodeEditor::Indent(bool aByKey) {
 
 		for (int i = u.Start.Line; i <= u.End.Line; ++i) {
 			Line &line = CodeLines[i];
-			if (line.Glyphs.empty()) {
+			/*if (line.Glyphs.empty()) {
 				if (i == u.Start.Line)
 					u.Content.push_back(0);
 
 				continue;
-			}
+			}*/
 			if (IndentWithTab) {
 				line.Glyphs.insert(line.Glyphs.begin(), Glyph('\t', PaletteIndex::Default));
 				if (i == u.Start.Line)
@@ -2741,10 +2741,7 @@ void CodeEditor::Indent(bool aByKey) {
 		}
 
 		switch (GetSelectionLines()) {
-		case 0:
-			// Do nothing.
-
-			break;
+		case 0: // Fall through.
 		case 1: {
 				const int step = (int)u.Content.size();
 				State.CursorPosition.Column += step;
