@@ -1681,7 +1681,7 @@ The `hint` can be one in `Palette`, `Texture`, `Sprite`, `Map`, `Sfx`, `Music`. 
 For example:
 
 ```lua
-foo = Resources.load('bar.pal') -- Load a palette.
+foo = Resources.load('bar.pal')                     -- Load a palette.
 foo = Resources.load({ width = 128, height = 128 }) -- Load a blank texture.
 ```
 
@@ -1701,7 +1701,7 @@ local data = {
       key = ''
     }
   },
-  ref = baz -- Ref by object.
+  ref = baz                -- Ref by object.
 }
 foo = Resources.load(data) -- Load a sprite.
 ```
@@ -1713,13 +1713,13 @@ local data = {
   },
   width = 60, height = 40,
   data = { ... },
-  ref = 'baz.png' -- Ref by asset name.
+  ref = 'baz.png'          -- Ref by asset name.
 }
 foo = Resources.load(data) -- Load a map.
 ```
 
 ```lua
-foo = Resources.load('bar.mp3', Sfx) -- Load an SFX.
+foo = Resources.load('bar.mp3', Sfx)   -- Load an SFX.
 foo = Resources.load('bar.mp3', Music) -- Load a piece of music.
 ```
 
@@ -1776,6 +1776,23 @@ Can be loaded by `Resources.load(...)`.
 * `texture:blend(mode)`: sets the blend state of the `Texture` with the specific mode
 	* `mode`: the blend mode to set; refer to the blend modes of `Canvas`
 	* returns `true` for success, otherwise `false`
+
+Textures created from an empty resource support render-to-texture: you can set them as the render target via `Canvas.main.target`, after which drawing primitives will be rendered into the texture, i.e.
+
+```lua
+local target = Resources.load({ width = 128, height = 128 }) -- Load a dynamic blank texture.
+Resources.wait(target)
+
+Canvas.main.target = target                                  -- Use the texture as render target.
+cls(Color.new(100, 200, 80))                                 -- Clear the render target with a specific color.
+text('This is a', 10, 0)                                     -- Draw something.
+text('render target.', 10, 16)
+
+Canvas.main.target = nil                                     -- Restore the render target to the main canvas.
+cls(Color.new(30, 30, 30))                                   -- Restore the clear color.
+
+sync()
+```
 
 ### Sprite Asset
 
