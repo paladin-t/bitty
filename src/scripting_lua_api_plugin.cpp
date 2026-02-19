@@ -10,9 +10,9 @@
 
 #include "bitty.h"
 #include "bytes.h"
-#include "executable.h"
 #include "filesystem.h"
 #include "project.h"
+#include "scripting_lua.h"
 #include "scripting_lua_api_plugin.h"
 
 /*
@@ -53,6 +53,39 @@ LUA_WRITE_ALIAS_CONST(ProjectPtr, Project)
 namespace Lua {
 
 namespace Application {
+
+/**< Plugin. */
+
+static int Plugin_built(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	impl->observer()->built();
+
+	return 0;
+}
+
+static void open_Plugin(lua_State* L) {
+	req(
+		L,
+		array(
+			luaL_Reg{
+				"Plugin",
+				[] (lua_State* L) -> int {
+					lib(
+						L,
+						array(
+							luaL_Reg{ "built", Plugin_built }, // Frame synchronized.
+							luaL_Reg{ nullptr, nullptr }
+						)
+					);
+
+					return 1;
+				}
+			},
+			luaL_Reg{ nullptr, nullptr }
+		)
+	);
+}
 
 /**< Project. */
 
@@ -155,6 +188,9 @@ static void open_Project(lua_State* L) {
 void plugin(class Executable* exec) {
 	// Prepare.
 	lua_State* L = (lua_State*)exec->pointer();
+
+	// Plugin.
+	open_Plugin(L);
 
 	// Project.
 	open_Project(L);

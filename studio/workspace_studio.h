@@ -109,6 +109,9 @@ protected:
 	virtual void unloadProject(const class Project* project, Executable* exec) override;
 
 private:
+	unsigned updateEditing(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, unsigned fps, bool alive, bool* indicated);
+	unsigned updateBuilding(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, unsigned fps, bool alive, bool* indicated);
+
 	void refresh(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 
 	void addRecentTouched(StudioSettings::RecentTouched::Types type, const char* path);

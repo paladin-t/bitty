@@ -1152,6 +1152,11 @@ private:
 #if defined BITTY_OS_WIN
 			" [-" WORKSPACE_OPTION_APPLICATION_CONSOLE_ENABLED_KEY "]"
 #endif /* BITTY_OS_WIN */
+			" [-" WORKSPACE_OPTION_APPLICATION_OUTPUT_KEY " \"PATH\"]"
+			" [-" WORKSPACE_OPTION_APPLICATION_PLATFORM_WIN_KEY "]"
+			" [-" WORKSPACE_OPTION_APPLICATION_PLATFORM_LINUX_KEY "]"
+			" [-" WORKSPACE_OPTION_APPLICATION_PLATFORM_MACOS_KEY "]"
+			" [-" WORKSPACE_OPTION_APPLICATION_PLATFORM_HTML_KEY "]"
 			" [-" WORKSPACE_OPTION_APPLICATION_FPS_KEY "]"
 			" [-" WORKSPACE_OPTION_APPLICATION_BOOT_SOUND_DISABLED_KEY "]"
 			" [-" WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY "]"
@@ -1175,6 +1180,11 @@ private:
 #if defined BITTY_OS_WIN
 		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_CONSOLE_ENABLED_KEY            "        Enable console window.\n");
 #endif /* BITTY_OS_WIN */
+		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_OUTPUT_KEY                     " \"PATH\" Specify the output path for build-only mode.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_PLATFORM_WIN_KEY               "        Build for Windows.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_PLATFORM_LINUX_KEY             "        Build for Linux.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_PLATFORM_MACOS_KEY             "        Build for MacOS.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_PLATFORM_HTML_KEY              "        Build for HTML.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_FPS_KEY                        " FPS    Specify running FPS.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_BOOT_SOUND_DISABLED_KEY        "        Disable boot sound.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY              "        Run with borderless window.\n");

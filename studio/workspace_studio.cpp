@@ -288,6 +288,46 @@ bool WorkspaceStudio::open(class Window* wnd, class Renderer* rnd, const class P
 	}
 #endif /* BITTY_OS_LINUX */
 
+	if (toBuild()) {
+		Plugin::Array::const_iterator exists = std::find_if(
+			plugins().begin(), plugins().end(),
+			[&] (const Plugin *val) -> bool {
+				if (buildTarget() == WORKSPACE_OPTION_APPLICATION_PLATFORM_WIN_KEY && Entry::compare(val->entry(), Entry::Stub("Project/Build/Windows")) == 0)
+					return true;
+				else if (buildTarget() == WORKSPACE_OPTION_APPLICATION_PLATFORM_LINUX_KEY && Entry::compare(val->entry(), Entry::Stub("Project/Build/Linux")) == 0)
+					return true;
+				else if (buildTarget() == WORKSPACE_OPTION_APPLICATION_PLATFORM_MACOS_KEY && Entry::compare(val->entry(), Entry::Stub("Project/Build/MacOS")) == 0)
+					return true;
+				else if (buildTarget() == WORKSPACE_OPTION_APPLICATION_PLATFORM_HTML_KEY && Entry::compare(val->entry(), Entry::Stub("Project/Build/HTML")) == 0)
+					return true;
+
+				return false;
+			}
+		);
+		if (exists == plugins().end()) {
+			const std::string msg_ = Text::cformat("Cannot find plugin to build for \"%s\".", buildTarget().c_str());
+			warn(msg_.c_str());
+
+			messagePopupBox(
+				msg_,
+				nullptr,
+				nullptr,
+				nullptr
+			);
+		} else {
+			std::string outPath = buildPath();
+			if (Path::existsDirectory(outPath.c_str())) {
+				outPath = Path::combine(outPath.c_str(), "output.zip");
+			}
+
+			const std::string msg_ = Text::cformat("Building for \"%s\", output to \"%s\"...", buildTarget().c_str(), outPath.c_str());
+			print(msg_.c_str());
+
+			Plugin* plugin = *exists;
+			Operations::pluginRunMenuItem(rnd, this, project, plugin, outPath);
+		}
+	}
+
 	return true;
 }
 
@@ -394,50 +434,10 @@ bool WorkspaceStudio::save(class Window* wnd, class Renderer* rnd, const class P
 }
 
 unsigned WorkspaceStudio::update(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, unsigned fps, bool alive, bool* indicated) {
-	// Prepare.
-	unsigned result = 0;
+	if (toBuild())
+		return updateBuilding(wnd, rnd, project, exec, primitives, delta, fps, alive, indicated);
 
-	execute(wnd, rnd, project, exec, primitives, delta, alive);
-	refresh(wnd, rnd, project, exec, primitives);
-
-	prepare(wnd, rnd, project, exec, primitives);
-	shortcuts(wnd, rnd, project, exec, primitives);
-
-	// Dialog boxes.
-	dialog(wnd, rnd, project);
-
-	// Head.
-	{
-		menu(wnd, rnd, project, exec, primitives);
-		banner(wnd, rnd, project, exec, primitives);
-	}
-
-	// Body.
-	{
-		assets(wnd, rnd, project, exec, primitives);
-
-		const float assetW = *assetsVisible() ? assetsWidth() : 0.0f;
-		bodyArea(Rect(assetW, menuHeight() + bannerHeight(), (float)rnd->width(), (float)rnd->height()));
-
-		editing(wnd, rnd, project, exec, primitives, delta, indicated);
-#if BITTY_DEBUG_ENABLED
-		debug(wnd, rnd, project, exec, primitives, fps);
-#else /* BITTY_DEBUG_ENABLED */
-		(void)fps;
-#endif /* BITTY_DEBUG_ENABLED */
-		if (canvas(wnd, rnd, project, exec, primitives, delta, indicated))
-			result = activeFrameRate();
-		console(wnd, rnd, project);
-		promise(wnd, rnd, project);
-	}
-
-	// Plugins.
-	plugins(wnd, rnd, project, delta);
-
-	// Finish.
-	finish(wnd, rnd, project);
-
-	return result;
+	return updateEditing(wnd, rnd, project, exec, primitives, delta, fps, alive, indicated);
 }
 
 void WorkspaceStudio::require(Executable* exec) {
@@ -690,7 +690,7 @@ void WorkspaceStudio::loadProject(class Window* wnd, class Renderer* rnd, const 
 #endif /* WORKSPACE_AUTORUN_ENABLED */
 
 		// Open the last project.
-		if (!start && _settings.projectLoadLastProjectAtStartup && _settings.recentListEnabled) {
+		if (!start && _settings.projectLoadLastProjectAtStartup && _settings.recentListEnabled && !toBuild()) {
 			for (int i = 0; i < WORKSPACE_RECENT_FILE_MAX_COUNT && i < (int)_settings.recentTouched.size(); ++i) {
 				const StudioSettings::RecentTouched::Types type = _settings.recentTouched[i].type;
 				const std::string &path = _settings.recentTouched[i].path;
@@ -760,6 +760,79 @@ void WorkspaceStudio::unloadProject(const class Project* project, Executable* ex
 	prj->readonly(false);
 }
 
+unsigned WorkspaceStudio::updateEditing(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, unsigned fps, bool alive, bool* indicated) {
+	// Prepare.
+	unsigned result = 0;
+
+	execute(wnd, rnd, project, exec, primitives, delta, alive);
+	refresh(wnd, rnd, project, exec, primitives);
+
+	prepare(wnd, rnd, project, exec, primitives);
+	shortcuts(wnd, rnd, project, exec, primitives);
+
+	// Dialog boxes.
+	dialog(wnd, rnd, project);
+
+	// Head.
+	{
+		menu(wnd, rnd, project, exec, primitives);
+		banner(wnd, rnd, project, exec, primitives);
+	}
+
+	// Body.
+	{
+		assets(wnd, rnd, project, exec, primitives);
+
+		const float assetW = *assetsVisible() ? assetsWidth() : 0.0f;
+		bodyArea(Rect(assetW, menuHeight() + bannerHeight(), (float)rnd->width(), (float)rnd->height()));
+
+		editing(wnd, rnd, project, exec, primitives, delta, indicated);
+#if BITTY_DEBUG_ENABLED
+		debug(wnd, rnd, project, exec, primitives, fps);
+#else /* BITTY_DEBUG_ENABLED */
+		(void)fps;
+#endif /* BITTY_DEBUG_ENABLED */
+		if (canvas(wnd, rnd, project, exec, primitives, delta, indicated))
+			result = activeFrameRate();
+		console(wnd, rnd, project);
+		promise(wnd, rnd, project);
+	}
+
+	// Plugins.
+	plugins(wnd, rnd, project, delta);
+
+	// Finish.
+	finish(wnd, rnd, project);
+
+	return result;
+}
+
+unsigned WorkspaceStudio::updateBuilding(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, unsigned /* fps */, bool /* alive */, bool* /* indicated */) {
+	// Prepare.
+	unsigned result = 0;
+
+	refresh(wnd, rnd, project, exec, primitives);
+
+	// Dialog boxes.
+	dialog(wnd, rnd, project);
+
+	// Body.
+	{
+		bodyArea(Rect(0.0f, 0.0f, (float)rnd->width(), (float)rnd->height()));
+
+		console(wnd, rnd, project);
+		promise(wnd, rnd, project);
+	}
+
+	// Plugins.
+	plugins(wnd, rnd, project, delta);
+
+	// Finish.
+	finish(wnd, rnd, project);
+
+	return result;
+}
+
 void WorkspaceStudio::refresh(class Window* wnd, class Renderer*, const class Project*, Executable*, class Primitives*) {
 	if (toRefreshWindowTitle()) {
 		toRefreshWindowTitle(false);
@@ -768,6 +841,9 @@ void WorkspaceStudio::refresh(class Window* wnd, class Renderer*, const class Pr
 }
 
 void WorkspaceStudio::addRecentTouched(StudioSettings::RecentTouched::Types type, const char* path) {
+	if (toBuild())
+		return;
+
 	if (!_settings.recentListEnabled)
 		return;
 

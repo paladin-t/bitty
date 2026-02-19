@@ -106,6 +106,10 @@ public:
 		 */
 		virtual void stop(void) = 0;
 		/**
+		 * @brief A project has been built.
+		 */
+		virtual void built(void) = 0;
+		/**
 		 * @brief Gets the size of the application.
 		 */
 		virtual Math::Vec2i applicationSize(void) = 0;

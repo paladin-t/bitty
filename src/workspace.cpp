@@ -398,6 +398,34 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 	// Initialize properties.
 	busy(false);
 
+	toBuild(false);
+	Text::Dictionary::const_iterator outOpt = options.find(WORKSPACE_OPTION_APPLICATION_OUTPUT_KEY);
+	if (outOpt != options.end()) {
+		std::string path_ = outOpt->second;
+		path_ = Unicode::fromOs(path_);
+		if (path_.size() >= 2 && path_.front() == '\"' && path_.back() == '\"') {
+			path_.erase(path_.begin());
+			path_.pop_back();
+		}
+		Path::uniform(path_);
+		toBuild(true);
+		buildPath(path_);
+
+		Text::Dictionary::const_iterator winOpt = options.find(WORKSPACE_OPTION_APPLICATION_PLATFORM_WIN_KEY);
+		Text::Dictionary::const_iterator linuxOpt = options.find(WORKSPACE_OPTION_APPLICATION_PLATFORM_LINUX_KEY);
+		Text::Dictionary::const_iterator macosOpt = options.find(WORKSPACE_OPTION_APPLICATION_PLATFORM_MACOS_KEY);
+		Text::Dictionary::const_iterator htmlOpt = options.find(WORKSPACE_OPTION_APPLICATION_PLATFORM_HTML_KEY);
+		if (winOpt != options.end())
+			buildTarget(WORKSPACE_OPTION_APPLICATION_PLATFORM_WIN_KEY);
+		else if (linuxOpt != options.end())
+			buildTarget(WORKSPACE_OPTION_APPLICATION_PLATFORM_LINUX_KEY);
+		else if (macosOpt != options.end())
+			buildTarget(WORKSPACE_OPTION_APPLICATION_PLATFORM_MACOS_KEY);
+		else if (htmlOpt != options.end())
+			buildTarget(WORKSPACE_OPTION_APPLICATION_PLATFORM_HTML_KEY);
+	}
+	buildingDone() = false;
+
 	toRefreshWindowTitle(false);
 	activeFrameRate(fps);
 	skipFrameCount(0);
@@ -997,6 +1025,13 @@ void Workspace::require(Executable*) {
 
 void Workspace::stop(void) {
 	debugStopping() = true;
+}
+
+void Workspace::built(void) {
+	const std::string msg = "Done.";
+	print(msg.c_str());
+
+	buildingDone() = true;
 }
 
 Math::Vec2i Workspace::applicationSize(void) {
@@ -2716,58 +2751,73 @@ void Workspace::debug(class Window* /* wnd */, class Renderer* rnd, const class 
 void Workspace::console(class Window* /* wnd */, class Renderer* rnd, const class Project* project) {
 	consoleFocused(false);
 
-	if (!*consoleVisible())
-		return;
+	const bool toBuild_ = toBuild();
+	if (!toBuild_) {
+		if (!*consoleVisible())
+			return;
 
-	if (immersive())
-		return;
+		if (immersive())
+			return;
+	}
 
 	ImGuiIO &io = ImGui::GetIO();
 	ImGuiStyle &style = ImGui::GetStyle();
 
 	VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2());
 
-	const float minHeight = std::min(bodyArea().height() * 0.3f, 256.0f * io.FontGlobalScale);
 	ImGuiWindowFlags flags = WORKSPACE_WND_FLAGS_DOCK;
-	if (consoleHeight() <= 0.0f) {
-		consoleHeight(minHeight);
+	float minHeight;
+	float consoleY;
+	if (toBuild_) {
+		minHeight = bodyArea().height();
+		if (consoleHeight() <= 0.0f) {
+			consoleHeight(minHeight);
+		}
+		consoleY = 0.0f;
+	} else {
+		minHeight = std::min(bodyArea().height() * 0.3f, 256.0f * io.FontGlobalScale);
+		if (consoleHeight() <= 0.0f) {
+			consoleHeight(minHeight);
+		}
+		consoleY = rnd->height() - consoleHeight();
 	}
-	const float consoleY = rnd->height() - consoleHeight();
 
-	const float gripPaddingX = 16.0f;
-	const float gripMarginY = ImGui::WindowResizingPadding().y;
-	if (consoleResizing() && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
-		consoleResizing(false);
+	if (!toBuild_) {
+		const float gripPaddingX = 16.0f;
+		const float gripMarginY = ImGui::WindowResizingPadding().y;
+		if (consoleResizing() && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+			consoleResizing(false);
 
-		withEditingAsset(
-			project,
-			[&] (Asset*, Editable* editor) -> void {
-				editor->resized(rnd, project);
-			}
-		);
-	}
-	if (
-		ImGui::IsMouseHoveringRect(
-			ImVec2(
-				bodyArea().xMin() + gripPaddingX,
-				consoleY
-			),
-			ImVec2(
-				bodyArea().xMax() - gripPaddingX * 2.0f,
-				consoleY + gripMarginY
-			),
-			false
-		) &&
-		!popupBox() && !headVisible() && !canvasHovering()
-	) {
-		consoleResizing(true);
+			withEditingAsset(
+				project,
+				[&] (Asset*, Editable* editor) -> void {
+					editor->resized(rnd, project);
+				}
+			);
+		}
+		if (
+			ImGui::IsMouseHoveringRect(
+				ImVec2(
+					bodyArea().xMin() + gripPaddingX,
+					consoleY
+				),
+				ImVec2(
+					bodyArea().xMax() - gripPaddingX * 2.0f,
+					consoleY + gripMarginY
+				),
+				false
+			) &&
+			!popupBox() && !headVisible() && !canvasHovering()
+		) {
+			consoleResizing(true);
 
-		ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
-	} else if (!ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
-		consoleResizing(false);
-	}
-	if (consoleResizing()) {
-		flags &= ~ImGuiWindowFlags_NoResize;
+			ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
+		} else if (!ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+			consoleResizing(false);
+		}
+		if (consoleResizing()) {
+			flags &= ~ImGuiWindowFlags_NoResize;
+		}
 	}
 
 	ImGui::SetNextWindowPos(ImVec2(bodyArea().xMin(), consoleY), ImGuiCond_Always);
@@ -2775,7 +2825,8 @@ void Workspace::console(class Window* /* wnd */, class Renderer* rnd, const clas
 		ImVec2(bodyArea().width(), consoleHeight()),
 		ImGuiCond_Always
 	);
-	ImGui::SetNextWindowSizeConstraints(ImVec2(-1, minHeight), ImVec2(-1, bodyArea().height() * 0.7f));
+	if (!toBuild_)
+		ImGui::SetNextWindowSizeConstraints(ImVec2(-1, minHeight), ImVec2(-1, bodyArea().height() * 0.7f));
 	if (ImGui::Begin(theme()->windowConsole(), consoleVisible(), flags)) {
 		const bool clr = ImGui::TitleBarCustomButton("#Clr", nullptr, ImGui::CustomClearButton, theme()->generic_Clear().c_str());
 
@@ -2989,6 +3040,14 @@ void Workspace::plugins(class Window*, class Renderer*, const class Project*, do
 
 	for (Plugin* plugin : plugins()) {
 		plugin->update(delta);
+	}
+
+	if (toBuild()) {
+		if (buildingDone()) {
+			SDL_Event evt;
+			evt.type = SDL_QUIT;
+			SDL_PushEvent(&evt);
+		}
 	}
 }
 
@@ -3915,31 +3974,33 @@ void Workspace::endSplash(class Window* wnd, class Renderer* rnd, const Text::Di
 			splashEngine(nullptr);
 		}
 	} else {
-		constexpr const int INDICES[] = {
-			1, 2, 3, 4, 5,
-			0, 0, 6, 6, 6,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-		};
+		if (!toBuild()) {
+			constexpr const int INDICES[] = {
+				1, 2, 3, 4, 5,
+				0, 0, 6, 6, 6,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+			};
 
-		const bool bootSound = options.find(WORKSPACE_OPTION_APPLICATION_BOOT_SOUND_DISABLED_KEY) == options.end();
+			const bool bootSound = options.find(WORKSPACE_OPTION_APPLICATION_BOOT_SOUND_DISABLED_KEY) == options.end();
 
-		Sfx::Ptr sfx(Sfx::create());
-		if (bootSound) {
-			sfx->fromBytes(RES_SOUND_SPLASH, BITTY_COUNTOF(RES_SOUND_SPLASH));
-			sfx->play(false, nullptr, -1);
-		}
-
-		for (int i = 0; i < BITTY_COUNTOF(INDICES); ++i) {
-			const long long begin = DateTime::ticks();
-			const long long end = begin + DateTime::fromSeconds(0.05);
-			while (DateTime::ticks() < end) {
-				constexpr const int STEP = 20;
-				workspaceSleep(STEP);
-				Platform::idle();
+			Sfx::Ptr sfx(Sfx::create());
+			if (bootSound) {
+				sfx->fromBytes(RES_SOUND_SPLASH, BITTY_COUNTOF(RES_SOUND_SPLASH));
+				sfx->play(false, nullptr, -1);
 			}
 
-			workspaceCreateSplash(wnd, rnd, this, INDICES[i]);
-			workspaceRenderSplash(wnd, rnd, this, nullptr);
+			for (int i = 0; i < BITTY_COUNTOF(INDICES); ++i) {
+				const long long begin = DateTime::ticks();
+				const long long end = begin + DateTime::fromSeconds(0.05);
+				while (DateTime::ticks() < end) {
+					constexpr const int STEP = 20;
+					workspaceSleep(STEP);
+					Platform::idle();
+				}
+
+				workspaceCreateSplash(wnd, rnd, this, INDICES[i]);
+				workspaceRenderSplash(wnd, rnd, this, nullptr);
+			}
 		}
 
 		if (splashBitty()) {
