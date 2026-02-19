@@ -301,6 +301,17 @@ bool WorkspaceStudio::open(class Window* wnd, class Renderer* rnd, const class P
 				else if (buildTarget() == WORKSPACE_OPTION_APPLICATION_PLATFORM_HTML_KEY && Entry::compare(val->entry(), Entry::Stub("Project/Build/HTML")) == 0)
 					return true;
 
+#if defined BITTY_OS_WIN
+				if (buildTarget().empty() && Entry::compare(val->entry(), Entry::Stub("Project/Build/Windows")) == 0)
+					return true;
+#elif defined BITTY_OS_MAC
+				if (buildTarget().empty() && Entry::compare(val->entry(), Entry::Stub("Project/Build/MacOS")) == 0)
+					return true;
+#elif defined BITTY_OS_LINUX
+				if (buildTarget().empty() && Entry::compare(val->entry(), Entry::Stub("Project/Build/Linux")) == 0)
+					return true;
+#endif /* Platform macro. */
+
 				return false;
 			}
 		);
