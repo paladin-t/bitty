@@ -37,7 +37,7 @@ public:
 	virtual bool clone(Loader** ptr) const override;
 
 	/**
-	 * @brief Resets this loader.
+	 * @brief Resets this loader. Called when a project is being unloaded.
 	 */
 	virtual void reset(void);
 

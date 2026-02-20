@@ -19,6 +19,10 @@
 ** Studio loader
 */
 
+/**
+ * @brief Loader middleware. Override or modify this class to make your own
+ *   loader for encrypting, pre/post-processing and other customization.
+ */
 class LoaderStudio : public Loader {
 public:
 	LoaderStudio();
