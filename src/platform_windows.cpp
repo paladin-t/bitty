@@ -427,6 +427,11 @@ void Platform::useDarkMode(class Window* wnd) {
 	HWND hWnd = wmInfo.info.win.window;
 	const BOOL value = TRUE;
 	::DwmSetWindowAttribute(hWnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &value, sizeof(value));
+
+	::SetWindowPos(
+		hWnd, nullptr, 0, 0, 0, 0,
+		SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED
+	);
 }
 
 void Platform::setWindowTransparentColor(class Window* wnd, const struct Color* col) {
