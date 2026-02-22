@@ -1,3 +1,14 @@
+### v1.6.1 Feb. 22, 2026
+
+Improved usability, fixed some bugs.
+
+* Added support for building project from command line
+* Added links of reusable libs
+* Improved indent handling in the text-based editors
+* Updated screen size for initial window scaling
+* Fixed an IME window positioning issue on Windows 10/11
+* Fixed a window refreshing issue under dark mode
+
 ### v1.6.0 Feb. 12, 2026
 
 Enhanced modules, improved usability, fixed some bugs.

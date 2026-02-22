@@ -89,6 +89,7 @@
 - [Building](#building)
 	- [Building for Desktop](#building-for-desktop)
 	- [Building for HTML](#building-for-html)
+	- [Building via Command Line](#building-via-command-line)
 
 <!-- End Table of Content -->
 
@@ -108,6 +109,10 @@
 * Audio: 1 BGM channel, 4 SFX channels; supports MP3, OGG, WAV, etc.
 * Gamepad: 6 buttons for each pad (D-Pad + A/B), up to 2 players
 * Keyboard and mouse: supported
+
+To change the global font scaling of the application, pass a launch option such as "-X1", "-X2", "-X3", etc.
+
+To configure the size of the game canvas, call `Canvas.main:resize(width, height)`.
 
 [TOP](#reference-manual)
 
@@ -2400,5 +2405,19 @@ It might require execution permission to launch an exported desktop binary, to a
 Click "Project", "Build", then "HTML" to make an executable for browser with the current opened project. It requires a WebAssembly capable browser.
 
 You can upload it to cloud or host it on your own server for others to play.
+
+[TOP](#reference-manual)
+
+## Building via Command Line
+
+To build from command line, provide the source project path, output destination path, and target platform. For example:
+
+```sh
+bitty path/to/src/project -o path/to/out/package.zip -win
+bitty path/to/src/project -o path/to/out/package.zip -linux
+bitty path/to/src/project -o path/to/out/package.zip -macos
+bitty path/to/src/project -o path/to/out/package.zip -html
+bitty path/to/src/project -o path/to/out/package.zip # Omit target platform to use the current working platform.
+```
 
 [TOP](#reference-manual)

@@ -8,6 +8,7 @@
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
 
+#define NOMINMAX
 #include "application.h"
 #include "bytes.h"
 #include "datetime.h"
@@ -233,11 +234,16 @@ public:
 		// Initialize the window and renderer.
 		const bool borderless = options.find(WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY) != options.end();
 		int scale = 1;
+		int boundWidth = 0;
+		int boundHeight = 0;
 		if (_workspace->prefer2XScaleForBigDisplay()) {
 			SDL_Rect bound;
 			if (SDL_GetDisplayUsableBounds(0, &bound) == 0) {
 				if (bound.w >= 1280 && bound.h >= 720) // Defaults to 2x scale for big display.
 					scale = 2;
+
+				boundWidth = bound.w;
+				boundHeight = bound.h;
 			}
 		}
 		if (options.find(WORKSPACE_OPTION_RENDERER_X1_KEY) != options.end())
@@ -266,8 +272,12 @@ public:
 		const int minWndWidth = WINDOW_MIN_WIDTH;
 		const int minWndHeight = WINDOW_MIN_HEIGHT;
 #else /* BITTY_DISPLAY_AUTO_SIZE_ENABLED*/
-		const int minWndWidth = WINDOW_MIN_WIDTH * scale;
-		const int minWndHeight = WINDOW_MIN_HEIGHT * scale;
+		int minWndWidth = WINDOW_MIN_WIDTH * scale;
+		int minWndHeight = WINDOW_MIN_HEIGHT * scale;
+		if (boundWidth > 0 && boundHeight > 0) {
+			minWndWidth = std::min(minWndWidth, boundWidth);
+			minWndHeight = std::min(minWndHeight, boundHeight);
+		}
 #endif /* BITTY_DISPLAY_AUTO_SIZE_ENABLED */
 #if !defined BITTY_OS_HTML
 		const std::string pref = Path::writableDirectory();
