@@ -239,7 +239,7 @@ public:
 		if (_workspace->prefer2XScaleForBigDisplay()) {
 			SDL_Rect bound;
 			if (SDL_GetDisplayUsableBounds(0, &bound) == 0) {
-				if (bound.w >= 1280 && bound.h >= 720) // Defaults to 2x scale for big display.
+				if (bound.w >= 1920 && bound.h >= 1080) // Defaults to 2x scale for big display.
 					scale = 2;
 
 				boundWidth = bound.w;

@@ -432,6 +432,7 @@ void Platform::useDarkMode(class Window* wnd) {
 		hWnd, nullptr, 0, 0, 0, 0,
 		SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED
 	);
+	::RedrawWindow(hWnd, nullptr, nullptr, RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
 void Platform::setWindowTransparentColor(class Window* wnd, const struct Color* col) {
