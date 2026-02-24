@@ -846,8 +846,9 @@ unsigned WorkspaceStudio::updateBuilding(class Window* wnd, class Renderer* rnd,
 
 void WorkspaceStudio::refresh(class Window* wnd, class Renderer*, const class Project*, Executable*, class Primitives*) {
 	if (toRefreshWindowTitle()) {
-		toRefreshWindowTitle(false);
 		wnd->title(toRefreshWindowTitleContent().c_str());
+		toRefreshWindowTitle(false);
+		toRefreshWindowTitleContent("");
 	}
 }
 

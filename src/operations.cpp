@@ -3506,6 +3506,8 @@ void Operations::projectStop(class Renderer* rnd, Workspace* ws, const class Pro
 	ws->canvasHovering(false);
 	ws->canvasInitialized(false);
 
+	ws->refreshWindowTitle(project);
+
 	ws->currentState(exec ? exec->current() : Executable::READY);
 }
 

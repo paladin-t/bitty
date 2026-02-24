@@ -254,6 +254,14 @@ public:
 			scale = 3;
 		else if (options.find(WORKSPACE_OPTION_RENDERER_X4_KEY) != options.end())
 			scale = 4;
+		else if (options.find(WORKSPACE_OPTION_RENDERER_X5_KEY) != options.end())
+			scale = 5;
+		else if (options.find(WORKSPACE_OPTION_RENDERER_X6_KEY) != options.end())
+			scale = 6;
+		else if (options.find(WORKSPACE_OPTION_RENDERER_X7_KEY) != options.end())
+			scale = 7;
+		else if (options.find(WORKSPACE_OPTION_RENDERER_X8_KEY) != options.end())
+			scale = 8;
 		const bool highDpi = options.find(WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY) == options.end();
 #if defined BITTY_OS_HTML
 		const bool vsync = options.find(WORKSPACE_OPTION_WINDOW_VSYNC_ENABLED_KEY) != options.end() ||
