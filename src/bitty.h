@@ -345,6 +345,9 @@
 #ifndef BITTY_TEXT_EXT
 #	define BITTY_TEXT_EXT "txt"
 #endif /* BITTY_TEXT_EXT */
+#ifndef BITTY_MARKDOWN_EXT
+#	define BITTY_MARKDOWN_EXT "md"
+#endif /* BITTY_MARKDOWN_EXT */
 #ifndef BITTY_ZIP_EXT
 #	define BITTY_ZIP_EXT "zip"
 #endif /* BITTY_ZIP_EXT */

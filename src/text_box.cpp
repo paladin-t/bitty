@@ -226,6 +226,11 @@ public:
 				_toColorize = true;
 
 				return true;
+			} else if (val_ == "markdown") {
+				SetLanguageDefinition(LanguageDefinition::Markdown());
+				_toColorize = true;
+
+				return true;
 			} else if (val_ == "json") {
 				SetLanguageDefinition(LanguageDefinition::Json());
 				_toColorize = true;

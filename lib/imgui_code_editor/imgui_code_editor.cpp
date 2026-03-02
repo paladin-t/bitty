@@ -155,6 +155,66 @@ CodeEditor::LanguageDefinition CodeEditor::LanguageDefinition::Text(void) {
 	return langDef;
 }
 
+CodeEditor::LanguageDefinition CodeEditor::LanguageDefinition::Markdown(void) {
+	static bool inited = false;
+	static LanguageDefinition langDef;
+	if (!inited) {
+		// Title mark: starts with #, followed by spaces.
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("^[ \\t]*#{1,6}\\s+", PaletteIndex::Preprocessor));
+		// Unordered list mark: - * +
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("^[ \\t]*[-*+][\\s]+", PaletteIndex::Punctuation));
+		// Ordered list mark: 1. 2.
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("^[ \\t]*[0-9]+\\.[\\s]+", PaletteIndex::Punctuation));
+		// Reference mark: >
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("^[ \\t]*>[ \\t]*", PaletteIndex::Punctuation));
+		// Horizontal like: --- *** ___
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("^[ \\t]*([-*_])[ \\t]*\\1[ \\t]*\\1+[ \\t]*$", PaletteIndex::Punctuation));
+		// Code block mark: triple `
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("^[ \\t]*```[a-zA-Z0-9_]*[ \\t]*$", PaletteIndex::Preprocessor));
+		// Inline code: `code`
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("`[^`]*`", PaletteIndex::String));
+		// Bold: **text** or __text__
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("\\*\\*[^*]+\\*\\*", PaletteIndex::Keyword));
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("__[^_]+__", PaletteIndex::Keyword));
+		// Italic: *text* or _text_
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("\\*[^*]+\\*", PaletteIndex::String));
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("_[^_]+_", PaletteIndex::String));
+		// Url: [text](url)
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("\\[[^]]+\\]\\([^)]+\\)", PaletteIndex::String));
+		// Image: ![alt](url)
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("!\\[[^]]+\\]\\([^)]+\\)", PaletteIndex::String));
+		// Inline HTML labels.
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("<[^>]+>", PaletteIndex::Preprocessor));
+		// HTML comment.
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("<!--.*?-->", PaletteIndex::Comment));
+		// Numbers.
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("0[xX][0-9a-fA-F]+[uU]?[lL]?[lL]?", PaletteIndex::Number));
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)([eE][+-]?[0-9]+)?[fF]?", PaletteIndex::Number));
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("0[0-7]+[Uu]?[lL]?[lL]?", PaletteIndex::Number));
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("[+-]?[0-9]+[Uu]?[lL]?[lL]?", PaletteIndex::Number));
+		// Normal identifiers.
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("[a-zA-Z_][a-zA-Z0-9_]*", PaletteIndex::Identifier));
+		// Symbols.
+		langDef.TokenRegexPatterns.push_back(std::make_pair<std::string, PaletteIndex>("[\\[\\]\\{\\}\\!\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\|\\<\\>\\?\\/\\;\\,\\.]", PaletteIndex::Punctuation));
+
+		langDef.RangedCharPatterns.push_back(std::make_pair<CodeEditor::Char, CodeEditor::Char>('[', ']'));
+		langDef.RangedCharPatterns.push_back(std::make_pair<CodeEditor::Char, CodeEditor::Char>('(', ')'));
+		langDef.RangedCharPatterns.push_back(std::make_pair<CodeEditor::Char, CodeEditor::Char>('{', '}'));
+		langDef.RangedCharPatterns.push_back(std::make_pair<CodeEditor::Char, CodeEditor::Char>('<', '>'));
+
+		langDef.CommentStart = "<!--";
+		langDef.CommentEnd = "-->";
+		langDef.SimpleCommentHead = "";
+
+		langDef.CaseSensitive = false;
+		langDef.Name = "Markdown";
+
+		inited = true;
+	}
+
+	return langDef;
+}
+
 CodeEditor::LanguageDefinition CodeEditor::LanguageDefinition::Json(void) {
 	static bool inited = false;
 	static LanguageDefinition langDef;

@@ -355,7 +355,7 @@ public:
 			BITTY_TITLE " v" BITTY_VERSION_STRING,
 			moditorIndex,
 			wndX, wndY,
-			wndWidth, wndHeight,
+			std::max(wndWidth, minWndWidth), std::max(wndHeight, minWndHeight),
 			minWndWidth, minWndHeight,
 			borderless,
 			highDpi, opengl,

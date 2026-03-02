@@ -1613,7 +1613,7 @@ unsigned Asset::typeOf(const std::string &ext, bool alowBytes) {
 		return Code::TYPE();
 	} else if (match(ext, BITTY_JSON_EXT)) {
 		return Json::TYPE();
-	} else if (match(ext, BITTY_TEXT_EXT)) {
+	} else if (match(ext, BITTY_TEXT_EXT) || match(ext, BITTY_MARKDOWN_EXT)) {
 		return Text::TYPE();
 	}
 

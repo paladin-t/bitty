@@ -73,8 +73,6 @@ private:
 public:
 	EditorTextImpl() {
 		_checkpoint.fill();
-
-		SetLanguageDefinition(LanguageDefinition::Text());
 	}
 	virtual ~EditorTextImpl() override {
 		close(nullptr);
@@ -85,9 +83,24 @@ public:
 	}
 
 	virtual void open(const class Project* project, const char* name, Object::Ptr obj, const char* /* ref */) override {
+		auto match = [] (const std::string &ext, const std::string &pattern) -> bool {
+			if (pattern.empty())
+				return false;
+
+			return Text::endsWith(ext, pattern, true) &&
+				(ext.length() == pattern.length() ||
+					(ext.length() >= pattern.length() + 1 && ext[ext.length() - pattern.length() - 1] == '.')
+				);
+		};
+
 		if (_opened)
 			return;
 		_opened = true;
+
+		if (match(name, BITTY_MARKDOWN_EXT))
+			SetLanguageDefinition(LanguageDefinition::Markdown());
+		else
+			SetLanguageDefinition(LanguageDefinition::Text());
 
 		_name = name;
 

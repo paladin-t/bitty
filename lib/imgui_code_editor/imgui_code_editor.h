@@ -206,6 +206,7 @@ public:
 		bool CaseSensitive;
 
 		static LanguageDefinition Text(void);
+		static LanguageDefinition Markdown(void);
 		static LanguageDefinition Json(void);
 		static LanguageDefinition AngelScript(void);
 		static LanguageDefinition C(void);
