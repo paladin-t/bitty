@@ -147,6 +147,8 @@ private:
 	std::string _docTarget;
 	std::string _scrollTarget;
 	unsigned _scrollTargetDelay = 0;
+	std::string _directory;
+	Resolver _resolver = nullptr;
 	std::string _title;
 	std::string _tableOfContent;
 	std::string _content;
@@ -224,6 +226,20 @@ public:
 		hide();
 	}
 
+	virtual const char* directory(void) const override {
+		return _directory.c_str();
+	}
+	virtual void directory(const char* dir) override {
+		_directory = dir;
+	}
+
+	virtual Resolver resolver(void) const override {
+		return _resolver;
+	}
+	virtual void resolver(Resolver resolve) override {
+		_resolver = resolve;
+	}
+
 	virtual const char* title(void) override {
 		if (_title.empty())
 			return nullptr;
@@ -255,79 +271,91 @@ public:
 			return;
 
 		// Load document.
+		Resolver resolve = _resolver;
+		if (!resolve) {
+			resolve = [] (const char* doc, std::string &content, std::string &title) -> bool {
+				// Prepare.
+				bool result = false;
+				File* file = File::create();
+
+				// Open the file.
+				if (file->open(doc, Stream::READ)) {
+					// Read from file.
+					const size_t l = file->count();
+					Byte* buf = new Byte[l + 1];
+					file->readBytes(buf, (size_t)l);
+					buf[l] = '\0';
+					content = (const char*)buf;
+					delete [] buf;
+					file->close();
+
+					// Get meta information.
+					FileInfo::Ptr fileInfo = FileInfo::make(doc);
+					title = fileInfo->fileName().c_str();
+					if (!title.empty())
+						title[0] = (char)::toupper(title[0]);
+
+					// Finish.
+					result = true;
+				}
+
+				// Finish.
+				File::destroy(file);
+
+				return result;
+			};
+		}
 		auto load = [&] (const char* doc_) -> bool {
-			// Prepare.
-			bool result = false;
-			File* file = File::create();
+			// Resolve the content and title.
+			if (!resolve(doc_, _content, _title))
+				return false;
 
-			// Open the file.
-			if (file->open(doc_, Stream::READ)) {
-				// Read from file.
-				size_t l = file->count();
-				Byte* buf = new Byte[l + 1];
-				file->readBytes(buf, (size_t)l);
-				buf[l] = '\0';
-				_content = (const char*)buf;
-				delete [] buf;
-				file->close();
+			// Parse table of content.
+			do {
+				constexpr char HEAD[] = "## Table of Content";
+				constexpr char TAIL[] = "<!-- End Table of Content -->";
+				size_t b = 0, e = 0;
+				b = Text::indexOf(_content, HEAD);
+				if (b == std::string::npos)
+					break;
+				e = Text::indexOf(_content, TAIL, b);
+				if (e == std::string::npos)
+					break;
+				_tableOfContent = _content.substr(b + 19, e - (b + 19));
+			} while (false);
+			do {
+				if (_tableOfContent.empty())
+					break;
+				constexpr char HEAD[] = "<!--";
+				constexpr char TAIL[] = "-->";
+				size_t b, e;
+				b = Text::indexOf(_tableOfContent, HEAD);
+				if (b == std::string::npos)
+					break;
+				e = Text::indexOf(_tableOfContent, TAIL, b);
+				if (e == std::string::npos)
+					break;
+				_tableOfContent.erase(b, e - b + 3);
+			} while (true);
 
-				// Parse table of content.
-				do {
-					constexpr char HEAD[] = "## Table of Content";
-					constexpr char TAIL[] = "<!-- End Table of Content -->";
-					size_t b = 0, e = 0;
-					b = Text::indexOf(_content, HEAD);
-					if (b == std::string::npos)
-						break;
-					e = Text::indexOf(_content, TAIL, b);
-					if (e == std::string::npos)
-						break;
-					_tableOfContent = _content.substr(b + 19, e - (b + 19));
-				} while (false);
-				do {
-					if (_tableOfContent.empty())
-						break;
-					constexpr char HEAD[] = "<!--";
-					constexpr char TAIL[] = "-->";
-					size_t b, e;
-					b = Text::indexOf(_tableOfContent, HEAD);
-					if (b == std::string::npos)
-						break;
-					e = Text::indexOf(_tableOfContent, TAIL, b);
-					if (e == std::string::npos)
-						break;
-					_tableOfContent.erase(b, e - b + 3);
-				} while (true);
-
-				// Remove comments.
-				do {
-					constexpr char HEAD[] = "<!--";
-					constexpr char TAIL[] = "-->";
-					size_t b = 0, e = 0;
-					b = Text::indexOf(_content, HEAD);
-					if (b == std::string::npos)
-						break;
-					e = Text::indexOf(_content, TAIL, b);
-					if (e == std::string::npos)
-						break;
-					_content.erase(b, e - b + 3);
-				} while (true);
-
-				// Get meta information.
-				FileInfo::Ptr fileInfo = FileInfo::make(doc_);
-				_title = fileInfo->fileName().c_str();
-				if (!_title.empty())
-					_title[0] = (char)::toupper(_title[0]);
-
-				_document = doc_;
-
-				result = true;
-			}
+			// Remove comments.
+			do {
+				constexpr char HEAD[] = "<!--";
+				constexpr char TAIL[] = "-->";
+				size_t b = 0, e = 0;
+				b = Text::indexOf(_content, HEAD);
+				if (b == std::string::npos)
+					break;
+				e = Text::indexOf(_content, TAIL, b);
+				if (e == std::string::npos)
+					break;
+				_content.erase(b, e - b + 3);
+			} while (true);
 
 			// Finish.
-			File::destroy(file);
+			_document = doc_;
 
-			return result;
+			return true;
 		};
 		if (!load(doc)) {
 			std::string base, ext, parent;
@@ -806,7 +834,7 @@ private:
 				if (it == _images.end()) {
 					std::string str;
 					str.assign(img->src.text, img->src.size);
-					str = Path::combine(DOCUMENT_MARKDOWN_DIR, str.c_str());
+					str = Path::combine(_directory.c_str(), str.c_str());
 					tex = Theme::createTexture(context->renderer, str.c_str());
 					_images[img->src.text] = tex;
 				} else {
@@ -913,7 +941,7 @@ private:
 				if (Text::startsWith(str, "http://", true) || Text::startsWith(str, "https://", true))
 					web = true;
 				else
-					str = Path::combine(DOCUMENT_MARKDOWN_DIR, str.c_str());
+					str = Path::combine(_directory.c_str(), str.c_str());
 			}
 
 			if (!pag && !web) {

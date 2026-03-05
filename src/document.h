@@ -12,6 +12,7 @@
 #define __DOCUMENT_H__
 
 #include "bitty.h"
+#include <functional>
 
 /*
 ** {===========================================================================
@@ -37,7 +38,16 @@
  */
 class Document {
 public:
+	typedef std::function<bool(const char*, std::string &, std::string &)> Resolver;
+
+public:
 	virtual ~Document();
+
+	virtual const char* directory(void) const = 0;
+	virtual void directory(const char* dir) = 0;
+
+	virtual Resolver resolver(void) const = 0;
+	virtual void resolver(Resolver resolve) = 0;
 
 	virtual const char* title(void) = 0;
 

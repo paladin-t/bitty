@@ -3390,6 +3390,7 @@ void Workspace::toggleManual(const char* path) {
 		documentTitle("[" + fileInfo->fileName() + "]");
 
 		document(Document::create());
+		document()->directory(DOCUMENT_MARKDOWN_DIR);
 		document()->show(path);
 	}
 }
