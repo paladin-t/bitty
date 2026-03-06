@@ -38,18 +38,26 @@
  */
 class Document {
 public:
-	typedef std::function<bool(const char*, std::string &, std::string &)> Resolver;
+	typedef std::function<bool(const char*, std::string &, std::string &)> ContentResolver;
 
 public:
 	virtual ~Document();
 
-	virtual const char* directory(void) const = 0;
-	virtual void directory(const char* dir) = 0;
+	virtual const std::string &directory(void) const = 0;
+	virtual void directory(const std::string &dir) = 0;
 
-	virtual Resolver resolver(void) const = 0;
-	virtual void resolver(Resolver resolve) = 0;
+	virtual ContentResolver contentResolver(void) const = 0;
+	virtual void contentResolver(ContentResolver resolve) = 0;
 
-	virtual const char* title(void) = 0;
+	virtual void font(struct ImFont* regular, struct ImFont* bold) = 0;
+
+	virtual const std::string &title(void) = 0;
+
+	virtual const std::string &content(void) const = 0;
+	virtual void content(const std::string &val) = 0;
+
+	virtual bool withTableOfContent(void) const = 0;
+	virtual void withTableOfContent(bool val) = 0;
 
 	virtual const char* shown(void) = 0;
 	virtual void show(const char* doc) = 0;

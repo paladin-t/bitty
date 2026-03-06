@@ -148,8 +148,11 @@ private:
 	std::string _scrollTarget;
 	unsigned _scrollTargetDelay = 0;
 	std::string _directory;
-	Resolver _resolver = nullptr;
+	ContentResolver _resolver = nullptr;
+	ImFont* _regularFont = nullptr;
+	ImFont* _boldFont = nullptr;
 	std::string _title;
+	bool _withTableOfContent = true;
 	std::string _tableOfContent;
 	std::string _content;
 
@@ -226,25 +229,41 @@ public:
 		hide();
 	}
 
-	virtual const char* directory(void) const override {
-		return _directory.c_str();
+	virtual const std::string &directory(void) const override {
+		return _directory;
 	}
-	virtual void directory(const char* dir) override {
+	virtual void directory(const std::string &dir) override {
 		_directory = dir;
 	}
 
-	virtual Resolver resolver(void) const override {
+	virtual ContentResolver contentResolver(void) const override {
 		return _resolver;
 	}
-	virtual void resolver(Resolver resolve) override {
+	virtual void contentResolver(ContentResolver resolve) override {
 		_resolver = resolve;
 	}
 
-	virtual const char* title(void) override {
-		if (_title.empty())
-			return nullptr;
+	virtual void font(struct ImFont* regular, struct ImFont* bold) override {
+		_regularFont = regular;
+		_boldFont = bold;
+	}
 
-		return _title.c_str();
+	virtual const std::string &title(void) override {
+		return _title;
+	}
+
+	virtual const std::string &content(void) const override {
+		return _content;
+	}
+	virtual void content(const std::string &val) override {
+		_content = val;
+	}
+
+	virtual bool withTableOfContent(void) const override {
+		return _withTableOfContent;
+	}
+	virtual void withTableOfContent(bool val) override {
+		_withTableOfContent = val;
 	}
 
 	virtual const char* shown(void) override {
@@ -271,7 +290,7 @@ public:
 			return;
 
 		// Load document.
-		Resolver resolve = _resolver;
+		ContentResolver resolve = _resolver;
 		if (!resolve) {
 			resolve = [] (const char* doc, std::string &content, std::string &title) -> bool {
 				// Prepare.
@@ -457,7 +476,7 @@ public:
 		}
 		// Render the content.
 		float width = 0;
-		const bool withTableOfContent = !_tableOfContent.empty() && ImGui::GetWindowWidth() > 800;
+		const bool withTableOfContent = _withTableOfContent && !_tableOfContent.empty() && ImGui::GetWindowWidth() > 800;
 		if (withTableOfContent)
 			width = ImGui::GetWindowWidth() - 266;
 		ImGui::BeginChild("@Doc/Ctt", ImVec2(width, 0), false, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoNav);
@@ -584,7 +603,7 @@ private:
 				if (y == MD_BLOCK_OL) {
 					assert(_listItemCount <= (int)_listItemIndeces.size() && "Wrong data.");
 
-					ImFont* font = (ImFont*)context->theme->fontBlock_Bold();
+					ImFont* font = _boldFont ? _boldFont : (ImFont*)context->theme->fontBlock_Bold();
 					ImGui::PushFont(font);
 					{
 						ImGui::SetWindowFontScale(0.5f);
@@ -613,7 +632,7 @@ private:
 
 			break;
 		case MD_BLOCK_H: {
-				ImFont* font = (ImFont*)context->theme->fontBlock();
+				ImFont* font = _regularFont ? _regularFont : (ImFont*)context->theme->fontBlock();
 				ImGui::PushFont(font);
 
 				MD_BLOCK_H_DETAIL* h = (MD_BLOCK_H_DETAIL*)detail;
@@ -800,7 +819,7 @@ private:
 
 		switch (type) {
 		case MD_SPAN_STRONG: {
-				ImFont* font = (ImFont*)context->theme->fontBlock_Bold();
+				ImFont* font = _boldFont ? _boldFont : (ImFont*)context->theme->fontBlock_Bold();
 				ImGui::PushFont(font);
 
 				_scaleStack.push(0.5f);
