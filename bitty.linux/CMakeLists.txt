@@ -381,6 +381,7 @@ list(
   "../src/color.cpp"
   "../src/database.cpp"
   "../src/datetime.cpp"
+  "../src/document_viewer.cpp"
   "../src/either.cpp"
   "../src/encoding.cpp"
   "../src/file_handle.cpp"

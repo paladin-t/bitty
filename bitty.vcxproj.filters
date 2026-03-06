@@ -1237,6 +1237,9 @@
     <ClCompile Include="lib\sqlite\sqlite3.c">
       <Filter>lib\sqlite</Filter>
     </ClCompile>
+    <ClCompile Include="src\document_viewer.cpp">
+      <Filter>src\shared</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -3205,6 +3208,9 @@
     </ClInclude>
     <ClInclude Include="lib\sqlite\sqlite3ext.h">
       <Filter>lib\sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="src\document_viewer.h">
+      <Filter>src\shared</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
