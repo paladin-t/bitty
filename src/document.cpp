@@ -8,10 +8,12 @@
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
 
+#include "bytes.h"
 #include "document.h"
 #include "encoding.h"
 #include "file_handle.h"
 #include "filesystem.h"
+#include "image.h"
 #include "platform.h"
 #include "renderer.h"
 #include "text.h"
@@ -148,7 +150,8 @@ private:
 	std::string _scrollTarget;
 	unsigned _scrollTargetDelay = 0;
 	std::string _directory;
-	ContentResolver _resolver = nullptr;
+	ContentResolver _contentResolver = nullptr;
+	ImageResolver _imageResolver = nullptr;
 	ImFont* _regularFont = nullptr;
 	ImFont* _boldFont = nullptr;
 	std::string _title;
@@ -237,10 +240,17 @@ public:
 	}
 
 	virtual ContentResolver contentResolver(void) const override {
-		return _resolver;
+		return _contentResolver;
 	}
 	virtual void contentResolver(ContentResolver resolve) override {
-		_resolver = resolve;
+		_contentResolver = resolve;
+	}
+
+	virtual ImageResolver imageResolver(void) const override {
+		return _imageResolver;
+	}
+	virtual void imageResolver(ImageResolver resolve) override {
+		_imageResolver = resolve;
 	}
 
 	virtual void font(struct ImFont* regular, struct ImFont* bold) override {
@@ -290,7 +300,7 @@ public:
 			return;
 
 		// Load document.
-		ContentResolver resolve = _resolver;
+		ContentResolver resolve = _contentResolver;
 		if (!resolve) {
 			resolve = [] (const char* doc, std::string &content, std::string &title) -> bool {
 				// Prepare.
@@ -846,6 +856,34 @@ private:
 
 			break;
 		case MD_SPAN_IMG: {
+				ImageResolver resolve = _imageResolver;
+				if (!resolve) {
+					resolve = [context] (const char* img, class Image* &ptr) -> bool {
+						ptr = nullptr;
+						File::Ptr file(File::create());
+						if (!file->open(img, Stream::READ))
+							return false;
+
+						Bytes::Ptr buf(Bytes::create());
+						if (!file->readBytes(buf.get())) {
+							file->close();
+
+							return false;
+						}
+						file->close();
+						Image* img_ = Image::create(nullptr);
+						if (!img_->fromBytes(buf.get())) {
+							Image::destroy(img_);
+							img_ = nullptr;
+
+							return false;
+						}
+						ptr = img_;
+
+						return !!ptr;
+					};
+				}
+
 				MD_SPAN_IMG_DETAIL* img = (MD_SPAN_IMG_DETAIL*)detail;
 
 				Texture* tex = nullptr;
@@ -854,7 +892,13 @@ private:
 					std::string str;
 					str.assign(img->src.text, img->src.size);
 					str = Path::combine(_directory.c_str(), str.c_str());
-					tex = Theme::createTexture(context->renderer, str.c_str());
+					Image* ptr = nullptr;
+					if (resolve(str.c_str(), ptr)) {
+						tex = Texture::create();
+						tex->fromImage(context->renderer, Texture::STATIC, ptr, Texture::NEAREST);
+						Image::destroy(ptr);
+						ptr = nullptr;
+					}
 					_images[img->src.text] = tex;
 				} else {
 					tex = it->second;

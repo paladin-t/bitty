@@ -11673,7 +11673,7 @@ static int DocumentViewer_ctor(lua_State* L) {
 	if (!obj)
 		return write(L, nullptr);
 
-	Document::ContentResolver resolveDocument = [impl] (const char* doc, std::string &content, std::string &title) -> bool {
+	Document::ContentResolver resolveContent = [impl] (const char* doc, std::string &content, std::string &title) -> bool {
 		const Project* project = impl->project();
 		if (!project)
 			return false;
@@ -11706,13 +11706,48 @@ static int DocumentViewer_ctor(lua_State* L) {
 
 		return true;
 	};
+	Document::ImageResolver resolveImage = [impl] (const char* img, class Image* &ptr) -> bool {
+		const Project* project = impl->project();
+		if (!project)
+			return false;
+
+		LockGuard<RecursiveMutex>::UniquePtr acquired;
+		Project* prj = project->acquire(acquired);
+		if (!prj)
+			return false;
+
+		Asset* asset = prj->get(img);
+		if (!asset)
+			return false;
+
+		Bytes::Ptr bytes(Bytes::create());
+		bool ok = asset->toBytes(bytes.get());
+		if (!ok)
+			ok = asset->object(Asset::RUNNING) && asset->save(Asset::RUNNING, bytes.get());
+		if (!ok)
+			return false;
+
+		bytes->poke(0);
+
+		Image* img_ = Image::create(nullptr);
+		if (!img_->fromBytes(bytes.get())) {
+			Image::destroy(img_);
+			img_ = nullptr;
+
+			return false;
+		}
+
+		ptr = img_;
+
+		return true;
+	};
 
 	bake(
 		impl->primitives()->workspace(),
 		[=] (const Variant &) -> void {
 			static int documentViewerSeed = 1;
 			const std::string id = "DocumentViewer_" + Text::toString(documentViewerSeed++);
-			obj->open(id.c_str(), resolveDocument);
+			obj->open(id.c_str(), resolveContent, resolveImage);
 		},
 		nullptr,
 		true
@@ -11900,6 +11935,23 @@ static int DocumentViewer_useFont(lua_State* L) {
 	return 0;
 }
 
+static int DocumentViewer_load(lua_State* L) {
+	DocumentViewer::Ptr* obj = nullptr;
+	std::string doc;
+	read<>(L, obj, doc);
+
+	if (obj) {
+		obj->get()->load(doc);
+
+		return 0;
+	} else {
+		error(L, "DocumentViewer expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
 static int DocumentViewer_get(lua_State* L) {
 	DocumentViewer::Ptr* obj = nullptr;
 	read<>(L, obj);
@@ -12058,6 +12110,7 @@ static void open_DocumentViewer(lua_State* L) {
 			luaL_Reg{ "tryLock", DocumentViewer_tryLock }, // Undocumented.
 			luaL_Reg{ "setOption", DocumentViewer_setOption },
 			luaL_Reg{ "useFont", DocumentViewer_useFont },
+			luaL_Reg{ "load", DocumentViewer_load },
 			luaL_Reg{ "get", DocumentViewer_get },
 			luaL_Reg{ "set", DocumentViewer_set },
 			luaL_Reg{ "update", DocumentViewer_update },

@@ -45,6 +45,7 @@ static constexpr const char* const EDITOR_CODE_MODULES[] = {
 	"Promise",
 	"Stream",
 	"Web",
+	"TextBox", "DocumentViewer",
 	// Engine.
 	"Resources",
 	"Asset",

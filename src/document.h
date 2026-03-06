@@ -39,6 +39,7 @@
 class Document {
 public:
 	typedef std::function<bool(const char*, std::string &, std::string &)> ContentResolver;
+	typedef std::function<bool(const char*, class Image* &)> ImageResolver;
 
 public:
 	virtual ~Document();
@@ -48,6 +49,9 @@ public:
 
 	virtual ContentResolver contentResolver(void) const = 0;
 	virtual void contentResolver(ContentResolver resolve) = 0;
+
+	virtual ImageResolver imageResolver(void) const = 0;
+	virtual void imageResolver(ImageResolver resolve) = 0;
 
 	virtual void font(struct ImFont* regular, struct ImFont* bold) = 0;
 
