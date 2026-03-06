@@ -3681,7 +3681,7 @@ void Workspace::filterAssets(class Window*, class Renderer* rnd, const class Pro
 		if (ImGui::MenuItem(theme()->menuAsset_Json()))
 			filter("*." BITTY_JSON_EXT);
 		if (ImGui::MenuItem(theme()->menuAsset_Text()))
-			filter("*." BITTY_TEXT_EXT);
+			filter("*." BITTY_TEXT_EXT ",*." BITTY_MARKDOWN_EXT);
 
 		ImGui::EndPopup();
 	}
