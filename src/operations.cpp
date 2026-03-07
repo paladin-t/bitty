@@ -83,7 +83,7 @@
 				"*." BITTY_MAP_EXT " " \
 				"*." BITTY_FONT_EXT " " \
 				"*.mp3 *.ogg *.wav *.mid *.aiff *.voc *.mod *.xm *.s3m *.669 *.it *.med *.opus *.flac" " " \
-				"*." BITTY_TEXT_EXT " *." BITTY_JSON_EXT, \
+				"*." BITTY_TEXT_EXT " *." BITTY_MARKDOWN_EXT " *." BITTY_JSON_EXT, \
 			"Code files (*." OPERATIONS_CODE_PLACEHOLDER ")", "*." OPERATIONS_CODE_PLACEHOLDER, \
 			"Palette files (*." BITTY_PALETTE_EXT ")", "*." BITTY_PALETTE_EXT, \
 			"Image files (*." BITTY_IMAGE_EXT ", *.png, *.jpg, *.bmp, *.tga" ")", "*." BITTY_IMAGE_EXT " *.png *.jpg *.bmp *.tga", \
@@ -91,7 +91,7 @@
 			"Map files (*." BITTY_MAP_EXT ")", "*." BITTY_MAP_EXT, \
 			"Font files (*." BITTY_FONT_EXT ")", "*." BITTY_FONT_EXT, \
 			"Audio files (*.mp3, *.ogg, *.wav, etc.)", "*.mp3 *.ogg *.wav *.mid *.aiff *.voc *.mod *.xm *.s3m *.669 *.it *.med *.opus *.flac", \
-			"Data files (*." BITTY_TEXT_EXT ", *." BITTY_JSON_EXT ")", "*." BITTY_TEXT_EXT " *." BITTY_JSON_EXT, \
+			"Data files (*." BITTY_TEXT_EXT ", *." BITTY_MARKDOWN_EXT ", *." BITTY_JSON_EXT ")", "*." BITTY_TEXT_EXT " *." BITTY_MARKDOWN_EXT " *." BITTY_JSON_EXT, \
 			"All files (*.*)", "*" \
 		}
 #endif /* OPERATIONS_ASSET_FILE_FILTER */
@@ -2347,6 +2347,7 @@ promise::Defer Operations::projectAddAsset(class Renderer* rnd, Workspace* ws, c
 				Image::TYPE(),
 				Palette::TYPE(),
 				Json::TYPE(),
+				Text::TYPE(),
 				Text::TYPE()
 			};
 			ImGui::AddAssetPopupBox::TypeNames typeNames = {
@@ -2356,7 +2357,8 @@ promise::Defer Operations::projectAddAsset(class Renderer* rnd, Workspace* ws, c
 				"Image",
 				"Palette",
 				"JSON",
-				"Text"
+				"Text",
+				"Markdown"
 			};
 			ImGui::AddAssetPopupBox::TypeExtensions typeExtensions = {
 				"",
@@ -2365,13 +2367,15 @@ promise::Defer Operations::projectAddAsset(class Renderer* rnd, Workspace* ws, c
 				"",
 				BITTY_PALETTE_EXT,
 				BITTY_JSON_EXT,
-				BITTY_TEXT_EXT
+				BITTY_TEXT_EXT,
+				BITTY_MARKDOWN_EXT
 			};
 			ImGui::AddAssetPopupBox::Vec2s defaultSizes = { // Default sizes.
 				Math::Vec2i(),
 				Math::Vec2i(BITTY_SPRITE_DEFAULT_WIDTH, BITTY_SPRITE_DEFAULT_HEIGHT),
 				Math::Vec2i(BITTY_MAP_DEFAULT_WIDTH, BITTY_MAP_DEFAULT_HEIGHT),
 				Math::Vec2i(BITTY_IMAGE_DEFAULT_WIDTH, BITTY_IMAGE_DEFAULT_HEIGHT),
+				Math::Vec2i(),
 				Math::Vec2i(),
 				Math::Vec2i(),
 				Math::Vec2i()
@@ -2383,6 +2387,7 @@ promise::Defer Operations::projectAddAsset(class Renderer* rnd, Workspace* ws, c
 				Math::Vec2i(BITTY_IMAGE_MAX_WIDTH, BITTY_IMAGE_MAX_HEIGHT),
 				Math::Vec2i(),
 				Math::Vec2i(),
+				Math::Vec2i(),
 				Math::Vec2i()
 			};
 			ImGui::AddAssetPopupBox::Vec2s defaultSizes2 = { // 2nd default sizes.
@@ -2392,12 +2397,14 @@ promise::Defer Operations::projectAddAsset(class Renderer* rnd, Workspace* ws, c
 				Math::Vec2i(),
 				Math::Vec2i(),
 				Math::Vec2i(),
+				Math::Vec2i(),
 				Math::Vec2i()
 			};
 			ImGui::AddAssetPopupBox::Vec2s maxSizes2 = { // 2nd max sizes.
 				Math::Vec2i(),
 				Math::Vec2i(),
 				Math::Vec2i(BITTY_MAP_TILE_DEFAULT_SIZE * 4, BITTY_MAP_TILE_DEFAULT_SIZE * 4),
+				Math::Vec2i(),
 				Math::Vec2i(),
 				Math::Vec2i(),
 				Math::Vec2i(),

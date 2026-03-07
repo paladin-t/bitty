@@ -8,10 +8,12 @@
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
 
+#include "bytes.h"
 #include "document.h"
 #include "encoding.h"
 #include "file_handle.h"
 #include "filesystem.h"
+#include "image.h"
 #include "platform.h"
 #include "renderer.h"
 #include "text.h"
@@ -148,8 +150,13 @@ private:
 	std::string _scrollTarget;
 	unsigned _scrollTargetDelay = 0;
 	std::string _directory;
-	Resolver _resolver = nullptr;
+	ContentResolver _contentResolver = nullptr;
+	ImageResolver _imageResolver = nullptr;
+	bool _useThemedSpanCode = false;
+	ImFont* _regularFont = nullptr;
+	ImFont* _boldFont = nullptr;
 	std::string _title;
+	bool _withTableOfContent = true;
 	std::string _tableOfContent;
 	std::string _content;
 
@@ -226,25 +233,55 @@ public:
 		hide();
 	}
 
-	virtual const char* directory(void) const override {
-		return _directory.c_str();
+	virtual const std::string &directory(void) const override {
+		return _directory;
 	}
-	virtual void directory(const char* dir) override {
+	virtual void directory(const std::string &dir) override {
 		_directory = dir;
 	}
 
-	virtual Resolver resolver(void) const override {
-		return _resolver;
+	virtual ContentResolver contentResolver(void) const override {
+		return _contentResolver;
 	}
-	virtual void resolver(Resolver resolve) override {
-		_resolver = resolve;
+	virtual void contentResolver(ContentResolver resolve) override {
+		_contentResolver = resolve;
 	}
 
-	virtual const char* title(void) override {
-		if (_title.empty())
-			return nullptr;
+	virtual ImageResolver imageResolver(void) const override {
+		return _imageResolver;
+	}
+	virtual void imageResolver(ImageResolver resolve) override {
+		_imageResolver = resolve;
+	}
 
-		return _title.c_str();
+	virtual bool useThemedSpanCode(void) const override {
+		return _useThemedSpanCode;
+	}
+	virtual void useThemedSpanCode(bool val) override {
+		_useThemedSpanCode = val;
+	}
+
+	virtual void font(struct ImFont* regular, struct ImFont* bold) override {
+		_regularFont = regular;
+		_boldFont = bold;
+	}
+
+	virtual const std::string &title(void) override {
+		return _title;
+	}
+
+	virtual const std::string &content(void) const override {
+		return _content;
+	}
+	virtual void content(const std::string &val) override {
+		_content = val;
+	}
+
+	virtual bool withTableOfContent(void) const override {
+		return _withTableOfContent;
+	}
+	virtual void withTableOfContent(bool val) override {
+		_withTableOfContent = val;
 	}
 
 	virtual const char* shown(void) override {
@@ -271,7 +308,7 @@ public:
 			return;
 
 		// Load document.
-		Resolver resolve = _resolver;
+		ContentResolver resolve = _contentResolver;
 		if (!resolve) {
 			resolve = [] (const char* doc, std::string &content, std::string &title) -> bool {
 				// Prepare.
@@ -457,7 +494,7 @@ public:
 		}
 		// Render the content.
 		float width = 0;
-		const bool withTableOfContent = !_tableOfContent.empty() && ImGui::GetWindowWidth() > 800;
+		const bool withTableOfContent = _withTableOfContent && !_tableOfContent.empty() && ImGui::GetWindowWidth() > 800;
 		if (withTableOfContent)
 			width = ImGui::GetWindowWidth() - 266;
 		ImGui::BeginChild("@Doc/Ctt", ImVec2(width, 0), false, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoNav);
@@ -557,6 +594,8 @@ private:
 	}
 
 	int enterBlock(MD_BLOCKTYPE type, void* detail, Context* context) {
+		ImGuiStyle &style = ImGui::GetStyle();
+
 		MD_BLOCKTYPE y = _blockStack.empty() ? MD_BLOCK_DOC : _blockStack.top();
 
 		_blockStack.push(type);
@@ -584,7 +623,7 @@ private:
 				if (y == MD_BLOCK_OL) {
 					assert(_listItemCount <= (int)_listItemIndeces.size() && "Wrong data.");
 
-					ImFont* font = (ImFont*)context->theme->fontBlock_Bold();
+					ImFont* font = _boldFont ? _boldFont : (ImFont*)context->theme->fontBlock_Bold();
 					ImGui::PushFont(font);
 					{
 						ImGui::SetWindowFontScale(0.5f);
@@ -613,7 +652,7 @@ private:
 
 			break;
 		case MD_BLOCK_H: {
-				ImFont* font = (ImFont*)context->theme->fontBlock();
+				ImFont* font = _regularFont ? _regularFont : (ImFont*)context->theme->fontBlock();
 				ImGui::PushFont(font);
 
 				MD_BLOCK_H_DETAIL* h = (MD_BLOCK_H_DETAIL*)detail;
@@ -630,7 +669,7 @@ private:
 		case MD_BLOCK_CODE: {
 				ImGui::PushID(context->codeSeed);
 				if (context->codeSeed < (int)_codeHeights.size())
-					ImGui::BeginChild((ImGuiID)context->codeSeed, ImVec2(0.0f, _codeHeights[context->codeSeed].bottom + ImGui::GetFrameHeightWithSpacing()), true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoNav);
+					ImGui::BeginChild((ImGuiID)context->codeSeed, ImVec2(0.0f, _codeHeights[context->codeSeed].bottom + ImGui::GetFrameHeightWithSpacing() + style.ScrollbarSize), true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoNav);
 				else
 					ImGui::BeginChild((ImGuiID)context->codeSeed, ImVec2(0.0f, 0.0f), true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoNav);
 				++context->codeSeed;
@@ -800,7 +839,7 @@ private:
 
 		switch (type) {
 		case MD_SPAN_STRONG: {
-				ImFont* font = (ImFont*)context->theme->fontBlock_Bold();
+				ImFont* font = _boldFont ? _boldFont : (ImFont*)context->theme->fontBlock_Bold();
 				ImGui::PushFont(font);
 
 				_scaleStack.push(0.5f);
@@ -827,6 +866,34 @@ private:
 
 			break;
 		case MD_SPAN_IMG: {
+				ImageResolver resolve = _imageResolver;
+				if (!resolve) {
+					resolve = [context] (const char* img, class Image* &ptr) -> bool {
+						ptr = nullptr;
+						File::Ptr file(File::create());
+						if (!file->open(img, Stream::READ))
+							return false;
+
+						Bytes::Ptr buf(Bytes::create());
+						if (!file->readBytes(buf.get())) {
+							file->close();
+
+							return false;
+						}
+						file->close();
+						Image* img_ = Image::create(nullptr);
+						if (!img_->fromBytes(buf.get())) {
+							Image::destroy(img_);
+							img_ = nullptr;
+
+							return false;
+						}
+						ptr = img_;
+
+						return !!ptr;
+					};
+				}
+
 				MD_SPAN_IMG_DETAIL* img = (MD_SPAN_IMG_DETAIL*)detail;
 
 				Texture* tex = nullptr;
@@ -835,7 +902,13 @@ private:
 					std::string str;
 					str.assign(img->src.text, img->src.size);
 					str = Path::combine(_directory.c_str(), str.c_str());
-					tex = Theme::createTexture(context->renderer, str.c_str());
+					Image* ptr = nullptr;
+					if (resolve(str.c_str(), ptr)) {
+						tex = Texture::create();
+						tex->fromImage(context->renderer, Texture::STATIC, ptr, Texture::NEAREST);
+						Image::destroy(ptr);
+						ptr = nullptr;
+					}
 					_images[img->src.text] = tex;
 				} else {
 					tex = it->second;
@@ -983,14 +1056,18 @@ private:
 			std::string str;
 			str.assign(begin, l);
 
-			ImColor col(80, 80, 80, 180);
-			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)col);
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)col);
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)col);
+			if (_useThemedSpanCode) {
+				ImGui::Button(str.c_str());
+			} else {
+				ImColor col(80, 80, 80, 180);
+				ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)col);
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)col);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)col);
 
-			ImGui::Button(str.c_str());
+				ImGui::Button(str.c_str());
 
-			ImGui::PopStyleColor(3);
+				ImGui::PopStyleColor(3);
+			}
 		} else if (context->hrefSize) {
 			pushed += documentSameLineIfPossible(scale, sameLine, begin, l, endX);
 			url(begin, l, context->href, context->hrefSize, context);
@@ -1026,7 +1103,7 @@ private:
 					const char* begin = txt;
 					const char* end = txt;
 					while (end && end <= txt + size) {
-						bool sl = begin == txt ? sameLine : true;
+						const bool sl = begin == txt ? sameLine : true;
 						const char* endding = end;
 						end = strchr(end, ' ');
 						if (end) {

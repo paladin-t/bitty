@@ -12,6 +12,7 @@
 #include "code.h"
 #include "database.h"
 #include "datetime.h"
+#include "document_viewer.h"
 #include "effects.h"
 #include "encoding.h"
 #include "file_handle.h"
@@ -286,6 +287,13 @@ LUA_READ_OBJ(TextBox)
 LUA_WRITE_OBJ(TextBox)
 LUA_WRITE_OBJ_CONST(TextBox)
 
+/**< Document viewer. */
+
+LUA_CHECK_OBJ(DocumentViewer)
+LUA_READ_OBJ(DocumentViewer)
+LUA_WRITE_OBJ(DocumentViewer)
+LUA_WRITE_OBJ_CONST(DocumentViewer)
+
 }
 
 namespace Lua { // Application.
@@ -382,7 +390,7 @@ static void bake(Workspace* workspace, Workspace::Bake::Handler bake, const Vari
 #	if BITTY_MULTITHREAD_ENABLED
 	workspace->addBake(bake, arg);
 
-	while (workspace->hasBake()) { // Make sure the `TextBox` has been created before other Lua operations.
+	while (workspace->hasBake()) {
 		constexpr const int STEP = 1;
 		DateTime::sleep(STEP);
 	}
@@ -9877,10 +9885,10 @@ static int Font_ctor(lua_State* L) {
 			break;
 
 		Bytes::Ptr bytes(Bytes::create());
-		bool saved = asset->toBytes(bytes.get());
-		if (!saved)
-			saved = asset->object(Asset::RUNNING) && asset->save(Asset::RUNNING, bytes.get());
-		if (!saved)
+		bool ok = asset->toBytes(bytes.get());
+		if (!ok)
+			ok = asset->object(Asset::RUNNING) && asset->save(Asset::RUNNING, bytes.get());
+		if (!ok)
 			break;
 
 		Font::Ptr ret = fromImage(bytes, name, sizev, permeation);
@@ -11051,10 +11059,10 @@ static int TextBox_useFont(lua_State* L) {
 				return nullptr;
 
 			Bytes::Ptr bytes(Bytes::create());
-			bool saved = asset->toBytes(bytes.get());
-			if (!saved)
-				saved = asset->object(Asset::RUNNING) && asset->save(Asset::RUNNING, bytes.get());
-			if (!saved)
+			bool ok = asset->toBytes(bytes.get());
+			if (!ok)
+				ok = asset->object(Asset::RUNNING) && asset->save(Asset::RUNNING, bytes.get());
+			if (!ok)
 				return nullptr;
 
 			bytes->poke(bytes->count());
@@ -11655,6 +11663,498 @@ static void open_TextBox(lua_State* L) {
 }
 #endif /* BITTY_BAKE_ENABLED */
 
+/**< Document viewer. */
+
+#if BITTY_BAKE_ENABLED
+static int DocumentViewer_ctor(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	DocumentViewer::Ptr obj(DocumentViewer::create(), [] (DocumentViewer*) -> void { /* Do nothing. */ });
+	if (!obj)
+		return write(L, nullptr);
+
+	Document::ContentResolver resolveContent = [impl] (const char* doc, std::string &content, std::string &title) -> bool {
+		auto processLines = [] (const std::string &content) -> std::string {
+			const std::string result = Text::replace(Text::replace(content, "\r\n", "\n"), "\r", "\n");
+
+			return result;
+		};
+
+		const Project* project = impl->project();
+		if (!project)
+			return false;
+
+		LockGuard<RecursiveMutex>::UniquePtr acquired;
+		Project* prj = project->acquire(acquired);
+		if (!prj)
+			return false;
+
+		Asset* asset = prj->get(doc);
+		if (!asset)
+			return false;
+
+		Bytes::Ptr bytes(Bytes::create());
+		bool ok = asset->toBytes(bytes.get());
+		if (!ok)
+			ok = asset->object(Asset::RUNNING) && asset->save(Asset::RUNNING, bytes.get());
+		if (!ok)
+			return false;
+
+		bytes->poke(0);
+
+		if (!bytes->readString(content))
+			return false;
+
+		content = processLines(content);
+
+		FileInfo::Ptr fileInfo = FileInfo::make(doc);
+		title = fileInfo->fileName().c_str();
+		if (!title.empty())
+			title[0] = (char)::toupper(title[0]);
+
+		return true;
+	};
+	Document::ImageResolver resolveImage = [impl] (const char* img, class Image* &ptr) -> bool {
+		const Project* project = impl->project();
+		if (!project)
+			return false;
+
+		LockGuard<RecursiveMutex>::UniquePtr acquired;
+		Project* prj = project->acquire(acquired);
+		if (!prj)
+			return false;
+
+		Asset* asset = prj->get(img);
+		if (!asset)
+			return false;
+
+		Bytes::Ptr bytes(Bytes::create());
+		bool ok = asset->toBytes(bytes.get());
+		if (!ok)
+			ok = asset->object(Asset::RUNNING) && asset->save(Asset::RUNNING, bytes.get());
+		if (!ok)
+			return false;
+
+		bytes->poke(0);
+
+		Image* img_ = Image::create(nullptr);
+		if (!img_->fromBytes(bytes.get())) {
+			Image::destroy(img_);
+			img_ = nullptr;
+
+			return false;
+		}
+
+		ptr = img_;
+
+		return true;
+	};
+
+	bake(
+		impl->primitives()->workspace(),
+		[=] (const Variant &) -> void {
+			static int documentViewerSeed = 1;
+			const std::string id = "DocumentViewer_" + Text::toString(documentViewerSeed++);
+			obj->open(id.c_str(), resolveContent, resolveImage);
+			obj->option("use_themed_span_code", true);
+		},
+		nullptr,
+		true
+	);
+
+	return write(L, &obj);
+}
+
+static int DocumentViewer___gc(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	DocumentViewer::Ptr* obj = nullptr;
+	check<>(L, obj);
+	if (!obj)
+		return 0;
+
+	DocumentViewer* tb = obj->get();
+
+	obj->~shared_ptr();
+
+	bake(
+		impl->primitives()->workspace(),
+		[=] (const Variant &) -> void {
+			tb->close();
+			DocumentViewer::destroy(tb);
+		},
+		nullptr,
+		false
+	);
+
+	return 0;
+}
+
+static int DocumentViewer_lock(lua_State* L) {
+	DocumentViewer::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		obj->get()->lock();
+
+		return 0;
+	} else {
+		error(L, "DocumentViewer expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int DocumentViewer_unlock(lua_State* L) {
+	DocumentViewer::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		obj->get()->unlock();
+
+		return 0;
+	} else {
+		error(L, "DocumentViewer expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int DocumentViewer_tryLock(lua_State* L) {
+	DocumentViewer::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		const bool ret = obj->get()->tryLock();
+
+		return write(L, ret);
+	} else {
+		error(L, "DocumentViewer expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int DocumentViewer_setOption(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	DocumentViewer::Ptr* obj = nullptr;
+	std::string key;
+	read<>(L, obj, key);
+
+	if (obj) {
+		DocumentViewer::WeakPtr ptr(*obj);
+
+		Variant val = nullptr;
+		read<3>(L, &val);
+
+		bake(
+			impl->primitives()->workspace(),
+			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				DocumentViewer::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
+
+				ptr_->option(key, val);
+			},
+			nullptr,
+			true
+		);
+	} else {
+		error(L, "DocumentViewer expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int DocumentViewer_useFont(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	DocumentViewer::Ptr* obj = nullptr;
+	Json::Ptr* json = nullptr;
+	read<>(L, obj, json);
+
+	if (obj) {
+		if (!json) {
+			error(L, "Json expected.");
+
+			return 0;
+		}
+
+		DocumentViewer::FontResolver resolveFont = [impl] (const std::string &path) -> Bytes::Ptr {
+			const Project* project = impl->project();
+			if (!project)
+				return nullptr;
+
+			LockGuard<RecursiveMutex>::UniquePtr acquired;
+			Project* prj = project->acquire(acquired);
+			if (!prj)
+				return nullptr;
+
+			Asset* asset = prj->get(path.c_str());
+			if (!asset)
+				return nullptr;
+
+			Bytes::Ptr bytes(Bytes::create());
+			bool ok = asset->toBytes(bytes.get());
+			if (!ok)
+				ok = asset->object(Asset::RUNNING) && asset->save(Asset::RUNNING, bytes.get());
+			if (!ok)
+				return nullptr;
+
+			bytes->poke(bytes->count());
+
+			return bytes;
+		};
+		DocumentViewer::FontData fontData;
+		if (!DocumentViewer::parseFont(*json, fontData, resolveFont)) {
+			error(L, "Json expected.");
+
+			return 0;
+		}
+
+		DocumentViewer::WeakPtr ptr(*obj);
+		Json::Ptr json_(*json);
+
+		bake(
+			impl->primitives()->workspace(),
+			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				DocumentViewer::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
+
+				ptr_->useFont(json_, fontData);
+			},
+			nullptr,
+			false
+		);
+	} else {
+		error(L, "DocumentViewer expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int DocumentViewer_load(lua_State* L) {
+	DocumentViewer::Ptr* obj = nullptr;
+	std::string doc;
+	read<>(L, obj, doc);
+
+	if (obj) {
+		obj->get()->load(doc);
+
+		return 0;
+	} else {
+		error(L, "DocumentViewer expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int DocumentViewer_get(lua_State* L) {
+	DocumentViewer::Ptr* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		size_t len = 0;
+		const char* text = obj->get()->text(&len);
+		std::string txt;
+		if (text)
+			txt.assign(text, len);
+
+		return write(L, txt);
+	} else {
+		error(L, "DocumentViewer expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int DocumentViewer_set(lua_State* L) {
+	DocumentViewer::Ptr* obj = nullptr;
+	std::string txt;
+	read<>(L, obj, txt);
+
+	if (obj) {
+		obj->get()->text(txt.c_str(), txt.length());
+
+		return 0;
+	} else {
+		error(L, "DocumentViewer expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int DocumentViewer_update(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	DocumentViewer::Ptr* obj = nullptr;
+	int x0 = 0, y0 = 0, x1 = 0, y1 = 0;
+	read<>(L, obj, x0, y0, x1, y1);
+
+	if (obj) {
+		DocumentViewer::WeakPtr ptr(*obj);
+
+		bake(
+			impl->primitives()->workspace(),
+			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				DocumentViewer::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
+
+				Window* wnd = impl->primitives()->window();
+				Renderer* rnd = impl->primitives()->renderer();
+				Workspace* ws = impl->primitives()->workspace();
+				const Math::Recti rect(x0, y0, x1, y1);
+				ptr_->bake(wnd, rnd, ws, (float)rect.xMin(), (float)rect.yMin(), (float)rect.width(), (float)rect.height());
+			},
+			nullptr,
+			false
+		);
+		int camX = 0, camY = 0;
+		const bool camChanged = impl->primitives()->camera(&camX, &camY);
+		impl->primitives()->function(
+			[=] (const Variant &) -> void {
+				if (ptr.expired())
+					return;
+				DocumentViewer::Ptr ptr_ = ptr.lock();
+				if (!ptr_)
+					return;
+
+				int x0_ = x0;
+				int y0_ = y0;
+				int x1_ = x1;
+				int y1_ = y1;
+				if (camChanged)
+					ptr_->translate(x0_, y0_, x1_, y1_, camX, camY);
+
+				Window* wnd = impl->primitives()->window();
+				Renderer* rnd = impl->primitives()->renderer();
+				Workspace* ws = impl->primitives()->workspace();
+				const Math::Recti rect(x0_, y0_, x1_, y1_);
+				ptr_->render(wnd, rnd, ws, (float)rect.xMin(), (float)rect.yMin(), (float)rect.width(), (float)rect.height());
+			},
+			nullptr,
+			false
+		);
+	} else {
+		error(L, "DocumentViewer expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int DocumentViewer___index(lua_State* L) {
+	DocumentViewer::Ptr* obj = nullptr;
+	const char* field = nullptr;
+	read<>(L, obj, field);
+
+	if (!obj || !field)
+		return 0;
+
+	if (strcmp(field, "text") == 0) {
+		size_t len = 0;
+		const char* text = obj->get()->text(&len);
+		std::string ret;
+		if (text)
+			ret.assign(text, len);
+
+		return write(L, ret);
+	} else {
+		return __index(L, field);
+	}
+}
+
+static int DocumentViewer___newindex(lua_State* L) {
+	DocumentViewer::Ptr* obj = nullptr;
+	const char* field = nullptr;
+	read<>(L, obj, field);
+
+	if (!obj || !field)
+		return 0;
+
+	if (strcmp(field, "text") == 0) {
+		std::string val;
+		read<3>(L, val);
+
+		obj->get()->text(val.c_str(), val.length());
+	}
+
+	return 0;
+}
+
+static void open_DocumentViewer(lua_State* L) {
+	def(
+		L, "DocumentViewer",
+		LUA_LIB(
+			array(
+				luaL_Reg{ "new", DocumentViewer_ctor },
+				luaL_Reg{ nullptr, nullptr }
+			)
+		),
+		array(
+			luaL_Reg{ "__gc", DocumentViewer___gc },
+			luaL_Reg{ "__tostring", __tostring<DocumentViewer::Ptr> },
+			luaL_Reg{ nullptr, nullptr }
+		),
+		array(
+			luaL_Reg{ "lock", DocumentViewer_lock }, // Undocumented.
+			luaL_Reg{ "unlock", DocumentViewer_unlock }, // Undocumented.
+			luaL_Reg{ "tryLock", DocumentViewer_tryLock }, // Undocumented.
+			luaL_Reg{ "setOption", DocumentViewer_setOption },
+			luaL_Reg{ "useFont", DocumentViewer_useFont },
+			luaL_Reg{ "load", DocumentViewer_load },
+			luaL_Reg{ "get", DocumentViewer_get },
+			luaL_Reg{ "set", DocumentViewer_set },
+			luaL_Reg{ "update", DocumentViewer_update },
+			luaL_Reg{ nullptr, nullptr }
+		),
+		DocumentViewer___index, DocumentViewer___newindex
+	);
+}
+#else /* BITTY_BAKE_ENABLED */
+static int DocumentViewer_ctor(lua_State* L) {
+	error(L, "The \"DocumentViewer\" module is not available.");
+
+	return 0;
+}
+
+static void open_DocumentViewer(lua_State* L) {
+	def(
+		L, "DocumentViewer",
+		LUA_LIB(
+			array(
+				luaL_Reg{ "new", DocumentViewer_ctor },
+				luaL_Reg{ nullptr, nullptr }
+			)
+		),
+		array(
+			luaL_Reg{ nullptr, nullptr }
+		),
+		array(
+			luaL_Reg{ nullptr, nullptr }
+		),
+		nullptr, nullptr
+	);
+}
+#endif /* BITTY_BAKE_ENABLED */
+
 /**< Categories. */
 
 void open(class Executable* exec) {
@@ -11663,6 +12163,9 @@ void open(class Executable* exec) {
 
 	// Text editor.
 	open_TextBox(L);
+
+	// Document viewer.
+	open_DocumentViewer(L);
 }
 
 }
@@ -13604,10 +14107,10 @@ static int Project_read(lua_State* L) {
 		return write(L, nullptr);
 
 	Bytes::Ptr bytes(Bytes::create());
-	bool saved = asset->toBytes(bytes.get());
-	if (!saved)
-		saved = asset->object(Asset::RUNNING) && asset->save(Asset::RUNNING, bytes.get());
-	if (!saved)
+	bool ok = asset->toBytes(bytes.get());
+	if (!ok)
+		ok = asset->object(Asset::RUNNING) && asset->save(Asset::RUNNING, bytes.get());
+	if (!ok)
 		return write(L, nullptr);
 
 	bytes->poke(bytes->count());
