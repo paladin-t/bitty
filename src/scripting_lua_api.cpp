@@ -11674,6 +11674,12 @@ static int DocumentViewer_ctor(lua_State* L) {
 		return write(L, nullptr);
 
 	Document::ContentResolver resolveContent = [impl] (const char* doc, std::string &content, std::string &title) -> bool {
+		auto processLines = [] (const std::string &content) -> std::string {
+			const std::string result = Text::replace(Text::replace(content, "\r\n", "\n"), "\r", "\n");
+
+			return result;
+		};
+
 		const Project* project = impl->project();
 		if (!project)
 			return false;
@@ -11698,6 +11704,8 @@ static int DocumentViewer_ctor(lua_State* L) {
 
 		if (!bytes->readString(content))
 			return false;
+
+		content = processLines(content);
 
 		FileInfo::Ptr fileInfo = FileInfo::make(doc);
 		title = fileInfo->fileName().c_str();

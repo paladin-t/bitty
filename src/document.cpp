@@ -594,6 +594,8 @@ private:
 	}
 
 	int enterBlock(MD_BLOCKTYPE type, void* detail, Context* context) {
+		ImGuiStyle &style = ImGui::GetStyle();
+
 		MD_BLOCKTYPE y = _blockStack.empty() ? MD_BLOCK_DOC : _blockStack.top();
 
 		_blockStack.push(type);
@@ -667,7 +669,7 @@ private:
 		case MD_BLOCK_CODE: {
 				ImGui::PushID(context->codeSeed);
 				if (context->codeSeed < (int)_codeHeights.size())
-					ImGui::BeginChild((ImGuiID)context->codeSeed, ImVec2(0.0f, _codeHeights[context->codeSeed].bottom + ImGui::GetFrameHeightWithSpacing()), true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoNav);
+					ImGui::BeginChild((ImGuiID)context->codeSeed, ImVec2(0.0f, _codeHeights[context->codeSeed].bottom + ImGui::GetFrameHeightWithSpacing() + style.ScrollbarSize), true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoNav);
 				else
 					ImGui::BeginChild((ImGuiID)context->codeSeed, ImVec2(0.0f, 0.0f), true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoNav);
 				++context->codeSeed;
@@ -1101,7 +1103,7 @@ private:
 					const char* begin = txt;
 					const char* end = txt;
 					while (end && end <= txt + size) {
-						bool sl = begin == txt ? sameLine : true;
+						const bool sl = begin == txt ? sameLine : true;
 						const char* endding = end;
 						end = strchr(end, ' ');
 						if (end) {
