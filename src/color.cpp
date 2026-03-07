@@ -309,17 +309,30 @@ bool Color::fromString(const std::string &str) {
 	UInt8 b5 = 0;
 	UInt8 b6 = 0;
 	UInt8 b7 = 0;
-	if (
-		!Text::fromHexCharacter(hex[0], b0) ||
-		!Text::fromHexCharacter(hex[1], b1) ||
-		!Text::fromHexCharacter(hex[2], b2) ||
-		!Text::fromHexCharacter(hex[3], b3) ||
-		!Text::fromHexCharacter(hex[4], b4) ||
-		!Text::fromHexCharacter(hex[5], b5) ||
-		!Text::fromHexCharacter(hex[6], b6) ||
-		!Text::fromHexCharacter(hex[7], b7)
-	) {
-		return false;
+	if (hex.length() == 8) {
+		if (
+			!Text::fromHexCharacter(hex[0], b0) ||
+			!Text::fromHexCharacter(hex[1], b1) ||
+			!Text::fromHexCharacter(hex[2], b2) ||
+			!Text::fromHexCharacter(hex[3], b3) ||
+			!Text::fromHexCharacter(hex[4], b4) ||
+			!Text::fromHexCharacter(hex[5], b5) ||
+			!Text::fromHexCharacter(hex[6], b6) ||
+			!Text::fromHexCharacter(hex[7], b7)
+		) {
+			return false;
+		}
+	} else if (hex.length() == 6) {
+		if (
+			!Text::fromHexCharacter(hex[0], b0) ||
+			!Text::fromHexCharacter(hex[1], b1) ||
+			!Text::fromHexCharacter(hex[2], b2) ||
+			!Text::fromHexCharacter(hex[3], b3) ||
+			!Text::fromHexCharacter(hex[4], b4) ||
+			!Text::fromHexCharacter(hex[5], b5)
+		) {
+			return false;
+		}
 	}
 
 	r = b0 * 16 + b1;

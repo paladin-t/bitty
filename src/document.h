@@ -53,6 +53,9 @@ public:
 	virtual ImageResolver imageResolver(void) const = 0;
 	virtual void imageResolver(ImageResolver resolve) = 0;
 
+	virtual bool useThemedSpanCode(void) const = 0;
+	virtual void useThemedSpanCode(bool val) = 0;
+
 	virtual void font(struct ImFont* regular, struct ImFont* bold) = 0;
 
 	virtual const std::string &title(void) = 0;

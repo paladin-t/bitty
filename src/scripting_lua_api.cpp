@@ -390,7 +390,7 @@ static void bake(Workspace* workspace, Workspace::Bake::Handler bake, const Vari
 #	if BITTY_MULTITHREAD_ENABLED
 	workspace->addBake(bake, arg);
 
-	while (workspace->hasBake()) { // Make sure the `TextBox` has been created before other Lua operations.
+	while (workspace->hasBake()) {
 		constexpr const int STEP = 1;
 		DateTime::sleep(STEP);
 	}
@@ -11748,6 +11748,7 @@ static int DocumentViewer_ctor(lua_State* L) {
 			static int documentViewerSeed = 1;
 			const std::string id = "DocumentViewer_" + Text::toString(documentViewerSeed++);
 			obj->open(id.c_str(), resolveContent, resolveImage);
+			obj->option("use_themed_span_code", true);
 		},
 		nullptr,
 		true

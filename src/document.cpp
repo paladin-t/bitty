@@ -152,6 +152,7 @@ private:
 	std::string _directory;
 	ContentResolver _contentResolver = nullptr;
 	ImageResolver _imageResolver = nullptr;
+	bool _useThemedSpanCode = false;
 	ImFont* _regularFont = nullptr;
 	ImFont* _boldFont = nullptr;
 	std::string _title;
@@ -251,6 +252,13 @@ public:
 	}
 	virtual void imageResolver(ImageResolver resolve) override {
 		_imageResolver = resolve;
+	}
+
+	virtual bool useThemedSpanCode(void) const override {
+		return _useThemedSpanCode;
+	}
+	virtual void useThemedSpanCode(bool val) override {
+		_useThemedSpanCode = val;
 	}
 
 	virtual void font(struct ImFont* regular, struct ImFont* bold) override {
@@ -1046,14 +1054,18 @@ private:
 			std::string str;
 			str.assign(begin, l);
 
-			ImColor col(80, 80, 80, 180);
-			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)col);
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)col);
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)col);
+			if (_useThemedSpanCode) {
+				ImGui::Button(str.c_str());
+			} else {
+				ImColor col(80, 80, 80, 180);
+				ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)col);
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)col);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)col);
 
-			ImGui::Button(str.c_str());
+				ImGui::Button(str.c_str());
 
-			ImGui::PopStyleColor(3);
+				ImGui::PopStyleColor(3);
+			}
 		} else if (context->hrefSize) {
 			pushed += documentSameLineIfPossible(scale, sameLine, begin, l, endX);
 			url(begin, l, context->href, context->hrefSize, context);
