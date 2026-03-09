@@ -1624,12 +1624,12 @@ void WorkspaceStudio::menu(class Window* wnd, class Renderer* rnd, const class P
 			if (ImGui::MenuItem(_theme->menuProject_RenameAsset(), nullptr, nullptr, assetsSelectedIndex() >= 0)) {
 				Operations::projectRenameAsset(rnd, this, project, assetsSelectedIndex());
 			}
+			ImGui::Separator();
 			bool filtering = assetsFiltering();
 			if (ImGui::MenuItem(_theme->menuProject_FilterAssets(), WORKSPACE_MODIFIER_KEY_NAME "+E", &filtering)) {
 				assetsFiltering(filtering);
 				assetsFilteringInitialized(false);
 			}
-			ImGui::Separator();
 			if (ImGui::MenuItem(_theme->menuProject_AddFile(), WORKSPACE_MODIFIER_KEY_NAME "+Shift+A")) {
 				Operations::projectAddFile(rnd, this, project, assetsSelectedIndex());
 			}

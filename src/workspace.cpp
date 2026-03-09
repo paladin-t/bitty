@@ -9,6 +9,7 @@
 */
 
 #include "bytes.h"
+#include "code.h"
 #include "document.h"
 #include "datetime.h"
 #include "editable.h"
@@ -3544,7 +3545,7 @@ int Workspace::withEditingAsset(const class Project* project, EditorHandler hand
 	return 1;
 }
 
-void Workspace::showAssetContextMenu(class Window*, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
+void Workspace::showAssetContextMenu(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
 	ImGuiIO &io = ImGui::GetIO();
 	ImGuiStyle &style = ImGui::GetStyle();
 
@@ -3568,12 +3569,17 @@ void Workspace::showAssetContextMenu(class Window*, class Renderer* rnd, const c
 				Operations::projectRenameAsset(rnd, this, project, assetsSelectedIndex());
 			}
 		}
+		if (ImGui::BeginMenu(theme()->menuProject_CopyCode())) {
+			copyCodeForAsset(wnd, rnd, project);
+
+			ImGui::EndMenu();
+		}
+		ImGui::Separator();
 		bool filtering = assetsFiltering();
 		if (ImGui::MenuItem(theme()->menuProject_FilterAssets(), nullptr, &filtering)) {
 			assetsFiltering(filtering);
 			assetsFilteringInitialized(false);
 		}
-		ImGui::Separator();
 		if (ImGui::MenuItem(theme()->menuProject_AddFile())) {
 			Operations::projectAddFile(rnd, this, project, assetsSelectedIndex());
 		}
@@ -3595,6 +3601,224 @@ void Workspace::showAssetContextMenu(class Window*, class Renderer* rnd, const c
 		}
 
 		ImGui::EndPopup();
+	}
+}
+
+void Workspace::copyCodeForAsset(class Window*, class Renderer*, const class Project* project) {
+	auto getCurrentAssetPath = [this, project] (void) -> std::string {
+		std::string assetPath;
+		withEditingAsset(
+			project,
+			[&] (Asset* asset, Editable*) -> void {
+				assetPath = asset->entry().name();
+				const std::string suffix = "." BITTY_LUA_EXT;
+				if (Text::endsWith(assetPath, suffix, true))
+					assetPath.erase(assetPath.length() - suffix.length());
+			}
+		);
+
+		return assetPath;
+	};
+	auto setClipboardText = [] (const std::string &txt) -> void {
+		const std::string osstr = Unicode::toOs(txt);
+
+		Platform::clipboardText(osstr.c_str());
+	};
+
+	unsigned type = 0;
+	editingAssetStates(project, nullptr, &type, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
+
+	switch (type) {
+	case Code::TYPE():
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_Requiring())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format("require '{0}'\n", { assetPath });
+			setClipboardText(code);
+		}
+
+		break;
+	case Sprite::TYPE():
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_LoadingResource())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format(
+				"local res = Resources.load('{0}', Sprite)\n",
+				{ assetPath }
+			);
+			setClipboardText(code);
+		}
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_LoadingContent())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format(
+				"local bytes = Project.main:read('{0}')\n"
+				"bytes:poke(1)\n",
+				{ assetPath }
+			);
+			setClipboardText(code);
+		}
+
+		break;
+	case Map::TYPE():
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_LoadingResource())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format(
+				"local res = Resources.load('{0}', Map)\n",
+				{ assetPath }
+			);
+			setClipboardText(code);
+		}
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_LoadingContent())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format(
+				"local bytes = Project.main:read('{0}')\n"
+				"bytes:poke(1)\n",
+				{ assetPath }
+			);
+			setClipboardText(code);
+		}
+
+		break;
+	case Image::TYPE():
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_LoadingResource())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format(
+				"local res = Resources.load('{0}', Texture)\n",
+				{ assetPath }
+			);
+			setClipboardText(code);
+		}
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_LoadingContent())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format(
+				"local bytes = Project.main:read('{0}')\n"
+				"bytes:poke(1)\n"
+				"local img = Image.new()\n"
+				"img:fromBytes(bytes)\n",
+				{ assetPath }
+			);
+			setClipboardText(code);
+		}
+
+		break;
+	case Palette::TYPE():
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_LoadingResource())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format(
+				"local res = Resources.load('{0}', Palette)\n",
+				{ assetPath }
+			);
+			setClipboardText(code);
+		}
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_LoadingContent())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format(
+				"local bytes = Project.main:read('{0}')\n"
+				"bytes:poke(1)\n",
+				{ assetPath }
+			);
+			setClipboardText(code);
+		}
+
+		break;
+	case Sound::TYPE():
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_LoadingResourceAsMusic())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format(
+				"local res = Resources.load('{0}', Music)\n",
+				{ assetPath }
+			);
+			setClipboardText(code);
+		}
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_LoadingResourceAsSfx())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format(
+				"local res = Resources.load('{0}', Sfx)\n",
+				{ assetPath }
+			);
+			setClipboardText(code);
+		}
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_LoadingContent())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format(
+				"local bytes = Project.main:read('{0}')\n"
+				"bytes:poke(1)\n",
+				{ assetPath }
+			);
+			setClipboardText(code);
+		}
+
+		break;
+	case Font::TYPE():
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_LoadingResource())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format(
+				"local ttf = Font.new('{0}', n)\n"
+				"font(ttf)\n",
+				{ assetPath }
+			);
+			setClipboardText(code);
+		}
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_LoadingContent())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format(
+				"local bytes = Project.main:read('{0}')\n"
+				"bytes:poke(1)\n",
+				{ assetPath }
+			);
+			setClipboardText(code);
+		}
+
+		break;
+	case Json::TYPE():
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_LoadingContent())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format(
+				"local bytes = Project.main:read('{0}')\n"
+				"bytes:poke(1)\n"
+				"local json = Json.new()\n"
+				"json:fromBytes(bytes)\n",
+				{ assetPath }
+			);
+			setClipboardText(code);
+		}
+
+		break;
+	case Text::TYPE():
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_LoadingContent())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format(
+				"local bytes = Project.main:read('{0}')\n"
+				"bytes:poke(1)\n"
+				"local content = bytes:readString()\n",
+				{ assetPath }
+			);
+			setClipboardText(code);
+		}
+
+		break;
+	case Bytes::TYPE():
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_LoadingContent())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format(
+				"local bytes = Project.main:read('{0}')\n"
+				"bytes:poke(1)\n",
+				{ assetPath }
+			);
+			setClipboardText(code);
+		}
+
+		break;
+	default:
+		if (ImGui::MenuItem(theme()->menuProject_CopyCode_LoadingContent())) {
+			const std::string &assetPath = getCurrentAssetPath();
+			const std::string code = Text::format(
+				"local bytes = Project.main:read('{0}')\n"
+				"bytes:poke(1)\n",
+				{ assetPath }
+			);
+			setClipboardText(code);
+		}
+
+		break;
 	}
 }
 

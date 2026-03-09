@@ -753,6 +753,7 @@ protected:
 	) const;
 	int withEditingAsset(const class Project* project, EditorHandler handler) const;
 	void showAssetContextMenu(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
+	void copyCodeForAsset(class Window* wnd, class Renderer* rnd, const class Project* project);
 	void filterAssets(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec);
 	void resizeAsset(class Window* wnd, class Renderer* rnd, const class Project* project, Asset::List::Index index);
 	void resizeAssetGrid(class Window* wnd, class Renderer* rnd, const class Project* project, Asset::List::Index index);

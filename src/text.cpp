@@ -883,6 +883,36 @@ std::string Text::cformat(const char* fmt, ...) {
 	return buf;
 }
 
+std::string Text::format(const std::string &fmt, const std::string &arg, int index) {
+	std::string result = fmt;
+	const std::string pattern = "{" + toString(index) + "}";
+	result = replace(result, pattern, arg, true);
+
+	return result;
+}
+
+std::string Text::format(const std::string &fmt, const Variant &arg, int index) {
+	return format(fmt, arg.toString(), index);
+}
+
+std::string Text::format(const std::string &fmt, const Array &args, int index) {
+	std::string result = fmt;
+	Array::const_iterator it = args.begin();
+	for (int i = 0; i < (int)args.size(); ++i, ++it)
+		result = format(result, *it, index + i);
+
+	return result;
+}
+
+std::string Text::format(const std::string &fmt, const std::initializer_list<std::string> &args, int index) {
+	std::string result = fmt;
+	std::initializer_list<std::string>::const_iterator it = args.begin();
+	for (int i = 0; i < (int)args.size(); ++i, ++it)
+		result = format(result, *it, index + i);
+
+	return result;
+}
+
 long Text::strtol(char const* str, char** endptr, int base) {
 	const long long ll = ::strtoll(str, endptr, base);
 	if (ll & 0xffffffff00000000) {

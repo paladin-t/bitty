@@ -147,6 +147,10 @@ public:
 	static void stylish(std::string &str, const char* dst, const char* src = nullptr);
 
 	static std::string cformat(const char* fmt, ...);
+	static std::string format(const std::string &fmt, const std::string &arg, int index = 0);
+	static std::string format(const std::string &fmt, const Variant &arg, int index = 0);
+	static std::string format(const std::string &fmt, const Array &args, int index = 0);
+	static std::string format(const std::string &fmt, const std::initializer_list<std::string> &args, int index = 0);
 
 	/**
 	 * @param[out] endptr

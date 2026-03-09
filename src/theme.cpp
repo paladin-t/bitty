@@ -208,6 +208,12 @@ bool Theme::open(class Renderer* rnd) {
 	menuProject_NewAsset("New Asset...");
 	menuProject_RemoveAsset("Remove Asset...");
 	menuProject_RenameAsset("Rename Asset...");
+	menuProject_CopyCode("Copy Code");
+	menuProject_CopyCode_Requiring("Requiring");
+	menuProject_CopyCode_LoadingResource("Loading Resource");
+	menuProject_CopyCode_LoadingResourceAsMusic("Loading Resource as Music");
+	menuProject_CopyCode_LoadingResourceAsSfx("Loading Resource as SFX");
+	menuProject_CopyCode_LoadingContent("Loading Content");
 	menuProject_FilterAssets("Filter Assets...");
 	menuProject_AddFile("Add File...");
 	menuProject_Import("Import...");
