@@ -8,11 +8,13 @@
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
 
+#include "document.h"
+#include "document_viewer.h"
 #include "encoding.h"
+#include "filesystem.h"
 #include "hacks.h"
 #include "platform.h"
 #include "renderer.h"
-#include "document_viewer.h"
 #include "theme.h"
 #include "window.h"
 #include "workspace.h"
@@ -67,6 +69,7 @@ private:
 
 	std::string _id;
 
+	Document* _document = nullptr;
 	mutable RecursiveMutex _lock;
 	struct Options {
 		bool clearBeforeBaking = false;
@@ -92,13 +95,19 @@ private:
 	ImGuiSDL::Device* _device = nullptr;                   // By the graphics thread.
 	Texture* _texture = nullptr;                           // By the graphics thread.
 	ImFont* _font = nullptr;                               // By the graphics thread.
+	ImFont* _regularFont = nullptr;                        // By the graphics thread.
+	ImFont* _boldFont = nullptr;                           // By the graphics thread.
 	ImGuiMouseCursor _mouseCursor = ImGuiMouseCursor_None; // By the graphics thread.
 
 public:
 	DocumentViewerImpl() {
+		_document = Document::create();
 	}
 	virtual ~DocumentViewerImpl() override {
 		assert(!_opened && "Not closed");
+
+		Document::destroy(_document);
+		_document = nullptr;
 	}
 
 	virtual unsigned type(void) const override {
@@ -112,7 +121,7 @@ public:
 		return false;
 	}
 
-	virtual void open(const char* name) override {
+	virtual void open(const char* name, Document::ContentResolver contentResolver, Document::ImageResolver imageResolver) override {
 		LockGuard<decltype(_lock)> guard(_lock);
 
 		if (_opened)
@@ -120,6 +129,9 @@ public:
 		_opened = true;
 
 		_id = name;
+
+		_document->contentResolver(contentResolver);
+		_document->imageResolver(imageResolver);
 
 		fprintf(stdout, "Document viewer opened: \"%s\".\n", _id.c_str());
 	}
@@ -133,6 +145,9 @@ public:
 		fprintf(stdout, "Document viewer closed: \"%s\".\n", _id.c_str());
 
 		_id.clear();
+
+		_document->contentResolver(nullptr);
+		_document->imageResolver(nullptr);
 
 		if (_context) {
 			ImGuiContext* mainContext = ImGui::GetCurrentContext();
@@ -148,6 +163,8 @@ public:
 				}
 				io.Fonts->Clear();
 				_font = nullptr;
+				_regularFont = nullptr;
+				_boldFont = nullptr;
 
 				ImGuiSDL::Deinitialize();
 
@@ -189,6 +206,22 @@ public:
 			return true;
 		}
 
+		if (key == "directory") {
+			const std::string val_ = (std::string)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			_document->directory(val_);
+
+			return true;
+		} else if (key == "use_themed_span_code") { // Undocumented.
+			const bool val_ = (bool)val;
+
+			LockGuard<decltype(_lock)> guard(_lock);
+
+			_document->useThemedSpanCode(val_);
+		}
+
 		if (key == "style_text") {
 			const std::string val_ = (std::string)val;
 			Color col;
@@ -220,6 +253,21 @@ public:
 			_options.toRefreshStyleColor = true;
 			_options.styleColors[ImGuiCol_Border] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
 			_options.styleColorDirty[ImGuiCol_Border] = true;
+
+			return true;
+		} else if (key == "style_code_span") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_Button] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_Button] = true;
+			_options.styleColors[ImGuiCol_ButtonHovered] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_ButtonHovered] = true;
+			_options.styleColors[ImGuiCol_ButtonActive] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_ButtonActive] = true;
 
 			return true;
 		} else if (key == "style_scrollbar_background") {
@@ -310,6 +358,61 @@ public:
 			_options.styleColorDirty[ImGuiCol_Separator] = true;
 
 			return true;
+		} else if (key == "style_table_header_background") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_TableHeaderBg] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_TableHeaderBg] = true;
+
+			return true;
+		} else if (key == "style_table_border_strong") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_TableBorderStrong] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_TableBorderStrong] = true;
+
+			return true;
+		} else if (key == "style_table_border_light") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_TableBorderLight] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_TableBorderLight] = true;
+
+			return true;
+		} else if (key == "style_table_row_background") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_TableRowBg] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_TableRowBg] = true;
+
+			return true;
+		} else if (key == "style_table_row_background_alt") {
+			const std::string val_ = (std::string)val;
+			Color col;
+			if (!col.fromString(val_))
+				return false;
+
+			_options.toRefreshStyleColor = true;
+			_options.styleColors[ImGuiCol_TableRowBgAlt] = ImVec4(col.r / 255.0f, col.g / 255.0f, col.b / 255.0f, col.a / 255.0f);
+			_options.styleColorDirty[ImGuiCol_TableRowBgAlt] = true;
+
+			return true;
 		}
 
 		if (key == "style_scrollbar_size") {
@@ -336,37 +439,35 @@ public:
 		return true;
 	}
 
-	virtual bool location(float &v) const override {
+	virtual void load(const std::string &doc) override {
 		LockGuard<decltype(_lock)> guard(_lock);
 
-		// TODO
+		const std::string &dir = _document->directory();
+		const std::string path = Path::combine(dir.c_str(), doc.c_str());
 
-		return true;
-	}
-	virtual void locate(float v) override {
-		LockGuard<decltype(_lock)> guard(_lock);
-
-		// TODO
+		_document->show(path.c_str());
 	}
 
 	virtual const char* text(size_t* len) const override {
 		LockGuard<decltype(_lock)> guard(_lock);
 
-		// TODO
+		const std::string &txt = _document->content();
+		if (len)
+			*len = txt.length();
 
-		return nullptr;
+		return txt.c_str();
 	}
 	virtual void text(const char* txt, size_t /* len */) override {
 		LockGuard<decltype(_lock)> guard(_lock);
 
-		// TODO
+		_document->content(txt ? txt : "");
 	}
 
 	virtual void update(
 		class Window* wnd, class Renderer* rnd,
 		class Workspace* ws, const class Project* /* project */, class Executable* /* exec */,
-		const char* title,
-		float x, float y, float width, float height,
+		const char* /* title */,
+		float x, float y, float /* width */, float /* height */,
 		int /* scale */,
 		bool /* pending */,
 		double /* delta */
@@ -375,30 +476,13 @@ public:
 
 		if (_font && _font->IsLoaded()) {
 			ImGui::PushFont(_font);
-			//SetFont(_font);
 		}
 		{
 			LockGuard<decltype(_lock)> guard(_lock);
 
-			/*if (_toColorize) {
-				_toColorize = false;
-				Colorize();
-			}*/
-
-			/*if (_acquireFocus) {
-				if (!ws->popupBox()) {
-					_acquireFocus = false;
-					EditorFocused = true;
-					ImGui::SetNextWindowFocus();
-				}
-			}*/
-
-			//_isFocused = IsEditorFocused();
-
-			//Render(title, ImVec2(width, height));
+			_document->update(wnd, rnd, ws->theme(), false);
 		}
 		if (_font && _font->IsLoaded()) {
-			//SetFont(nullptr);
 			ImGui::PopFont();
 		}
 	}
@@ -548,8 +632,6 @@ public:
 		float x, float y, float width, float height
 	) override {
 		// Prepare.
-		ImGuiContext* context = ImGui::GetCurrentContext();
-
 		if (!_opened)
 			return;
 
@@ -741,8 +823,14 @@ private:
 			if (!_font) {
 				io.Fonts->Clear();
 				_font = io.Fonts->AddFontDefault();
+				_regularFont = io.Fonts->AddFontDefault();
+				_boldFont = io.Fonts->AddFontDefault();
 
 				rebuild(rnd, io);
+
+				ImFont* regularFont = _regularFont ? _regularFont : _font;
+				ImFont* boldFont = _boldFont ? _boldFont : _font;
+				_document->font(regularFont, boldFont);
 			}
 
 			return true;
@@ -828,7 +916,7 @@ private:
 				fontCfg.GlyphOffset = ImVec2((float)glyphOffset.x, (float)glyphOffset.y);
 				fontCfg.MergeMode = operation == "merge";
 				if (operation == "set" || operation == "merge") {
-					const bool setDefault = operation == "set" /* && usage == "generic" */ && glyphRanges == io.Fonts->GetGlyphRangesDefault();
+					const bool setDefault = operation == "set" && usage == "generic" && glyphRanges == io.Fonts->GetGlyphRangesDefault();
 					if (setDefault)
 						io.Fonts->Clear();
 
@@ -848,8 +936,12 @@ private:
 						);
 						if (setDefault && !font)
 							io.Fonts->AddFontDefault();
-						// if (usage == "code")
-						_font = font;
+						if (usage == "generic" || usage.empty())
+							_font = font;
+						else if (usage == "regular")
+							_regularFont = font;
+						else if (usage == "bold")
+							_boldFont = font;
 					} while (false);
 				} else if (operation == "clear") {
 					io.Fonts->Clear();
@@ -859,6 +951,10 @@ private:
 		}
 
 		rebuild(rnd, io);
+
+		ImFont* regularFont = _regularFont ? _regularFont : _font;
+		ImFont* boldFont = _boldFont ? _boldFont : _font;
+		_document->font(regularFont, boldFont);
 
 		_options.toRefreshFont = false;
 		_options.fontData.clear();

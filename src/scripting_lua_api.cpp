@@ -11673,7 +11673,7 @@ static int DocumentViewer_ctor(lua_State* L) {
 	if (!obj)
 		return write(L, nullptr);
 
-	::Document::ContentResolver resolveContent = [impl] (const char* doc, std::string &content, std::string &title) -> bool {
+	Document::ContentResolver resolveContent = [impl] (const char* doc, std::string &content, std::string &title) -> bool {
 		auto processLines = [] (const std::string &content) -> std::string {
 			const std::string result = Text::replace(Text::replace(content, "\r\n", "\n"), "\r", "\n");
 
@@ -11714,7 +11714,7 @@ static int DocumentViewer_ctor(lua_State* L) {
 
 		return true;
 	};
-	::Document::ImageResolver resolveImage = [impl] (const char* img, class Image* &ptr) -> bool {
+	Document::ImageResolver resolveImage = [impl] (const char* img, class Image* &ptr) -> bool {
 		const Project* project = impl->project();
 		if (!project)
 			return false;

@@ -13,6 +13,7 @@
 
 #include "bitty.h"
 #include "bytes.h"
+#include "document.h"
 #include "json.h"
 #include <map>
 
@@ -35,7 +36,7 @@ public:
 public:
 	BITTY_CLASS_TYPE('D', 'O', 'C', 'V')
 
-	virtual void open(const char* name) = 0;
+	virtual void open(const char* name, Document::ContentResolver contentResolver, Document::ImageResolver imageResolver) = 0;
 	virtual void close(void) = 0;
 
 	virtual void lock(void) = 0;
@@ -46,8 +47,7 @@ public:
 
 	virtual bool useFont(const Json::Ptr &json, const FontData &fontData) = 0;
 
-	virtual bool location(float &v) const = 0;
-	virtual void locate(float v) = 0;
+	virtual void load(const std::string &doc) = 0;
 
 	virtual const char* text(size_t* len) const = 0;
 	virtual void text(const char* txt, size_t len = 0) = 0;
