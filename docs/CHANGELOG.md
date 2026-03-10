@@ -1,3 +1,17 @@
+### v1.7.0 Mar. 10, 2026
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added a `DocumentViewer` module
+* Added code highlight for markdown (.md) files
+* Added support for markdown (.md) content to the `TextBox` module.
+* Added support to create markdown (.md) assets
+* Added context menu items to the assets panel to copy code snippets
+* Improved project strategy parsing for canvas settings
+* Updated the application title refresh mechanism to restore its text content after execution ends
+* Updated the launch options for application scaling
+* Fixed a HEX color conversion out-of-bounds bug
+
 ### v1.6.1 Feb. 22, 2026
 
 Improved usability, fixed some bugs.

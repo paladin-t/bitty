@@ -49,7 +49,9 @@
 		- [Promise](#promise)
 		- [Stream](#stream)
 		- [Web](#web)
-		- [TextBox](#textbox)
+		- [Widgets](#widgets)
+			- [Text Box](#text-box)
+			- [Document Viewer](#document-viewer)
 	- [Assets and Resources](#assets-and-resources)
 		- [Resources](#resources)
 		- [Asset](#asset)
@@ -110,9 +112,31 @@
 * Gamepad: 6 buttons for each pad (D-Pad + A/B), up to 2 players
 * Keyboard and mouse: supported
 
-To change the global font scaling of the application, pass a launch option such as "-X1", "-X2", "-X3", etc.
+<!-- TIPS --> To change the global font scaling of the application, pass a launch option such as "-X1", "-X2", "-X3", etc.
 
-To configure the size of the game canvas, call `Canvas.main:resize(width, height)`.
+<!-- TIPS --> To configure the size of the game canvas, call `Canvas.main:resize(width, height)`.
+
+<!-- TIPS --> By default, Bitty Engine is optimized for pixelated graphics. To display non-pixelated graphics, add the following configuration to "info.json":
+
+```json
+{
+  "strategies": [
+    "linear_canvas"
+  ]
+}
+```
+
+Or:
+
+```json
+{
+  "strategies": [
+    "anisotropic_canvas"
+  ]
+}
+```
+
+See [Project](#project) for more details.
 
 [TOP](#reference-manual)
 
@@ -901,13 +925,19 @@ Note that when open a file as `Stream.Append`, it always writes data at the end 
 
 **Constructors**
 
+File information:
+
 * `FileInfo.new(path)`: constructs a file information object with the specific path
 	* `path`: the file path
+
+Directory information:
 
 * `DirectoryInfo.new(path)`: constructs a directory information object with the specific path
 	* `path`: the directory path
 
 **Methods**
+
+File information:
 
 * `fileInfo:fullPath()`: gets the full path
 	* returns the full path
@@ -940,6 +970,8 @@ Note that when open a file as `Stream.Append`, it always writes data at the end 
 	* returns the `DirectoryInfo` of its parent
 * `fileInfo:readAll()`: reads all content of the file represented by the `FileInfo` as string
 	* returns the content string
+
+Directory information:
 
 * `directoryInfo:fullPath()`: gets the full path
 	* returns the full path
@@ -1467,7 +1499,11 @@ fetch('https://github.com', {
 | `hint`                                | "bytes", "string", "json"            | Optional, defaults to "string". Prefers how to interpret respond data                                     |
 | `allow_insecure_connection_for_https` | `true`, `false`                      | Optional, defaults to `false`, for desktop only. Specifies whether to allow insecure connection for HTTPS |
 
-### TextBox
+### Widgets
+
+In addition to drawing with graphics primitives and resources, Bitty Engine also supports widgets such as `TextBox` and `DocumentViewer`, which facilitate features like text/code editing and markdown viewing.
+
+#### Text Box
 
 This module shows a multiline text box.
 
@@ -1491,64 +1527,64 @@ This module shows a multiline text box.
 
 Available options:
 
-| Key                                | Value                                                  | Note                                                                                            |
-|------------------------------------|--------------------------------------------------------|-------------------------------------------------------------------------------------------------|
-| "language_definition"              | Can be one in "text", "json", "c", "c++", "lua", "sql" | Sets the specific language definition for text colorization, defaults to "text"                 |
-| "colorization_enabled"             | Boolean                                                | Indicates whether to do colorization, defaults to `true`                                        |
-| "cursor_line"                      | Integer                                                | Sets the line number of the cursor                                                              |
-| "cursor_column"                    | Integer                                                | Sets the column number of the cursor                                                            |
-| "indent_with_tab"                  | Boolean                                                | Indicates whether to indent with tab, defaults to `false`                                       |
-| "tab_size"                         | Integer                                                | Sets the tab size, defaults to 4                                                                |
-| "head_size"                        | Double                                                 | Sets the size of the head area                                                                  |
-| "overwrite"                        | Boolean                                                | Indicates whether to behave as overwrite mode, defaults to `false`                              |
-| "readonly"                         | Boolean                                                | Indicates whether to behave as readonly mode, defaults to `false`                               |
-| "show_line_numbers"                | Boolean                                                | Indicates whether to show line numbers, defaults to `false`                                     |
-| "sticky_line_numbers"              | Boolean                                                | Indicates whether to stick line numbers, defaults to `false`                                    |
-| "show_line_indicator"              | Boolean                                                | Indicates whether to show line indicator, defaults to `false`                                   |
-| "show_modification_status"         | Boolean                                                | Indicates whether to show modification status, defaults to `false`                              |
-| "show_scrollbars"                  | Boolean                                                | Indicates whether to show scrollbars, defaults to `true`                                        |
-| "show_spaces"                      | Boolean                                                | Indicates whether to show spaces, defaults to `false`                                           |
-| "column_indicator"                 | Integer                                                | Sets the column number of the column indicator                                                  |
-| "force_monospace"                  | Boolean                                                | Sets whether to force the editor to presume that it is under monospace mode                     |
-| "clear_before_baking"              | Boolean                                                | Trivial option. Indicates whether to clear the render target before baking, defaults to `false` |
-| "affected_by_camera"               | Boolean                                                | Indicates whether the rendering is affected by camera, defaults to `true`                       |
-| "context_menu_enabled"             | Boolean                                                | Indicates whether the context menu is enabled, defaults to `true`                               |
-| "style_default"                    | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the default tokens for colorization                                   |
-| "style_keyword"                    | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the keyword tokens for colorization                                   |
-| "style_number"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the number tokens for colorization                                    |
-| "style_string"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the string tokens for colorization                                    |
-| "style_char_literal"               | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the literal-character tokens for colorization                         |
-| "style_punctuation"                | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the punctuation tokens for colorization                               |
-| "style_preprocessor"               | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the preprocessor tokens for colorization                              |
-| "style_symbol"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the symbol tokens for colorization                                    |
-| "style_identifier"                 | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the identifier tokens for colorization                                |
-| "style_known_identifier"           | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the known identifier tokens for colorization                          |
-| "style_preproc_identifier"         | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the preproc identifier tokens for colorization                        |
-| "style_comment"                    | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the comment tokens for colorization                                   |
-| "style_multiline_comment"          | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the multiline comment tokens for colorization                         |
-| "style_space"                      | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the space tokens for colorization                                     |
-| "style_background"                 | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the background for colorization                                       |
-| "style_cursor"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the cursor for colorization                                           |
-| "style_selection"                  | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the selection for colorization                                        |
-| "style_line_number"                | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the line number for colorization                                      |
-| "style_current_line_fill"          | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the current line filling for colorization                             |
-| "style_current_line_fill_inactive" | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the current line inactive filling for colorization                    |
-| "style_current_line_edge"          | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the current line edge for colorization                                |
-| "style_line_edited"                | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the line edited status for colorization                               |
-| "style_line_edited_saved"          | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the line edited and saved status for colorization                     |
-| "style_line_edited_reverted"       | Color in String, as `"#RRGGBBAA"`                      | Sets the palette color of the line edited and reverted status for colorization                  |
-| "style_text"                       | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the text                                                               |
-| "style_popup_background"           | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the popup background                                                   |
-| "style_border"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the border                                                             |
-| "style_scrollbar_background"       | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the scrollbar background                                               |
-| "style_scrollbar_grab"             | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the scrollbar grab                                                     |
-| "style_scrollbar_grab_hovered"     | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the hovered scrollbar grab                                             |
-| "style_scrollbar_grab_active"      | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the active scrollbar grab                                              |
-| "style_scrollbar_size"             | Double                                                 | Sets the scrollbar size                                                                         |
-| "style_header"                     | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the header                                                             |
-| "style_header_hovered"             | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the hovered header                                                     |
-| "style_header_active"              | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the active header                                                      |
-| "style_separator"                  | Color in String, as `"#RRGGBBAA"`                      | Sets the widget color of the seperator                                                          |
+| Key                                | Value                                                              | Note                                                                                            |
+|------------------------------------|--------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| "language_definition"              | Can be one in "text", "markdown", "json", "c", "c++", "lua", "sql" | Sets the specific language definition for text colorization, defaults to "text"                 |
+| "colorization_enabled"             | Boolean                                                            | Indicates whether to do colorization, defaults to `true`                                        |
+| "cursor_line"                      | Integer                                                            | Sets the line number of the cursor                                                              |
+| "cursor_column"                    | Integer                                                            | Sets the column number of the cursor                                                            |
+| "indent_with_tab"                  | Boolean                                                            | Indicates whether to indent with tab, defaults to `false`                                       |
+| "tab_size"                         | Integer                                                            | Sets the tab size, defaults to 4                                                                |
+| "head_size"                        | Double                                                             | Sets the size of the head area                                                                  |
+| "overwrite"                        | Boolean                                                            | Indicates whether to behave as overwrite mode, defaults to `false`                              |
+| "readonly"                         | Boolean                                                            | Indicates whether to behave as readonly mode, defaults to `false`                               |
+| "show_line_numbers"                | Boolean                                                            | Indicates whether to show line numbers, defaults to `false`                                     |
+| "sticky_line_numbers"              | Boolean                                                            | Indicates whether to stick line numbers, defaults to `false`                                    |
+| "show_line_indicator"              | Boolean                                                            | Indicates whether to show line indicator, defaults to `false`                                   |
+| "show_modification_status"         | Boolean                                                            | Indicates whether to show modification status, defaults to `false`                              |
+| "show_scrollbars"                  | Boolean                                                            | Indicates whether to show scrollbars, defaults to `true`                                        |
+| "show_spaces"                      | Boolean                                                            | Indicates whether to show spaces, defaults to `false`                                           |
+| "column_indicator"                 | Integer                                                            | Sets the column number of the column indicator                                                  |
+| "force_monospace"                  | Boolean                                                            | Sets whether to force the editor to presume that it is under monospace mode                     |
+| "clear_before_baking"              | Boolean                                                            | Trivial option. Indicates whether to clear the render target before baking, defaults to `false` |
+| "affected_by_camera"               | Boolean                                                            | Indicates whether the rendering is affected by camera, defaults to `true`                       |
+| "context_menu_enabled"             | Boolean                                                            | Indicates whether the context menu is enabled, defaults to `true`                               |
+| "style_default"                    | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the default tokens for colorization                                   |
+| "style_keyword"                    | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the keyword tokens for colorization                                   |
+| "style_number"                     | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the number tokens for colorization                                    |
+| "style_string"                     | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the string tokens for colorization                                    |
+| "style_char_literal"               | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the literal-character tokens for colorization                         |
+| "style_punctuation"                | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the punctuation tokens for colorization                               |
+| "style_preprocessor"               | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the preprocessor tokens for colorization                              |
+| "style_symbol"                     | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the symbol tokens for colorization                                    |
+| "style_identifier"                 | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the identifier tokens for colorization                                |
+| "style_known_identifier"           | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the known identifier tokens for colorization                          |
+| "style_preproc_identifier"         | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the preproc identifier tokens for colorization                        |
+| "style_comment"                    | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the comment tokens for colorization                                   |
+| "style_multiline_comment"          | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the multiline comment tokens for colorization                         |
+| "style_space"                      | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the space tokens for colorization                                     |
+| "style_background"                 | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the background for colorization                                       |
+| "style_cursor"                     | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the cursor for colorization                                           |
+| "style_selection"                  | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the selection for colorization                                        |
+| "style_line_number"                | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the line number for colorization                                      |
+| "style_current_line_fill"          | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the current line filling for colorization                             |
+| "style_current_line_fill_inactive" | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the current line inactive filling for colorization                    |
+| "style_current_line_edge"          | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the current line edge for colorization                                |
+| "style_line_edited"                | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the line edited status for colorization                               |
+| "style_line_edited_saved"          | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the line edited and saved status for colorization                     |
+| "style_line_edited_reverted"       | Color in String, as `"#RRGGBBAA"`                                  | Sets the palette color of the line edited and reverted status for colorization                  |
+| "style_text"                       | Color in String, as `"#RRGGBBAA"`                                  | Sets the widget color of the text                                                               |
+| "style_popup_background"           | Color in String, as `"#RRGGBBAA"`                                  | Sets the widget color of the popup background                                                   |
+| "style_border"                     | Color in String, as `"#RRGGBBAA"`                                  | Sets the widget color of the border                                                             |
+| "style_scrollbar_background"       | Color in String, as `"#RRGGBBAA"`                                  | Sets the widget color of the scrollbar background                                               |
+| "style_scrollbar_grab"             | Color in String, as `"#RRGGBBAA"`                                  | Sets the widget color of the scrollbar grab                                                     |
+| "style_scrollbar_grab_hovered"     | Color in String, as `"#RRGGBBAA"`                                  | Sets the widget color of the hovered scrollbar grab                                             |
+| "style_scrollbar_grab_active"      | Color in String, as `"#RRGGBBAA"`                                  | Sets the widget color of the active scrollbar grab                                              |
+| "style_scrollbar_size"             | Double                                                             | Sets the scrollbar size                                                                         |
+| "style_header"                     | Color in String, as `"#RRGGBBAA"`                                  | Sets the widget color of the header                                                             |
+| "style_header_hovered"             | Color in String, as `"#RRGGBBAA"`                                  | Sets the widget color of the hovered header                                                     |
+| "style_header_active"              | Color in String, as `"#RRGGBBAA"`                                  | Sets the widget color of the active header                                                      |
+| "style_separator"                  | Color in String, as `"#RRGGBBAA"`                                  | Sets the widget color of the seperator                                                          |
 
 * `textBox:useFont(json)`: uses the specific font as the `TextBox`'s active font
 	* `json`: the font config
@@ -1633,6 +1669,100 @@ The position values of a `TextBox` start from 1.
 	* `forceAbove`: if `true`, forces the cursor to be positioned in the upper part of the viewport
 	* `slowMode`: whether to scroll slowly
 * `textBox:update(x0, y0, x1, y1)`: updates the `TextBox` at the specific area
+	* `x0`: the first x position
+	* `y0`: the first y position
+	* `x1`: the second x position
+	* `y1`: the second y position
+
+#### Document Viewer
+
+This module shows a document viewer. It supports markdown (.md) documents for the moment.
+
+**Constructors**
+
+* `DocumentViewer.new()`: constructs a text box object
+
+**Object Fields**
+
+* `docViewer.text`: gets or sets the text content of the widget
+
+**Methods**
+
+* `docViewer:setOption(key, ...)`: sets option value of the specific key
+	* `key`: the option key to set
+
+Available options:
+
+| Key                              | Value                             | Note                                                                                            |
+|----------------------------------|-----------------------------------|-------------------------------------------------------------------------------------------------|
+| "clear_before_baking"            | Boolean                           | Trivial option. Indicates whether to clear the render target before baking, defaults to `false` |
+| "affected_by_camera"             | Boolean                           | Indicates whether the rendering is affected by camera, defaults to `true`                       |
+| "directory"                      | String                            | The path prefix for asset lookup                                                                |
+| "style_text"                     | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the text                                                               |
+| "style_popup_background"         | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the popup background                                                   |
+| "style_border"                   | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the border                                                             |
+| "style_code_span"                | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the code span                                                          |
+| "style_scrollbar_background"     | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the scrollbar background                                               |
+| "style_scrollbar_grab"           | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the scrollbar grab                                                     |
+| "style_scrollbar_grab_hovered"   | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the hovered scrollbar grab                                             |
+| "style_scrollbar_grab_active"    | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the active scrollbar grab                                              |
+| "style_scrollbar_size"           | Double                            | Sets the scrollbar size                                                                         |
+| "style_header"                   | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the header                                                             |
+| "style_header_hovered"           | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the hovered header                                                     |
+| "style_header_active"            | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the active header                                                      |
+| "style_separator"                | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the seperator                                                          |
+| "style_table_header_background"  | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the table header background                                            |
+| "style_table_border_strong"      | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the table strong border                                                |
+| "style_table_border_light"       | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the table light border                                                 |
+| "style_table_row_background"     | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the table row background                                               |
+| "style_table_row_background_alt" | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the table alt row background                                           |
+
+* `docViewer:useFont(json)`: uses the specific font as the `DocumentViewer`'s active font
+	* `json`: the font config
+
+The following configuration serves as an example to set the default ASCII font for a `DocumentViewer`.
+
+```json
+{
+  "fonts": [
+    {
+      "operation": "set",
+      "usage": "generic",
+      "path": "fonts/ProggyClean.ttf",
+      "size": 13,
+      "ranges": "default",
+      "glyph_offset": [ 0, 0 ]
+    },
+    {
+      "operation": "set",
+      "usage": "regular",
+      "path": "fonts/ProggyClean.ttf",
+      "size": 26,
+      "ranges": "default",
+      "glyph_offset": [ 0, 0 ]
+    },
+    {
+      "operation": "set",
+      "usage": "bold",
+      "path": "fonts/ProggyClean.ttf",
+      "size": 26,
+      "ranges": "default",
+      "glyph_offset": [ 0, 0 ]
+    }
+  ]
+}
+```
+
+* `docViewer:load(doc)`: loads a document asset from the current project
+	* `doc`: the path to the document asset
+
+The position values of a `DocumentViewer` start from 1.
+
+* `docViewer:get()`: gets the text content of the widget
+	* returns the text content
+* `docViewer:set(txt)`: sets the text content to the widget
+	* `txt`: the specific text to set
+* `docViewer:update(x0, y0, x1, y1)`: updates the `DocumentViewer` at the specific area
 	* `x0`: the first x position
 	* `y0`: the first y position
 	* `x1`: the second x position
@@ -2235,11 +2365,15 @@ In the following description, `Canvas.foo` (with capital C) indicates that `Canv
 
 **Constants**
 
+Canvas blend modes:
+
 * `Canvas.BlendModeNone`
 * `Canvas.BlendModeBlend`
 * `Canvas.BlendModeAdd`
 * `Canvas.BlendModeMod`
 * `Canvas.BlendModeMul`
+
+Canvas blend factors:
 
 * `Canvas.BlendFactorZero`
 * `Canvas.BlendFactorOne`
@@ -2251,6 +2385,8 @@ In the following description, `Canvas.foo` (with capital C) indicates that `Canv
 * `Canvas.BlendFactorOneMinusDstColor`
 * `Canvas.BlendFactorDstAlpha`
 * `Canvas.BlendFactorOneMinusDstAlpha`
+
+Canvas blend operations:
 
 * `Canvas.BlendOperationAdd`
 * `Canvas.BlendOperationSub`
@@ -2397,6 +2533,10 @@ It might require execution permission to launch an exported desktop binary, to a
 
 * For MacOS "xattr -cr bitty_stage.app", then "chmod u+x bitty_stage.app/Contents/MacOS/bitty_stage"
 * For Linux "chmod u+x x64/bitty"
+
+<!-- TIPS --> To customize the runtime status icon, put an icon at "../icon.png" relative to executables.
+
+<!-- TIPS --> To customize the splash image, put an image at "../splash.png" relative to executables. The image could be transparent.
 
 [TOP](#reference-manual)
 
