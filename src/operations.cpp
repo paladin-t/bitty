@@ -3432,6 +3432,44 @@ void Operations::projectRun(class Renderer* rnd, Workspace* ws, const class Proj
 
 		prj->cleanup(Asset::RUNNING);
 
+		do {
+			Asset* infoAsset = prj->info();
+			infoAsset->prepare(Asset::RUNNING, false);
+			Object::Ptr &infoObj = infoAsset->object(Asset::RUNNING);
+			if (!infoObj)
+				break;
+
+			Json::Ptr json = Object::as<Json::Ptr>(infoObj);
+			if (!json)
+				break;
+
+			rapidjson::Document doc;
+			if (!json->toJson(doc))
+				break;
+
+			Text::Array strategies;
+			if (!Jpath::get(doc, strategies, "strategies"))
+				break;
+
+			Project::Strategies strategy = Project::NONE;
+			for (const std::string &s : strategies) {
+				if (s == "batch_map")
+					strategy = (Project::Strategies)(strategy | Project::BATCH_MAP);
+				else if (s == "linear_canvas")
+					strategy = (Project::Strategies)(strategy | Project::LINEAR_CANVAS);
+				else if (s == "anisotropic_canvas")
+					strategy = (Project::Strategies)(strategy | Project::ANISOTROPIC_CANVAS);
+			}
+			prj->strategy(strategy);
+
+			Texture::ScaleModes canvasScaleMode = Texture::NEAREST;
+			if ((prj->strategy() & Project::LINEAR_CANVAS) != Project::NONE)
+				canvasScaleMode = Texture::LINEAR;
+			if ((prj->strategy() & Project::ANISOTROPIC_CANVAS) != Project::NONE)
+				canvasScaleMode = Texture::ANISOTROPIC;
+			ws->canvasScaleMode(canvasScaleMode);
+		} while (false);
+
 		prj->foreach(
 			[rnd, project] (Asset* &asset, Asset::List::Index) -> void {
 				Editable* editor = asset->editor();
