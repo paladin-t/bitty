@@ -1,7 +1,7 @@
 /*
 ** Bitty
 **
-** An itty bitty game engine.
+** An itty bitty 2D game engine.
 **
 ** Copyright (C) 2020 - 2026 Tony Wang, all rights reserved
 **
@@ -358,7 +358,7 @@ AboutPopupBox::AboutPopupBox(
 #endif /* BITTY_OS_HTML */
 
 	_name = BITTY_TITLE;
-	_desc = "v" BITTY_VERSION_STRING " - An itty bitty game engine";
+	_desc = "v" BITTY_VERSION_STRING " - An itty bitty 2D game engine";
 
 	_specs += "Built for " BITTY_OS ", ";
 	_specs += Platform::isLittleEndian() ? "little-endian" : "big-endian";

@@ -1,7 +1,7 @@
 /*
 ** Bitty
 **
-** An itty bitty game engine.
+** An itty bitty 2D game engine.
 **
 ** Copyright (C) 2020 - 2026 Tony Wang, all rights reserved
 **

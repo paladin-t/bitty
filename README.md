@@ -2,7 +2,7 @@
 
 [Home](https://paladin-t.github.io/bitty/index.html) | [Steam](https://store.steampowered.com/app/1386180/) | [Itch](https://tonywang.itch.io/bitty) | [Documents](https://paladin-t.github.io/bitty/documents.html) | [About](https://paladin-t.github.io/bitty/about.html)
 
-![](docs/imgs/floppy.gif) **An itty bitty game engine.**
+![](docs/imgs/floppy.gif) **An itty bitty 2D game engine.**
 
 - [About Bitty Engine](#about-bitty-engine)
 	- [Why Bitty Engine?](#why-bitty-engine)
@@ -27,7 +27,7 @@
 
 ![](docs/imgs/banner_coding.png)
 
-Bitty Engine is a cross-platform itty bitty **Game Engine** and open-source **Framework**. The full featured engine is programmable in Lua and integrated with built-in editors. It keeps the nature of both engine's productivity, and fantasy computer/console's ease to iterate. It boosts your commercial/non-commercial projects, prototypes, game jams, or just thought experiments.
+Bitty Engine is a cross-platform itty bitty **2D Game Engine** and open-source **Framework**. The full featured engine is programmable in Lua and integrated with built-in editors. It keeps the nature of both engine's productivity, and fantasy computer/console's ease to iterate. It boosts your commercial/non-commercial projects, prototypes, game jams, or just thought experiments.
 
 ### Why Bitty Engine?
 

@@ -144,7 +144,7 @@ Improved usability, fixed some bugs.
 * Improved usability with touch screen
 * Improved asset corruption notification
 
-### v1.3 Jan. 17, 2024
+### v1.3.0 Jan. 17, 2024
 
 Enhanced modules, improved usability, fixed some bugs.
 
@@ -192,7 +192,7 @@ Enhanced modules, improved usability, fixed some bugs.
 * Fixed a cursor location issue of the `bytes:resize(...)` function
 * Fixed a canvas scaling issue under edit mode
 
-### v1.2 Sep. 1, 2022
+### v1.2.0 Sep. 1, 2022
 
 Enhanced modules, improved usability, fixed some bugs.
 
@@ -335,7 +335,7 @@ Enhanced modules, improved usability, fixed some bugs.
 * Improved error handling during parsing
 * Improved asset lookup performance
 
-### v1.1 Apr. 10, 2021
+### v1.1.0 Apr. 10, 2021
 
 Enhanced modules, improved usability, fixed some bugs.
 
@@ -402,7 +402,7 @@ Enhanced modules, improved usability, fixed some bugs.
 * Fixed a tab ('\t') character rendering issue of text-based editors
 * Upgraded ImGui from v1.79 to v1.80
 
-### v1.0 Jan. 19, 2021
+### v1.0.0 Jan. 19, 2021
 
 Enhanced modules, improved usability, fixed some bugs.
 
@@ -472,7 +472,7 @@ Enhanced modules, improved high-DPI awareness on MacOS, fixed some bugs.
 * Fixed a touch position bug with global scale
 * Fixed a rendering bug with high-DPI monitor (MacOS)
 
-### v0.9 beta Dec. 18, 2020
+### v0.9.0 beta Dec. 18, 2020
 
 Added MacOS and Linux versions. Enhanced modules, improved usability, fixed some bugs.
 
@@ -524,7 +524,7 @@ Improved usability, fixed some bugs, and finished the manual.
 * Improved the behaviour when open project with pending changes
 * Finished the first version of the reference manual
 
-### v0.8 beta Nov. 18, 2020
+### v0.8.0 beta Nov. 18, 2020
 
 Added Windows version. First release with features including:
 

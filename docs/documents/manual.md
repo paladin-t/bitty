@@ -1586,8 +1586,10 @@ Available options:
 | "style_header_active"              | Color in String, as `"#RRGGBBAA"`                                  | Sets the widget color of the active header                                                      |
 | "style_separator"                  | Color in String, as `"#RRGGBBAA"`                                  | Sets the widget color of the seperator                                                          |
 
+* `textBox:useFont(entry)`: uses the specific font as the `TextBox`'s active font
+	* `entry`: the asset entry name of the font config
 * `textBox:useFont(json)`: uses the specific font as the `TextBox`'s active font
-	* `json`: the font config
+	* `json`: the font config as a `Json` object
 
 Most fonts work well with a plain text editor, but only a monospaced font is suitable for code editors. Consider choosing a proper font to use a code editor with the `'language_definition'` option.
 
@@ -1717,8 +1719,10 @@ Available options:
 | "style_table_row_background"     | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the table row background                                               |
 | "style_table_row_background_alt" | Color in String, as `"#RRGGBBAA"` | Sets the widget color of the table alt row background                                           |
 
+* `docViewer:useFont(entry)`: uses the specific font as the `DocumentViewer`'s active font
+	* `entry`: the asset entry name of the font config
 * `docViewer:useFont(json)`: uses the specific font as the `DocumentViewer`'s active font
-	* `json`: the font config
+	* `json`: the font config as a `Json` object
 
 The following configuration serves as an example to set the default ASCII font for a `DocumentViewer`.
 
