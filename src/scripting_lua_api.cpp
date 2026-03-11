@@ -11035,16 +11035,16 @@ static int TextBox_useFont(lua_State* L) {
 
 	TextBox::Ptr* obj = nullptr;
 	Json::Ptr* json = nullptr;
-	read<>(L, obj, json);
+	std::string path;
+	read<>(L, obj);
+	if (isUserdata(L, 2)) {
+		read<2>(L, json);
+	} else if (isString(L, 2)) {
+		read<2>(L, path);
+	}
 
 	if (obj) {
-		if (!json) {
-			error(L, "Json expected.");
-
-			return 0;
-		}
-
-		TextBox::FontResolver resolveFont = [impl] (const std::string &path) -> Bytes::Ptr {
+		auto resolveAsset = [impl] (const std::string &path) -> Bytes::Ptr {
 			const Project* project = impl->project();
 			if (!project)
 				return nullptr;
@@ -11069,6 +11069,38 @@ static int TextBox_useFont(lua_State* L) {
 
 			return bytes;
 		};
+
+		if (!json && path.empty()) {
+			error(L, "Json or string expected.");
+
+			return 0;
+		}
+
+		Json::Ptr tmp = nullptr;
+		do {
+			if (!(!json && !path.empty()))
+				break;
+
+			Bytes::Ptr bytes = resolveAsset(path);
+			if (!bytes)
+				break;
+			bytes->poke(0);
+			std::string str;
+			if (!bytes->readString(str))
+				break;
+			tmp = Json::Ptr(Json::create());
+			if (!tmp->fromString(str))
+				break;
+			json = &tmp;
+		} while (false);
+
+		if (!json) {
+			error(L, "Json expected.");
+
+			return 0;
+		}
+
+		TextBox::FontResolver resolveFont = resolveAsset;
 		TextBox::FontData fontData;
 		if (!TextBox::parseFont(*json, fontData, resolveFont)) {
 			error(L, "Json expected.");
@@ -11878,16 +11910,16 @@ static int DocumentViewer_useFont(lua_State* L) {
 
 	DocumentViewer::Ptr* obj = nullptr;
 	Json::Ptr* json = nullptr;
-	read<>(L, obj, json);
+	std::string path;
+	read<>(L, obj);
+	if (isUserdata(L, 2)) {
+		read<2>(L, json);
+	} else if (isString(L, 2)) {
+		read<2>(L, path);
+	}
 
 	if (obj) {
-		if (!json) {
-			error(L, "Json expected.");
-
-			return 0;
-		}
-
-		DocumentViewer::FontResolver resolveFont = [impl] (const std::string &path) -> Bytes::Ptr {
+		auto resolveAsset = [impl] (const std::string &path) -> Bytes::Ptr {
 			const Project* project = impl->project();
 			if (!project)
 				return nullptr;
@@ -11912,6 +11944,38 @@ static int DocumentViewer_useFont(lua_State* L) {
 
 			return bytes;
 		};
+
+		if (!json && path.empty()) {
+			error(L, "Json or string expected.");
+
+			return 0;
+		}
+
+		Json::Ptr tmp = nullptr;
+		do {
+			if (!(!json && !path.empty()))
+				break;
+
+			Bytes::Ptr bytes = resolveAsset(path);
+			if (!bytes)
+				break;
+			bytes->poke(0);
+			std::string str;
+			if (!bytes->readString(str))
+				break;
+			tmp = Json::Ptr(Json::create());
+			if (!tmp->fromString(str))
+				break;
+			json = &tmp;
+		} while (false);
+
+		if (!json) {
+			error(L, "Json expected.");
+
+			return 0;
+		}
+
+		DocumentViewer::FontResolver resolveFont = resolveAsset;
 		DocumentViewer::FontData fontData;
 		if (!DocumentViewer::parseFont(*json, fontData, resolveFont)) {
 			error(L, "Json expected.");
