@@ -644,6 +644,10 @@ void Workspace::skipFrame(void) {
 	skipFrameCount(1);
 }
 
+void Workspace::skipFrame(int frames) {
+	skipFrameCount(frames);
+}
+
 bool Workspace::prefer2XScaleForBigDisplay(void) const {
 	return false;
 }
@@ -1848,7 +1852,7 @@ void Workspace::assets(class Window* wnd, class Renderer* rnd, const class Proje
 
 		ImGui::BeginChild("@Asts", ImVec2(), false, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_NoNav);
 
-		auto sel = [] (Project* prj, Asset* asset) -> void {
+		auto sel = [this] (Project* prj, Asset* asset) -> void {
 			prj->foreach(
 				[&] (Asset* &asset_, Asset::List::Index) -> void {
 					Asset::States* states = asset_->states();
@@ -1856,8 +1860,10 @@ void Workspace::assets(class Window* wnd, class Renderer* rnd, const class Proje
 					if (asset_ == asset) {
 						states->select();
 
-						if (states->activity() == Asset::States::CLOSED)
+						if (states->activity() == Asset::States::CLOSED) {
 							states->activate(Asset::States::INSPECTABLE);
+							skipFrame(3); // Prevent tab flickering.
+						}
 					} else {
 						states->deselect();
 					}
@@ -2038,6 +2044,7 @@ void Workspace::editing(class Window* wnd, class Renderer* rnd, const class Proj
 							Asset::States* states = asset->states();
 							states->activate(Asset::States::INSPECTABLE);
 							states->focus();
+							skipFrame(3); // Prevent tab flickering.
 
 							Editable* editor = asset->editor();
 							if (editor)

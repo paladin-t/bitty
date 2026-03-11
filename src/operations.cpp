@@ -3681,6 +3681,7 @@ bool Operations::debugSetProgramPointer(Workspace* ws, const class Project* proj
 	Asset::States* states = asset->states();
 	states->activate(Asset::States::INSPECTABLE);
 	states->focus();
+	ws->skipFrame(3); // Prevent tab flickering.
 
 	Editable* editor = asset->editor();
 	if (!editor)

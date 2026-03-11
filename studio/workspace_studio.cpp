@@ -1214,8 +1214,10 @@ void WorkspaceStudio::shortcuts(class Window* wnd, class Renderer* rnd, const cl
 
 			Asset::States* states = asset->states();
 			const Asset::States::Activity activity = states->activity();
-			if (activity == Asset::States::CLOSED)
+			if (activity == Asset::States::CLOSED) {
 				states->activate(Asset::States::INSPECTABLE);
+				skipFrame(3); // Prevent tab flickering.
+			}
 
 			states->focus();
 		} while (false);
@@ -1247,8 +1249,10 @@ void WorkspaceStudio::shortcuts(class Window* wnd, class Renderer* rnd, const cl
 
 			Asset::States* states = asset->states();
 			const Asset::States::Activity activity = states->activity();
-			if (activity == Asset::States::CLOSED)
+			if (activity == Asset::States::CLOSED) {
 				states->activate(Asset::States::INSPECTABLE);
+				skipFrame(3); // Prevent tab flickering.
+			}
 
 			states->focus();
 		} while (false);

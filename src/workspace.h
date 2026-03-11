@@ -449,6 +449,7 @@ public:
 	virtual void refreshWindowTitle(const class Project* project);
 	virtual bool skipping(void);
 	virtual void skipFrame(void);
+	virtual void skipFrame(int frames);
 	/**
 	 * @brief Gets whether prefers 2x scale for big display.
 	 */
