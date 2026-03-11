@@ -1937,7 +1937,6 @@ void Workspace::assets(class Window* wnd, class Renderer* rnd, const class Proje
 						}
 						const bool rmb = ImGui::IsItemClicked(ImGuiMouseButton_Right);
 						if (rmb || ImGui::IsItemClicked()) {
-							//if (!rmb)
 							sel(prj, asset);
 
 							if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))

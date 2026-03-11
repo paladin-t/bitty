@@ -2438,6 +2438,7 @@ bool find(
 				result = fill(cursor, nbegin, nend, wholeWord && *wholeWord ? getWord : nullptr);
 			} else { // Not found.
 				// Open next page for global search.
+			_forwardAgain:
 				if (*globalSearch && textPages->size() > 1) {
 					if (++page >= (int)textPages->size())
 						page = 0;
@@ -2449,8 +2450,7 @@ bool find(
 					}
 				}
 
-				// Find again from the beginning.
-			_forwardAgain:
+				// Find in the current lookup page.
 				mat = editingTextFindForward(text->c_str(), pat.c_str(), 0, 0, &lnoff, &coloff);
 				if (mat) { // Found.
 					const Marker::Coordinates nbegin(page, lnoff, coloff);
@@ -2458,12 +2458,8 @@ bool find(
 
 					result = fill(cursor, nbegin, nend, wholeWord && *wholeWord ? getWord : nullptr);
 				} else { // Not found.
-					if (page != cursor->begin.index) {
-						page = cursor->begin.index;
-						text = at(page, tmp);
-
+					if (page != cursor->begin.index)
 						goto _forwardAgain;
-					}
 				}
 			}
 		} else if (step == -1) { // Backward.
@@ -2485,6 +2481,7 @@ bool find(
 				result = fill(cursor, nbegin, nend, wholeWord && *wholeWord ? getWord : nullptr);
 			} else if (!max.empty()) { // Not found.
 				// Open previous page for global search.
+			_backwardAgain:
 				if (*globalSearch && textPages->size() > 1) {
 					if (--page < 0)
 						page = (int)textPages->size() - 1;
@@ -2496,9 +2493,8 @@ bool find(
 					}
 				}
 
-				// Find again from the end.
+				// Find in the current lookup page.
 				pos = max;
-			_backwardAgain:
 				mat = editingTextFindBackward(text->c_str(), pat.c_str(), pos.line, pos.column, &lnoff, &coloff);
 				if (mat) { // Found.
 					const Marker::Coordinates nbegin(page, lnoff, coloff);
@@ -2506,12 +2502,8 @@ bool find(
 
 					result = fill(cursor, nbegin, nend, wholeWord && *wholeWord ? getWord : nullptr);
 				} else { // Not found.
-					if (page != cursor->begin.index) {
-						page = cursor->begin.index;
-						text = at(page, tmp);
-
+					if (page != cursor->begin.index)
 						goto _backwardAgain;
-					}
 				}
 			}
 		} else /* if (step == 0) */ { // Error.
