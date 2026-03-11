@@ -543,7 +543,8 @@ public:
 		if (_acquireFocus) {
 			if (!ws->popupBox()) {
 				_acquireFocus = false;
-				ImGui::SetNextWindowFocus();
+				if (!ImGui::IsPopupOpen("", ImGuiPopupFlags_AnyPopupId | ImGuiPopupFlags_AnyPopupLevel))
+					ImGui::SetNextWindowFocus();
 			}
 		}
 
