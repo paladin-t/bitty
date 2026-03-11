@@ -13597,6 +13597,71 @@ static void open_Application(lua_State* L) {
 	}
 }
 
+/**< Engine. */
+
+static const char* Engine_name(lua_State*) {
+	return BITTY_TITLE;
+}
+
+static const char* Engine_shortName(lua_State*) {
+	return BITTY_NAME;
+}
+
+static const char* Engine_identifier(lua_State*) {
+	return "bitty";
+}
+
+static unsigned Engine_majorVersionNumber(lua_State*) {
+	return BITTY_VER_MAJOR;
+}
+
+static unsigned Engine_minorVersionNumber(lua_State*) {
+	return BITTY_VER_MINOR;
+}
+
+static unsigned Engine_revisionNumber(lua_State*) {
+	return BITTY_VER_REVISION;
+}
+
+static unsigned Engine_version(lua_State*) {
+	return BITTY_VERSION;
+}
+
+static const char* Engine_versionString(lua_State*) {
+	return BITTY_VERSION_STRING;
+}
+
+static const char* Engine_runtime(lua_State*) {
+	return "Lua";
+}
+
+static void open_Engine(lua_State* L) {
+	def(
+		L, "Engine",
+		LUA_LIB(
+			array<luaL_Reg>()
+		),
+		array<luaL_Reg>(),
+		array<luaL_Reg>(),
+		nullptr, nullptr
+	);
+
+	getGlobal(L, "Engine");
+	setTable(
+		L,
+		"name", Engine_name(L),
+		"shortName", Engine_shortName(L),
+		"identifier", Engine_identifier(L),
+		"majorVersionNumber", Engine_majorVersionNumber(L),
+		"minorVersionNumber", Engine_minorVersionNumber(L),
+		"revisionNumber", Engine_revisionNumber(L),
+		"version", Engine_version(L),
+		"versionString", Engine_versionString(L),
+		"runtime", Engine_runtime(L)
+	);
+	pop(L);
+}
+
 /**< Canvas. */
 
 static int Canvas_size(lua_State* L) {
@@ -14693,6 +14758,9 @@ void open(class Executable* exec) {
 
 	// Application.
 	open_Application(L);
+
+	// Engine.
+	open_Engine(L);
 
 	// Canvas.
 	open_Canvas(L);
