@@ -50,6 +50,8 @@ private:
 	unsigned _id = 0;
 	int _cursor = 0;
 	double _ticks = 0.0;
+	double _animationSpeed = 1.0;
+	bool _animationSpeedChanged = false;
 
 public:
 	SpriteImpl() {
@@ -290,6 +292,14 @@ public:
 
 		return get(_cursor, tex, area, interval, key);
 	}
+	virtual double animationSpeed(void) const override {
+		return _animationSpeed;
+	}
+	virtual void animationSpeed(double val) override {
+		constexpr const double EPSILON = 0.0001;
+		_animationSpeed = val;
+		_animationSpeedChanged = std::abs(_animationSpeed - 1) > EPSILON;
+	}
 
 	virtual bool update(double delta, unsigned* id) override {
 		if (id != nullptr) {
@@ -306,6 +316,8 @@ public:
 		if (_frames.empty())
 			return false;
 
+		if (_animationSpeedChanged)
+			delta *= _animationSpeed;
 		_ticks += delta;
 		const Frame &f = _frames[_cursor];
 		if (_ticks >= f.interval) {

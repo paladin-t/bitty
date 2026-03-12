@@ -9319,6 +9319,14 @@ static int ResourceSprite___index(lua_State* L) {
 		const int ret = ptr->count();
 
 		return write(L, ret);
+	} else if (strcmp(field, "animationSpeed") == 0) {
+		Sprite::Ptr ptr = Resources_waitUntilProcessed<Sprite::Ptr>(impl, impl->primitives(), *obj, obj->get()->ref);
+		if (!ptr)
+			return write(L, nullptr);
+
+		const double ret = ptr->animationSpeed();
+
+		return write(L, ret);
 	} else {
 		return __index(L, field);
 	}
@@ -9356,6 +9364,17 @@ static int ResourceSprite___newindex(lua_State* L) {
 			return 0;
 
 		ptr->vFlip(val);
+	} else if (strcmp(field, "animationSpeed") == 0) {
+		double val = 1.0;
+		read<3>(L, val);
+
+		LockGuard<RecursiveMutex> guardAsset(obj->get()->lock);
+
+		Sprite::Ptr ptr = Resources_waitUntilProcessed<Sprite::Ptr>(impl, impl->primitives(), *obj, obj->get()->ref);
+		if (!ptr)
+			return 0;
+
+		ptr->animationSpeed(val);
 	}
 
 	return 0;

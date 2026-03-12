@@ -95,6 +95,8 @@ public:
 	 * @param[out] key
 	 */
 	virtual bool current(int* index /* nullable */, Texture::Ptr* tex /* nullable */, Math::Recti* area /* nullable */, double* interval /* nullable */, const char** key /* nullable */) const = 0;
+	virtual double animationSpeed(void) const = 0;
+	virtual void animationSpeed(double val) = 0;
 
 	virtual bool update(double delta, unsigned* id /* nullable */) = 0;
 
