@@ -783,23 +783,42 @@ private:
 		return _context;
 	}
 	Texture* texture(Window* /* wnd */, Renderer* rnd, int width, int height) {
-		// Invalidate the texture if the desired size has been changed.
-		if (_texture && (_texture->width() != width || _texture->height() != height)) {
-			Texture::destroy(_texture);
-			_texture = nullptr;
-		}
+		// Texture creator.
+		auto createTexture = [] (Renderer* rnd, int w, int h) -> Texture* {
+			Texture* tex = Texture::create();
+			Byte* pixels = new Byte[w * h * sizeof(Color)];
+			memset(pixels, 0, w * h * sizeof(Color));
+			tex->fromBytes(rnd, Texture::TARGET, pixels, w, h, 0, Texture::NEAREST);
+			tex->blend(Texture::BLEND);
+			delete [] pixels;
 
-		// Reuse the cached texture if possible.
-		if (_texture)
-			return _texture;
+			return tex;
+		};
 
 		// Create a new texture.
-		_texture = Texture::create();
-		Byte* pixels = new Byte[width * height * sizeof(Color)];
-		memset(pixels, 0, width * height * sizeof(Color));
-		_texture->fromBytes(rnd, Texture::TARGET, pixels, width, height, 0, Texture::NEAREST);
-		_texture->blend(Texture::BLEND);
-		delete [] pixels;
+		if (!_texture) {
+			_texture = createTexture(rnd, width, height);
+
+			return _texture;
+		}
+
+		// Invalidate the texture if the desired size has been changed.
+		if (_texture && (_texture->width() != width || _texture->height() != height)) {
+			Texture* oldTex = _texture;
+			_texture = createTexture(rnd, width, height);
+
+			Texture* oldTgt = rnd->target();
+			rnd->target(_texture);
+			{
+				const Color cls(0x2e, 0x32, 0x38, 0xff);
+				rnd->clear(&cls);
+				rnd->render(oldTex, nullptr, nullptr, nullptr, nullptr, false, false, nullptr, false, false);
+			}
+			rnd->target(oldTgt);
+
+			Texture::destroy(oldTex);
+			oldTex = nullptr;
+		}
 
 		// Return the new created texture.
 		return _texture;
