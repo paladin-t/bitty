@@ -1,3 +1,17 @@
+### v1.7.1 Mar. 24, 2026
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added support for loading font config via asset path for the `TextBox` module
+* Added support for loading font config via asset path for the `DocumentViewer` module
+* Added an `Engine` module which holds a number of engine related values, such as identifier, version numbers, runtime, etc.
+* Added a `Sprite.animationSpeed` property to control a sprite's animation speed
+* Improved global searching in code assets
+* Improved the context menu on the assets panel
+* Optimized to prevent tab flickering when opening asset tabs
+* Fixed a flickering issue when resizing a `TextBox` widget
+* Fixed a flickering issue when resizing a `DocumentViewer` widget
+
 ### v1.7.0 Mar. 10, 2026
 
 Enhanced modules, improved usability, fixed some bugs.

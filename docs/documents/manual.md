@@ -82,6 +82,7 @@
 	- [Physics](#physics)
 	- [Invoking](#invoking)
 	- [Application](#application)
+		- [Engine](#engine)
 		- [Canvas](#canvas)
 		- [Project](#project)
 		- [Debug](#debug)
@@ -116,7 +117,7 @@
 
 <!-- TIPS --> To configure the size of the game canvas, call `Canvas.main:resize(width, height)`.
 
-<!-- TIPS --> By default, Bitty Engine is optimized for pixelated graphics. To display non-pixelated graphics, add the following configuration to "info.json":
+<!-- TIPS --> By default, Bitty Engine is set for pixelated graphics. To display non-pixelated graphics, add the following configuration to "info.json":
 
 ```json
 {
@@ -248,7 +249,6 @@ msgbox('How about it?', 'Yes', 'No', 'Cancel')
 	* `prompt`: the prompt on the box
 	* `default`: the default content
 	* returns inputted string, or `nil` for canceled
-
 * `exit()`: exits execution of the current program
 
 [TOP](#reference-manual)
@@ -1942,9 +1942,9 @@ Can be loaded by `Resources.load(...)`.
 * `sprite.count`: readonly, gets the `Sprite` frame count
 * `sprite.width`: readonly, gets the `Sprite` width of every frame
 * `sprite.height`: readonly, gets the `Sprite` height of every frame
-
 * `sprite.hFlip`: gets or sets whether the `Sprite` is flipped horizontally
 * `sprite.vFlip`: gets or sets whether the `Sprite` is flipped vertically
+* `sprite.animationSpeed`: gets or sets the animation speed; i.e. 0.0 for paused, 1.0 for normal speed, 2.0 for doubled speed
 
 **Methods**
 
@@ -2362,6 +2362,22 @@ Application.setCursor(img)
 	* `size`: can be one in "fullscreen", "windowed"
 * `Application.raise()`: raises the application window
 * `Application.skipFrame()`: skips one frame for flushing the application window, the primitives and other things keep running normally
+
+### Engine
+
+This module includes a number of engine related values.
+
+**Static Variables**
+
+* `Engine.name`: readonly, gets the engine name; always `"Bitty Engine"`
+* `Engine.shortName`: readonly, gets the short engine name; always `"Bitty"`
+* `Engine.identifier`: readonly, gets the ; always `"bitty"`
+* `Engine.majorVersionNumber`: readonly, gets the major version number
+* `Engine.minorVersionNumber`: readonly, gets the minor version number
+* `Engine.revisionNumber`: readonly, gets the revision number
+* `Engine.version`: readonly, gets the version number in an integer
+* `Engine.versionString`: readonly, gets the version in string
+* `Engine.runtime`: readonly, gets the runtime name; always `"Lua"`
 
 ### Canvas
 
