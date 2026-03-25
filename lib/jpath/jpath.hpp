@@ -3,7 +3,7 @@
 **
 ** For the latest info, see https://github.com/paladin-t/jpath
 **
-** Copyright (C) 2020 - 2024 Tony Wang
+** Copyright (C) 2020 - 2026 Tony Wang
 **
 ** Permission is hereby granted, free of charge, to any person obtaining a copy
 ** of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,7 @@
 
 #include "../rapidjson/include/rapidjson/document.h"
 #include <string>
+#include <vector>
 
 /*
 ** {===========================================================================
@@ -48,6 +49,14 @@ enum Types {
 	ARRAY = 1 << 5,
 	OBJECT = 1 << 6
 };
+
+typedef std::vector<int> Any;
+
+inline Any ANY(void) {
+	Any ARRAY;
+
+	return ARRAY; // Any type.
+}
 
 inline Types getType(const rapidjson::Value &obj) {
 	if (obj.IsNull())
@@ -76,10 +85,10 @@ inline bool getValue(const rapidjson::Value &obj, bool &ret) {
 
 	return true;
 }
-inline bool getValue(const rapidjson::Value &obj, char &ret) {
+inline bool getValue(const rapidjson::Value &obj, signed char &ret) {
 	if (!obj.IsInt())
 		return false;
-	ret = (char)obj.GetInt();
+	ret = (signed char)obj.GetInt();
 
 	return true;
 }
@@ -179,10 +188,18 @@ inline bool getValue(const rapidjson::Value &obj, const rapidjson::Value* &ret) 
 
 	return true;
 }
+inline bool getValue(const rapidjson::Value &obj, rapidjson::Value* &ret) {
+	ret = (rapidjson::Value*)&obj;
+
+	return true;
+}
+inline void setValue(rapidjson::Value &obj, std::nullptr_t, rapidjson::Document &) {
+	obj.SetNull();
+}
 inline void setValue(rapidjson::Value &obj, bool src, rapidjson::Document &) {
 	obj.SetBool(src);
 }
-inline void setValue(rapidjson::Value &obj, char src, rapidjson::Document &) {
+inline void setValue(rapidjson::Value &obj, signed char src, rapidjson::Document &) {
 	obj.SetInt(src);
 }
 inline void setValue(rapidjson::Value &obj, unsigned char src, rapidjson::Document &) {
@@ -258,6 +275,45 @@ inline bool read(const rapidjson::Value &obj, const rapidjson::Value* &ret, cons
 }
 template<typename Car, typename ...Cdr> bool read(const rapidjson::Value &obj, const rapidjson::Value* &ret, Car car, Cdr ...cdr) {
 	const rapidjson::Value* tmp = nullptr;
+	if (!read(obj, tmp, car))
+		return false;
+	if (!tmp)
+		return false;
+	if (!read(*tmp, ret, cdr ...))
+		return false;
+
+	return true;
+}
+inline bool read(rapidjson::Value &obj, rapidjson::Value* &ret, int node) {
+	if (ret)
+		ret = nullptr;
+	if (!obj.IsArray() || node < 0)
+		return false;
+	if ((rapidjson::SizeType)node >= obj.Size())
+		return false;
+
+	ret = &obj[node];
+
+	return true;
+}
+inline bool read(rapidjson::Value &obj, rapidjson::Value* &ret, const char* node) {
+	if (ret)
+		ret = nullptr;
+	if (!obj.IsObject() || !node)
+		return false;
+	auto entry = obj.FindMember(node);
+	if (entry == obj.MemberEnd())
+		return false;
+
+	ret = &entry->value;
+
+	return true;
+}
+inline bool read(rapidjson::Value &obj, rapidjson::Value* &ret, const std::string &node) {
+	return read(obj, ret, node.c_str());
+}
+template<typename Car, typename ...Cdr> bool read(rapidjson::Value &obj, rapidjson::Value* &ret, Car car, Cdr ...cdr) {
+	rapidjson::Value* tmp = nullptr;
 	if (!read(obj, tmp, car))
 		return false;
 	if (!tmp)
@@ -368,6 +424,28 @@ template<typename ...Path> int count(const rapidjson::Value &obj, Path ...path) 
 		return 0;
 
 	return (int)tmp->GetArray().Size();
+}
+inline void clear(rapidjson::Value &obj) {
+	rapidjson::Value* tmp = &obj;
+	if (!tmp)
+		return;
+
+	if (tmp->IsArray())
+		tmp->GetArray().Clear();
+	else if (tmp->IsObject())
+		tmp->SetObject();
+}
+template<typename ...Path> void clear(rapidjson::Value &obj, Path ...path) {
+	rapidjson::Value* tmp = nullptr;
+	if (!read(obj, tmp, path ...))
+		return;
+	if (!tmp)
+		return;
+
+	if (tmp->IsArray())
+		tmp->GetArray().Clear();
+	else if (tmp->IsObject())
+		tmp->SetObject();
 }
 template<typename Ret, typename ...Path> bool get(const rapidjson::Value &obj, Ret &ret, Path ...path) {
 	const rapidjson::Value* tmp = nullptr;
