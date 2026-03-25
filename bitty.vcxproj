@@ -2188,6 +2188,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">CompileAsC</CompileAs>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|x64'">4042;4091;4100;4189;4201;4206;4210;4232;4244;4245;4267;4334;4456;4459;4701;4702;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
+    <ClCompile Include="lib\luaxx\luaxx.cpp" />
     <ClCompile Include="lib\lua\src\lapi.c">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='release|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">4244;4310;4324;4701;4702;4709</DisableSpecificWarnings>
@@ -3053,7 +3054,6 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClCompile Include="src\web_html.cpp" />
     <ClCompile Include="src\widgets.cpp" />
     <ClCompile Include="src\loader.cpp" />
-    <ClCompile Include="src\luaxx.cpp" />
     <ClCompile Include="src\recorder.cpp" />
     <ClCompile Include="src\resource\inline_resource.cpp" />
     <ClCompile Include="src\scripting_lua_api.cpp" />
@@ -3409,6 +3409,7 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClInclude Include="lib\libuv\src\win\stream-inl.h" />
     <ClInclude Include="lib\libuv\src\win\winapi.h" />
     <ClInclude Include="lib\libuv\src\win\winsock.h" />
+    <ClInclude Include="lib\luaxx\luaxx.h" />
     <ClInclude Include="lib\lua\src\lapi.h" />
     <ClInclude Include="lib\lua\src\lauxlib.h" />
     <ClInclude Include="lib\lua\src\lcode.h" />
@@ -3697,7 +3698,6 @@ copy /y "$(OutDir)*.dll" "bitty\$(PlatformTarget)_$(Configuration)\*.*"
     <ClInclude Include="src\web_html.h" />
     <ClInclude Include="src\widgets.h" />
     <ClInclude Include="src\loader.h" />
-    <ClInclude Include="src\luaxx.h" />
     <ClInclude Include="src\recorder.h" />
     <ClInclude Include="src\resource\inline_resource.h" />
     <ClInclude Include="src\scripting_lua_api.h" />

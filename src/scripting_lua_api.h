@@ -11,7 +11,7 @@
 #ifndef __SCRIPTING_LUA_API_H__
 #define __SCRIPTING_LUA_API_H__
 
-#include "luaxx.h"
+#include "../lib/luaxx/luaxx.h"
 
 /*
 ** {===========================================================================

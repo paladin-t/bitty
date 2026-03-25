@@ -313,9 +313,6 @@
     <ClCompile Include="src\recorder.cpp">
       <Filter>src\workspace\shared</Filter>
     </ClCompile>
-    <ClCompile Include="src\luaxx.cpp">
-      <Filter>src\executable\lua</Filter>
-    </ClCompile>
     <ClCompile Include="src\resources.cpp">
       <Filter>src\resources</Filter>
     </ClCompile>
@@ -1240,6 +1237,9 @@
     <ClCompile Include="src\document_viewer.cpp">
       <Filter>src\shared</Filter>
     </ClCompile>
+    <ClCompile Include="lib\luaxx\luaxx.cpp">
+      <Filter>lib\luaxx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -1505,6 +1505,9 @@
     </Filter>
     <Filter Include="src\application\res">
       <UniqueIdentifier>{2cad55a9-59e2-43d5-8242-b6169264e154}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\luaxx">
+      <UniqueIdentifier>{0f7128c5-a374-41e3-80c5-2c4c24593a36}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2212,9 +2215,6 @@
     </ClInclude>
     <ClInclude Include="lib\portable_file_dialogs\portable-file-dialogs.h">
       <Filter>lib\portable_file_dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="src\luaxx.h">
-      <Filter>src\executable\lua</Filter>
     </ClInclude>
     <ClInclude Include="src\resources.h">
       <Filter>src\resources</Filter>
@@ -3211,6 +3211,9 @@
     </ClInclude>
     <ClInclude Include="src\document_viewer.h">
       <Filter>src\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\luaxx\luaxx.h">
+      <Filter>lib\luaxx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

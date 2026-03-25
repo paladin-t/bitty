@@ -82,7 +82,6 @@
 		038E741C25820E5200A94374 /* web.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 038E737E25820E4100A94374 /* web.cpp */; };
 		038E741D25820E5200A94374 /* datetime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 038E737F25820E4100A94374 /* datetime.cpp */; };
 		038E741F25820E5200A94374 /* palette.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 038E738325820E4200A94374 /* palette.cpp */; };
-		038E742125820E5200A94374 /* luaxx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 038E738B25820E4600A94374 /* luaxx.cpp */; };
 		038E742225820E5200A94374 /* scripting_lua.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 038E738D25820E4700A94374 /* scripting_lua.cpp */; };
 		038E742325820E5200A94374 /* project.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 038E738E25820E4700A94374 /* project.cpp */; };
 		038E742425820E5200A94374 /* updatable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 038E738F25820E4700A94374 /* updatable.cpp */; };
@@ -198,6 +197,7 @@
 		03FEADB325C94F13006A5EF0 /* imgui_tables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03FEADB225C94F13006A5EF0 /* imgui_tables.cpp */; };
 		680E68A82EE0638700E789A2 /* text_box.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 680E68A62EE0638600E789A2 /* text_box.cpp */; };
 		6845B2CF2F5A88FB00381C3B /* document_viewer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6845B2CE2F5A88FB00381C3B /* document_viewer.cpp */; };
+		6860E3142F73CD7F00200061 /* luaxx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6860E3122F73CD7F00200061 /* luaxx.cpp */; };
 		6868251C2B56EBAA00D8E3FB /* strscpy.c in Sources */ = {isa = PBXBuildFile; fileRef = 686825092B56EBA700D8E3FB /* strscpy.c */; };
 		6868251D2B56EBAA00D8E3FB /* thread-common.c in Sources */ = {isa = PBXBuildFile; fileRef = 6868250B2B56EBA700D8E3FB /* thread-common.c */; };
 		6868251E2B56EBAA00D8E3FB /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 6868250C2B56EBA700D8E3FB /* timer.c */; };
@@ -445,7 +445,6 @@
 		038E736A25820E3D00A94374 /* plus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = plus.h; path = src/plus.h; sourceTree = "<group>"; };
 		038E736B25820E3E00A94374 /* stream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stream.cpp; path = src/stream.cpp; sourceTree = "<group>"; };
 		038E736C25820E3E00A94374 /* executable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = executable.h; path = src/executable.h; sourceTree = "<group>"; };
-		038E736D25820E3E00A94374 /* luaxx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = luaxx.h; path = src/luaxx.h; sourceTree = "<group>"; };
 		038E736E25820E3E00A94374 /* archive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = archive.cpp; path = src/archive.cpp; sourceTree = "<group>"; };
 		038E736F25820E3F00A94374 /* resources.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = resources.cpp; path = src/resources.cpp; sourceTree = "<group>"; };
 		038E737025820E3F00A94374 /* editor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = editor.h; path = src/editor.h; sourceTree = "<group>"; };
@@ -465,7 +464,6 @@
 		038E738525820E4400A94374 /* filesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = filesystem.h; path = src/filesystem.h; sourceTree = "<group>"; };
 		038E738925820E4500A94374 /* asset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = asset.h; path = src/asset.h; sourceTree = "<group>"; };
 		038E738A25820E4600A94374 /* editor_code.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = editor_code.h; path = src/editor_code.h; sourceTree = "<group>"; };
-		038E738B25820E4600A94374 /* luaxx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = luaxx.cpp; path = src/luaxx.cpp; sourceTree = "<group>"; };
 		038E738C25820E4700A94374 /* dispatchable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dispatchable.h; path = src/dispatchable.h; sourceTree = "<group>"; };
 		038E738D25820E4700A94374 /* scripting_lua.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scripting_lua.cpp; path = src/scripting_lua.cpp; sourceTree = "<group>"; };
 		038E738E25820E4700A94374 /* project.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = project.cpp; path = src/project.cpp; sourceTree = "<group>"; };
@@ -765,6 +763,8 @@
 		680E68A72EE0638700E789A2 /* text_box.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = text_box.h; path = src/text_box.h; sourceTree = "<group>"; };
 		6845B2CD2F5A88FA00381C3B /* document_viewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = document_viewer.h; path = src/document_viewer.h; sourceTree = "<group>"; };
 		6845B2CE2F5A88FB00381C3B /* document_viewer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = document_viewer.cpp; path = src/document_viewer.cpp; sourceTree = "<group>"; };
+		6860E3122F73CD7F00200061 /* luaxx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = luaxx.cpp; path = lib/luaxx/luaxx.cpp; sourceTree = "<group>"; };
+		6860E3132F73CD7F00200061 /* luaxx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = luaxx.h; path = lib/luaxx/luaxx.h; sourceTree = "<group>"; };
 		686824F92B56EB7300D8E3FB /* uv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = uv.h; path = lib/libuv/include/uv.h; sourceTree = "<group>"; };
 		686824FB2B56EB8B00D8E3FB /* threadpool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = threadpool.h; path = lib/libuv/include/uv/threadpool.h; sourceTree = "<group>"; };
 		686824FC2B56EB8B00D8E3FB /* tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tree.h; path = lib/libuv/include/uv/tree.h; sourceTree = "<group>"; };
@@ -1052,8 +1052,6 @@
 		031B4EB325833D3C002EF476 /* lua */ = {
 			isa = PBXGroup;
 			children = (
-				038E738B25820E4600A94374 /* luaxx.cpp */,
-				038E736D25820E3E00A94374 /* luaxx.h */,
 				03004C6028BC8C04008B4476 /* scripting_lua_api_physics.cpp */,
 				03004C5F28BC8C04008B4476 /* scripting_lua_api_physics.h */,
 				038E735E25820E3B00A94374 /* scripting_lua_api_promises.cpp */,
@@ -1426,6 +1424,7 @@
 				687EDAA52EC362BB002C82A7 /* kissfft */,
 				686824F22B56EB2700D8E3FB /* libuv */,
 				038E746125820EBA00A94374 /* lua */,
+				6860E3112F73CD5100200061 /* luaxx */,
 				038E76C82582112400A94374 /* lz4 */,
 				038E746225820EC400A94374 /* md4c */,
 				038E746325820EC800A94374 /* micropather */,
@@ -1926,6 +1925,15 @@
 			name = Cpp;
 			sourceTree = "<group>";
 		};
+		6860E3112F73CD5100200061 /* luaxx */ = {
+			isa = PBXGroup;
+			children = (
+				6860E3122F73CD7F00200061 /* luaxx.cpp */,
+				6860E3132F73CD7F00200061 /* luaxx.h */,
+			);
+			name = luaxx;
+			sourceTree = "<group>";
+		};
 		686824F22B56EB2700D8E3FB /* libuv */ = {
 			isa = PBXGroup;
 			children = (
@@ -2271,7 +2279,6 @@
 				038E745625820E5200A94374 /* input.cpp in Sources */,
 				038E76B62582111700A94374 /* lzio.c in Sources */,
 				038E742525820E5200A94374 /* archive_txt.cpp in Sources */,
-				038E742125820E5200A94374 /* luaxx.cpp in Sources */,
 				687EDAE52EC3642B002C82A7 /* analyser.cpp in Sources */,
 				6868251E2B56EBAA00D8E3FB /* timer.c in Sources */,
 				03004C4728BC8BF0008B4476 /* cpSpaceQuery.c in Sources */,
@@ -2374,6 +2381,7 @@
 				038E76D42582114100A94374 /* lz4frame.c in Sources */,
 				031B4EAA25833CB2002EF476 /* ioapi.c in Sources */,
 				68F789312F120C4000000F41 /* database.cpp in Sources */,
+				6860E3142F73CD7F00200061 /* luaxx.cpp in Sources */,
 				038E743125820E5200A94374 /* renderer.cpp in Sources */,
 				03004C5828BC8BF0008B4476 /* cpShape.c in Sources */,
 				038E741525820E5200A94374 /* promise.cpp in Sources */,

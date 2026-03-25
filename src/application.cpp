@@ -16,7 +16,6 @@
 #include "encoding.h"
 #include "file_handle.h"
 #include "filesystem.h"
-#include "luaxx.h"
 #include "platform.h"
 #include "primitives.h"
 #include "project.h"
@@ -32,6 +31,7 @@
 #include "../lib/civetweb/include/civetweb.h"
 #include "../lib/imgui_sdl/imgui_sdl.h"
 #include "../lib/jpath/jpath.hpp"
+#include "../lib/luaxx/luaxx.h"
 #if defined BITTY_CP_VC
 #	pragma warning(push)
 #	pragma warning(disable : 4800)

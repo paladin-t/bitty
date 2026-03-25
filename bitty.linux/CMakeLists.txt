@@ -257,6 +257,10 @@ list(
   "../lib/lua/src/lzio.c"
 )
 list(
+  APPEND BITTY_LIB_LUAXX
+  "../lib/luaxx/luaxx.cpp"
+)
+list(
   APPEND BITTY_LIB_LZ4
   "../lib/lz4/lib/lz4.c"
   "../lib/lz4/lib/lz4frame.c"
@@ -323,7 +327,6 @@ list(
 )
 list(
   APPEND BITTY_SRC_EXECUTABLE
-  "../src/luaxx.cpp"
   "../src/scripting_lua.cpp"
   "../src/scripting_lua_api.cpp"
   "../src/scripting_lua_api_physics.cpp"
@@ -455,6 +458,7 @@ add_executable(
   ${BITTY_LIB_JO_GIF}
   ${BITTY_LIB_KISSFFT}
   ${BITTY_LIB_LUA}
+  ${BITTY_LIB_LUAXX}
   ${BITTY_LIB_LZ4}
   ${BITTY_LIB_MD4C}
   ${BITTY_LIB_MICROPATHER}

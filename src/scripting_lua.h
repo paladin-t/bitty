@@ -11,9 +11,9 @@
 #ifndef __SCRIPTING_LUA_H__
 #define __SCRIPTING_LUA_H__
 
-#include "luaxx.h"
 #include "scripting.h"
 #include "scripting_lua_dbg.h"
+#include "../lib/luaxx/luaxx.h"
 #include <set>
 #if BITTY_MULTITHREAD_ENABLED
 #	include <thread>
