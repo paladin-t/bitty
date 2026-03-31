@@ -45,9 +45,9 @@
 ** Macros and constants
 */
 
-static_assert(sizeof(Int64) == sizeof(lua_Integer), "Wrong size.");
-static_assert(sizeof(UInt64) == sizeof(lua_Unsigned), "Wrong size.");
-static_assert(sizeof(Double) == sizeof(lua_Number), "Wrong size.");
+static_assert(sizeof(Bitty::Int64) == sizeof(lua_Integer), "Wrong size.");
+static_assert(sizeof(Bitty::UInt64) == sizeof(lua_Unsigned), "Wrong size.");
+static_assert(sizeof(Bitty::Double) == sizeof(lua_Number), "Wrong size.");
 
 /* ===========================================================================} */
 
@@ -57,6 +57,8 @@ static_assert(sizeof(Double) == sizeof(lua_Number), "Wrong size.");
 */
 
 namespace Lua { // Library.
+
+using namespace ::Bitty;
 
 /**< Algorithms. */
 
@@ -225,6 +227,8 @@ LUA_WRITE_OBJ_CONST(Web)
 
 namespace Lua { // Engine.
 
+using namespace ::Bitty;
+
 /**< Resources. */
 
 LUA_CHECK_ALIAS(Resources::Asset::Ptr, Asset)
@@ -280,6 +284,8 @@ LUA_WRITE_OBJ_CONST(Font)
 
 namespace Lua { // Editor.
 
+using namespace ::Bitty;
+
 /**< Text editor. */
 
 LUA_CHECK_OBJ(TextBox)
@@ -298,9 +304,11 @@ LUA_WRITE_OBJ_CONST(DocumentViewer)
 
 namespace Lua { // Application.
 
+using namespace ::Bitty;
+
 /**< Canvas. */
 
-typedef ::Primitives Canvas;
+typedef ::Bitty::Primitives Canvas;
 typedef std::shared_ptr<Canvas> CanvasPtr;
 LUA_CHECK_ALIAS(CanvasPtr, Canvas)
 LUA_READ_ALIAS(CanvasPtr, Canvas)
@@ -628,12 +636,12 @@ static void checkOrRead(lua_State* L, Variant* ret, Index idx, References &refs,
 	}
 }
 
-void check(lua_State* L, class Variant* ret, Index idx, TableOptions options) {
+void check(lua_State* L, Bitty::Variant* ret, Index idx, TableOptions options) {
 	References refs;
 	checkOrRead(L, ret, idx, refs, true, 1, options);
 }
 
-void read(lua_State* L, class Variant* ret, Index idx, TableOptions options) {
+void read(lua_State* L, Bitty::Variant* ret, Index idx, TableOptions options) {
 	References refs;
 	checkOrRead(L, ret, idx, refs, false, 1, options);
 }
@@ -710,19 +718,19 @@ static int write_(lua_State* L, const Variant* val, References &refs) {
 	return 1;
 }
 
-template<> int write(lua_State* L, const class Variant* val) {
+template<> int write(lua_State* L, const Bitty::Variant* val) {
 	References refs;
 
 	return write_(L, val, refs);
 }
 
-template<> int write(lua_State* L, class Variant* val) {
+template<> int write(lua_State* L, Bitty::Variant* val) {
 	References refs;
 
 	return write_(L, val, refs);
 }
 
-int call(lua_State* L, const Function &func, int argc, const class Variant* argv) {
+int call(lua_State* L, const Function &func, int argc, const Bitty::Variant* argv) {
 	function(L, func);
 	for (int i = 0; i < argc; ++i)
 		write(L, &argv[i]);
@@ -733,7 +741,7 @@ int call(lua_State* L, const Function &func, int argc, const class Variant* argv
 	return result;
 }
 
-int call(class Variant* ret, lua_State* L, const Function &func) {
+int call(Bitty::Variant* ret, lua_State* L, const Function &func) {
 	function(L, func);
 	const int result = invoke(L, 0, 1);
 	if (result == LUA_OK || result == LUA_YIELD) {
@@ -744,7 +752,7 @@ int call(class Variant* ret, lua_State* L, const Function &func) {
 	return result;
 }
 
-int call(class Variant* ret, lua_State* L, const Function &func, int argc, const class Variant* argv) {
+int call(Bitty::Variant* ret, lua_State* L, const Function &func, int argc, const Bitty::Variant* argv) {
 	function(L, func);
 	for (int i = 0; i < argc; ++i)
 		write(L, &argv[i]);
@@ -757,7 +765,7 @@ int call(class Variant* ret, lua_State* L, const Function &func, int argc, const
 	return result;
 }
 
-int call(int retc, class Variant* retv, lua_State* L, const Function &func) {
+int call(int retc, Bitty::Variant* retv, lua_State* L, const Function &func) {
 	function(L, func);
 	const int result = invoke(L, 0, retc);
 	if (result == LUA_OK || result == LUA_YIELD) {
@@ -769,7 +777,7 @@ int call(int retc, class Variant* retv, lua_State* L, const Function &func) {
 	return result;
 }
 
-int call(int retc, class Variant* retv, lua_State* L, const Function &func, int argc, const class Variant* argv) {
+int call(int retc, Bitty::Variant* retv, lua_State* L, const Function &func, int argc, const Bitty::Variant* argv) {
 	function(L, func);
 	for (int i = 0; i < argc; ++i)
 		write(L, &argv[i]);
@@ -1001,12 +1009,16 @@ template<typename Func, typename ...Args> int call(Walker::Blocking &ret, lua_St
 
 }
 
+using namespace ::Lua;
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Standard
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -1204,12 +1216,16 @@ void open(class Executable* exec) {
 
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Libraries
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -8409,12 +8425,16 @@ void open(class Executable* exec) {
 
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Engine
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -10906,12 +10926,16 @@ void open(class Executable* exec) {
 
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Editor
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -12255,6 +12279,8 @@ void open(class Executable* exec) {
 
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
@@ -12796,6 +12822,8 @@ EMSCRIPTEN_KEEPALIVE int call16(const char* arg1, const char* arg2, const char* 
 }
 #endif /* BITTY_OS_HTML */
 
+namespace Bitty {
+
 namespace Lua {
 
 namespace Invoke {
@@ -13106,12 +13134,16 @@ void callback(lua_State*) {
 
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Application
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -14789,6 +14821,8 @@ void open(class Executable* exec) {
 
 	// Debug.
 	open_Debug(L);
+}
+
 }
 
 }

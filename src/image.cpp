@@ -26,7 +26,7 @@
 
 #ifndef IMAGE_LOCK_SURFACE
 #	define IMAGE_LOCK_SURFACE(SUR) \
-	ProcedureGuard<bool> BITTY_UNIQUE_NAME(__LOCK__)( \
+	Bitty::ProcedureGuard<bool> BITTY_UNIQUE_NAME(__LOCK__)( \
 		std::bind( \
 			[&] (SDL_Surface* surface) -> bool* { \
 				bool* result = (bool*)(uintptr_t)(SDL_MUSTLOCK(SUR) ? 0x1 : 0x0); \
@@ -46,8 +46,8 @@
 	);
 #endif /* IMAGE_LOCK_SURFACE */
 
-static const Byte IMAGE_PALETTED_HEADER_BYTES[] = IMAGE_PALETTED_HEADER;
-static const Byte IMAGE_COLORED_HEADER_BYTES[] = IMAGE_COLORED_HEADER;
+static const Bitty::Byte IMAGE_PALETTED_HEADER_BYTES[] = IMAGE_PALETTED_HEADER;
+static const Bitty::Byte IMAGE_COLORED_HEADER_BYTES[] = IMAGE_COLORED_HEADER;
 
 /* ===========================================================================} */
 
@@ -55,6 +55,8 @@ static const Byte IMAGE_COLORED_HEADER_BYTES[] = IMAGE_COLORED_HEADER;
 ** {===========================================================================
 ** Image
 */
+
+namespace Bitty {
 
 class ImageImpl : public Image {
 private:
@@ -866,6 +868,8 @@ Image* Image::create(Palette::Ptr palette) {
 void Image::destroy(Image* ptr) {
 	ImageImpl* impl = static_cast<ImageImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

@@ -16,7 +16,7 @@
 ** Macros and constants
 */
 
-static const Color PALETTE_DEFAULT_COLORS_ARRAY[] = PALETTE_DEFAULT_COLORS;
+static const Bitty::Color PALETTE_DEFAULT_COLORS_ARRAY[] = PALETTE_DEFAULT_COLORS;
 
 /* ===========================================================================} */
 
@@ -24,6 +24,8 @@ static const Color PALETTE_DEFAULT_COLORS_ARRAY[] = PALETTE_DEFAULT_COLORS;
 ** {===========================================================================
 ** Palette
 */
+
+namespace Bitty {
 
 class PaletteImpl : public Palette {
 private:
@@ -250,6 +252,8 @@ Palette* Palette::create(int count) {
 void Palette::destroy(Palette* ptr) {
 	PaletteImpl* impl = static_cast<PaletteImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

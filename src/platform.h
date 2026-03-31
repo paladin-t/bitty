@@ -19,6 +19,8 @@
 ** Platform
 */
 
+namespace Bitty {
+
 /**
  * @brief Platform specific functions.
  *
@@ -101,6 +103,8 @@ public:
 	static void closeInput(void);
 	static void inputScreenPosition(int x, int y);
 };
+
+}
 
 /* ===========================================================================} */
 

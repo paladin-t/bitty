@@ -21,6 +21,8 @@
 ** Text editor
 */
 
+namespace Bitty {
+
 class EditorTextImpl : public EditorText, public ImGui::CodeEditor {
 private:
 	bool _opened = false;
@@ -674,6 +676,8 @@ EditorText* EditorText::create(void) {
 void EditorText::destroy(EditorText* ptr) {
 	EditorTextImpl* impl = static_cast<EditorTextImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

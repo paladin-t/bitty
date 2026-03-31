@@ -20,6 +20,8 @@
 ** Texture
 */
 
+namespace Bitty {
+
 /**
  * @brief Texture object.
  */
@@ -132,6 +134,8 @@ public:
 	static Texture* create(void);
 	static void destroy(Texture* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

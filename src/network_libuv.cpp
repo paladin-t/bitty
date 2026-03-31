@@ -48,13 +48,13 @@
 
 #ifndef NETWORK_STATE
 #	define NETWORK_STATE(P, I, W, O) \
-	VariableGuard<decltype(P)> __PROC__(&(P), (I), (W)); \
+	Bitty::VariableGuard<decltype(P)> __PROC__(&(P), (I), (W)); \
 	if (!(__PROC__).changed()) { \
 		O; \
 	}
 #endif /* NETWORK_STATE */
 
-static_assert(sizeof(Network::BytesSize) == 4, "Wrong size.");
+static_assert(sizeof(Bitty::Network::BytesSize) == 4, "Wrong size.");
 
 #endif /* BITTY_NETWORK_ENABLED */
 
@@ -78,7 +78,7 @@ static std::string networkGetInterfaces(void) {
 	static_assert(BYTE_COUNT >= 4, "Wrong size.");
 	union {
 		ipv4 ip;
-		Byte bytes[BYTE_COUNT];
+		Bitty::Byte bytes[BYTE_COUNT];
 	} lo;
 	lo.bytes[0] = 127;
 	lo.bytes[1] = 0;
@@ -90,7 +90,7 @@ static std::string networkGetInterfaces(void) {
 	for (int i = 0; i < n; ++i) {
 		union {
 			ipv4 ip;
-			Byte bytes[BYTE_COUNT];
+			Bitty::Byte bytes[BYTE_COUNT];
 		} u;
 		u.ip = iface[i].ip_address;
 		if (u.ip == 0 || u.ip == lo.ip)
@@ -98,14 +98,14 @@ static std::string networkGetInterfaces(void) {
 
 		std::string addr;
 		for (int j = 0; j < (int)BYTE_COUNT; ++j) {
-			addr += Text::toString(u.bytes[j]);
+			addr += Bitty::Text::toString(u.bytes[j]);
 			if (j != (int)BYTE_COUNT - 1)
 				addr.push_back('.');
 		}
 
 		std::string name;
 		if (iface[i].name[0]) {
-			name = Unicode::fromWide(iface[i].name);
+			name = Bitty::Unicode::fromWide(iface[i].name);
 		}
 
 		rapidjson::Value jobj;
@@ -129,14 +129,14 @@ static std::string networkGetInterfaces(void) {
 #endif /* Platform macro. */
 
 	std::string json;
-	Json::toString(jdoc, json, false);
+	Bitty::Json::toString(jdoc, json, false);
 
 	return json;
 }
 
-static void networkAddressToString(const uv_tcp_t* tcp, Network::AddressName &addr) {
+static void networkAddressToString(const uv_tcp_t* tcp, Bitty::Network::AddressName &addr) {
 	assert(BITTY_COUNTOF(addr.text) >= strlen(NETWORK_NULL_STRING) + 1);
-	memset(&addr, 0, sizeof(Network::AddressName));
+	memset(&addr, 0, sizeof(Bitty::Network::AddressName));
 	memcpy(addr.text, NETWORK_NULL_STRING, strlen(NETWORK_NULL_STRING));
 
 	struct sockaddr_storage addr_;
@@ -152,18 +152,18 @@ static void networkAddressToString(const uv_tcp_t* tcp, Network::AddressName &ad
 	int port = 0;
 	if (addr_.ss_family == AF_INET) {
 		struct sockaddr_in* addr_i4 = (struct sockaddr_in*)&addr_;
-		uv_ip4_name(addr_i4, addr.text, sizeof(Network::AddressName));
+		uv_ip4_name(addr_i4, addr.text, sizeof(Bitty::Network::AddressName));
 		port = addr_i4->sin_port;
 	} else if (addr_.ss_family == AF_INET6) {
 		struct sockaddr_in6* addr_i6 = (struct sockaddr_in6*)&addr_;
-		uv_ip6_name(addr_i6, addr.text, sizeof(Network::AddressName));
+		uv_ip6_name(addr_i6, addr.text, sizeof(Bitty::Network::AddressName));
 		port = addr_i6->sin6_port;
 	}
-	const std::string str = addr.text + std::string(":") + Text::toString(port);
-	memcpy(addr.text, str.c_str(), std::min(sizeof(Network::AddressName), str.length()));
+	const std::string str = addr.text + std::string(":") + Bitty::Text::toString(port);
+	memcpy(addr.text, str.c_str(), std::min(sizeof(Bitty::Network::AddressName), str.length()));
 }
 
-static void networkWrite(uv_stream_t* handle, const Byte* buf, size_t len) {
+static void networkWrite(uv_stream_t* handle, const Bitty::Byte* buf, size_t len) {
 	typedef struct {
 		uv_write_t req;
 		uv_buf_t buf;
@@ -185,32 +185,32 @@ static void networkWrite(uv_stream_t* handle, const Byte* buf, size_t len) {
 
 static bool networkSend(
 	uv_stream_t* handle, bool limitedSize,
-	const Byte* buf, size_t len, bool bytesWithSize, bool withEos
+	const Bitty::Byte* buf, size_t len, bool bytesWithSize, bool withEos
 ) {
 	size_t sz = len;
 	if (bytesWithSize)
-		sz += sizeof(Network::BytesSize);
+		sz += sizeof(Bitty::Network::BytesSize);
 	if (withEos)
 		++sz;
 	if (limitedSize && sz > NETWORK_MESSAGE_MAX_SIZE)
 		return false;
 
 	if (bytesWithSize) {
-		Network::BytesSize head = (Network::BytesSize)(len + sizeof(Network::BytesSize));
-		networkWrite(handle, (const Byte*)&head, 4);
+		Bitty::Network::BytesSize head = (Bitty::Network::BytesSize)(len + sizeof(Bitty::Network::BytesSize));
+		networkWrite(handle, (const Bitty::Byte*)&head, 4);
 	}
 	networkWrite(handle, buf, len);
 	if (withEos) {
 		constexpr const char eos[1] = { '\0' };
-		networkWrite(handle, (const Byte*)eos, 1);
+		networkWrite(handle, (const Bitty::Byte*)eos, 1);
 	}
 
 	return true;
 }
 
 static bool networkBroadcast(
-	NetworkLibuv::TcpClientHandles &clients, bool limitedSize,
-	const Byte* buf, size_t len, bool bytesWithSize, bool withEos
+	Bitty::NetworkLibuv::TcpClientHandles &clients, bool limitedSize,
+	const Bitty::Byte* buf, size_t len, bool bytesWithSize, bool withEos
 ) {
 	bool ret = true;
 	for (uv_tcp_t* tcp : clients) {
@@ -221,16 +221,16 @@ static bool networkBroadcast(
 	return ret;
 };
 
-static Bytes* networkReceiveBytes(uv_stream_t* /* handle */, ssize_t /* nread */, const uv_buf_t* /* buf */, bool bytesWithSize, Bytes* cached, Bytes* receiving) {
+static Bitty::Bytes* networkReceiveBytes(uv_stream_t* /* handle */, ssize_t /* nread */, const uv_buf_t* /* buf */, bool bytesWithSize, Bitty::Bytes* cached, Bitty::Bytes* receiving) {
 	if (bytesWithSize) {
-		if (receiving->count() >= sizeof(Network::BytesSize)) {
-			Network::BytesSize* up = (Network::BytesSize*)receiving->pointer();
+		if (receiving->count() >= sizeof(Bitty::Network::BytesSize)) {
+			Bitty::Network::BytesSize* up = (Bitty::Network::BytesSize*)receiving->pointer();
 			if (receiving->count() >= *up) {
 				if (cached) {
 					cached->clear();
 					cached->writeBytes(
-						(const Byte*)(receiving->pointer() + sizeof(Network::BytesSize)),
-						(size_t)(*up - sizeof(Network::BytesSize))
+						(const Bitty::Byte*)(receiving->pointer() + sizeof(Bitty::Network::BytesSize)),
+						(size_t)(*up - sizeof(Bitty::Network::BytesSize))
 					);
 				} else {
 					assert(false && "Wrong data.");
@@ -257,7 +257,7 @@ static Bytes* networkReceiveBytes(uv_stream_t* /* handle */, ssize_t /* nread */
 	return nullptr;
 }
 
-static bool networkReceiveUntilEos(uv_stream_t* /* handle */, ssize_t /* nread */, const uv_buf_t* /* buf */, std::string &str, Bytes* receiving) {
+static bool networkReceiveUntilEos(uv_stream_t* /* handle */, ssize_t /* nread */, const uv_buf_t* /* buf */, std::string &str, Bitty::Bytes* receiving) {
 	for (size_t i = 0; i < receiving->count(); ++i) {
 		if (i >= NETWORK_MESSAGE_MAX_SIZE || receiving->get(i) == '\0') {
 			str.clear();
@@ -281,6 +281,8 @@ static bool networkReceiveUntilEos(uv_stream_t* /* handle */, ssize_t /* nread *
 */
 
 #if BITTY_NETWORK_ENABLED
+
+namespace Bitty {
 
 NetworkLibuv::NetworkLibuv() {
 	_loop = (uv_loop_t*)malloc(sizeof(uv_loop_t));
@@ -1146,6 +1148,8 @@ class Json* NetworkLibuv::jsonCache(void) {
 		_jsonCache = Json::create();
 
 	return _jsonCache;
+}
+
 }
 
 #endif /* BITTY_NETWORK_ENABLED */

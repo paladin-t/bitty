@@ -17,7 +17,7 @@
 ** Utilities
 */
 
-static int scriptingLuaDbgCompare(const Breakpoint &left, const Breakpoint &right) {
+static int scriptingLuaDbgCompare(const Bitty::Breakpoint &left, const Bitty::Breakpoint &right) {
 	if (left.source < right.source)
 		return -1;
 	else if (left.source > right.source)
@@ -32,7 +32,7 @@ static int scriptingLuaDbgCompare(const Breakpoint &left, const Breakpoint &righ
 }
 
 static int scriptingLuaDbgCompare(const void* lptr, const void* rptr) {
-	return scriptingLuaDbgCompare(*(const Breakpoint*)lptr, *(const Breakpoint*)rptr);
+	return scriptingLuaDbgCompare(*(const Bitty::Breakpoint*)lptr, *(const Bitty::Breakpoint*)rptr);
 }
 
 /* ===========================================================================} */
@@ -41,6 +41,8 @@ static int scriptingLuaDbgCompare(const void* lptr, const void* rptr) {
 ** {===========================================================================
 ** Lua scripting debug
 */
+
+namespace Bitty {
 
 Breakpoint::Breakpoint() {
 }
@@ -252,6 +254,8 @@ bool Scope::operator != (const Scope &other) const {
 		lineDefined != other.lineDefined ||
 		name != other.name ||
 		what != other.what;
+}
+
 }
 
 /* ===========================================================================} */

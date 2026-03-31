@@ -68,6 +68,8 @@ static void datetimeSleep(int ms) {
 ** Date time
 */
 
+namespace Bitty {
+
 long long DateTime::utc(int* sec, int* mi, int* hr, int* mday, int* mo, int* yr, int* wday, int* yday, int* isdst) {
 	time_t ct;
 	struct tm* timeinfo = nullptr;
@@ -192,6 +194,8 @@ long long DateTime::fromSeconds(double t) {
 
 void DateTime::sleep(int ms) {
 	datetimeSleep(ms);
+}
+
 }
 
 /* ===========================================================================} */

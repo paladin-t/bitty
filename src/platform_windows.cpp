@@ -71,6 +71,8 @@ static void platformThreadName(uint32_t threadId, const char* threadName) {
 ** IO
 */
 
+namespace Bitty {
+
 bool Platform::copyFile(const char* src, const char* dst) {
 	const filesystem::copy_options options =
 		filesystem::copy_options::overwrite_existing |
@@ -263,12 +265,16 @@ void Platform::currentDirectory(const char* dir) {
 	::SetCurrentDirectoryA(osstr.c_str());
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Surfing and browsing
 */
+
+namespace Bitty {
 
 void Platform::surf(const char* url) {
 	const HRESULT result = ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
@@ -292,6 +298,8 @@ void Platform::browse(const char* dir) {
 	::CoUninitialize();
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
@@ -302,6 +310,8 @@ void Platform::browse(const char* dir) {
 bool platformRedirectedIoToConsole = false;
 
 static const WORD MAX_CONSOLE_LINES = 500;
+
+namespace Bitty {
 
 const char* Platform::os(void) {
 	return "Windows";
@@ -373,12 +383,16 @@ void Platform::redirectIoToConsole(void) {
 	freopen("CON", "w", stderr);
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** GUI
 */
+
+namespace Bitty {
 
 void Platform::msgbox(const char* text, const char* caption) {
 	::MessageBoxA(nullptr, text, caption, MB_OK);
@@ -450,6 +464,8 @@ void Platform::setWindowTransparentColor(class Window* wnd, const struct Color* 
 		style &= ~WS_EX_LAYERED;
 		::SetWindowLong(hWnd, GWL_EXSTYLE, style);
 	}
+}
+
 }
 
 /* ===========================================================================} */

@@ -51,12 +51,12 @@ static int entry(int argc, const char* argv[]) {
 		emscripten_sleep(STEP);
 	}
 	WORKSPACE_PREFERENCES_NAME = "preferences";
-	Application* app = createApplication(new WorkspaceStudio(), argc, argv);
+	Bitty::Application* app = Bitty::createApplication(new Bitty::WorkspaceStudio(), argc, argv);
 	emscripten_cancel_main_loop();
 	emscripten_set_main_loop_arg(
 		[] (void* arg) -> void {
-			Application* app = (Application*)arg;
-			updateApplication(app);
+			Bitty::Application* app = (Bitty::Application*)arg;
+			Bitty::updateApplication(app);
 		},
 		app,
 		mainGetActiveFrameRate(), 1
@@ -64,9 +64,9 @@ static int entry(int argc, const char* argv[]) {
 	destroyApplication(app);
 #else /* BITTY_OS_HTML */
 	WORKSPACE_PREFERENCES_NAME = "preferences";
-	Application* app = createApplication(new WorkspaceStudio(), argc, argv);
-	while (updateApplication(app)) { /* Do nothing. */ }
-	destroyApplication(app);
+	Bitty::Application* app = Bitty::createApplication(new Bitty::WorkspaceStudio(), argc, argv);
+	while (Bitty::updateApplication(app)) { /* Do nothing. */ }
+	Bitty::destroyApplication(app);
 #endif /* BITTY_OS_HTML */
 
 	return 0;
@@ -165,11 +165,11 @@ static void openTerminal(void) {
 	freopen("CON", "w", stderr);
 }
 
-static std::vector<const char*> splitArgs(const char* ln, Text::Array &args) {
+static std::vector<const char*> splitArgs(const char* ln, Bitty::Text::Array &args) {
 	std::vector<const char*> ret;
-	args = Text::split(ln, " ");
+	args = Bitty::Text::split(ln, " ");
 	for (std::string &a : args) {
-		a = Text::trim(a);
+		a = Bitty::Text::trim(a);
 		ret.push_back(a.c_str());
 	}
 
@@ -192,7 +192,7 @@ int CALLBACK WinMain(_In_ HINSTANCE /* hInstance */, _In_ HINSTANCE /* hPrevInst
 	openTerminal();
 #endif /* BITTY_DEBUG */
 
-	Text::Array argbuf;
+	Bitty::Text::Array argbuf;
 	std::vector<const char*> args = splitArgs(lpCmdLine, argbuf);
 
 #if !defined BITTY_DEBUG
@@ -286,7 +286,7 @@ int main(int argc, const char* argv[]) {
 	platformSetDocumentPathResolver(androidDocumentPathResolve);
 
 	if (argc >= 2)
-		Platform::currentDirectory(argv[1]);
+		Bitty::Platform::currentDirectory(argv[1]);
 
 	for (int i = 2; i < argc; ++i)
 		args.push_back(argv[i]);

@@ -218,6 +218,8 @@ static int encodingStrFromUtf8(wchar_t* buf, int buf_size, const char* in_text, 
 ** Unicode
 */
 
+namespace Bitty {
+
 std::string Unicode::fromOs(const char* str) {
 #if defined BITTY_OS_WIN
 	std::string result;
@@ -436,6 +438,8 @@ unsigned Unicode::takeUtf8(const char* ch, int n) {
 	return u.ui;
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
@@ -449,6 +453,8 @@ unsigned Unicode::takeUtf8(const char* ch, int n) {
 	// the C99/C++11 standards.
 #	define b64_free(ptr) free(ptr)
 #endif /* b64_free */
+
+namespace Bitty {
 
 bool Base64::toBytes(class Bytes* val, const std::string &str) {
 	size_t len = 0;
@@ -475,12 +481,16 @@ bool Base64::fromBytes(std::string &val, const class Bytes* buf) {
 	return true;
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** LZ4
 */
+
+namespace Bitty {
 
 bool Lz4::toBytes(class Bytes* val, const class Bytes* src) {
 	if (!val || !src)
@@ -541,6 +551,8 @@ bool Lz4::fromBytes(class Bytes* val, const class Bytes* src) {
 	val->resize((size_t)n);
 
 	return true;
+}
+
 }
 
 /* ===========================================================================} */

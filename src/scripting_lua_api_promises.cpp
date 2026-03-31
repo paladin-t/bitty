@@ -42,6 +42,8 @@
 
 namespace Lua { // Standard.
 
+using namespace ::Bitty;
+
 /**< Promise. */
 
 LUA_CHECK_OBJ(Promise)
@@ -52,6 +54,8 @@ LUA_WRITE_OBJ_CONST(Promise)
 }
 
 namespace Lua { // Library.
+
+using namespace ::Bitty;
 
 /**< Bytes. */
 
@@ -90,12 +94,16 @@ EM_JS(
 );
 #endif /* BITTY_OS_HTML */
 
+using namespace ::Lua;
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Standard
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -596,12 +604,16 @@ void promise(class Executable* exec) {
 
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Libraries
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -1254,6 +1266,8 @@ void promise(class Executable* exec) {
 
 	// Web.
 	open_Web(L);
+}
+
 }
 
 }

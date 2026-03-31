@@ -18,6 +18,8 @@
 ** Archive
 */
 
+namespace Bitty {
+
 Archive::Formats Archive::formatOf(const char* path) {
 	Formats result = ZIP;
 
@@ -64,6 +66,8 @@ void Archive::destroy(Archive* ptr) {
 
 		break;
 	}
+}
+
 }
 
 /* ===========================================================================} */

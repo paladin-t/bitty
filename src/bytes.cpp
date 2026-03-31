@@ -18,7 +18,7 @@
 
 template<typename T> union BytesUnion {
 	T data = 0;
-	Byte bytes[sizeof(T)];
+	Bitty::Byte bytes[sizeof(T)];
 };
 
 /* ===========================================================================} */
@@ -27,6 +27,8 @@ template<typename T> union BytesUnion {
 ** {===========================================================================
 ** Bytes
 */
+
+namespace Bitty {
 
 class BytesImpl : public Bytes {
 private:
@@ -546,6 +548,8 @@ Bytes* Bytes::create(void) {
 void Bytes::destroy(Bytes* ptr) {
 	BytesImpl* impl = static_cast<BytesImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

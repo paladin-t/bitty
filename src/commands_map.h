@@ -18,6 +18,8 @@
 ** Map commands
 */
 
+namespace Bitty {
+
 namespace Commands {
 
 namespace Map {
@@ -178,6 +180,8 @@ public:
 	static Command* create(void);
 	static void destroy(Command* ptr);
 };
+
+}
 
 }
 

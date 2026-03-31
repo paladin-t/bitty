@@ -18,6 +18,8 @@
 ** Image commands
 */
 
+namespace Bitty {
+
 namespace Commands {
 
 namespace Image {
@@ -259,7 +261,7 @@ const char* Resize::toString(void) const {
 }
 
 int Resize::redo(Object::Ptr obj, int argc, const Variant* argv) {
-	::Image::Ptr img = Object::as<::Image::Ptr>(obj);
+	::Bitty::Image::Ptr img = Object::as<::Bitty::Image::Ptr>(obj);
 	void* arg0 = unpack<void*>(argc, argv, 0, nullptr);
 	Texture::Ptr* tex = (Texture::Ptr*)(arg0);
 
@@ -292,7 +294,7 @@ int Resize::redo(Object::Ptr obj, int argc, const Variant* argv) {
 }
 
 int Resize::undo(Object::Ptr obj, int argc, const Variant* argv) {
-	::Image::Ptr img = Object::as<::Image::Ptr>(obj);
+	::Bitty::Image::Ptr img = Object::as<::Bitty::Image::Ptr>(obj);
 	void* arg0 = unpack<void*>(argc, argv, 0, nullptr);
 	Texture::Ptr* tex = (Texture::Ptr*)(arg0);
 
@@ -334,6 +336,8 @@ Command* Resize::create(void) {
 void Resize::destroy(Command* ptr) {
 	Resize* impl = static_cast<Resize*>(ptr);
 	delete impl;
+}
+
 }
 
 }

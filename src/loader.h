@@ -20,6 +20,8 @@
 ** Loader
 */
 
+namespace Bitty {
+
 /**
  * @brief Loader middleware. Override this class to make your own loader for
  *   encrypting, pre/post-processing and other customization.
@@ -62,6 +64,8 @@ public:
 	 */
 	virtual class Bytes* encode(const class Project* project, const class Asset* asset, class Bytes* buf) const;
 };
+
+}
 
 /* ===========================================================================} */
 

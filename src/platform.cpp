@@ -20,6 +20,8 @@
 ** Platform
 */
 
+namespace Bitty {
+
 bool Platform::ignore(const char* path) {
 	if (!path)
 		return true;
@@ -99,6 +101,8 @@ void Platform::idle(void) {
 		if (windowResized || targetReset)
 			ImGuiSDL::Reset();
 	}
+}
+
 }
 
 /* ===========================================================================} */

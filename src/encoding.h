@@ -49,6 +49,8 @@
 ** Unicode
 */
 
+namespace Bitty {
+
 /**
  * @brief Unicode utilities.
  */
@@ -71,12 +73,16 @@ public:
 	static unsigned takeUtf8(const char* ch, int n);
 };
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Base64
 */
+
+namespace Bitty {
 
 /**
  * @brief Base64 utilities.
@@ -93,12 +99,16 @@ public:
 	static bool fromBytes(std::string &val, const class Bytes* buf);
 };
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** LZ4
 */
+
+namespace Bitty {
 
 /**
  * @brief LZ4 utilities.
@@ -114,6 +124,8 @@ public:
 	 */
 	static bool fromBytes(class Bytes* val, const class Bytes* src);
 };
+
+}
 
 /* ===========================================================================} */
 

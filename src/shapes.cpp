@@ -17,6 +17,8 @@
 ** Shapes
 */
 
+namespace Bitty {
+
 namespace Shapes {
 
 int line(int x0, int y0, int x1, int y1, Plotter plot) {
@@ -456,6 +458,8 @@ int replace(int x, int y, int w, int h, int* rx0, int* ry0, int* rx1, int* ry1, 
 			return left == right || (left.a == 0 && right.a == 0);
 		}
 	);
+}
+
 }
 
 }

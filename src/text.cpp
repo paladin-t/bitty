@@ -30,6 +30,8 @@ static const std::locale TEXT_LOCALE("C");
 ** Text
 */
 
+namespace Bitty {
+
 class TextImpl : public Text {
 private:
 	std::string _text;
@@ -1097,6 +1099,8 @@ Text* Text::create(void) {
 void Text::destroy(Text* ptr) {
 	TextImpl* impl = static_cast<TextImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

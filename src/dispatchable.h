@@ -19,6 +19,8 @@
 ** Dispatchable
 */
 
+namespace Bitty {
+
 /**
  * @brief Dispatchable interface.
  */
@@ -40,6 +42,8 @@ protected:
 		return (0 <= idx && idx < argc && argv) ? (Arg)argv[idx] : default_;
 	}
 };
+
+}
 
 /* ===========================================================================} */
 

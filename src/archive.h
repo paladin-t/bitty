@@ -31,6 +31,8 @@
 ** Archive
 */
 
+namespace Bitty {
+
 /**
  * @brief Archive object.
  */
@@ -85,6 +87,8 @@ public:
 	static Archive* create(Formats type);
 	static void destroy(Archive* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

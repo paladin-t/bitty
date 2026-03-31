@@ -16,6 +16,8 @@
 ** Palette commands
 */
 
+namespace Bitty {
+
 namespace Commands {
 
 namespace Palette {
@@ -36,13 +38,13 @@ const char* Change::toString(void) const {
 }
 
 int Change::redo(Object::Ptr obj, int, const Variant*) {
-	::Palette::Ptr ptr = Object::as<::Palette::Ptr>(obj);
+	::Bitty::Palette::Ptr ptr = Object::as<::Bitty::Palette::Ptr>(obj);
 
 	return ptr->set(index(), &color()) ? 1 : 0;
 }
 
 int Change::undo(Object::Ptr obj, int, const Variant*) {
-	::Palette::Ptr ptr = Object::as<::Palette::Ptr>(obj);
+	::Bitty::Palette::Ptr ptr = Object::as<::Bitty::Palette::Ptr>(obj);
 
 	return ptr->set(index(), &old()) ? 1 : 0;
 }
@@ -144,6 +146,8 @@ Command* Delete::create(void) {
 void Delete::destroy(Command* ptr) {
 	Delete* impl = static_cast<Delete*>(ptr);
 	delete impl;
+}
+
 }
 
 }

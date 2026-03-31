@@ -15,6 +15,8 @@
 ** Code
 */
 
+namespace Bitty {
+
 class CodeImpl : public Code {
 private:
 	std::string _text;
@@ -62,6 +64,8 @@ Code* Code::create(void) {
 void Code::destroy(Code* ptr) {
 	CodeImpl* impl = static_cast<CodeImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

@@ -89,6 +89,8 @@ static constexpr const char* const EDITOR_CODE_PRIMITIVES[] = {
 ** Code editor
 */
 
+namespace Bitty {
+
 class EditorCode : public Editable, public virtual Object {
 private:
 	static int refCount;
@@ -109,6 +111,8 @@ public:
 	static EditorCode* create(void);
 	static void destroy(EditorCode* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

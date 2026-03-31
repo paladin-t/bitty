@@ -25,6 +25,8 @@
 ** Editor customized by plugin
 */
 
+namespace Bitty {
+
 class EditorPluginImpl : public EditorPlugin, public ImGui::CodeEditor {
 private:
 	bool _opened = false;
@@ -961,6 +963,8 @@ EditorPlugin* EditorPlugin::create(void) {
 void EditorPlugin::destroy(EditorPlugin* ptr) {
 	EditorPluginImpl* impl = static_cast<EditorPluginImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

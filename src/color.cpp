@@ -16,6 +16,8 @@
 ** Color
 */
 
+namespace Bitty {
+
 Color::Color() {
 }
 
@@ -342,6 +344,8 @@ bool Color::fromString(const std::string &str) {
 		b6 * 16 + b7 : 255;
 
 	return true;
+}
+
 }
 
 /* ===========================================================================} */

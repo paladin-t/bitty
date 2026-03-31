@@ -24,6 +24,16 @@
 ** IO
 */
 
+static std::string (* platformDocumentPathResolver)(void) = nullptr;
+
+void platformSetDocumentPathResolver(std::string (* resolver)(void)) {
+	platformDocumentPathResolver = resolver;
+}
+
+std::string platformBinPath;
+
+namespace Bitty {
+
 bool Platform::copyFile(const char* src, const char* dst) {
 	std::ifstream is(src, std::ios::in | std::ios::binary);
 	std::ofstream os(dst, std::ios::out | std::ios::binary);
@@ -199,14 +209,6 @@ std::string Platform::absoluteOf(const std::string &path) {
 	return result;
 }
 
-static std::string (* platformDocumentPathResolver)(void) = nullptr;
-
-void platformSetDocumentPathResolver(std::string (* resolver)(void)) {
-	platformDocumentPathResolver = resolver;
-}
-
-std::string platformBinPath;
-
 std::string Platform::executableFile(void) {
 	return platformBinPath;
 }
@@ -234,6 +236,8 @@ void Platform::currentDirectory(const char* dir) {
 	chdir(dir);
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
@@ -247,6 +251,8 @@ EM_JS(
 	}
 );
 
+namespace Bitty {
+
 void Platform::surf(const char* url) {
 	platformHtmlSurf(url);
 }
@@ -255,20 +261,14 @@ void Platform::browse(const char*) {
 	BITTY_MISSING
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** OS
 */
-
-const char* Platform::os(void) {
-	return "HTML";
-}
-
-void Platform::threadName(const char*) {
-	// Do nothing.
-}
 
 EM_JS(
 	const char*, platformHtmlExecute, (const char* cmd), {
@@ -293,6 +293,16 @@ EM_JS(
 	}
 );
 
+namespace Bitty {
+
+const char* Platform::os(void) {
+	return "HTML";
+}
+
+void Platform::threadName(const char*) {
+	// Do nothing.
+}
+
 std::string Platform::execute(const char* cmd) {
 	const char* ret_ = platformHtmlExecute(cmd);
 	const std::string ret = ret_ ? ret_ : "";
@@ -309,12 +319,16 @@ void Platform::redirectIoToConsole(void) {
 	// Do nothing.
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** GUI
 */
+
+namespace Bitty {
 
 void Platform::msgbox(const char* text, const char* caption) {
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, caption, text, nullptr);
@@ -344,6 +358,8 @@ void Platform::useDarkMode(class Window* wnd) {
 void Platform::setWindowTransparentColor(class Window* wnd, const struct Color* col) {
 	(void)wnd;
 	(void)col;
+}
+
 }
 
 /* ===========================================================================} */

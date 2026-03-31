@@ -20,6 +20,12 @@
 
 #if BITTY_WEB_ENABLED
 
+struct mg_callbacks;
+struct mg_connection;
+struct mg_context;
+
+namespace Bitty {
+
 class WebCivetWeb : public Web {
 private:
 	/**< States. */
@@ -36,15 +42,15 @@ private:
 
 	/**< Connection. */
 
-	struct mg_context* _ctx = nullptr;
-	struct mg_callbacks* _callbacks = nullptr;
+	mg_context* _ctx = nullptr;
+	mg_callbacks* _callbacks = nullptr;
 
 	/**< Callbacks. */
 
 	RequestedHandler _rspdHandler = nullptr;
 	mutable Mutex _rspdHandlerLock;
 
-	struct mg_connection* _pollingConn = nullptr;
+	mg_connection* _pollingConn = nullptr;
 
 public:
 	WebCivetWeb();
@@ -70,7 +76,7 @@ public:
 
 	virtual const RequestedHandler &requestedCallback(void) const override;
 	virtual void callback(const RequestedHandler &cb) override;
-	void callback(struct mg_connection* nc, void* cbdata);
+	void callback(mg_connection* nc, void* cbdata);
 
 private:
 	void doOpen(unsigned short port);
@@ -78,8 +84,10 @@ private:
 
 	void doPoll(void);
 
-	bool onHttp(struct mg_connection* nc, void* cbdata);
+	bool onHttp(mg_connection* nc, void* cbdata);
 };
+
+}
 
 #endif /* BITTY_WEB_ENABLED */
 

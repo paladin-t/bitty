@@ -17,6 +17,8 @@
 ** @note See: https://paladin-t.github.io/articles/smooth-tile-based-movement-algorithm-with-sliding.html.
 */
 
+namespace Bitty {
+
 class WalkerImpl : public Walker {
 private:
 	Math::Vec2i _objSize = Math::Vec2i(BITTY_GRID_DEFAULT_SIZE, BITTY_GRID_DEFAULT_SIZE);
@@ -353,6 +355,8 @@ Walker* Walker::create(void) {
 void Walker::destroy(Walker* ptr) {
 	WalkerImpl* impl = static_cast<WalkerImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

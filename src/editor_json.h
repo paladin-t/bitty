@@ -18,6 +18,8 @@
 ** JSON editor
 */
 
+namespace Bitty {
+
 class EditorJson : public Editable, public virtual Object {
 public:
 	BITTY_CLASS_TYPE('J', 'S', 'N', 'E')
@@ -31,6 +33,8 @@ public:
 	static EditorJson* create(void);
 	static void destroy(EditorJson* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

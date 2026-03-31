@@ -21,6 +21,8 @@
 ** Raycaster
 */
 
+namespace Bitty {
+
 /**
  * @brief Raycaster algorithm.
  */
@@ -64,6 +66,8 @@ public:
 	static Raycaster* create(void);
 	static void destroy(Raycaster* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

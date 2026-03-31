@@ -42,6 +42,8 @@
 
 #if BITTY_WEB_ENABLED
 
+namespace Bitty {
+
 class FetchCurl : public Fetch {
 private:
 	enum States {
@@ -118,6 +120,8 @@ private:
 
 	static size_t receive(void* ptr, size_t size, size_t nmemb, void* stream);
 };
+
+}
 
 #endif /* BITTY_WEB_ENABLED */
 

@@ -16,6 +16,8 @@
 ** Paintable commands
 */
 
+namespace Bitty {
+
 namespace Commands {
 
 namespace Paintable {
@@ -1478,6 +1480,8 @@ unsigned Delete::type(void) const {
 
 const char* Delete::toString(void) const {
 	return "Delete";
+}
+
 }
 
 }

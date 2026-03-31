@@ -44,6 +44,8 @@
 ** Plugin
 */
 
+namespace Bitty {
+
 /**
  * @brief Plugin.
  */
@@ -113,6 +115,8 @@ public:
 private:
 	bool opened(void) const;
 };
+
+}
 
 /* ===========================================================================} */
 

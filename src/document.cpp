@@ -72,6 +72,8 @@ static int documentSameLineIfPossible(float /* scale */, bool sameLine, const ch
 ** Document
 */
 
+namespace Bitty {
+
 class DocumentImpl : public Document {
 private:
 	struct Context {
@@ -261,7 +263,7 @@ public:
 		_useThemedSpanCode = val;
 	}
 
-	virtual void font(struct ImFont* regular, struct ImFont* bold) override {
+	virtual void font(ImFont* regular, ImFont* bold) override {
 		_regularFont = regular;
 		_boldFont = bold;
 	}
@@ -1206,6 +1208,8 @@ Document* Document::create(void) {
 void Document::destroy(Document* ptr) {
 	DocumentImpl* impl = static_cast<DocumentImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

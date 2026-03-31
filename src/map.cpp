@@ -18,6 +18,8 @@
 ** Map
 */
 
+namespace Bitty {
+
 class MapImpl : public Map {
 private:
 	typedef std::vector<int> Cels;
@@ -672,6 +674,8 @@ Map* Map::create(const Tiles* tiles, bool batch) {
 void Map::destroy(Map* ptr) {
 	MapImpl* impl = static_cast<MapImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

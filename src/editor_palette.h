@@ -18,6 +18,8 @@
 ** Palette editor
 */
 
+namespace Bitty {
+
 class EditorPalette : public Editor, public virtual Object {
 public:
 	BITTY_CLASS_TYPE('P', 'L', 'T', 'E')
@@ -25,6 +27,8 @@ public:
 	static EditorPalette* create(void);
 	static void destroy(EditorPalette* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

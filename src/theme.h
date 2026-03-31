@@ -35,6 +35,8 @@
 ** Theme
 */
 
+namespace Bitty {
+
 /**
  * @brief Theme entity.
  */
@@ -480,6 +482,8 @@ protected:
 private:
 	void fromFile(class Renderer* rnd, const char* path);
 };
+
+}
 
 /* ===========================================================================} */
 

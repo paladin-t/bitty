@@ -27,6 +27,8 @@
 ** Recorder
 */
 
+namespace Bitty {
+
 /**
  * @brief Recorder utilities.
  */
@@ -47,6 +49,8 @@ public:
 	static Recorder* create(SaveHandler save, unsigned fps);
 	static void destroy(Recorder* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

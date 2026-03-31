@@ -16,6 +16,8 @@
 ** Noiser
 */
 
+namespace Bitty {
+
 class NoiserImpl : public Noiser {
 private:
 	FastNoiseLite _generator;
@@ -298,6 +300,8 @@ Noiser* Noiser::create(void) {
 void Noiser::destroy(Noiser* ptr) {
 	NoiserImpl* impl = static_cast<NoiserImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

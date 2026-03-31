@@ -15,10 +15,14 @@
 ** Command
 */
 
+namespace Bitty {
+
 Command::Command() {
 }
 
 Command::~Command() {
+}
+
 }
 
 /* ===========================================================================} */
@@ -27,6 +31,8 @@ Command::~Command() {
 ** {===========================================================================
 ** Command queue
 */
+
+namespace Bitty {
 
 CommandQueue::Factory::Factory(Command::Creator create_, Command::Destroyer destroy_) : create(create_), destroy(destroy_) {
 }
@@ -184,6 +190,8 @@ void CommandQueue::destroyCommand(Command* ptr) {
 		return;
 
 	it->second.destroy(ptr);
+}
+
 }
 
 /* ===========================================================================} */

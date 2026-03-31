@@ -24,6 +24,8 @@
 ** Code editor
 */
 
+namespace Bitty {
+
 class EditorCodeImpl : public EditorCode, public ImGui::CodeEditor {
 private:
 	bool _opened = false;
@@ -1139,6 +1141,8 @@ void EditorCode::destroy(EditorCode* ptr) {
 	EditorCodeImpl* impl = static_cast<EditorCodeImpl*>(ptr);
 	impl->dispose(--refCount);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

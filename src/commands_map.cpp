@@ -17,6 +17,8 @@
 ** Map commands
 */
 
+namespace Bitty {
+
 namespace Commands {
 
 namespace Map {
@@ -275,7 +277,7 @@ const char* Resize::toString(void) const {
 }
 
 int Resize::redo(Object::Ptr obj, int, const Variant*) {
-	::Map::Ptr map = Object::as<::Map::Ptr>(obj);
+	::Bitty::Map::Ptr map = Object::as<::Bitty::Map::Ptr>(obj);
 
 	if (!old()) {
 		old(Bytes::Ptr(Bytes::create()));
@@ -308,7 +310,7 @@ int Resize::redo(Object::Ptr obj, int, const Variant*) {
 }
 
 int Resize::undo(Object::Ptr obj, int, const Variant*) {
-	::Map::Ptr map = Object::as<::Map::Ptr>(obj);
+	::Bitty::Map::Ptr map = Object::as<::Bitty::Map::Ptr>(obj);
 
 	if (bytes()) {
 		Bytes::Ptr tmp(Bytes::create());
@@ -320,7 +322,7 @@ int Resize::undo(Object::Ptr obj, int, const Variant*) {
 		(void)n;
 		assert(n == (int)bytes());
 		Texture::Ptr texture = nullptr;
-		::Map::Tiles tiles;
+		::Bitty::Map::Tiles tiles;
 		if (map->tiles(tiles))
 			texture = tiles.texture;
 		std::string str;
@@ -330,7 +332,7 @@ int Resize::undo(Object::Ptr obj, int, const Variant*) {
 		map->fromJson(texture, doc);
 	} else {
 		Texture::Ptr texture = nullptr;
-		::Map::Tiles tiles;
+		::Bitty::Map::Tiles tiles;
 		if (map->tiles(tiles))
 			texture = tiles.texture;
 		std::string str;
@@ -363,6 +365,8 @@ Command* Resize::create(void) {
 void Resize::destroy(Command* ptr) {
 	Resize* impl = static_cast<Resize*>(ptr);
 	delete impl;
+}
+
 }
 
 }

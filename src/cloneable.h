@@ -18,6 +18,8 @@
 ** Cloneable
 */
 
+namespace Bitty {
+
 /**
  * @brief Cloneable interface.
  */
@@ -28,6 +30,8 @@ public:
 	 */
 	virtual bool clone(T** ptr) const = 0;
 };
+
+}
 
 /* ===========================================================================} */
 

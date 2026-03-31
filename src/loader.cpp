@@ -15,6 +15,8 @@
 ** Loader
 */
 
+namespace Bitty {
+
 Loader::Loader() {
 }
 
@@ -40,6 +42,8 @@ class Bytes* Loader::decode(const class Project*, const class Asset*, class Byte
 
 class Bytes* Loader::encode(const class Project*, const class Asset*, class Bytes* buf) const {
 	return buf;
+}
+
 }
 
 /* ===========================================================================} */

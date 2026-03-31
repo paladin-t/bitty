@@ -20,6 +20,8 @@
 ** File
 */
 
+namespace Bitty {
+
 /**
  * @brief File streaming object.
  */
@@ -39,6 +41,8 @@ public:
 	static File* create(void);
 	static void destroy(File* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

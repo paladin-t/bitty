@@ -24,6 +24,8 @@
 **   way, for workspaces, editors, etc.
 */
 
+namespace Bitty {
+
 /**
  * @brief Comparison utilities.
  */
@@ -441,6 +443,8 @@ public:
 		}
 	}
 };
+
+}
 
 /* ===========================================================================} */
 

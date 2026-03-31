@@ -60,6 +60,8 @@
 ** Effects
 */
 
+namespace Bitty {
+
 #if BITTY_EFFECTS_ENABLED && (defined BITTY_OS_WIN || defined BITTY_OS_MAC || defined BITTY_OS_LINUX)
 class EffectsImpl : public Effects {
 private:
@@ -1173,6 +1175,8 @@ Effects* Effects::create(void) {
 void Effects::destroy(Effects* ptr) {
 	EffectsImpl* impl = static_cast<EffectsImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

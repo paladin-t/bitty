@@ -19,6 +19,8 @@
 ** Font
 */
 
+namespace Bitty {
+
 class FontImpl : public Font {
 private:
 	Bytes::Ptr _data = nullptr;
@@ -353,6 +355,8 @@ Font* Font::create() {
 void Font::destroy(Font* ptr) {
 	FontImpl* impl = static_cast<FontImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

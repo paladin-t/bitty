@@ -16,6 +16,8 @@
 ** Pathfinder
 */
 
+namespace Bitty {
+
 template<typename T> class PathfinderImpl : public Pathfinder, public micropather::Graph {
 private:
 	typedef T Number;
@@ -253,6 +255,8 @@ Pathfinder* Pathfinder::create(int w, int n, int e, int s) {
 void Pathfinder::destroy(Pathfinder* ptr) {
 	PathfinderImpl_* impl = static_cast<PathfinderImpl_*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

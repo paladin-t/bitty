@@ -19,6 +19,8 @@
 ** Entry
 */
 
+namespace Bitty {
+
 /**
  * @brief Entry.
  */
@@ -54,6 +56,8 @@ public:
 
 	static int compare(const Stub &left, const Stub &right, const std::string* priority = nullptr);
 };
+
+}
 
 /* ===========================================================================} */
 

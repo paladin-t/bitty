@@ -17,6 +17,8 @@
 ** File
 */
 
+namespace Bitty {
+
 class FileImpl : public File {
 private:
 	FILE* _file = nullptr;
@@ -493,6 +495,8 @@ File* File::create(void) {
 void File::destroy(File* ptr) {
 	FileImpl* impl = static_cast<FileImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

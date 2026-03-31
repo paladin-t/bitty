@@ -20,6 +20,8 @@
 ** Stream
 */
 
+namespace Bitty {
+
 /**
  * @brief Streaming interface.
  */
@@ -99,6 +101,8 @@ public:
 	virtual int writeLine(const std::string &val) = 0;
 	virtual int writeLine(void) = 0;
 };
+
+}
 
 /* ===========================================================================} */
 

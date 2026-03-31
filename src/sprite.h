@@ -36,6 +36,8 @@
 ** Sprite
 */
 
+namespace Bitty {
+
 /**
  * @brief Sprite resource object.
  */
@@ -126,6 +128,8 @@ public:
 	static Sprite* create(int width, int height);
 	static void destroy(Sprite* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

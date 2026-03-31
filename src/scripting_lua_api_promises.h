@@ -18,11 +18,15 @@
 ** Standard
 */
 
+namespace Bitty {
+
 namespace Lua {
 
 namespace Standard {
 
 void promise(class Executable* exec);
+
+}
 
 }
 
@@ -35,11 +39,15 @@ void promise(class Executable* exec);
 ** Libraries
 */
 
+namespace Bitty {
+
 namespace Lua {
 
 namespace Libs {
 
 void promise(class Executable* exec);
+
+}
 
 }
 

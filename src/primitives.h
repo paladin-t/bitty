@@ -23,13 +23,13 @@
 
 #ifndef PRIMITIVE_CLIP
 #	define PRIMITIVE_CLIP(P, C) \
-		ProcedureGuard<Primitives> BITTY_UNIQUE_NAME(__CLIP__)( \
+		Bitty::ProcedureGuard<Bitty::Primitives> BITTY_UNIQUE_NAME(__CLIP__)( \
 			P, \
-			[&] (void) -> Primitives* { \
+			[&] (void) -> Bitty::Primitives* { \
 				P->clip(C.xMin(), C.yMin(), C.width(), C.height()); \
 				return P; \
 			}, \
-			[&] (Primitives*) -> void { \
+			[&] (Bitty::Primitives*) -> void { \
 				P->clip(); \
 			} \
 		);
@@ -41,6 +41,8 @@
 ** {===========================================================================
 ** Primitives
 */
+
+namespace Bitty {
 
 /**
  * @brief Primitives.
@@ -498,6 +500,8 @@ public:
 	static Primitives* create(bool withAudio);
 	static void destroy(Primitives* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

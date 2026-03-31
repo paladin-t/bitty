@@ -18,8 +18,12 @@
 ** ZIP archive
 */
 
+namespace Bitty {
+
 class Archive* archive_create_zip(void);
 void archive_destroy_zip(class Archive* ptr);
+
+}
 
 /* ===========================================================================} */
 

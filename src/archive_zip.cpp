@@ -36,6 +36,8 @@
 ** ZIP archive
 */
 
+namespace Bitty {
+
 class ArchiveImplZip : public Archive {
 private:
 	Stream::Accesses _accessibility = Stream::READ_WRITE;
@@ -471,6 +473,8 @@ Archive* archive_create_zip(void) {
 void archive_destroy_zip(Archive* ptr) {
 	ArchiveImplZip* impl = static_cast<ArchiveImplZip*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

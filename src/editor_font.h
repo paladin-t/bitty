@@ -18,6 +18,8 @@
 ** Font editor
 */
 
+namespace Bitty {
+
 class EditorFont : public Editable, public virtual Object {
 public:
 	BITTY_CLASS_TYPE('F', 'N', 'T', 'E')
@@ -25,6 +27,8 @@ public:
 	static EditorFont* create(void);
 	static void destroy(EditorFont* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

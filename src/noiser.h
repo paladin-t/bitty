@@ -20,6 +20,8 @@
 ** Noiser
 */
 
+namespace Bitty {
+
 /**
  * @brief Noiser algorithm.
  */
@@ -43,6 +45,8 @@ public:
 	static Noiser* create(void);
 	static void destroy(Noiser* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

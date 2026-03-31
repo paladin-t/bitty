@@ -22,6 +22,8 @@
 
 namespace Lua { // Library.
 
+using namespace ::Bitty;
+
 /**< Bytes. */
 
 LUA_CHECK_OBJ(Bytes)
@@ -33,6 +35,8 @@ LUA_WRITE_OBJ_CONST(Bytes)
 
 namespace Lua { // Application.
 
+using namespace ::Bitty;
+
 /**< Project. */
 
 typedef std::shared_ptr<const Project> ProjectPtr;
@@ -43,12 +47,16 @@ LUA_WRITE_ALIAS_CONST(ProjectPtr, Project)
 
 }
 
+using namespace ::Lua;
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Application
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -200,12 +208,16 @@ void plugin(class Executable* exec) {
 
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Editor
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -233,6 +245,8 @@ void plugin(class Executable* exec) {
 
 	// Editor.
 	open_Editor(L);
+}
+
 }
 
 }

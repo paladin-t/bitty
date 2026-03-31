@@ -62,6 +62,8 @@
 ** Text box
 */
 
+namespace Bitty {
+
 class TextBoxImpl : public TextBox, public ImGui::CodeEditor {
 private:
 	bool _opened = false;
@@ -2026,6 +2028,8 @@ TextBox* TextBox::create(void) {
 void TextBox::destroy(TextBox* ptr) {
 	TextBoxImpl* impl = static_cast<TextBoxImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

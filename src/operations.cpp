@@ -109,16 +109,16 @@ static constexpr const char OPERATIONS_ASSET_DEFAULT_CODE[] =
 
 #ifndef OPERATIONS_AUTO_CLOSE_POPUP
 #	define OPERATIONS_AUTO_CLOSE_POPUP(W) \
-		ProcedureGuard<void> BITTY_UNIQUE_NAME(__CLOSE__)( \
+		Bitty::ProcedureGuard<void> BITTY_UNIQUE_NAME(__CLOSE__)( \
 			std::bind( \
-				[] (Workspace* ws) -> void* { \
+				[] (Bitty::Workspace* ws) -> void* { \
 					ImGui::PopupBox::Ptr popup = ws->popupBox(); \
 					return (void*)(uintptr_t)popup.get(); \
 				}, \
 				W \
 			), \
 			std::bind( \
-				[] (Workspace* ws, void* ptr) -> void { \
+				[] (Bitty::Workspace* ws, void* ptr) -> void { \
 					ImGui::PopupBox* popup = (ImGui::PopupBox*)(uintptr_t)ptr; \
 					if (popup == ws->popupBox().get()) \
 						ws->popupBox(nullptr); \
@@ -135,21 +135,21 @@ static constexpr const char OPERATIONS_ASSET_DEFAULT_CODE[] =
 ** Utilities
 */
 
-static void operationsHandleError(Workspace* ws, const char* msg) {
+static void operationsHandleError(Bitty::Workspace* ws, const char* msg) {
 	ws->error(msg);
 }
 
 static void operationsAppendCustomAssetType(
-	class Renderer*, Workspace* ws, const class Project*,
+	Bitty::Renderer*, Bitty::Workspace* ws, const Bitty::Project*,
 	ImGui::AddAssetPopupBox::Types &types, ImGui::AddAssetPopupBox::TypeNames &typeNames, ImGui::AddAssetPopupBox::TypeExtensions &typeExtensions,
 	ImGui::AddAssetPopupBox::Vec2s &defaultSizes, ImGui::AddAssetPopupBox::Vec2s &maxSizes,
 	ImGui::AddAssetPopupBox::Vec2s &defaultSizes2, ImGui::AddAssetPopupBox::Vec2s &maxSizes2
 ) {
-	for (Plugin* plugin : ws->plugins()) {
-		if (!plugin->is(Plugin::Usages::COMPILER))
+	for (Bitty::Plugin* plugin : ws->plugins()) {
+		if (!plugin->is(Bitty::Plugin::Usages::COMPILER))
 			continue;
 
-		const Plugin::Schema &schema = plugin->schema();
+		const Bitty::Plugin::Schema &schema = plugin->schema();
 		if (std::find(types.begin(), types.end(), schema.type()) != types.end()) {
 			fprintf(stderr, "Asset type already exists: \"%s\".\n", schema.name.c_str());
 
@@ -159,10 +159,10 @@ static void operationsAppendCustomAssetType(
 		types.push_back(schema.type());
 		typeNames.push_back(schema.name);
 		typeExtensions.push_back(schema.extension);
-		defaultSizes.push_back(Math::Vec2i());
-		maxSizes.push_back(Math::Vec2i());
-		defaultSizes2.push_back(Math::Vec2i());
-		maxSizes2.push_back(Math::Vec2i());
+		defaultSizes.push_back(Bitty::Math::Vec2i());
+		maxSizes.push_back(Bitty::Math::Vec2i());
+		defaultSizes2.push_back(Bitty::Math::Vec2i());
+		maxSizes2.push_back(Bitty::Math::Vec2i());
 	}
 }
 
@@ -172,6 +172,8 @@ static void operationsAppendCustomAssetType(
 ** {===========================================================================
 ** Operations
 */
+
+namespace Bitty {
 
 promise::Defer Operations::popupMessage(class Renderer*, Workspace* ws, const char* content, bool deniable, bool cancelable) {
 	return promise::newPromise(
@@ -3845,6 +3847,8 @@ promise::Defer Operations::pluginRunMenuItem(class Renderer*, Workspace* ws, con
 			);
 		}
 	);
+}
+
 }
 
 /* ===========================================================================} */

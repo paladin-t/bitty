@@ -20,6 +20,8 @@
 ** @note Specialized workspace for Pro version.
 */
 
+namespace Bitty {
+
 class WorkspaceStudio : public Workspace {
 public:
 	struct StudioSettings : public Settings {
@@ -124,6 +126,8 @@ private:
 	void showAbout(class Window* wnd, class Renderer* rnd, class Primitives* primitives);
 	void showPaused(class Window* wnd, class Renderer* rnd, const class Project* project, class Primitives* primitives);
 };
+
+}
 
 /* ===========================================================================} */
 

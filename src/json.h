@@ -23,6 +23,8 @@
 ** JSON
 */
 
+namespace Bitty {
+
 /**
  * @brief JSON object.
  */
@@ -75,6 +77,8 @@ public:
 	static Json* create(void);
 	static void destroy(Json* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

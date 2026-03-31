@@ -48,6 +48,8 @@
 ** Scripting
 */
 
+namespace Bitty {
+
 /**
  * @brief Scripting driven executable object.
  */
@@ -90,6 +92,8 @@ public:
 	static Scripting* create(Languages language);
 	static void destroy(Executable* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

@@ -16,6 +16,8 @@
 ** Asset
 */
 
+namespace Bitty {
+
 Entry::Stub::Stub(const Text::Array &data) : parts(data) {
 }
 
@@ -93,6 +95,8 @@ int Entry::compare(const Stub &left_, const Stub &right_, const std::string* pri
 			);
 		}
 	);
+}
+
 }
 
 /* ===========================================================================} */

@@ -124,6 +124,8 @@
 ** Text-based archive
 */
 
+namespace Bitty {
+
 class ArchiveImplTxt : public Archive {
 private:
 	struct Entry {
@@ -846,6 +848,8 @@ Archive* archive_create_txt(void) {
 void archive_destroy_txt(Archive* ptr) {
 	ArchiveImplTxt* impl = static_cast<ArchiveImplTxt*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

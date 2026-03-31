@@ -45,6 +45,20 @@ bool operator != (const ImVec2 &left, const ImVec2 &right);
 
 /*
 ** {===========================================================================
+** Forward declaration
+*/
+
+namespace Bitty {
+
+class Asset;
+class Project;
+
+}
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
 ** ImGui widgets
 */
 
@@ -60,7 +74,7 @@ typedef std::function<void(const ImVec2 &, bool, bool, const char*)> ButtonDrawe
 
 typedef std::function<void(void)> TabBarDropper;
 
-typedef std::function<bool(const class Asset*)> AssetFilter;
+typedef std::function<bool(const Bitty::Asset*)> AssetFilter;
 
 class Initializer {
 private:
@@ -84,8 +98,8 @@ private:
 
 	std::stack<bool> _opened;
 	int _dec = 0;
-	Text::Array _inc;
-	Text::Array _path;
+	Bitty::Text::Array _inc;
+	Bitty::Text::Array _path;
 
 public:
 	Hierarchy(BeginHandler begin, EndHandler end);
@@ -93,7 +107,7 @@ public:
 	void prepare(void);
 	void finish(void);
 
-	bool with(Text::Array::const_iterator begin, Text::Array::const_iterator end);
+	bool with(Bitty::Text::Array::const_iterator begin, Bitty::Text::Array::const_iterator end);
 };
 
 class PopupBox {
@@ -109,7 +123,7 @@ public:
 
 class WaitingPopupBox : public PopupBox {
 public:
-	struct TimeoutHandler : public Handler<TimeoutHandler, void> {
+	struct TimeoutHandler : public Bitty::Handler<TimeoutHandler, void> {
 		using Handler::Handler;
 	};
 
@@ -134,13 +148,13 @@ public:
 
 class MessagePopupBox : public PopupBox {
 public:
-	struct ConfirmHandler : public Handler<ConfirmHandler, void> {
+	struct ConfirmHandler : public Bitty::Handler<ConfirmHandler, void> {
 		using Handler::Handler;
 	};
-	struct DenyHandler : public Handler<DenyHandler, void> {
+	struct DenyHandler : public Bitty::Handler<DenyHandler, void> {
 		using Handler::Handler;
 	};
-	struct CancelHandler : public Handler<CancelHandler, void> {
+	struct CancelHandler : public Bitty::Handler<CancelHandler, void> {
 		using Handler::Handler;
 	};
 
@@ -171,10 +185,10 @@ public:
 
 class InputPopupBox : public PopupBox {
 public:
-	struct ConfirmHandler : public Handler<ConfirmHandler, void, const char*> {
+	struct ConfirmHandler : public Bitty::Handler<ConfirmHandler, void, const char*> {
 		using Handler::Handler;
 	};
-	struct CancelHandler : public Handler<CancelHandler, void> {
+	struct CancelHandler : public Bitty::Handler<CancelHandler, void> {
 		using Handler::Handler;
 	};
 
@@ -206,34 +220,34 @@ public:
 
 class AddAssetPopupBox : public PopupBox {
 public:
-	struct ConfirmHandler : public Handler<ConfirmHandler, void, unsigned, const char*, const Math::Vec2i*, const Math::Vec2i*, const char*> {
+	struct ConfirmHandler : public Bitty::Handler<ConfirmHandler, void, unsigned, const char*, const Bitty::Math::Vec2i*, const Bitty::Math::Vec2i*, const char*> {
 		using Handler::Handler;
 	};
-	struct CancelHandler : public Handler<CancelHandler, void> {
+	struct CancelHandler : public Bitty::Handler<CancelHandler, void> {
 		using Handler::Handler;
 	};
 
 	typedef std::vector<unsigned> Types;
 	typedef std::vector<std::string> TypeNames;
 	typedef std::vector<std::string> TypeExtensions;
-	typedef std::vector<Math::Vec2i> Vec2s;
+	typedef std::vector<Bitty::Math::Vec2i> Vec2s;
 
 private:
-	const class Project* _project = nullptr;
+	const Bitty::Project* _project = nullptr;
 	std::string _title;
 	std::string _type;
 	Types _types;
 	TypeNames _typeNames;
 	TypeExtensions _typeExtensions;
 	int _typeIndex = 0;
-	Text::Array _refs;
+	Bitty::Text::Array _refs;
 	int _refIndex = -1;
 	std::string _size;
-	Math::Vec2i _sizeVec;
+	Bitty::Math::Vec2i _sizeVec;
 	Vec2s _defaultSizes;
 	Vec2s _maxSizes;
 	std::string _size2;
-	Math::Vec2i _sizeVec2;
+	Bitty::Math::Vec2i _sizeVec2;
 	Vec2s _defaultSizes2;
 	Vec2s _maxSizes2;
 	std::string _reference;
@@ -257,7 +271,7 @@ private:
 
 public:
 	AddAssetPopupBox(
-		const class Project* project,
+		const Bitty::Project* project,
 		const std::string &title,
 		const std::string &type, const Types &types, const TypeNames &typeNames, const TypeExtensions &typeExtensions, int typeIndex,
 		const std::string &size, const Vec2s &defaultSizes, const Vec2s &maxSizes,
@@ -275,10 +289,10 @@ public:
 
 class AddFilePopupBox : public PopupBox {
 public:
-	struct ConfirmHandler : public Handler<ConfirmHandler, void, const char*, const char*> {
+	struct ConfirmHandler : public Bitty::Handler<ConfirmHandler, void, const char*, const char*> {
 		using Handler::Handler;
 	};
-	struct CancelHandler : public Handler<CancelHandler, void> {
+	struct CancelHandler : public Bitty::Handler<CancelHandler, void> {
 		using Handler::Handler;
 	};
 
@@ -318,19 +332,19 @@ public:
 
 class ResizePopupBox : public PopupBox {
 public:
-	struct ConfirmHandler : public Handler<ConfirmHandler, void, const Math::Vec2i*> {
+	struct ConfirmHandler : public Bitty::Handler<ConfirmHandler, void, const Bitty::Math::Vec2i*> {
 		using Handler::Handler;
 	};
-	struct CancelHandler : public Handler<CancelHandler, void> {
+	struct CancelHandler : public Bitty::Handler<CancelHandler, void> {
 		using Handler::Handler;
 	};
 
 private:
 	std::string _title;
 	std::string _size;
-	Math::Vec2i _sizeVec;
-	Math::Vec2i _defaultSize;
-	Math::Vec2i _maxSize;
+	Bitty::Math::Vec2i _sizeVec;
+	Bitty::Math::Vec2i _defaultSize;
+	Bitty::Math::Vec2i _maxSize;
 
 	ConfirmHandler _confirmHandler = nullptr;
 	std::string _confirmText;
@@ -342,7 +356,7 @@ private:
 public:
 	ResizePopupBox(
 		const std::string &title,
-		const std::string &size, const Math::Vec2i &defaultSize, const Math::Vec2i &maxSize,
+		const std::string &size, const Bitty::Math::Vec2i &defaultSize, const Bitty::Math::Vec2i &maxSize,
 		const ConfirmHandler &confirm, const CancelHandler &cancel,
 		const char* confirmTxt /* nullable */, const char* cancelTxt /* nullable */
 	);
@@ -353,22 +367,22 @@ public:
 
 class SelectAssetPopupBox : public PopupBox {
 public:
-	struct ConfirmHandlerForSingleSelection : public Handler<ConfirmHandlerForSingleSelection, void, const std::string &> {
+	struct ConfirmHandlerForSingleSelection : public Bitty::Handler<ConfirmHandlerForSingleSelection, void, const std::string &> {
 		using Handler::Handler;
 	};
-	struct ConfirmHandlerForMultipleSelection : public Handler<ConfirmHandlerForMultipleSelection, void, const Text::Set &> {
+	struct ConfirmHandlerForMultipleSelection : public Bitty::Handler<ConfirmHandlerForMultipleSelection, void, const Bitty::Text::Set &> {
 		using Handler::Handler;
 	};
-	struct CancelHandler : public Handler<CancelHandler, void> {
+	struct CancelHandler : public Bitty::Handler<CancelHandler, void> {
 		using Handler::Handler;
 	};
 
 private:
-	const class Project* _project = nullptr;
+	const Bitty::Project* _project = nullptr;
 	std::string _title;
 	std::string _content;
 	std::string _singleSelection;
-	Text::Set _multipleSelection;
+	Bitty::Text::Set _multipleSelection;
 	std::string _extra;
 
 	std::string _all;
@@ -388,7 +402,7 @@ private:
 
 public:
 	SelectAssetPopupBox(
-		const class Project* project,
+		const Bitty::Project* project,
 		const std::string &title,
 		const std::string &content,
 		const std::string &default_,
@@ -399,10 +413,10 @@ public:
 		const char* confirmTxt /* nullable */, const char* cancelTxt /* nullable */
 	);
 	SelectAssetPopupBox(
-		const class Project* project,
+		const Bitty::Project* project,
 		const std::string &title,
 		const std::string &content,
-		const Text::Set &default_,
+		const Bitty::Text::Set &default_,
 		const std::string &extra,
 		const std::string &all,
 		ImTextureID texId, ImTextureID openTexId, ImU32 col,
@@ -417,16 +431,16 @@ public:
 
 class SwitchAssetPopupBox : public PopupBox {
 public:
-	struct ConfirmHandler : public Handler<ConfirmHandler, void, const char*> {
+	struct ConfirmHandler : public Bitty::Handler<ConfirmHandler, void, const char*> {
 		using Handler::Handler;
 	};
-	struct CancelHandler : public Handler<CancelHandler, void> {
+	struct CancelHandler : public Bitty::Handler<CancelHandler, void> {
 		using Handler::Handler;
 	};
 
 private:
 	std::string _title;
-	Text::Array _assets;
+	Bitty::Text::Array _assets;
 	std::string _selection;
 
 	ConfirmHandler _confirmHandler = nullptr;
@@ -436,7 +450,7 @@ private:
 
 public:
 	SwitchAssetPopupBox(
-		const class Project* project,
+		const Bitty::Project* project,
 		const std::string &title,
 		const ConfirmHandler &confirm, const CancelHandler &cancel
 	);
@@ -534,27 +548,27 @@ bool Selectable(const std::string &label, bool selected = false, ImGuiSelectable
 bool Selectable(const std::string &label, bool* p_selected, ImGuiSelectableFlags flags = ImGuiSelectableFlags_None, const ImVec2 &size = ImVec2(0, 0));
 
 void RefSelector(
-	const class Project* project,
-	Text::Array &refs, int* ref_index,
+	const Bitty::Project* project,
+	Bitty::Text::Array &refs, int* ref_index,
 	unsigned type,
 	const char* none /* nullable */, const char* palette /* nullable */, const char* reference /* nullable */
 );
 
 void AssetSelectAll(
-	const class Project* project,
-	Text::Set &selected,
+	const Bitty::Project* project,
+	Bitty::Text::Set &selected,
 	AssetFilter filter = nullptr
 );
 bool AssetSelector(
-	const class Project* project,
-	Text::Set &selected,
+	const Bitty::Project* project,
+	Bitty::Text::Set &selected,
 	ImTextureID dir_tex_id = nullptr, ImTextureID open_dir_tex_id = nullptr,
 	ImU32 col = IM_COL32_WHITE,
 	AssetFilter filter = nullptr,
 	int* total = nullptr
 );
 bool AssetSelector(
-	const class Project* project,
+	const Bitty::Project* project,
 	std::string &selected,
 	ImTextureID dir_tex_id = nullptr, ImTextureID open_dir_tex_id = nullptr, ImTextureID file_tex_id = nullptr,
 	ImU32 col = IM_COL32_WHITE,
@@ -562,35 +576,35 @@ bool AssetSelector(
 	int* total = nullptr
 );
 bool AssetMenu(
-	const class Project* project,
+	const Bitty::Project* project,
 	std::string &selected,
 	AssetFilter filter = nullptr
 );
 
 bool ExampleMenu(
-	const class Project* project,
-	const Entry::Dictionary &examples,
+	const Bitty::Project* project,
+	const Bitty::Entry::Dictionary &examples,
 	std::string &selected
 );
 
 bool PluginMenu(
-	const class Project* project,
-	const Plugin::Array &plugins,
+	const Bitty::Project* project,
+	const Bitty::Plugin::Array &plugins,
 	const char* menu,
-	Plugin* &selected
+	Bitty::Plugin* &selected
 );
 
 bool DocumentMenu(
-	const class Project* project,
-	const Entry::Dictionary &documents,
+	const Bitty::Project* project,
+	const Bitty::Entry::Dictionary &documents,
 	std::string &selected
 );
 
-void DebugVariable(const Variant &val);
+void DebugVariable(const Bitty::Variant &val);
 
 void ConfigGamepads(
-	Input* input,
-	Input::Gamepad* pads, int pad_count,
+	Bitty::Input* input,
+	Bitty::Input::Gamepad* pads, int pad_count,
 	int* active_pad_index /* nullable */, int* active_btn_index /* nullable */,
 	const char* label_wait /* nullable */
 );

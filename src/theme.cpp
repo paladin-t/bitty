@@ -57,6 +57,8 @@
 ** Theme
 */
 
+namespace Bitty {
+
 Theme::Theme() {
 }
 
@@ -1073,6 +1075,8 @@ void Theme::fromFile(class Renderer* rnd, const char* path_) {
 			}
 		}
 	}
+}
+
 }
 
 /* ===========================================================================} */

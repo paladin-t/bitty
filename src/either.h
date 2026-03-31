@@ -18,6 +18,8 @@
 ** Maybe
 */
 
+namespace Bitty {
+
 template<class T> class Maybe;
 template<> class Maybe<void> {
 public:
@@ -114,12 +116,16 @@ public:
 	}
 };
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Either
 */
+
+namespace Bitty {
 
 template<class T> struct Left {
 	T value;
@@ -248,6 +254,8 @@ public:
 		return _isLeft ? Maybe<void>() : Maybe<R>(_right);
 	}
 };
+
+}
 
 /* ===========================================================================} */
 

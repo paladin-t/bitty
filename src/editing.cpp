@@ -48,7 +48,7 @@ static const char* editingTextOffset(const char* code, int ln, int col) {
 		if (*code == '\0')
 			break;
 
-		const int n = Unicode::expectUtf8(code);
+		const int n = Bitty::Unicode::expectUtf8(code);
 		code += n;
 	}
 
@@ -72,7 +72,7 @@ static const char* editingTextFindForward(const char* txt, const char* const wha
 				*coloff = 0;
 				++str;
 			} else {
-				const int n = Unicode::expectUtf8(str);
+				const int n = Bitty::Unicode::expectUtf8(str);
 				++(*coloff);
 				str += n;
 			}
@@ -102,7 +102,7 @@ static const char* editingTextFindBackward(const char* txt, const char* const wh
 				*coloff = 0;
 				++str;
 			} else {
-				const int n = Unicode::expectUtf8(str);
+				const int n = Bitty::Unicode::expectUtf8(str);
 				++(*coloff);
 				str += n;
 			}
@@ -120,6 +120,8 @@ static const char* editingTextFindBackward(const char* txt, const char* const wh
 ** {===========================================================================
 ** Editing
 */
+
+namespace Bitty {
 
 namespace Editing {
 
@@ -2737,6 +2739,8 @@ bool fromCheckpoint(const Project* project, const char* name, Checkpoint &checkp
 	bytes->poke(pos);
 
 	return result;
+}
+
 }
 
 }

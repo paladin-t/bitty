@@ -29,8 +29,12 @@
 ** Text-based archive
 */
 
+namespace Bitty {
+
 class Archive* archive_create_txt(void);
 void archive_destroy_txt(class Archive* ptr);
+
+}
 
 /* ===========================================================================} */
 

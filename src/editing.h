@@ -40,6 +40,8 @@
 ** Forward declaration
 */
 
+namespace Bitty {
+
 class Renderer;
 class Workspace;
 class Project;
@@ -50,12 +52,16 @@ class Sprite;
 class Map;
 class Sound;
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Editing
 */
+
+namespace Bitty {
 
 /**
  * @brief Editing and preview area, utilities.
@@ -530,6 +536,8 @@ struct Checkpoint {
  */
 bool toCheckpoint(const Project* project, const char* name, Checkpoint &checkpoint);
 bool fromCheckpoint(const Project* project, const char* name, Checkpoint &checkpoint);
+
+}
 
 }
 

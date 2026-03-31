@@ -29,6 +29,8 @@
 
 #if BITTY_NETWORK_ENABLED
 
+namespace Bitty {
+
 Network* Network::create(const char* type) {
 	Network* result = nullptr;
 	if (strcmp(type, "libuv") == 0 || strcmp(type, "default") == 0) {
@@ -53,6 +55,8 @@ void Network::destroy(Network* ptr) {
 
 		break;
 	}
+}
+
 }
 
 #endif /* BITTY_NETWORK_ENABLED */

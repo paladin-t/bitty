@@ -196,6 +196,8 @@ static bool webFetchRemove(unsigned /* id */) {
 
 #if BITTY_WEB_ENABLED
 
+namespace Bitty {
+
 FetchHtml::FetchHtml() {
 	_id = webGetId();
 
@@ -373,6 +375,8 @@ void FetchHtml::reset(void) {
 	_responseHint = STRING;
 }
 
+}
+
 #endif /* BITTY_WEB_ENABLED */
 
 /* ===========================================================================} */
@@ -383,6 +387,8 @@ void FetchHtml::reset(void) {
 */
 
 #if BITTY_WEB_ENABLED
+
+namespace Bitty {
 
 WebHtml::WebHtml() {
 #if defined BITTY_DEBUG
@@ -450,6 +456,8 @@ void WebHtml::callback(const RequestedHandler &) {
 }
 
 void WebHtml::callback(struct mg_connection*, int, void*) {
+}
+
 }
 
 #endif /* BITTY_WEB_ENABLED */

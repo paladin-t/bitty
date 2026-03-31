@@ -60,8 +60,19 @@
 
 /*
 ** {===========================================================================
+** Forward declaration
+*/
+
+struct ImFont;
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
 ** Document viewer
 */
+
+namespace Bitty {
 
 class DocumentViewerImpl : public DocumentViewer {
 private:
@@ -94,9 +105,9 @@ private:
 	ImGuiContext* _context = nullptr;                      // By the graphics thread.
 	ImGuiSDL::Device* _device = nullptr;                   // By the graphics thread.
 	Texture* _texture = nullptr;                           // By the graphics thread.
-	ImFont* _font = nullptr;                               // By the graphics thread.
-	ImFont* _regularFont = nullptr;                        // By the graphics thread.
-	ImFont* _boldFont = nullptr;                           // By the graphics thread.
+	::ImFont* _font = nullptr;                             // By the graphics thread.
+	::ImFont* _regularFont = nullptr;                      // By the graphics thread.
+	::ImFont* _boldFont = nullptr;                         // By the graphics thread.
 	ImGuiMouseCursor _mouseCursor = ImGuiMouseCursor_None; // By the graphics thread.
 
 public:
@@ -847,8 +858,8 @@ private:
 
 				rebuild(rnd, io);
 
-				ImFont* regularFont = _regularFont ? _regularFont : _font;
-				ImFont* boldFont = _boldFont ? _boldFont : _font;
+				::ImFont* regularFont = _regularFont ? _regularFont : _font;
+				::ImFont* boldFont = _boldFont ? _boldFont : _font;
 				_document->font(regularFont, boldFont);
 			}
 
@@ -1061,6 +1072,8 @@ DocumentViewer* DocumentViewer::create(void) {
 void DocumentViewer::destroy(DocumentViewer* ptr) {
 	DocumentViewerImpl* impl = static_cast<DocumentViewerImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

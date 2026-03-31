@@ -17,6 +17,8 @@
 ** Editor
 */
 
+namespace Bitty {
+
 float Editor::Ref::windowWidth(float exp) {
 	const float w = ImGui::GetContentRegionAvail().x;
 	_verticalScrollBarVisible = w < std::floor(exp);
@@ -40,6 +42,8 @@ Editor::Splitter Editor::split(void) {
 	const float paintingWidth = content.x - toolsWidth;
 
 	return std::make_pair(paintingWidth, toolsWidth);
+}
+
 }
 
 /* ===========================================================================} */

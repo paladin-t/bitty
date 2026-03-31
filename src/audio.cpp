@@ -39,6 +39,8 @@
 
 static uintptr_t _soundOccupation = 0;
 
+namespace Bitty {
+
 class SoundImpl : public Sound {
 private:
 	mutable std::string _title;
@@ -372,12 +374,16 @@ void Sound::destroy(Sound* ptr) {
 	delete impl;
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Sfx
 */
+
+namespace Bitty {
 
 struct SfxOccupation {
 	uintptr_t _channels[AUDIO_SFX_CHANNEL_COUNT];
@@ -644,6 +650,8 @@ void Sfx::destroy(Sfx* ptr) {
 	delete impl;
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
@@ -652,6 +660,8 @@ void Sfx::destroy(Sfx* ptr) {
 */
 
 static uintptr_t _musicOccupation = 0;
+
+namespace Bitty {
 
 class MusicImpl : public Music {
 private:
@@ -906,12 +916,16 @@ void Music::destroy(Music* ptr) {
 	delete impl;
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Audio
 */
+
+namespace Bitty {
 
 class AudioImpl : public Audio {
 private:
@@ -1034,6 +1048,8 @@ Audio* Audio::create(void) {
 void Audio::destroy(Audio* ptr) {
 	AudioImpl* impl = static_cast<AudioImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

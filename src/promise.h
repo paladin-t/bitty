@@ -23,6 +23,8 @@
 ** @note Minimal promise implementation to help handling asynchronous functions.
 */
 
+namespace Bitty {
+
 /**
  * @brief Promise object.
  */
@@ -66,6 +68,8 @@ public:
 	static Promise* create(void);
 	static void destroy(Promise* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

@@ -18,11 +18,15 @@
 ** Application
 */
 
+namespace Bitty {
+
 namespace Lua {
 
 namespace Application {
 
 void plugin(class Executable* exec);
+
+}
 
 }
 
@@ -35,11 +39,15 @@ void plugin(class Executable* exec);
 ** Editor
 */
 
+namespace Bitty {
+
 namespace Lua {
 
 namespace Editor {
 
 void plugin(class Executable* exec);
+
+}
 
 }
 

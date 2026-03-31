@@ -76,8 +76,8 @@ void Hierarchy::finish(void) {
 	}
 }
 
-bool Hierarchy::with(Text::Array::const_iterator begin, Text::Array::const_iterator end) {
-	Compare::diff(begin, end, _path.begin(), _path.end(), &_dec, &_inc); // Calculate difference between the current entry and the last `path`.
+bool Hierarchy::with(Bitty::Text::Array::const_iterator begin, Bitty::Text::Array::const_iterator end) {
+	Bitty::Compare::diff(begin, end, _path.begin(), _path.end(), &_dec, &_inc); // Calculate difference between the current entry and the last `path`.
 	_path.assign(begin, end); // Assign for calculation during the next loop step.
 
 	for (int i = 0; i < _dec; ++i) {
@@ -121,12 +121,12 @@ void WaitingPopupBox::update(void) {
 	bool isOpen = true;
 	bool toClose = false;
 
-	const unsigned long long now = DateTime::ticks();
+	const unsigned long long now = Bitty::DateTime::ticks();
 
 	if (_init.begin()) {
 		OpenPopup("#Wait");
 
-		_timeoutTime = now + DateTime::fromSeconds(0.25);
+		_timeoutTime = now + Bitty::DateTime::fromSeconds(0.25);
 	}
 
 	const ImVec2 pos = io.DisplaySize/* * io.DisplayFramebufferScale*/ * 0.5f;
@@ -349,7 +349,7 @@ void InputPopupBox::update(void) {
 }
 
 AddAssetPopupBox::AddAssetPopupBox(
-	const class Project* project,
+	const Bitty::Project* project,
 	const std::string &title,
 	const std::string &type, const Types &types, const TypeNames &typeNames, const TypeExtensions &typeExtensions, int typeIndex,
 	const std::string &size, const Vec2s &defaultSizes, const Vec2s &maxSizes,
@@ -371,8 +371,8 @@ AddAssetPopupBox::AddAssetPopupBox(
 {
 	if (_typeIndex < 0 || _typeIndex >= (int)_defaultSizes.size()) {
 		_typeIndex = 0;
-		_sizeVec = Math::Vec2i(0, 0);
-		_sizeVec2 = Math::Vec2i(0, 0);
+		_sizeVec = Bitty::Math::Vec2i(0, 0);
+		_sizeVec2 = Bitty::Math::Vec2i(0, 0);
 	} else {
 		_sizeVec = _defaultSizes[_typeIndex];
 		_sizeVec2 = _defaultSizes2[_typeIndex];
@@ -388,8 +388,8 @@ AddAssetPopupBox::AddAssetPopupBox(
 
 	_language = BITTY_LUA_EXT;
 	do {
-		LockGuard<RecursiveMutex>::UniquePtr acquired;
-		Project* prj = project->acquire(acquired);
+		Bitty::LockGuard<Bitty::RecursiveMutex>::UniquePtr acquired;
+		Bitty::Project* prj = project->acquire(acquired);
 		if (!prj)
 			break;
 
@@ -403,8 +403,8 @@ AddAssetPopupBox::~AddAssetPopupBox() {
 void AddAssetPopupBox::update(void) {
 	ImGuiStyle &style = GetStyle();
 
-	const Math::Vec2i* szPtr = nullptr;
-	const Math::Vec2i* szPtr2 = nullptr;
+	const Bitty::Math::Vec2i* szPtr = nullptr;
+	const Bitty::Math::Vec2i* szPtr2 = nullptr;
 
 	bool isOpen = true;
 	bool toConfirm = false;
@@ -445,12 +445,12 @@ void AddAssetPopupBox::update(void) {
 		PopID();
 
 		switch (_types[_typeIndex]) {
-		case Palette::TYPE(): // Do nothing.
+		case Bitty::Palette::TYPE(): // Do nothing.
 			break;
-		case Image::TYPE():
+		case Bitty::Image::TYPE():
 			PushID("@Ref");
 			{
-				RefSelector(_project, _refs, &_refIndex, Image::TYPE(), _none.c_str(), _palette.c_str(), _reference.c_str());
+				RefSelector(_project, _refs, &_refIndex, Bitty::Image::TYPE(), _none.c_str(), _palette.c_str(), _reference.c_str());
 
 				SameLine();
 				SetHelpTooltip(_tooltipRefPalette);
@@ -482,10 +482,10 @@ void AddAssetPopupBox::update(void) {
 			PopID();
 
 			break;
-		case Sprite::TYPE():
+		case Bitty::Sprite::TYPE():
 			PushID("@Ref");
 			{
-				RefSelector(_project, _refs, &_refIndex, Sprite::TYPE(), _none.c_str(), _palette.c_str(), _reference.c_str());
+				RefSelector(_project, _refs, &_refIndex, Bitty::Sprite::TYPE(), _none.c_str(), _palette.c_str(), _reference.c_str());
 
 				SameLine();
 				SetHelpTooltip(_tooltipRefImage);
@@ -517,10 +517,10 @@ void AddAssetPopupBox::update(void) {
 			PopID();
 
 			break;
-		case Map::TYPE():
+		case Bitty::Map::TYPE():
 			PushID("@Ref");
 			{
-				RefSelector(_project, _refs, &_refIndex, Map::TYPE(), _none.c_str(), _palette.c_str(), _reference.c_str());
+				RefSelector(_project, _refs, &_refIndex, Bitty::Map::TYPE(), _none.c_str(), _palette.c_str(), _reference.c_str());
 
 				SameLine();
 				SetHelpTooltip(_tooltipRefImage);
@@ -576,9 +576,9 @@ void AddAssetPopupBox::update(void) {
 			PopID();
 
 			break;
-		case Code::TYPE(): // Fall through.
-		case Json::TYPE(): // Fall through.
-		case Text::TYPE(): // Do nothing.
+		case Bitty::Code::TYPE(): // Fall through.
+		case Bitty::Json::TYPE(): // Fall through.
+		case Bitty::Text::TYPE(): // Do nothing.
 			break;
 		default: // Do nothing.
 			break;
@@ -591,13 +591,13 @@ void AddAssetPopupBox::update(void) {
 			if (!_init.end())
 				SetKeyboardFocusHere();
 			if (InputText("", _buffer, sizeof(_buffer), ImGuiInputTextFlags_AutoSelectAll)) {
-				const std::string ext = Asset::extOf(_buffer);
-				const unsigned y = Asset::typeOf(ext, false);
+				const std::string ext = Bitty::Asset::extOf(_buffer);
+				const unsigned y = Bitty::Asset::typeOf(ext, false);
 				if (y) {
 					const int old = _typeIndex;
 					const unsigned* offset = std::find(&_types[0], &_types[_types.size() - 1], y);
 					const ptrdiff_t idx = offset - &_types[0];
-					_typeIndex = Math::clamp((int)idx, 0, (int)(_types.size() - 1));
+					_typeIndex = Bitty::Math::clamp((int)idx, 0, (int)(_types.size() - 1));
 					if (_typeIndex != old)
 						typeChanged();
 				}
@@ -649,15 +649,15 @@ void AddAssetPopupBox::update(void) {
 				ref = _refs[_refIndex].c_str();
 
 			std::string buffer = _buffer;
-			const std::string ext = Asset::extOf(_buffer);
-			const unsigned y = Asset::typeOf(ext, false);
+			const std::string ext = Bitty::Asset::extOf(_buffer);
+			const unsigned y = Bitty::Asset::typeOf(ext, false);
 			if (!buffer.empty() && y != _types[_typeIndex]) {
 				switch (_types[_typeIndex]) {
-				case Image::TYPE():
+				case Bitty::Image::TYPE():
 					buffer += ref ? "." BITTY_IMAGE_EXT : ".png";
 
 					break;
-				case Code::TYPE():
+				case Bitty::Code::TYPE():
 					buffer += "." + _language;
 
 					break;
@@ -667,7 +667,7 @@ void AddAssetPopupBox::update(void) {
 					break;
 				}
 			}
-			Path::uniform(buffer);
+			Bitty::Path::uniform(buffer);
 
 			_confirmHandler(_types[_typeIndex], ref, szPtr, szPtr2, buffer.c_str());
 		}
@@ -725,7 +725,7 @@ void AddFilePopupBox::update(void) {
 				const std::string newPath = _browser(_defaultPath);
 				if (!newPath.empty()) {
 					_defaultPath = newPath;
-					Path::split(_defaultPath, &_default, nullptr, nullptr);
+					Bitty::Path::split(_defaultPath, &_default, nullptr, nullptr);
 					memset(_buffer, 0, sizeof(_buffer));
 					memcpy(_buffer, _default.c_str(), std::min(sizeof(_buffer), _default.length()));
 				}
@@ -783,7 +783,7 @@ void AddFilePopupBox::update(void) {
 
 		if (!_confirmHandler.empty()) {
 			std::string buffer = _buffer;
-			Path::uniform(buffer);
+			Bitty::Path::uniform(buffer);
 
 			_confirmHandler(_defaultPath.c_str(), buffer.c_str());
 		}
@@ -798,7 +798,7 @@ void AddFilePopupBox::update(void) {
 
 ResizePopupBox::ResizePopupBox(
 	const std::string &title,
-	const std::string &size, const Math::Vec2i &defaultSize, const Math::Vec2i &maxSize,
+	const std::string &size, const Bitty::Math::Vec2i &defaultSize, const Bitty::Math::Vec2i &maxSize,
 	const ConfirmHandler &confirm, const CancelHandler &cancel,
 	const char* confirmTxt, const char* cancelTxt
 ) : _title(title),
@@ -819,7 +819,7 @@ ResizePopupBox::~ResizePopupBox() {
 void ResizePopupBox::update(void) {
 	ImGuiStyle &style = GetStyle();
 
-	const Math::Vec2i* szPtr = nullptr;
+	const Bitty::Math::Vec2i* szPtr = nullptr;
 
 	bool isOpen = true;
 	bool toConfirm = false;
@@ -902,7 +902,7 @@ void ResizePopupBox::update(void) {
 }
 
 SelectAssetPopupBox::SelectAssetPopupBox(
-	const class Project* project,
+	const Bitty::Project* project,
 	const std::string &title,
 	const std::string &content,
 	const std::string &default_,
@@ -924,10 +924,10 @@ SelectAssetPopupBox::SelectAssetPopupBox(
 }
 
 SelectAssetPopupBox::SelectAssetPopupBox(
-	const class Project* project,
+	const Bitty::Project* project,
 	const std::string &title,
 	const std::string &content,
-	const Text::Set &default_,
+	const Bitty::Text::Set &default_,
 	const std::string &extra,
 	const std::string &all,
 	ImTextureID texId, ImTextureID openTexId, ImU32 col,
@@ -1045,26 +1045,26 @@ void SelectAssetPopupBox::update(void) {
 }
 
 SwitchAssetPopupBox::SwitchAssetPopupBox(
-	const class Project* project,
+	const Bitty::Project* project,
 	const std::string &title,
 	const ConfirmHandler &confirm, const CancelHandler &cancel
 ) : _title(title),
 	_confirmHandler(confirm), _cancelHandler(cancel)
 {
 	do {
-		LockGuard<RecursiveMutex>::UniquePtr acquired;
-		Project* prj = project->acquire(acquired);
+		Bitty::LockGuard<Bitty::RecursiveMutex>::UniquePtr acquired;
+		Bitty::Project* prj = project->acquire(acquired);
 		if (!prj)
 			break;
 
 		prj->foreach(
-			[&] (Asset* &asset, Asset::List::Index) -> void {
-				Asset::States* states = asset->states();
-				const Asset::States::Activity activity = states->activity();
-				if (activity == Asset::States::CLOSED)
+			[&] (Bitty::Asset* &asset, Bitty::Asset::List::Index) -> void {
+				Bitty::Asset::States* states = asset->states();
+				const Bitty::Asset::States::Activity activity = states->activity();
+				if (activity == Bitty::Asset::States::CLOSED)
 					return;
 
-				const Entry &entry = asset->entry();
+				const Bitty::Entry &entry = asset->entry();
 				_assets.push_back(entry.name());
 			},
 			true
@@ -1115,7 +1115,7 @@ void SwitchAssetPopupBox::update(void) {
 
 		const bool tab = IsKeyPressed(SDL_SCANCODE_TAB);
 		if (tab) {
-			Text::Array::iterator it = std::find(_assets.begin(), _assets.end(), _selection);
+			Bitty::Text::Array::iterator it = std::find(_assets.begin(), _assets.end(), _selection);
 			if (it != _assets.end()) {
 				int next = (int)(it - _assets.begin());
 				if (io.KeyShift) {
@@ -1398,7 +1398,7 @@ void CustomAddButton(const ImVec2 &center, bool held, bool hovered, const char* 
 	drawList->AddLine(center + ImVec2(0, -lnExtent), center + ImVec2(0, lnExtent), lnCol, 1);
 
 	if (tooltip && IsItemHovered()) {
-		VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
+		Bitty::VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
 
 		SetTooltip(tooltip);
 	}
@@ -1417,7 +1417,7 @@ void CustomRemoveButton(const ImVec2 &center, bool held, bool hovered, const cha
 	drawList->AddLine(center + ImVec2(-lnExtent, 0), center + ImVec2(lnExtent, 0), lnCol, 1);
 
 	if (tooltip && IsItemHovered()) {
-		VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
+		Bitty::VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
 
 		SetTooltip(tooltip);
 	}
@@ -1439,7 +1439,7 @@ void CustomRenameButton(const ImVec2 &center, bool held, bool hovered, const cha
 	drawList->AddLine(center + ImVec2(lnExtent * -0.1f, lnExtent), center + ImVec2(lnExtent * 0.6f, lnExtent), lnCol, 1);
 
 	if (tooltip && IsItemHovered()) {
-		VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
+		Bitty::VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
 
 		SetTooltip(tooltip);
 	}
@@ -1478,7 +1478,7 @@ void CustomClearButton(const ImVec2 &center, bool held, bool hovered, const char
 	);
 
 	if (tooltip && IsItemHovered()) {
-		VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
+		Bitty::VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
 
 		SetTooltip(tooltip);
 	}
@@ -1497,7 +1497,7 @@ void CustomMinButton(const ImVec2 &center, bool held, bool hovered, const char* 
 	drawList->AddLine(center + ImVec2(-lnExtent, lnExtent - 1), center + ImVec2(lnExtent, lnExtent - 1), lnCol, 1);
 
 	if (tooltip && IsItemHovered()) {
-		VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
+		Bitty::VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
 
 		SetTooltip(tooltip);
 	}
@@ -1516,7 +1516,7 @@ void CustomMaxButton(const ImVec2 &center, bool held, bool hovered, const char* 
 	drawList->AddRect(center + ImVec2(-lnExtent, -lnExtent), center + ImVec2(lnExtent, lnExtent), lnCol);
 
 	if (tooltip && IsItemHovered()) {
-		VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
+		Bitty::VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
 
 		SetTooltip(tooltip);
 	}
@@ -1536,7 +1536,7 @@ void CustomCloseButton(const ImVec2 &center, bool held, bool hovered, const char
 	drawList->AddLine(center + ImVec2(lnExtent, -lnExtent), center + ImVec2(-lnExtent, lnExtent), lnCol);
 
 	if (tooltip && IsItemHovered()) {
-		VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
+		Bitty::VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
 
 		SetTooltip(tooltip);
 	}
@@ -1560,7 +1560,7 @@ void CustomPlayButton(const ImVec2 &center, bool held, bool hovered, const char*
 	);
 
 	if (tooltip && IsItemHovered()) {
-		VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
+		Bitty::VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
 
 		SetTooltip(tooltip);
 	}
@@ -1579,7 +1579,7 @@ void CustomStopButton(const ImVec2 &center, bool held, bool hovered, const char*
 	drawList->AddRectFilled(center + ImVec2(-lnExtent, -lnExtent), center + ImVec2(lnExtent, lnExtent), lnCol);
 
 	if (tooltip && IsItemHovered()) {
-		VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
+		Bitty::VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
 
 		SetTooltip(tooltip);
 	}
@@ -1604,9 +1604,9 @@ bool Url(const char* label, const char* link, bool adj) {
 	}
 	if (IsItemHovered() && IsMouseReleased(ImGuiMouseButton_Left)) { // Used `IsItemHovered()` instead of `IsItemClicked()` to avoid a clicking issue.
 		if (link) {
-			const std::string osstr = Unicode::toOs(link);
+			const std::string osstr = Bitty::Unicode::toOs(link);
 
-			Platform::surf(osstr.c_str());
+			Bitty::Platform::surf(osstr.c_str());
 		}
 
 		return true;
@@ -1624,7 +1624,7 @@ void SetHelpTooltip(const std::string &text) {
 
 	TextUnformatted("[?]");
 	if (!text.empty() && IsItemHovered()) {
-		VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
+		Bitty::VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
 
 		SetTooltip(text);
 	}
@@ -1637,7 +1637,7 @@ bool Checkbox(const std::string &label, bool* v) {
 void Indicator(const ImVec2 &min, const ImVec2 &max, float thickness) {
 	ImDrawList* drawList = GetWindowDrawList();
 
-	const bool tick = !!(((int)(DateTime::toSeconds(DateTime::ticks()) * 1)) % 2);
+	const bool tick = !!(((int)(Bitty::DateTime::toSeconds(Bitty::DateTime::ticks()) * 1)) % 2);
 	drawList->AddRect(
 		min, max,
 		tick ? IM_COL32_WHITE : IM_COL32_BLACK,
@@ -1647,7 +1647,7 @@ void Indicator(const ImVec2 &min, const ImVec2 &max, float thickness) {
 }
 
 void Indicator(const char* label, const ImVec2 &pos) {
-	const bool tick = !!(((int)(DateTime::toSeconds(DateTime::ticks()) * 1)) % 2);
+	const bool tick = !!(((int)(Bitty::DateTime::toSeconds(Bitty::DateTime::ticks()) * 1)) % 2);
 	const ImVec2 old = GetCursorPos();
 	SetCursorPos(pos);
 	TextColored(ColorConvertU32ToFloat4(tick ? IM_COL32(255, 0, 0, 255) : IM_COL32_BLACK_TRANS), label);
@@ -1760,7 +1760,7 @@ bool ColorButton(const char* desc_id, const ImVec4 &col, ImGuiColorEditFlags fla
 
 	const bool result = ColorButton(desc_id, col, flags, size);
 	if (tooltip && IsItemHovered()) {
-		VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
+		Bitty::VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
 
 		SetTooltip(tooltip);
 	}
@@ -1785,7 +1785,7 @@ bool ImageButton(ImTextureID user_texture_id, const ImVec2 &size, const ImVec4& 
 	}
 
 	if (tooltip && IsItemHovered()) {
-		VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
+		Bitty::VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
 
 		SetTooltip(tooltip);
 	}
@@ -2288,8 +2288,8 @@ bool Selectable(const std::string &label, bool* p_selected, ImGuiSelectableFlags
 }
 
 void RefSelector(
-	const class Project* project,
-	Text::Array &refs, int* ref_index,
+	const Bitty::Project* project,
+	Bitty::Text::Array &refs, int* ref_index,
 	unsigned type,
 	const char* none, const char* palette, const char* reference
 ) {
@@ -2297,17 +2297,17 @@ void RefSelector(
 	const char* refStr = reference ? reference : "Reference:";
 	unsigned expType = 0;
 	switch (type) {
-	case Image::TYPE():
+	case Bitty::Image::TYPE():
 		refStr = palette ? palette : "Palette:";
-		expType = Palette::TYPE();
+		expType = Bitty::Palette::TYPE();
 
 		break;
-	case Sprite::TYPE():
-		expType = Image::TYPE();
+	case Bitty::Sprite::TYPE():
+		expType = Bitty::Image::TYPE();
 
 		break;
-	case Map::TYPE():
-		expType = Image::TYPE();
+	case Bitty::Map::TYPE():
+		expType = Bitty::Image::TYPE();
 
 		break;
 	default:
@@ -2319,17 +2319,17 @@ void RefSelector(
 	if (refIdx == -1 && refs.empty()) {
 		refs.push_back(none ? none : "<None>");
 		do {
-			LockGuard<RecursiveMutex>::UniquePtr acquired;
-			Project* prj = project->acquire(acquired);
+			Bitty::LockGuard<Bitty::RecursiveMutex>::UniquePtr acquired;
+			Bitty::Project* prj = project->acquire(acquired);
 			if (!prj)
 				break;
 
 			prj->foreach(
-				[&] (Asset* &asset, Asset::List::Index) -> void {
+				[&] (Bitty::Asset* &asset, Bitty::Asset::List::Index) -> void {
 					if (asset->type() != expType)
 						return;
 
-					const Entry &entry = asset->entry();
+					const Bitty::Entry &entry = asset->entry();
 					refs.push_back(entry.name());
 				}
 			);
@@ -2343,7 +2343,7 @@ void RefSelector(
 		"",
 		&refIdx,
 		[] (void* data, int idx, const char** outText) -> bool {
-			Text::Array* refs = (Text::Array*)data;
+			Bitty::Text::Array* refs = (Bitty::Text::Array*)data;
 			*outText = refs->at(idx).c_str();
 
 			return true;
@@ -2357,8 +2357,8 @@ void RefSelector(
 }
 
 void AssetSelectAll(
-	const class Project* project,
-	Text::Set &selected,
+	const Bitty::Project* project,
+	Bitty::Text::Set &selected,
 	AssetFilter filter
 ) {
 	selected.clear();
@@ -2373,20 +2373,20 @@ void AssetSelectAll(
 	hierarchy.prepare();
 
 	do {
-		LockGuard<RecursiveMutex>::UniquePtr acquired;
-		Project* prj = project->acquire(acquired);
+		Bitty::LockGuard<Bitty::RecursiveMutex>::UniquePtr acquired;
+		Bitty::Project* prj = project->acquire(acquired);
 		if (!prj)
 			break;
 
 		prj->foreach(
-			[&] (Asset* &asset, Asset::List::Index) -> void {
+			[&] (Bitty::Asset* &asset, Bitty::Asset::List::Index) -> void {
 				if (filter && filter(asset))
 					return;
 
-				const Entry &entry = asset->entry();
+				const Bitty::Entry &entry = asset->entry();
 
-				Text::Array::const_iterator begin = entry.parts().begin();
-				Text::Array::const_iterator end = entry.parts().end() - 1;
+				Bitty::Text::Array::const_iterator begin = entry.parts().begin();
+				Bitty::Text::Array::const_iterator end = entry.parts().end() - 1;
 				if (entry.parts().size() == 1) {
 					begin = entry.parts().end();
 					end = entry.parts().end();
@@ -2404,8 +2404,8 @@ void AssetSelectAll(
 }
 
 bool AssetSelector(
-	const class Project* project,
-	Text::Set &selected,
+	const Bitty::Project* project,
+	Bitty::Text::Set &selected,
 	ImTextureID dir_tex_id, ImTextureID open_dir_tex_id,
 	ImU32 col,
 	AssetFilter filter,
@@ -2427,23 +2427,23 @@ bool AssetSelector(
 	hierarchy.prepare();
 
 	do {
-		LockGuard<RecursiveMutex>::UniquePtr acquired;
-		Project* prj = project->acquire(acquired);
+		Bitty::LockGuard<Bitty::RecursiveMutex>::UniquePtr acquired;
+		Bitty::Project* prj = project->acquire(acquired);
 		if (!prj)
 			break;
 
 		prj->foreach(
-			[&] (Asset* &asset, Asset::List::Index) -> void {
+			[&] (Bitty::Asset* &asset, Bitty::Asset::List::Index) -> void {
 				if (filter && filter(asset))
 					return;
 
 				if (total)
 					++*total;
 
-				const Entry &entry = asset->entry();
+				const Bitty::Entry &entry = asset->entry();
 
-				Text::Array::const_iterator begin = entry.parts().begin();
-				Text::Array::const_iterator end = entry.parts().end() - 1;
+				Bitty::Text::Array::const_iterator begin = entry.parts().begin();
+				Bitty::Text::Array::const_iterator end = entry.parts().end() - 1;
 				if (entry.parts().size() == 1) {
 					begin = entry.parts().end();
 					end = entry.parts().end();
@@ -2452,7 +2452,7 @@ bool AssetSelector(
 				if (hierarchy.with(begin, end)) {
 					const std::string &file = entry.parts().back();
 					const std::string &full = entry.name();
-					const Text::Set::iterator it = selected.find(full);
+					const Bitty::Text::Set::iterator it = selected.find(full);
 					const bool wasChecked = it != selected.end();
 					bool checked = wasChecked;
 					if (TreeNode(&checked, file, ImGuiTreeNodeFlags_None, ImGuiButtonFlags_None)) {
@@ -2476,7 +2476,7 @@ bool AssetSelector(
 }
 
 bool AssetSelector(
-	const class Project* project,
+	const Bitty::Project* project,
 	std::string &selected,
 	ImTextureID dir_tex_id, ImTextureID open_dir_tex_id, ImTextureID file_tex_id,
 	ImU32 col,
@@ -2499,23 +2499,23 @@ bool AssetSelector(
 	hierarchy.prepare();
 
 	do {
-		LockGuard<RecursiveMutex>::UniquePtr acquired;
-		Project* prj = project->acquire(acquired);
+		Bitty::LockGuard<Bitty::RecursiveMutex>::UniquePtr acquired;
+		Bitty::Project* prj = project->acquire(acquired);
 		if (!prj)
 			break;
 
 		prj->foreach(
-			[&] (Asset* &asset, Asset::List::Index) -> void {
+			[&] (Bitty::Asset* &asset, Bitty::Asset::List::Index) -> void {
 				if (filter && filter(asset))
 					return;
 
 				if (total)
 					++*total;
 
-				const Entry &entry = asset->entry();
+				const Bitty::Entry &entry = asset->entry();
 
-				Text::Array::const_iterator begin = entry.parts().begin();
-				Text::Array::const_iterator end = entry.parts().end() - 1;
+				Bitty::Text::Array::const_iterator begin = entry.parts().begin();
+				Bitty::Text::Array::const_iterator end = entry.parts().end() - 1;
 				if (entry.parts().size() == 1) {
 					begin = entry.parts().end();
 					end = entry.parts().end();
@@ -2546,7 +2546,7 @@ bool AssetSelector(
 }
 
 bool AssetMenu(
-	const class Project* project,
+	const Bitty::Project* project,
 	std::string &selected,
 	AssetFilter filter
 ) {
@@ -2563,20 +2563,20 @@ bool AssetMenu(
 	hierarchy.prepare();
 
 	do {
-		LockGuard<RecursiveMutex>::UniquePtr acquired;
-		Project* prj = project->acquire(acquired);
+		Bitty::LockGuard<Bitty::RecursiveMutex>::UniquePtr acquired;
+		Bitty::Project* prj = project->acquire(acquired);
 		if (!prj)
 			break;
 
 		prj->foreach(
-			[&] (Asset* &asset, Asset::List::Index) -> void {
+			[&] (Bitty::Asset* &asset, Bitty::Asset::List::Index) -> void {
 				if (filter && filter(asset))
 					return;
 
-				const Entry &entry = asset->entry();
+				const Bitty::Entry &entry = asset->entry();
 
-				Text::Array::const_iterator begin = entry.parts().begin();
-				Text::Array::const_iterator end = entry.parts().end() - 1;
+				Bitty::Text::Array::const_iterator begin = entry.parts().begin();
+				Bitty::Text::Array::const_iterator end = entry.parts().end() - 1;
 				if (entry.parts().size() == 1) {
 					begin = entry.parts().end();
 					end = entry.parts().end();
@@ -2604,8 +2604,8 @@ bool AssetMenu(
 }
 
 bool ExampleMenu(
-	const class Project*,
-	const Entry::Dictionary &examples,
+	const Bitty::Project*,
+	const Bitty::Entry::Dictionary &examples,
 	std::string &selected
 ) {
 	bool result = false;
@@ -2622,11 +2622,11 @@ bool ExampleMenu(
 	);
 	hierarchy.prepare();
 
-	for (Entry::Dictionary::value_type kv : examples) {
-		const Entry &entry = kv.first;
+	for (Bitty::Entry::Dictionary::value_type kv : examples) {
+		const Bitty::Entry &entry = kv.first;
 		const std::string path = kv.second;
-		Text::Array::const_iterator begin = entry.parts().begin();
-		Text::Array::const_iterator end = entry.parts().end() - 1;
+		Bitty::Text::Array::const_iterator begin = entry.parts().begin();
+		Bitty::Text::Array::const_iterator end = entry.parts().end() - 1;
 		if (entry.parts().size() == 1) {
 			begin = entry.parts().end();
 			end = entry.parts().end();
@@ -2635,7 +2635,7 @@ bool ExampleMenu(
 		if (hierarchy.with(begin, end)) {
 			std::string file = entry.parts().back();
 			const std::string dotBit = "." BITTY_PROJECT_EXT;
-			if (Text::endsWith(file, dotBit, true))
+			if (Bitty::Text::endsWith(file, dotBit, true))
 				file = file.substr(0, file.length() - dotBit.length());
 			if (MenuItem(file)) {
 				selected = path;
@@ -2651,10 +2651,10 @@ bool ExampleMenu(
 }
 
 bool PluginMenu(
-	const class Project*,
-	const Plugin::Array &plugins,
+	const Bitty::Project*,
+	const Bitty::Plugin::Array &plugins,
 	const char* menu,
-	Plugin* &selected
+	Bitty::Plugin* &selected
 ) {
 	bool result = false;
 
@@ -2670,19 +2670,19 @@ bool PluginMenu(
 	);
 	hierarchy.prepare();
 
-	for (Plugin* plugin : plugins) {
-		if (!plugin->is(Plugin::Usages::MENU))
+	for (Bitty::Plugin* plugin : plugins) {
+		if (!plugin->is(Bitty::Plugin::Usages::MENU))
 			continue;
 
-		const Entry &entry = plugin->entry();
+		const Bitty::Entry &entry = plugin->entry();
 
 		if (entry.parts().empty())
 			continue;
 		if (entry.parts().front() != menu)
 			continue;
 
-		Text::Array::const_iterator begin = entry.parts().begin() + 1; // Ignore the menu head.
-		Text::Array::const_iterator end = entry.parts().end() - 1;
+		Bitty::Text::Array::const_iterator begin = entry.parts().begin() + 1; // Ignore the menu head.
+		Bitty::Text::Array::const_iterator end = entry.parts().end() - 1;
 		if (entry.parts().size() == 1) {
 			begin = entry.parts().end();
 			end = entry.parts().end();
@@ -2691,7 +2691,7 @@ bool PluginMenu(
 		if (hierarchy.with(begin, end)) {
 			std::string file = entry.parts().back();
 			const std::string dotBit = "." BITTY_PROJECT_EXT;
-			if (Text::endsWith(file, dotBit, true))
+			if (Bitty::Text::endsWith(file, dotBit, true))
 				file = file.substr(0, file.length() - dotBit.length());
 			if (MenuItem(file)) {
 				selected = plugin;
@@ -2707,8 +2707,8 @@ bool PluginMenu(
 }
 
 bool DocumentMenu(
-	const class Project*,
-	const Entry::Dictionary &documents,
+	const Bitty::Project*,
+	const Bitty::Entry::Dictionary &documents,
 	std::string &selected
 ) {
 	bool result = false;
@@ -2725,11 +2725,11 @@ bool DocumentMenu(
 	);
 	hierarchy.prepare();
 
-	for (Entry::Dictionary::value_type kv : documents) {
-		const Entry &entry = kv.first;
+	for (Bitty::Entry::Dictionary::value_type kv : documents) {
+		const Bitty::Entry &entry = kv.first;
 		const std::string path = kv.second;
-		Text::Array::const_iterator begin = entry.parts().begin();
-		Text::Array::const_iterator end = entry.parts().end() - 1;
+		Bitty::Text::Array::const_iterator begin = entry.parts().begin();
+		Bitty::Text::Array::const_iterator end = entry.parts().end() - 1;
 		if (entry.parts().size() == 1) {
 			begin = entry.parts().end();
 			end = entry.parts().end();
@@ -2738,7 +2738,7 @@ bool DocumentMenu(
 		if (hierarchy.with(begin, end)) {
 			std::string file = entry.parts().back();
 			const std::string dotBit = "." BITTY_PROJECT_EXT;
-			if (Text::endsWith(file, dotBit, true))
+			if (Bitty::Text::endsWith(file, dotBit, true))
 				file = file.substr(0, file.length() - dotBit.length());
 			if (MenuItem(file)) {
 				selected = path;
@@ -2753,31 +2753,31 @@ bool DocumentMenu(
 	return result;
 }
 
-static void DebugVariable(const Variant &val, int level) {
-	if (val.type() == Variant::STRING) {
+static void DebugVariable(const Bitty::Variant &val, int level) {
+	if (val.type() == Bitty::Variant::STRING) {
 		std::string val_ = val.toString();
-		val_ = Text::replace(val_, "\r", "\\r");
-		val_ = Text::replace(val_, "\n", "\\n");
-		val_ = Text::replace(val_, "\t", "\\t");
+		val_ = Bitty::Text::replace(val_, "\r", "\\r");
+		val_ = Bitty::Text::replace(val_, "\n", "\\n");
+		val_ = Bitty::Text::replace(val_, "\t", "\\t");
 		TextUnformatted(val_);
 
 		return;
 	}
-	if (val.type() == Variant::POINTER) {
+	if (val.type() == Bitty::Variant::POINTER) {
 		const std::string val_ = (const char*)(void*)val;
 		TextUnformatted(val_);
 
 		return;
 	}
-	if (val.type() != Variant::OBJECT) {
+	if (val.type() != Bitty::Variant::OBJECT) {
 		TextUnformatted(val.toString());
 
 		return;
 	}
 
-	const Object::Ptr obj = (Object::Ptr)val;
-	if (obj && Object::is<IList::Ptr>(obj)) {
-		IList::Ptr lst = Object::as<IList::Ptr>(obj);
+	const Bitty::Object::Ptr obj = (Bitty::Object::Ptr)val;
+	if (obj && Bitty::Object::is<Bitty::IList::Ptr>(obj)) {
+		Bitty::IList::Ptr lst = Bitty::Object::as<Bitty::IList::Ptr>(obj);
 		PushID(level);
 		if (lst->count() == 0) {
 			TextUnformatted("[...]");
@@ -2785,16 +2785,16 @@ static void DebugVariable(const Variant &val, int level) {
 			if (level <= BITTY_DEBUG_TABLE_LEVEL_MAX_COUNT) {
 				for (int i = 0; i < lst->count(); ++i) {
 					if (i >= BITTY_DEBUG_TABLE_ITEM_MAX_COUNT) {
-						const std::string more = Text::toString(lst->count() - i) + " more...";
+						const std::string more = Bitty::Text::toString(lst->count() - i) + " more...";
 						TextUnformatted(more);
 
 						break;
 					}
 
 					PushID(i);
-					const std::string idx = Text::toString(i + 1) + ":";
+					const std::string idx = Bitty::Text::toString(i + 1) + ":";
 					TextUnformatted(idx); SameLine();
-					const Variant item = lst->at(i);
+					const Bitty::Variant item = lst->at(i);
 					DebugVariable(item, level + 1);
 					PopID();
 				}
@@ -2805,18 +2805,18 @@ static void DebugVariable(const Variant &val, int level) {
 			TreePop();
 		}
 		PopID();
-	} else if (obj && Object::is<IDictionary::Ptr>(obj)) {
-		IDictionary::Ptr dict = Object::as<IDictionary::Ptr>(obj);
+	} else if (obj && Bitty::Object::is<Bitty::IDictionary::Ptr>(obj)) {
+		Bitty::IDictionary::Ptr dict = Bitty::Object::as<Bitty::IDictionary::Ptr>(obj);
 		PushID(level);
 		if (dict->count() == 0) {
 			TextUnformatted("{...}");
 		} else if (TreeNode("{...}")) {
 			if (level <= BITTY_DEBUG_TABLE_LEVEL_MAX_COUNT) {
-				const IDictionary::Keys keys = dict->keys();
+				const Bitty::IDictionary::Keys keys = dict->keys();
 				int i = 0;
-				for (IDictionary::Keys::const_iterator it = keys.begin(); it != keys.end() && i < (int)keys.size(); ++it, ++i) {
+				for (Bitty::IDictionary::Keys::const_iterator it = keys.begin(); it != keys.end() && i < (int)keys.size(); ++it, ++i) {
 					if (i >= BITTY_DEBUG_TABLE_ITEM_MAX_COUNT) {
-						const std::string more = Text::toString((int)keys.size() - i) + " more...";
+						const std::string more = Bitty::Text::toString((int)keys.size() - i) + " more...";
 						TextUnformatted(more);
 
 						break;
@@ -2825,7 +2825,7 @@ static void DebugVariable(const Variant &val, int level) {
 					PushID(i);
 					const std::string key = *it + ":";
 					TextUnformatted(key); SameLine();
-					const Variant val_ = dict->get(*it);
+					const Bitty::Variant val_ = dict->get(*it);
 					DebugVariable(val_, level + 1);
 					PopID();
 				}
@@ -2841,13 +2841,13 @@ static void DebugVariable(const Variant &val, int level) {
 	}
 }
 
-void DebugVariable(const Variant &val) {
+void DebugVariable(const Bitty::Variant &val) {
 	DebugVariable(val, 1);
 }
 
 void ConfigGamepads(
-	Input* input,
-	Input::Gamepad* pads, int pad_count,
+	Bitty::Input* input,
+	Bitty::Input::Gamepad* pads, int pad_count,
 	int* active_pad_index, int* active_btn_index,
 	const char* label_wait
 ) {
@@ -2861,7 +2861,7 @@ void ConfigGamepads(
 	};
 
 	for (int i = 0; i < pad_count; ++i) {
-		Input::Gamepad &pad = pads[i];
+		Bitty::Input::Gamepad &pad = pads[i];
 
 		constexpr const int PLACEHOLDER_INDEX = 6;
 		char buf[] = {
@@ -2869,12 +2869,12 @@ void ConfigGamepads(
 		};
 		buf[PLACEHOLDER_INDEX] = (char)(i + '1'); // Put pad index at the first placeholder.
 		if (CollapsingHeader(buf, i == 0 ? ImGuiTreeNodeFlags_DefaultOpen : ImGuiTreeNodeFlags_None)) {
-			for (int b = 0; b < Input::BUTTON_COUNT; ++b) {
+			for (int b = 0; b < Bitty::Input::BUTTON_COUNT; ++b) {
 				buf[PLACEHOLDER_INDEX + 1] = (char)(b + '1'); // Put button index at the second placeholder.
 
 				PushID(buf);
 
-				if (b == Input::A)
+				if (b == Bitty::Input::A)
 					Separator();
 
 				const std::string key = input->nameOf(pad.buttons[b]);
@@ -2888,10 +2888,10 @@ void ConfigGamepads(
 						*active_pad_index = -1;
 						*active_btn_index = -1;
 					}
-					Input::Button btn;
+					Bitty::Input::Button btn;
 					if (input->pressed(btn)) {
-						if (btn.device == Input::KEYBOARD && btn.value == SDL_SCANCODE_BACKSPACE) {
-							btn.device = Input::INVALID;
+						if (btn.device == Bitty::Input::KEYBOARD && btn.value == SDL_SCANCODE_BACKSPACE) {
+							btn.device = Bitty::Input::INVALID;
 							btn.index = 0;
 							btn.value = 0;
 						}
@@ -2930,7 +2930,7 @@ void ConfigOnscreenGamepad(
 		SameLine();
 		PushItemWidth(-1.0f);
 		if (DragFloat("", scale, 0.005f, 1.0f, INPUT_GAMEPAD_MAX_SCALE, "%.1f"))
-			*scale = Math::clamp(*scale, 1.0f, INPUT_GAMEPAD_MAX_SCALE);
+			*scale = Bitty::Math::clamp(*scale, 1.0f, INPUT_GAMEPAD_MAX_SCALE);
 		PopItemWidth();
 	}
 	PopID();
@@ -2941,7 +2941,7 @@ void ConfigOnscreenGamepad(
 		SameLine();
 		PushItemWidth(-1.0f);
 		if (DragFloat("", padding_x, 0.05f, 0.0f, INPUT_GAMEPAD_MAX_X_PADDING, "%.1f%%"))
-			*padding_x = Math::clamp(*padding_x, 0.0f, INPUT_GAMEPAD_MAX_X_PADDING);
+			*padding_x = Bitty::Math::clamp(*padding_x, 0.0f, INPUT_GAMEPAD_MAX_X_PADDING);
 		PopItemWidth();
 	}
 	PopID();
@@ -2952,7 +2952,7 @@ void ConfigOnscreenGamepad(
 		SameLine();
 		PushItemWidth(-1.0f);
 		if (DragFloat("", padding_y, 0.05f, 0.0f, INPUT_GAMEPAD_MAX_Y_PADDING, "%.1f%%"))
-			*padding_y = Math::clamp(*padding_y, 0.0f, INPUT_GAMEPAD_MAX_Y_PADDING);
+			*padding_y = Bitty::Math::clamp(*padding_y, 0.0f, INPUT_GAMEPAD_MAX_Y_PADDING);
 		PopItemWidth();
 	}
 	PopID();

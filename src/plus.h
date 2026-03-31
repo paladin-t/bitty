@@ -27,6 +27,8 @@
 **   way, for the application.
 */
 
+namespace Bitty {
+
 /**
  * @brief Non-copyable.
  */
@@ -336,6 +338,8 @@ public:
 		_userdata = nullptr;
 	}
 };
+
+}
 
 /* ===========================================================================} */
 

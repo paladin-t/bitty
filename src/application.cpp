@@ -96,7 +96,7 @@ EM_JS(
 );
 #endif /* BITTY_OS_HTML */
 
-static void applicationParseArgs(int argc, const char* argv[], Text::Dictionary &options) {
+static void applicationParseArgs(int argc, const char* argv[], Bitty::Text::Dictionary &options) {
 	if (argc == 0 || !argv)
 		return;
 
@@ -113,7 +113,7 @@ static void applicationParseArgs(int argc, const char* argv[], Text::Dictionary 
 					++i;
 				}
 			}
-			Text::toLowerCase(key);
+			Bitty::Text::toLowerCase(key);
 			options[key] = val;
 		} else if (*arg == '\0') {
 			// Do nothing.
@@ -128,19 +128,19 @@ static void applicationParseArgs(int argc, const char* argv[], Text::Dictionary 
 		++i;
 	}
 }
-static void applicationLoadArgs(const char* path, Text::Dictionary &options) {
-	File::Ptr file(File::create());
-	if (!file->open(path, Stream::READ))
+static void applicationLoadArgs(const char* path, Bitty::Text::Dictionary &options) {
+	Bitty::File::Ptr file(Bitty::File::create());
+	if (!file->open(path, Bitty::Stream::READ))
 		return;
 
 	std::string buf;
 	file->readString(buf);
 	file->close();
 
-	Text::Array args = Text::split(buf, " ");
+	Bitty::Text::Array args = Bitty::Text::split(buf, " ");
 	std::vector<const char*> argv;
 	for (std::string &a : args) {
-		a = Text::trim(a);
+		a = Bitty::Text::trim(a);
 		if (!a.empty())
 			argv.push_back(a.c_str());
 	}
@@ -156,6 +156,8 @@ static void applicationLoadArgs(const char* path, Text::Dictionary &options) {
 ** {===========================================================================
 ** Application
 */
+
+namespace Bitty {
 
 class Application : public NonCopyable {
 private:
@@ -1362,6 +1364,8 @@ bool updateApplication(class Application* app) {
 	const bool result = app->update();
 
 	return result;
+}
+
 }
 
 /* ===========================================================================} */

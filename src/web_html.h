@@ -20,6 +20,8 @@
 
 #if BITTY_WEB_ENABLED
 
+namespace Bitty {
+
 class FetchHtml : public Fetch {
 private:
 	/**< States. */
@@ -77,6 +79,8 @@ private:
 	void reset(void);
 };
 
+}
+
 #endif /* BITTY_WEB_ENABLED */
 
 /* ===========================================================================} */
@@ -87,6 +91,8 @@ private:
 */
 
 #if BITTY_WEB_ENABLED
+
+namespace Bitty {
 
 class WebHtml : public Web {
 public:
@@ -115,6 +121,8 @@ public:
 	virtual void callback(const RequestedHandler &cb) override;
 	void callback(struct mg_connection* nc, int ev, void* evData);
 };
+
+}
 
 #endif /* BITTY_WEB_ENABLED */
 

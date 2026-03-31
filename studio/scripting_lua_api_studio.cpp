@@ -20,6 +20,8 @@
 
 namespace Lua { // Library.
 
+using namespace ::Bitty;
+
 /**< Bytes. */
 
 LUA_CHECK_OBJ(Bytes)
@@ -29,12 +31,16 @@ LUA_WRITE_OBJ_CONST(Bytes)
 
 }
 
+using namespace ::Lua;
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Libraries
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -53,12 +59,16 @@ void studio(class Executable* exec) {
 
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Engine
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -77,12 +87,16 @@ void studio(class Executable* exec) {
 
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Application
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -101,12 +115,16 @@ void studio(class Executable* exec) {
 
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Studio
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -119,6 +137,8 @@ void studio(class Executable* exec) {
 	lua_State* L = (lua_State*)exec->pointer();
 
 	(void)L;
+}
+
 }
 
 }

@@ -15,6 +15,8 @@
 ** Studio loader
 */
 
+namespace Bitty {
+
 LoaderStudio::LoaderStudio() {
 }
 
@@ -46,6 +48,8 @@ class Bytes* LoaderStudio::encode(const class Project* /* project */, const clas
 	// reuses the input object rather than creating new one.
 
 	return buf;
+}
+
 }
 
 /* ===========================================================================} */

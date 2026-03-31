@@ -26,6 +26,8 @@
 ** Sprite editor
 */
 
+namespace Bitty {
+
 class EditorSpriteImpl : public EditorSprite {
 private:
 	bool _opened = false;
@@ -1091,6 +1093,8 @@ EditorSprite* EditorSprite::create(void) {
 void EditorSprite::destroy(EditorSprite* ptr) {
 	EditorSpriteImpl* impl = static_cast<EditorSpriteImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

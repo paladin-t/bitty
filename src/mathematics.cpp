@@ -19,6 +19,8 @@
 ** Math utilities
 */
 
+namespace Bitty {
+
 namespace Math {
 
 double PI(void) {
@@ -41,6 +43,8 @@ void srand(void) {
 
 int rand(void) {
 	return std::rand();
+}
+
 }
 
 }

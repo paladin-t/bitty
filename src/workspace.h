@@ -182,6 +182,8 @@ class CodeEditor;
 ** Workspace
 */
 
+namespace Bitty {
+
 /**
  * @brief Workspace entity.
  */
@@ -766,6 +768,8 @@ protected:
 	void beginSplash(class Window* wnd, class Renderer* rnd, const class Project* project);
 	void endSplash(class Window* wnd, class Renderer* rnd, const Text::Dictionary &options);
 };
+
+}
 
 /* ===========================================================================} */
 

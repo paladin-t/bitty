@@ -18,6 +18,8 @@
 ** Text editor
 */
 
+namespace Bitty {
+
 class EditorText : public Editable, public virtual Object {
 public:
 	BITTY_CLASS_TYPE('T', 'X', 'T', 'E')
@@ -31,6 +33,8 @@ public:
 	static EditorText* create(void);
 	static void destroy(EditorText* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

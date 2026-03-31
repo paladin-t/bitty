@@ -20,6 +20,8 @@
 ** Pathfinder
 */
 
+namespace Bitty {
+
 /**
  * @brief Pathfinder algorithm.
  */
@@ -56,6 +58,8 @@ public:
 	static Pathfinder* create(int w, int n, int e, int s);
 	static void destroy(Pathfinder* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

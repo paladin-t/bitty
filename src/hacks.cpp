@@ -19,7 +19,7 @@
 
 namespace ImGuiSDLHack {
 	
-Texture::Texture(Renderer* rnd, unsigned char* pixels, int width, int height) {
+Texture::Texture(Bitty::Renderer* rnd, unsigned char* pixels, int width, int height) {
 	SDL_Renderer* renderer = (SDL_Renderer*)rnd->pointer();
 
 	surface = SDL_CreateRGBSurfaceFrom(
@@ -48,6 +48,8 @@ Texture::~Texture() {
 ** {===========================================================================
 ** Threading guard
 */
+
+namespace Bitty {
 
 #if BITTY_THREADING_GUARD_ENABLED
 ThreadingGuard::ThreadingGuard() {
@@ -83,5 +85,7 @@ void ThreadingGuard::validate(void) {
 
 ThreadingGuard graphicsThreadingGuard;
 #endif /* BITTY_THREADING_GUARD_ENABLED */
+
+}
 
 /* ===========================================================================} */

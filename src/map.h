@@ -22,6 +22,8 @@
 ** Map
 */
 
+namespace Bitty {
+
 /**
  * @brief Map resource object.
  */
@@ -135,6 +137,8 @@ public:
 	static Map* create(const Tiles* tiles /* nullable */, bool batch);
 	static void destroy(Map* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

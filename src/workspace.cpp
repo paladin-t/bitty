@@ -124,13 +124,13 @@ static void workspaceSleep(int ms) {
 }
 #else /* BITTY_OS_HTML */
 static bool workspaceHasSplashImage(void) {
-	return Path::existsFile(WORKSPACE_SPLASH_FILE);
+	return Bitty::Path::existsFile(WORKSPACE_SPLASH_FILE);
 }
 static void workspaceSleep(int ms) {
-	DateTime::sleep(ms);
+	Bitty::DateTime::sleep(ms);
 }
 #endif /* BITTY_OS_HTML */
-static void workspaceCreateSplash(Window*, Renderer* rnd, Workspace* ws) {
+static void workspaceCreateSplash(Bitty::Window*, Bitty::Renderer* rnd, Bitty::Workspace* ws) {
 	if (ws->splashBitty()) {
 		ws->theme()->destroyTexture(rnd, ws->splashBitty());
 		ws->splashBitty(nullptr);
@@ -144,16 +144,16 @@ static void workspaceCreateSplash(Window*, Renderer* rnd, Workspace* ws) {
 #if defined BITTY_OS_HTML
 	const char* img = workspaceGetSplashImage();
 	if (img) {
-		Bytes::Ptr bytes(Bytes::create());
-		if (Base64::toBytes(bytes.get(), img)) {
+		Bitty::Bytes::Ptr bytes(Bitty::Bytes::create());
+		if (Bitty::Base64::toBytes(bytes.get(), img)) {
 			ws->splashBitty(ws->theme()->createTexture(rnd, bytes->pointer(), bytes->count()));
 		}
 		workspaceGetSplashFree((void*)img);
 	}
 #else /* BITTY_OS_HTML */
-	File::Ptr file(File::create());
-	if (file->open(WORKSPACE_SPLASH_FILE, Stream::READ)) {
-		Bytes::Ptr bytes(Bytes::create());
+	Bitty::File::Ptr file(Bitty::File::create());
+	if (file->open(WORKSPACE_SPLASH_FILE, Bitty::Stream::READ)) {
+		Bitty::Bytes::Ptr bytes(Bitty::Bytes::create());
 		file->readBytes(bytes.get());
 		file->close();
 
@@ -161,8 +161,8 @@ static void workspaceCreateSplash(Window*, Renderer* rnd, Workspace* ws) {
 	}
 #endif /* BITTY_OS_HTML */
 }
-static void workspaceCreateSplash(Window*, Renderer* rnd, Workspace* ws, int index) {
-	constexpr const Byte* const IMAGES[] = {
+static void workspaceCreateSplash(Bitty::Window*, Bitty::Renderer* rnd, Bitty::Workspace* ws, int index) {
+	constexpr const Bitty::Byte* const IMAGES[] = {
 		RES_TOAST_BITTY0, RES_TOAST_BITTY1, RES_TOAST_BITTY2, RES_TOAST_BITTY3, RES_TOAST_BITTY4, RES_TOAST_BITTY5, RES_TOAST_BITTY6
 	};
 	constexpr const size_t LENS[] = {
@@ -180,12 +180,12 @@ static void workspaceCreateSplash(Window*, Renderer* rnd, Workspace* ws, int ind
 		ws->splashEngine(ws->theme()->createTexture(rnd, RES_TOAST_ENGINE, BITTY_COUNTOF(RES_TOAST_ENGINE)));
 	}
 }
-static void workspaceRenderSplash(Window*, Renderer* rnd, Workspace* ws, std::function<void(Renderer*, Workspace*)> post) {
-	const Color cls(0x00, 0x00, 0x00, 0x00);
+static void workspaceRenderSplash(Bitty::Window*, Bitty::Renderer* rnd, Bitty::Workspace* ws, std::function<void(Bitty::Renderer*, Bitty::Workspace*)> post) {
+	const Bitty::Color cls(0x00, 0x00, 0x00, 0x00);
 	rnd->clear(&cls);
 
 	if (ws->splashBitty()) {
-		const Math::Recti dstBitty = Math::Recti::byXYWH(
+		const Bitty::Math::Recti dstBitty = Bitty::Math::Recti::byXYWH(
 			(rnd->width() - ws->splashBitty()->width()) / 2,
 			(rnd->height() - ws->splashBitty()->height()) / 2,
 			ws->splashBitty()->width(),
@@ -194,7 +194,7 @@ static void workspaceRenderSplash(Window*, Renderer* rnd, Workspace* ws, std::fu
 		rnd->render(ws->splashBitty(), nullptr, &dstBitty, nullptr, nullptr, false, false, nullptr, false, false);
 
 		if (ws->splashEngine()) {
-			const Math::Recti dstEngine = Math::Recti::byXYWH(
+			const Bitty::Math::Recti dstEngine = Bitty::Math::Recti::byXYWH(
 				(rnd->width() - ws->splashEngine()->width()) / 2,
 				dstBitty.yMax() + 16,
 				ws->splashEngine()->width(),
@@ -209,7 +209,7 @@ static void workspaceRenderSplash(Window*, Renderer* rnd, Workspace* ws, std::fu
 
 	rnd->flush();
 }
-static void workspaceWaitSplash(Window* wnd, Renderer* rnd, Workspace* ws, const Project* project) {
+static void workspaceWaitSplash(Bitty::Window* wnd, Bitty::Renderer* rnd, Bitty::Workspace* ws, const Bitty::Project* project) {
 #if defined BITTY_OS_HTML
 	if (!workspaceGetPlayButtonEnabled())
 		return;
@@ -220,36 +220,36 @@ static void workspaceWaitSplash(Window* wnd, Renderer* rnd, Workspace* ws, const
 
 	ran = true;
 
-	Primitives* primitives = Primitives::create(false);
+	Bitty::Primitives* primitives = Bitty::Primitives::create(false);
 	primitives->open(wnd, rnd, ws, project, nullptr, nullptr);
 	primitives->autoCls(false);
 	bool pressed = false;
 	while (true) {
 		constexpr const int STEP = 10;
 		workspaceSleep(STEP);
-		Platform::idle();
+		Bitty::Platform::idle();
 
 		bool finished = false;
 		workspaceRenderSplash(
 			wnd, rnd, ws,
-			[&] (Renderer* rnd, Workspace*) -> void {
+			[&] (Bitty::Renderer* rnd, Bitty::Workspace*) -> void {
 				primitives->newFrame();
 
-				const Math::Vec2f rndSize(rnd->width(), rnd->height());
-				auto collides = [] (const Math::Vec3f &circ, float x, float y, float canw, float canh, float dispw, float disph) -> bool {
+				const Bitty::Math::Vec2f rndSize(rnd->width(), rnd->height());
+				auto collides = [] (const Bitty::Math::Vec3f &circ, float x, float y, float canw, float canh, float dispw, float disph) -> bool {
 					x = x / dispw * canw;
 					y = y / disph * canh;
-					const Real dx = x - circ.x;
-					const Real dy = y - circ.y;
-					const Real dist = std::sqrt(dx * dx + dy * dy);
+					const Bitty::Real dx = x - circ.x;
+					const Bitty::Real dy = y - circ.y;
+					const Bitty::Real dist = std::sqrt(dx * dx + dy * dy);
 
 					return dist <= circ.z;
 				};
-				const Math::Vec3f range(rnd->width() * 0.5f, rnd->height() * 0.5f, rnd->height() * 0.5f);
+				const Bitty::Math::Vec3f range(rnd->width() * 0.5f, rnd->height() * 0.5f, rnd->height() * 0.5f);
 #if defined BITTY_DEBUG
 				{
-					Math::Vec2f p0(range.x, range.y);
-					const Color debugCol(255, 0, 0);
+					Bitty::Math::Vec2f p0(range.x, range.y);
+					const Bitty::Color debugCol(255, 0, 0);
 					primitives->circ((int)p0.x, (int)p0.y, (int)range.z, false, &debugCol);
 				}
 #endif /* BITTY_DEBUG */
@@ -266,19 +266,19 @@ static void workspaceWaitSplash(Window* wnd, Renderer* rnd, Workspace* ws, const
 				const float offsetY = 96;
 				const float cornerX = 10 * 3;
 				const float cornerY = 12 * 3;
-				const Math::Vec2f p0(rnd->width() * 0.5f + cornerX + offsetX, rnd->height() * 0.5f + offsetY);
-				const Math::Vec2f p1(rnd->width() * 0.5f - cornerX + offsetX, rnd->height() * 0.5f - cornerY + offsetY);
-				const Math::Vec2f p2(rnd->width() * 0.5f - cornerX + offsetX, rnd->height() * 0.5f + cornerY + offsetY);
-				const Color fillTriCol = touched ? Color(45, 39, 41, 128) : Color(128, 128, 128, 128);
-				const Color triCol = touched ? Color(255, 255, 255, 235) : Color(255, 255, 255, 235);
+				const Bitty::Math::Vec2f p0(rnd->width() * 0.5f + cornerX + offsetX, rnd->height() * 0.5f + offsetY);
+				const Bitty::Math::Vec2f p1(rnd->width() * 0.5f - cornerX + offsetX, rnd->height() * 0.5f - cornerY + offsetY);
+				const Bitty::Math::Vec2f p2(rnd->width() * 0.5f - cornerX + offsetX, rnd->height() * 0.5f + cornerY + offsetY);
+				const Bitty::Color fillTriCol = touched ? Bitty::Color(45, 39, 41, 128) : Bitty::Color(128, 128, 128, 128);
+				const Bitty::Color triCol = touched ? Bitty::Color(255, 255, 255, 235) : Bitty::Color(255, 255, 255, 235);
 				primitives->tri(p0, p1, p2, true, &fillTriCol);
 				primitives->tri(p0, p1, p2, false, &triCol);
 
 				primitives->commit();
 				const int scale = rnd->scale() / wnd->scale();
-				const Math::Rectf clientArea = Math::Rectf::byXYWH(0, 0, rnd->width(), rnd->height());
-				const Math::Vec2i canvasSz(rnd->width(), rnd->height());
-				primitives->update(&clientArea, &canvasSz, scale, Math::EPSILON<double>(), true, nullptr);
+				const Bitty::Math::Rectf clientArea = Bitty::Math::Rectf::byXYWH(0, 0, rnd->width(), rnd->height());
+				const Bitty::Math::Vec2i canvasSz(rnd->width(), rnd->height());
+				primitives->update(&clientArea, &canvasSz, scale, Bitty::Math::EPSILON<double>(), true, nullptr);
 
 				if (!pressed) {
 					if (touched)
@@ -310,6 +310,8 @@ static void workspaceWaitSplash(Window* wnd, Renderer* rnd, Workspace* ws, const
 ** {===========================================================================
 ** Workspace
 */
+
+namespace Bitty {
 
 Workspace::Settings::Settings() {
 	static_assert(INPUT_GAMEPAD_COUNT >= 2, "Wrong size.");
@@ -4251,6 +4253,8 @@ void Workspace::endSplash(class Window* wnd, class Renderer* rnd, const Text::Di
 	const Color color(0x00, 0x00, 0x00, 0x00);
 	rnd->clear(&color);
 #endif /* BITTY_SPLASH_ENABLED */
+}
+
 }
 
 /* ===========================================================================} */
