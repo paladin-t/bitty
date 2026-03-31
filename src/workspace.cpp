@@ -294,7 +294,7 @@ static void workspaceWaitSplash(Bitty::Window* wnd, Bitty::Renderer* rnd, Bitty:
 			break;
 	}
 	primitives->close();
-	Primitives::destroy(primitives);
+	Bitty::Primitives::destroy(primitives);
 #else /* BITTY_OS_HTML */
 	(void)wnd;
 	(void)rnd;
