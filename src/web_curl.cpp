@@ -21,6 +21,8 @@
 
 #if BITTY_WEB_ENABLED
 
+namespace Bitty {
+
 FetchCurl::FetchCurl() {
 	_state = IDLE;
 
@@ -354,6 +356,8 @@ size_t FetchCurl::receive(void* ptr, size_t size, size_t nmemb, void* stream) {
 		self->_response->writeBytes((Byte*)ptr, len);
 
 	return size * nmemb;
+}
+
 }
 
 #endif /* BITTY_WEB_ENABLED */

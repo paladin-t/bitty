@@ -43,6 +43,8 @@ extern "C" {
 
 namespace Lua { // Library.
 
+using namespace ::Bitty;
+
 /**< Math. */
 
 LUA_CHECK_ALIAS(Math::Vec2f, Vec2)
@@ -580,12 +582,16 @@ static int write(lua_State* L, ShapeQuery::Array &val) {
 
 }
 
+using namespace ::Lua;
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Engine
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -7328,6 +7334,8 @@ void physics(class Executable* exec) {
 	pack(L, "Physics", "Space");
 
 	open_Physics(L);
+}
+
 }
 
 }

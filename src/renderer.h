@@ -22,17 +22,17 @@
 
 #ifndef BITTY_RENDER_TARGET
 #	define BITTY_RENDER_TARGET(RND, TEX) \
-	ProcedureGuard<class Texture> BITTY_UNIQUE_NAME(__TARGET__)( \
+	Bitty::ProcedureGuard<class Texture> BITTY_UNIQUE_NAME(__TARGET__)( \
 		std::bind( \
-			[&] (class Renderer* rnd) -> class Texture* { \
-				class Texture* result = rnd->target(); \
+			[&] (class Bitty::Renderer* rnd) -> class Bitty::Texture* { \
+				class Bitty::Texture* result = rnd->target(); \
 				rnd->target(TEX); \
 				return result; \
 			}, \
 			(RND) \
 		), \
 		std::bind( \
-			[] (class Renderer* rnd, class Texture* tex) -> void { \
+			[] (class Bitty::Renderer* rnd, class Bitty::Texture* tex) -> void { \
 				rnd->target(tex); \
 			}, \
 			(RND), std::placeholders::_1 \
@@ -42,9 +42,9 @@
 
 #ifndef BITTY_RENDER_SCALE
 #	define BITTY_RENDER_SCALE(RND, SCL) \
-	ProcedureGuard<int> BITTY_UNIQUE_NAME(__SCALE__)( \
+	Bitty::ProcedureGuard<int> BITTY_UNIQUE_NAME(__SCALE__)( \
 		std::bind( \
-			[&] (class Renderer* rnd) -> int* { \
+			[&] (class Bitty::Renderer* rnd) -> int* { \
 				int* result = (int*)(uintptr_t)rnd->scale(); \
 				rnd->scale(SCL); \
 				return result; \
@@ -52,7 +52,7 @@
 			(RND) \
 		), \
 		std::bind( \
-			[] (class Renderer* rnd, int* scl) -> void { \
+			[] (class Bitty::Renderer* rnd, int* scl) -> void { \
 				rnd->scale((int)(uintptr_t)scl); \
 			}, \
 			(RND), std::placeholders::_1 \
@@ -66,6 +66,8 @@
 ** {===========================================================================
 ** Renderer
 */
+
+namespace Bitty {
 
 /**
  * @brief Renderer structure and context.
@@ -177,6 +179,8 @@ public:
 	static Renderer* create(void);
 	static void destroy(Renderer* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

@@ -38,6 +38,15 @@
 
 /*
 ** {===========================================================================
+** Forward declaration
+*/
+
+struct ImFont;
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
 ** Input
 **
 ** @note There are four kinds of input sources:
@@ -46,6 +55,8 @@
 **   3. Keyboard. Corresponds to actual hardware.
 **   4. Mouse. Corresponds to actual mouse or touch screen hardware.
 */
+
+namespace Bitty {
 
 /**
  * @brief Input handler.
@@ -222,7 +233,7 @@ public:
 	 */
 	virtual int updateOnscreenGamepad(
 		class Window* wnd, class Renderer* rnd,
-		struct ImFont* font,
+		ImFont* font,
 		bool swapAB,
 		float scale,
 		float paddingX, float paddingY
@@ -298,6 +309,8 @@ public:
 	static Input* create(void);
 	static void destroy(Input* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

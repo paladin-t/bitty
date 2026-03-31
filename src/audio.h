@@ -59,6 +59,8 @@
 ** Structures
 */
 
+namespace Bitty {
+
 struct AudioSpec {
 	typedef void (* AudioHandler)(void*, UInt8*, int);
 
@@ -73,12 +75,16 @@ struct AudioSpec {
 	void* userdata = nullptr;
 };
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Sound
 */
+
+namespace Bitty {
 
 /**
  * @brief Sound resource object.
@@ -136,12 +142,16 @@ public:
 	static void destroy(Sound* ptr);
 };
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Sfx
 */
+
+namespace Bitty {
 
 /**
  * @brief SFX resource object.
@@ -175,12 +185,16 @@ public:
 	static void destroy(Sfx* ptr);
 };
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Music
 */
+
+namespace Bitty {
 
 /**
  * @brief Music resource object.
@@ -224,12 +238,16 @@ public:
 	static void destroy(Music* ptr);
 };
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Audio
 */
+
+namespace Bitty {
 
 /**
  * @brief Audio manager.
@@ -263,6 +281,8 @@ public:
 	static Audio* create(void);
 	static void destroy(Audio* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

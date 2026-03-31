@@ -16,6 +16,8 @@
 ** Scripting
 */
 
+namespace Bitty {
+
 Scripting::Scripting() {
 }
 
@@ -127,6 +129,8 @@ void Scripting::destroy(Executable* ptr) {
 
 		break;
 	}
+}
+
 }
 
 /* ===========================================================================} */

@@ -21,6 +21,8 @@
 ** Walker
 */
 
+namespace Bitty {
+
 /**
  * @brief Walker algorithm.
  */
@@ -74,6 +76,8 @@ public:
 	static Walker* create(void);
 	static void destroy(Walker* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

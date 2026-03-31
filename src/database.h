@@ -20,6 +20,8 @@
 ** Database
 */
 
+namespace Bitty {
+
 /**
  * @brief Database object.
  */
@@ -50,6 +52,8 @@ public:
 	static Database* create(void);
 	static void destroy(Database* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

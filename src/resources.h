@@ -43,6 +43,8 @@ static constexpr const char RESOURCES_BYTES_HEADER[4] = {
 ** Resources
 */
 
+namespace Bitty {
+
 /**
  * @brief Resource manager.
  */
@@ -121,7 +123,7 @@ public:
 		Object::Ptr unref(void);
 	};
 
-	struct Glyph : public Resource<::Texture::Ptr>, public Async, public virtual Object {
+	struct Glyph : public Resource<::Bitty::Texture::Ptr>, public Async, public virtual Object {
 		friend class ResourcesImpl;
 
 	private:
@@ -137,7 +139,7 @@ public:
 		virtual unsigned type(void) const override;
 	};
 
-	struct Palette : public Resource<::Palette::Ptr>, public Async, public virtual Object {
+	struct Palette : public Resource<::Bitty::Palette::Ptr>, public Async, public virtual Object {
 	public:
 		typedef std::shared_ptr<Palette> Ptr;
 
@@ -146,7 +148,7 @@ public:
 		friend class ResourcesImpl;
 
 	public:
-		::Palette::Ptr shadow = nullptr;
+		::Bitty::Palette::Ptr shadow = nullptr;
 
 		Mutex lock;
 
@@ -164,7 +166,7 @@ public:
 		Object::Ptr unref(void);
 	};
 
-	struct Texture : public Resource<::Texture::Ptr>, public Async, public virtual Object {
+	struct Texture : public Resource<::Bitty::Texture::Ptr>, public Async, public virtual Object {
 	public:
 		typedef std::shared_ptr<Texture> Ptr;
 
@@ -173,7 +175,7 @@ public:
 		friend class ResourcesImpl;
 
 	public:
-		::Image::WeakPtr source;
+		::Bitty::Image::WeakPtr source;
 
 		Palette::Ptr ref = nullptr;
 
@@ -192,7 +194,7 @@ public:
 		Palette::Ptr unref(void);
 	};
 
-	struct Sprite : public Resource<::Sprite::Ptr>, public Async, public virtual Object {
+	struct Sprite : public Resource<::Bitty::Sprite::Ptr>, public Async, public virtual Object {
 	public:
 		typedef std::shared_ptr<Sprite> Ptr;
 
@@ -220,7 +222,7 @@ public:
 		Texture::Ptr unref(void);
 	};
 
-	struct Map : public Resource<::Map::Ptr>, public Async, public virtual Object {
+	struct Map : public Resource<::Bitty::Map::Ptr>, public Async, public virtual Object {
 	public:
 		typedef std::shared_ptr<Map> Ptr;
 
@@ -229,7 +231,7 @@ public:
 		friend class ResourcesImpl;
 
 	public:
-		::Map::Ptr shadow = nullptr;
+		::Bitty::Map::Ptr shadow = nullptr;
 
 		Texture::Ptr ref = nullptr;
 
@@ -250,7 +252,7 @@ public:
 		Texture::Ptr unref(void);
 	};
 
-	struct Sfx : public Resource<::Sfx::Ptr>, public Async, public virtual Object {
+	struct Sfx : public Resource<::Bitty::Sfx::Ptr>, public Async, public virtual Object {
 	public:
 		typedef std::shared_ptr<Sfx> Ptr;
 
@@ -272,7 +274,7 @@ public:
 		Object::Ptr unref(void);
 	};
 
-	struct Music : public Resource<::Music::Ptr>, public Async, public virtual Object {
+	struct Music : public Resource<::Bitty::Music::Ptr>, public Async, public virtual Object {
 	public:
 		typedef std::shared_ptr<Music> Ptr;
 
@@ -361,56 +363,56 @@ public:
 	/**
 	 * @brief Loads texture from an image file.
 	 */
-	virtual ::Texture::Ptr load(class Renderer* rnd, const char* path) = 0;
+	virtual ::Bitty::Texture::Ptr load(class Renderer* rnd, const char* path) = 0;
 	/**
 	 * @brief Loads asset from the project.
 	 *
 	 * @param[in, out] req
 	 */
-	virtual ::Object::Ptr load(const class Project* project, Asset &req) = 0;
+	virtual ::Bitty::Object::Ptr load(const class Project* project, Asset &req) = 0;
 	/**
 	 * @brief Loads texture from a glyph.
 	 *
 	 * @param[in, out] req
 	 * @param[out] width
 	 */
-	virtual ::Texture::Ptr load(class Renderer* rnd, Glyph &req, int* width /* nullable */, int* height /* nullable */) = 0;
+	virtual ::Bitty::Texture::Ptr load(class Renderer* rnd, Glyph &req, int* width /* nullable */, int* height /* nullable */) = 0;
 	/**
 	 * @brief Loads palette from the project.
 	 *
 	 * @param[in, out] req
 	 */
-	virtual ::Palette::Ptr load(const class Project* project, Palette &req) = 0;
+	virtual ::Bitty::Palette::Ptr load(const class Project* project, Palette &req) = 0;
 	/**
 	 * @brief Loads image texture from the project.
 	 *
 	 * @param[in, out] req
 	 */
-	virtual ::Texture::Ptr load(const class Project* project, Texture &req) = 0;
+	virtual ::Bitty::Texture::Ptr load(const class Project* project, Texture &req) = 0;
 	/**
 	 * @brief Loads sprite from the project.
 	 *
 	 * @param[in, out] req
 	 */
-	virtual ::Sprite::Ptr load(const class Project* project, Sprite &req) = 0;
+	virtual ::Bitty::Sprite::Ptr load(const class Project* project, Sprite &req) = 0;
 	/**
 	 * @brief Loads map from the project.
 	 *
 	 * @param[in, out] req
 	 */
-	virtual ::Map::Ptr load(const class Project* project, Map &req) = 0;
+	virtual ::Bitty::Map::Ptr load(const class Project* project, Map &req) = 0;
 	/**
 	 * @brief Loads SFX from the project.
 	 *
 	 * @param[in, out] req
 	 */
-	virtual ::Sfx::Ptr load(const class Project* project, Sfx &req) = 0;
+	virtual ::Bitty::Sfx::Ptr load(const class Project* project, Sfx &req) = 0;
 	/**
 	 * @brief Loads music from the project.
 	 *
 	 * @param[in, out] req
 	 */
-	virtual ::Music::Ptr load(const class Project* project, Music &req) = 0;
+	virtual ::Bitty::Music::Ptr load(const class Project* project, Music &req) = 0;
 
 	virtual int unload(const char* path) = 0;
 	virtual int unload(const Asset &req) = 0;
@@ -425,6 +427,8 @@ public:
 	static Resources* create(void);
 	static void destroy(Resources* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

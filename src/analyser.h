@@ -41,6 +41,8 @@ typedef std::complex<float> Complex;
 ** Analyser
 */
 
+namespace Bitty {
+
 /**
  * @brief Sound analyser.
  */
@@ -72,6 +74,8 @@ public:
 	 */
 	static void analyse(const Spec &spec, void* stream, int len, float columns[ANALYSER_COLUMN_COUNT]);
 };
+
+}
 
 /* ===========================================================================} */
 

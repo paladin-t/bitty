@@ -18,6 +18,8 @@
 ** Map editor
 */
 
+namespace Bitty {
+
 class EditorMap : public Editor, public virtual Object {
 public:
 	BITTY_CLASS_TYPE('M', 'A', 'P', 'E')
@@ -25,6 +27,8 @@ public:
 	static EditorMap* create(void);
 	static void destroy(EditorMap* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

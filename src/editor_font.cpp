@@ -20,6 +20,8 @@
 ** Font editor
 */
 
+namespace Bitty {
+
 class EditorFontImpl : public EditorFont {
 private:
 	struct Glyph {
@@ -325,6 +327,8 @@ EditorFont* EditorFont::create(void) {
 void EditorFont::destroy(EditorFont* ptr) {
 	EditorFontImpl* impl = static_cast<EditorFontImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

@@ -42,6 +42,8 @@
 
 #if BITTY_NETWORK_ENABLED
 
+namespace Bitty {
+
 /**
  * @brief Network object.
  */
@@ -122,6 +124,8 @@ public:
 	static Network* create(const char* type);
 	static void destroy(Network* ptr);
 };
+
+}
 
 #endif /* BITTY_NETWORK_ENABLED */
 

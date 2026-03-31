@@ -18,6 +18,8 @@
 ** Image editor
 */
 
+namespace Bitty {
+
 class EditorImage : public Editor, public virtual Object {
 public:
 	BITTY_CLASS_TYPE('I', 'M', 'G', 'E')
@@ -25,6 +27,8 @@ public:
 	static EditorImage* create(void);
 	static void destroy(EditorImage* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

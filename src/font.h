@@ -20,6 +20,8 @@
 ** Font
 */
 
+namespace Bitty {
+
 /**
  * @brief Font resource object.
  */
@@ -53,6 +55,8 @@ public:
 	static Font* create(void);
 	static void destroy(Font* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

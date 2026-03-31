@@ -22,6 +22,8 @@
 ** JSON editor
 */
 
+namespace Bitty {
+
 class EditorJsonImpl : public EditorJson, public ImGui::CodeEditor {
 private:
 	bool _opened = false;
@@ -754,6 +756,8 @@ EditorJson* EditorJson::create(void) {
 void EditorJson::destroy(EditorJson* ptr) {
 	EditorJsonImpl* impl = static_cast<EditorJsonImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

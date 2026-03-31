@@ -15,6 +15,8 @@
 ** Promise
 */
 
+namespace Bitty {
+
 class PromiseImpl : public Promise {
 private:
 	States _state = PENDING;
@@ -163,6 +165,8 @@ Promise* Promise::create(void) {
 void Promise::destroy(Promise* ptr) {
 	PromiseImpl* impl = static_cast<PromiseImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

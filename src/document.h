@@ -31,8 +31,19 @@
 
 /*
 ** {===========================================================================
+** Forward declaration
+*/
+
+struct ImFont;
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
 ** Document
 */
+
+namespace Bitty {
 
 /**
  * @brief Document viewer.
@@ -57,7 +68,7 @@ public:
 	virtual bool useThemedSpanCode(void) const = 0;
 	virtual void useThemedSpanCode(bool val) = 0;
 
-	virtual void font(struct ImFont* regular, struct ImFont* bold) = 0;
+	virtual void font(ImFont* regular, ImFont* bold) = 0;
 
 	virtual const std::string &title(void) = 0;
 
@@ -78,6 +89,8 @@ public:
 	static Document* create(void);
 	static void destroy(Document* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

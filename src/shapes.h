@@ -19,6 +19,8 @@
 ** Shapes
 */
 
+namespace Bitty {
+
 namespace Shapes {
 
 typedef std::function<void(int, int)> Plotter;
@@ -38,6 +40,8 @@ int fill(int x, int y, int w, int h, int* rx0, int* ry0, int* rx1, int* ry1, con
 
 int replace(int x, int y, int w, int h, int* rx0, int* ry0, int* rx1, int* ry1, int oldColor, int newColor, Indexer get, Plotter plot);
 int replace(int x, int y, int w, int h, int* rx0, int* ry0, int* rx1, int* ry1, const Color &oldColor, const Color &newColor, Picker get, Plotter plot);
+
+}
 
 }
 

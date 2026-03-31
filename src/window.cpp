@@ -16,6 +16,8 @@
 ** Window
 */
 
+namespace Bitty {
+
 class WindowImpl : public Window {
 private:
 	SDL_Window* _window = nullptr;
@@ -333,6 +335,8 @@ Window* Window::create(void) {
 void Window::destroy(Window* ptr) {
 	WindowImpl* impl = static_cast<WindowImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

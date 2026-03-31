@@ -26,6 +26,8 @@
 ** Image editor
 */
 
+namespace Bitty {
+
 class EditorImageImpl : public EditorImage {
 private:
 	struct Pixels {
@@ -1471,6 +1473,8 @@ EditorImage* EditorImage::create(void) {
 void EditorImage::destroy(EditorImage* ptr) {
 	EditorImageImpl* impl = static_cast<EditorImageImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

@@ -20,6 +20,8 @@
 ** @note Specialized theme for Pro version.
 */
 
+namespace Bitty {
+
 class ThemeStudio : public Theme {
 public:
 	BITTY_PROPERTY(Style, styleDark)
@@ -47,6 +49,8 @@ protected:
 	virtual void setColor(const std::string &key, ImGuiCol idx, const ImColor &col) override;
 	virtual void setColor(const std::string &key, const std::string &idx, const ImColor &col) override;
 };
+
+}
 
 /* ===========================================================================} */
 

@@ -23,6 +23,8 @@
 
 #if BITTY_WEB_ENABLED
 
+namespace Bitty {
+
 /**
  * @brief Fetch object as HTTP client.
  */
@@ -72,6 +74,8 @@ public:
 	static void destroy(Fetch* ptr);
 };
 
+}
+
 #endif /* BITTY_WEB_ENABLED */
 
 /* ===========================================================================} */
@@ -82,6 +86,8 @@ public:
 */
 
 #if BITTY_WEB_ENABLED
+
+namespace Bitty {
 
 /**
  * @brief Web object as HTTP server.
@@ -117,6 +123,8 @@ public:
 	static Web* create(const char* type);
 	static void destroy(Web* ptr);
 };
+
+}
 
 #endif /* BITTY_WEB_ENABLED */
 

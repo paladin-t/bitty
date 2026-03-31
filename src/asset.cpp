@@ -40,6 +40,8 @@
 ** Asset
 */
 
+namespace Bitty {
+
 Asset::States::~States() {
 }
 
@@ -1772,6 +1774,8 @@ void Asset::object(Usages usage, std::nullptr_t) {
 	default: // Do nothing.
 		break;
 	}
+}
+
 }
 
 /* ===========================================================================} */

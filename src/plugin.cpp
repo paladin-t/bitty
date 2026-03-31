@@ -45,6 +45,8 @@
 ** Scripting
 */
 
+namespace Bitty {
+
 unsigned Plugin::Schema::type(void) const {
 	const unsigned y = (unsigned)Math::hash(BITTY_MAKE_UINT32('P', 'L', 'G', 'N'), name);
 
@@ -301,6 +303,8 @@ void Plugin::update(double delta) {
 
 bool Plugin::opened(void) const {
 	return _project && _executable;
+}
+
 }
 
 /* ===========================================================================} */

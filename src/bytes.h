@@ -20,6 +20,8 @@
 ** Bytes
 */
 
+namespace Bitty {
+
 /**
  * @brief Bytes streaming object.
  */
@@ -46,6 +48,8 @@ public:
 	static Bytes* create(void);
 	static void destroy(Bytes* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

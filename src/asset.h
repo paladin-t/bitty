@@ -34,6 +34,8 @@
 ** Asset
 */
 
+namespace Bitty {
+
 /**
  * @brief Asset entity.
  */
@@ -343,6 +345,8 @@ private:
 	void object(Usages usage, const Object::Ptr &obj);
 	void object(Usages usage, std::nullptr_t);
 };
+
+}
 
 /* ===========================================================================} */
 

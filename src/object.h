@@ -21,6 +21,8 @@
 ** Object and variant
 */
 
+namespace Bitty {
+
 /**
  * @brief Object base.
  */
@@ -153,12 +155,16 @@ public:
 	std::string toString(void) const;
 };
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Enumerator and enumerable interfaces
 */
+
+namespace Bitty {
 
 /**
  * @brief Enumerator object interface.
@@ -190,12 +196,16 @@ public:
 	virtual IEnumerator::Ptr enumerate(void) = 0;
 };
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** List and dictionary interfaces
 */
+
+namespace Bitty {
 
 /**
  * @brief List object interface.
@@ -240,12 +250,16 @@ public:
 	virtual void clear(void) = 0;
 };
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Enumerable class
 */
+
+namespace Bitty {
 
 /**
  * @brief Enumerable class.
@@ -268,12 +282,16 @@ protected:
 	void onEnumeratorDestructing(IEnumerator* obj);
 };
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** List and dictionary classes
 */
+
+namespace Bitty {
 
 /**
  * @brief List class.
@@ -296,6 +314,8 @@ public:
 	static Dictionary* create(void);
 	static void destroy(Dictionary* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

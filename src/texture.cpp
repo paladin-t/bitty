@@ -21,7 +21,7 @@
 
 #ifndef TEXTURE_LOCK_SURFACE
 #	define TEXTURE_LOCK_SURFACE(SUR) \
-	ProcedureGuard<bool> BITTY_UNIQUE_NAME(__LOCK__)( \
+	Bitty::ProcedureGuard<bool> BITTY_UNIQUE_NAME(__LOCK__)( \
 		std::bind( \
 			[&] (SDL_Surface* surface) -> bool* { \
 				bool* result = (bool*)(uintptr_t)(SDL_MUSTLOCK(SUR) ? 0x1 : 0x0); \
@@ -42,23 +42,23 @@
 #endif /* TEXTURE_LOCK_SURFACE */
 
 #if SDL_VERSION_ATLEAST(2, 0, 12)
-static_assert((unsigned)Texture::NEAREST == (unsigned)SDL_ScaleModeNearest, "Value does not match.");
-static_assert((unsigned)Texture::LINEAR == (unsigned)SDL_ScaleModeLinear, "Value does not match.");
-static_assert((unsigned)Texture::ANISOTROPIC == (unsigned)SDL_ScaleModeBest, "Value does not match.");
+static_assert((unsigned)Bitty::Texture::NEAREST == (unsigned)SDL_ScaleModeNearest, "Value does not match.");
+static_assert((unsigned)Bitty::Texture::LINEAR == (unsigned)SDL_ScaleModeLinear, "Value does not match.");
+static_assert((unsigned)Bitty::Texture::ANISOTROPIC == (unsigned)SDL_ScaleModeBest, "Value does not match.");
 #endif /* SDL_VERSION_ATLEAST(2, 0, 12) */
 
-static_assert((unsigned)Texture::STATIC == (unsigned)SDL_TEXTUREACCESS_STATIC, "Value does not match.");
-static_assert((unsigned)Texture::STREAMING == (unsigned)SDL_TEXTUREACCESS_STREAMING, "Value does not match.");
-static_assert((unsigned)Texture::TARGET == (unsigned)SDL_TEXTUREACCESS_TARGET, "Value does not match.");
+static_assert((unsigned)Bitty::Texture::STATIC == (unsigned)SDL_TEXTUREACCESS_STATIC, "Value does not match.");
+static_assert((unsigned)Bitty::Texture::STREAMING == (unsigned)SDL_TEXTUREACCESS_STREAMING, "Value does not match.");
+static_assert((unsigned)Bitty::Texture::TARGET == (unsigned)SDL_TEXTUREACCESS_TARGET, "Value does not match.");
 
-static_assert((unsigned)Texture::NONE == (unsigned)SDL_BLENDMODE_NONE, "Value does not match.");
-static_assert((unsigned)Texture::BLEND == (unsigned)SDL_BLENDMODE_BLEND, "Value does not match.");
-static_assert((unsigned)Texture::ADD == (unsigned)SDL_BLENDMODE_ADD, "Value does not match.");
-static_assert((unsigned)Texture::MOD == (unsigned)SDL_BLENDMODE_MOD, "Value does not match.");
+static_assert((unsigned)Bitty::Texture::NONE == (unsigned)SDL_BLENDMODE_NONE, "Value does not match.");
+static_assert((unsigned)Bitty::Texture::BLEND == (unsigned)SDL_BLENDMODE_BLEND, "Value does not match.");
+static_assert((unsigned)Bitty::Texture::ADD == (unsigned)SDL_BLENDMODE_ADD, "Value does not match.");
+static_assert((unsigned)Bitty::Texture::MOD == (unsigned)SDL_BLENDMODE_MOD, "Value does not match.");
 #if SDL_VERSION_ATLEAST(2, 0, 12)
-static_assert((unsigned)Texture::MUL == (unsigned)SDL_BLENDMODE_MUL, "Value does not match.");
+static_assert((unsigned)Bitty::Texture::MUL == (unsigned)SDL_BLENDMODE_MUL, "Value does not match.");
 #endif /* SDL_VERSION_ATLEAST(2, 0, 12) */
-static_assert((unsigned)Texture::INVALID == (unsigned)SDL_BLENDMODE_INVALID, "Value does not match.");
+static_assert((unsigned)Bitty::Texture::INVALID == (unsigned)SDL_BLENDMODE_INVALID, "Value does not match.");
 
 /* ===========================================================================} */
 
@@ -66,6 +66,8 @@ static_assert((unsigned)Texture::INVALID == (unsigned)SDL_BLENDMODE_INVALID, "Va
 ** {===========================================================================
 ** Texture
 */
+
+namespace Bitty {
 
 class TextureImpl : public Texture {
 private:
@@ -661,6 +663,8 @@ Texture* Texture::create(void) {
 void Texture::destroy(Texture* ptr) {
 	TextureImpl* impl = static_cast<TextureImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

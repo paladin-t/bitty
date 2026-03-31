@@ -16,6 +16,8 @@
 ** Sprite commands
 */
 
+namespace Bitty {
+
 namespace Commands {
 
 namespace Sprite {
@@ -37,7 +39,7 @@ const char* AddAnimation::toString(void) const {
 }
 
 int AddAnimation::redo(Object::Ptr obj, int argc, const Variant* argv) {
-	::Sprite::Ptr ptr = Object::as<::Sprite::Ptr>(obj);
+	::Bitty::Sprite::Ptr ptr = Object::as<::Bitty::Sprite::Ptr>(obj);
 	Object::Ptr arg0 = unpack<Object::Ptr>(argc, argv, 0, nullptr);
 	Texture::Ptr tex = Object::as<Texture::Ptr>(arg0);
 	void* arg1 = unpack<void*>(argc, argv, 1, nullptr);
@@ -55,7 +57,7 @@ int AddAnimation::redo(Object::Ptr obj, int argc, const Variant* argv) {
 }
 
 int AddAnimation::undo(Object::Ptr obj, int argc, const Variant* argv) {
-	::Sprite::Ptr ptr = Object::as<::Sprite::Ptr>(obj);
+	::Bitty::Sprite::Ptr ptr = Object::as<::Bitty::Sprite::Ptr>(obj);
 	void* arg1 = unpack<void*>(argc, argv, 1, nullptr);
 
 	if (!ptr->remove(index(), nullptr, nullptr, nullptr, nullptr))
@@ -108,13 +110,13 @@ const char* CutAnimation::toString(void) const {
 }
 
 int CutAnimation::redo(Object::Ptr obj, int argc, const Variant* argv) {
-	::Sprite::Ptr ptr = Object::as<::Sprite::Ptr>(obj);
+	::Bitty::Sprite::Ptr ptr = Object::as<::Bitty::Sprite::Ptr>(obj);
 	void* arg1 = unpack<void*>(argc, argv, 1, nullptr);
 
 	int result = 0;
 
 	if (!filled()) {
-		const ::Sprite::Range range = ptr->rangeOf(animation());
+		const ::Bitty::Sprite::Range range = ptr->rangeOf(animation());
 		const int beginIdx = std::get<0>(range);
 		const int endIdx = std::get<1>(range);
 		for (int i = beginIdx; i <= endIdx; ++i) {
@@ -139,7 +141,7 @@ int CutAnimation::redo(Object::Ptr obj, int argc, const Variant* argv) {
 }
 
 int CutAnimation::undo(Object::Ptr obj, int argc, const Variant* argv) {
-	::Sprite::Ptr ptr = Object::as<::Sprite::Ptr>(obj);
+	::Bitty::Sprite::Ptr ptr = Object::as<::Bitty::Sprite::Ptr>(obj);
 	Object::Ptr arg0 = unpack<Object::Ptr>(argc, argv, 0, nullptr);
 	Texture::Ptr tex = Object::as<Texture::Ptr>(arg0);
 	void* arg1 = unpack<void*>(argc, argv, 1, nullptr);
@@ -247,7 +249,7 @@ const char* RenameAnimation::toString(void) const {
 }
 
 int RenameAnimation::redo(Object::Ptr obj, int argc, const Variant* argv) {
-	::Sprite::Ptr ptr = Object::as<::Sprite::Ptr>(obj);
+	::Bitty::Sprite::Ptr ptr = Object::as<::Bitty::Sprite::Ptr>(obj);
 	void* arg1 = unpack<void*>(argc, argv, 1, nullptr);
 
 	if (!filled()) {
@@ -265,7 +267,7 @@ int RenameAnimation::redo(Object::Ptr obj, int argc, const Variant* argv) {
 }
 
 int RenameAnimation::undo(Object::Ptr obj, int argc, const Variant* argv) {
-	::Sprite::Ptr ptr = Object::as<::Sprite::Ptr>(obj);
+	::Bitty::Sprite::Ptr ptr = Object::as<::Bitty::Sprite::Ptr>(obj);
 	void* arg1 = unpack<void*>(argc, argv, 1, nullptr);
 
 	if (!ptr->set(index(), nullptr, nullptr, old().c_str()))
@@ -317,7 +319,7 @@ const char* AddFrame::toString(void) const {
 }
 
 int AddFrame::redo(Object::Ptr obj, int argc, const Variant* argv) {
-	::Sprite::Ptr ptr = Object::as<::Sprite::Ptr>(obj);
+	::Bitty::Sprite::Ptr ptr = Object::as<::Bitty::Sprite::Ptr>(obj);
 	Object::Ptr arg0 = unpack<Object::Ptr>(argc, argv, 0, nullptr);
 	Texture::Ptr tex = Object::as<Texture::Ptr>(arg0);
 
@@ -333,7 +335,7 @@ int AddFrame::redo(Object::Ptr obj, int argc, const Variant* argv) {
 }
 
 int AddFrame::undo(Object::Ptr obj, int, const Variant*) {
-	::Sprite::Ptr ptr = Object::as<::Sprite::Ptr>(obj);
+	::Bitty::Sprite::Ptr ptr = Object::as<::Bitty::Sprite::Ptr>(obj);
 
 	std::string key;
 	if (!ptr->remove(index(), nullptr, nullptr, nullptr, &key))
@@ -390,7 +392,7 @@ const char* CutFrame::toString(void) const {
 }
 
 int CutFrame::redo(Object::Ptr obj, int, const Variant*) {
-	::Sprite::Ptr ptr = Object::as<::Sprite::Ptr>(obj);
+	::Bitty::Sprite::Ptr ptr = Object::as<::Bitty::Sprite::Ptr>(obj);
 
 	std::string key;
 	if (filled()) {
@@ -417,7 +419,7 @@ int CutFrame::redo(Object::Ptr obj, int, const Variant*) {
 }
 
 int CutFrame::undo(Object::Ptr obj, int argc, const Variant* argv) {
-	::Sprite::Ptr ptr = Object::as<::Sprite::Ptr>(obj);
+	::Bitty::Sprite::Ptr ptr = Object::as<::Bitty::Sprite::Ptr>(obj);
 	Object::Ptr arg0 = unpack<Object::Ptr>(argc, argv, 0, nullptr);
 	Texture::Ptr tex = Object::as<Texture::Ptr>(arg0);
 
@@ -522,7 +524,7 @@ const char* ChangeArea::toString(void) const {
 }
 
 int ChangeArea::redo(Object::Ptr obj, int, const Variant*) {
-	::Sprite::Ptr ptr = Object::as<::Sprite::Ptr>(obj);
+	::Bitty::Sprite::Ptr ptr = Object::as<::Bitty::Sprite::Ptr>(obj);
 
 	if (!filled()) {
 		Math::Recti old_;
@@ -537,7 +539,7 @@ int ChangeArea::redo(Object::Ptr obj, int, const Variant*) {
 }
 
 int ChangeArea::undo(Object::Ptr obj, int, const Variant*) {
-	::Sprite::Ptr ptr = Object::as<::Sprite::Ptr>(obj);
+	::Bitty::Sprite::Ptr ptr = Object::as<::Bitty::Sprite::Ptr>(obj);
 
 	if (!ptr->set(index(), &old(), nullptr, nullptr))
 		return 0;
@@ -585,7 +587,7 @@ const char* ChangeInterval::toString(void) const {
 }
 
 int ChangeInterval::redo(Object::Ptr obj, int, const Variant*) {
-	::Sprite::Ptr ptr = Object::as<::Sprite::Ptr>(obj);
+	::Bitty::Sprite::Ptr ptr = Object::as<::Bitty::Sprite::Ptr>(obj);
 
 	if (!filled()) {
 		double old_ = 0;
@@ -600,7 +602,7 @@ int ChangeInterval::redo(Object::Ptr obj, int, const Variant*) {
 }
 
 int ChangeInterval::undo(Object::Ptr obj, int, const Variant*) {
-	::Sprite::Ptr ptr = Object::as<::Sprite::Ptr>(obj);
+	::Bitty::Sprite::Ptr ptr = Object::as<::Bitty::Sprite::Ptr>(obj);
 
 	if (!ptr->set(index(), nullptr, &old(), nullptr))
 		return 0;
@@ -629,6 +631,8 @@ Command* ChangeInterval::create(void) {
 void ChangeInterval::destroy(Command* ptr) {
 	ChangeInterval* impl = static_cast<ChangeInterval*>(ptr);
 	delete impl;
+}
+
 }
 
 }

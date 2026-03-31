@@ -32,6 +32,8 @@
 ** Executable
 */
 
+namespace Bitty {
+
 /**
  * @brief Executable interface.
  */
@@ -234,6 +236,8 @@ public:
 
 	virtual void gc(void) = 0;
 };
+
+}
 
 /* ===========================================================================} */
 

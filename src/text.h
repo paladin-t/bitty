@@ -24,6 +24,8 @@
 ** Text
 */
 
+namespace Bitty {
+
 /**
  * @brief Text object and utilities.
  */
@@ -172,6 +174,8 @@ public:
 	static Text* create(void);
 	static void destroy(Text* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

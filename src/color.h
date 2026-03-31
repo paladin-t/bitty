@@ -20,6 +20,8 @@
 ** Color
 */
 
+namespace Bitty {
+
 /**
  * @brief Color structure.
  *
@@ -81,6 +83,8 @@ struct Color {
 	std::string toString(void) const;
 	bool fromString(const std::string &str);
 };
+
+}
 
 /* ===========================================================================} */
 

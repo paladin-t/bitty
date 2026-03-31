@@ -28,6 +28,8 @@
 ** @note See: https://lodev.org/cgtutor/raycasting.html.
 */
 
+namespace Bitty {
+
 class RaycasterImpl : public Raycaster {
 private:
 	Math::Vec2i _tileSize = Math::Vec2i(BITTY_GRID_DEFAULT_SIZE, BITTY_GRID_DEFAULT_SIZE);
@@ -199,6 +201,8 @@ Raycaster* Raycaster::create(void) {
 void Raycaster::destroy(Raycaster* ptr) {
 	RaycasterImpl* impl = static_cast<RaycasterImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

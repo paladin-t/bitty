@@ -23,7 +23,7 @@
 #	define IMAGE_PALETTE_BITS 8
 #endif /* IMAGE_PALETTE_BITS */
 #ifndef IMAGE_PALETTE_COLOR_COUNT
-#	define IMAGE_PALETTE_COLOR_COUNT Math::pow(2, IMAGE_PALETTE_BITS)
+#	define IMAGE_PALETTE_COLOR_COUNT Bitty::Math::pow(2, IMAGE_PALETTE_BITS)
 #endif /* IMAGE_PALETTE_COLOR_COUNT */
 
 #ifndef IMAGE_PALETTED_HEADER
@@ -39,6 +39,8 @@
 ** {===========================================================================
 ** Image
 */
+
+namespace Bitty {
 
 /**
  * @brief Image resource object.
@@ -118,6 +120,8 @@ public:
 	static Image* create(Palette::Ptr palette /* nullable */);
 	static void destroy(Image* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

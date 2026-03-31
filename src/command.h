@@ -22,6 +22,8 @@
 ** Command
 */
 
+namespace Bitty {
+
 class Command {
 public:
 	typedef std::function<Command*(void)> Creator;
@@ -83,12 +85,16 @@ protected:
 	}
 };
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Command queue
 */
+
+namespace Bitty {
 
 class CommandQueue {
 private:
@@ -165,6 +171,8 @@ private:
 	Command* createCommand(unsigned type);
 	void destroyCommand(Command* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

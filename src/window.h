@@ -48,6 +48,8 @@
 ** Window
 */
 
+namespace Bitty {
+
 /**
  * @brief Window structure and context.
  */
@@ -222,6 +224,8 @@ public:
 	static Window* create(void);
 	static void destroy(Window* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

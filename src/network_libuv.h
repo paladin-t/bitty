@@ -26,6 +26,8 @@
 
 #if BITTY_NETWORK_ENABLED
 
+namespace Bitty {
+
 class NetworkLibuv : public Network {
 public:
 	typedef std::vector<uv_tcp_t*> TcpClientHandles;
@@ -127,6 +129,8 @@ private:
 	class Bytes* bytesCache(void);
 	class Json* jsonCache(void);
 };
+
+}
 
 #endif /* BITTY_NETWORK_ENABLED */
 

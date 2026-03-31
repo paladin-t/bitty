@@ -18,6 +18,8 @@
 ** Image commands
 */
 
+namespace Bitty {
+
 namespace Commands {
 
 namespace Image {
@@ -169,6 +171,8 @@ public:
 	static Command* create(void);
 	static void destroy(Command* ptr);
 };
+
+}
 
 }
 

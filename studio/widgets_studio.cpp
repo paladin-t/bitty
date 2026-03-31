@@ -39,9 +39,9 @@ namespace ImGui {
 namespace Studio {
 
 PreferencesPopupBox::PreferencesPopupBox(
-	class Primitives* primitives, class ThemeStudio* theme,
+	Bitty::Primitives* primitives, Bitty::ThemeStudio* theme,
 	const std::string &title,
-	WorkspaceStudio::StudioSettings &settings,
+	Bitty::WorkspaceStudio::StudioSettings &settings,
 	bool editable,
 	const ConfirmHandler &confirm, const CancelHandler &cancel, const ApplyHandler &applyHandler,
 	const char* confirmTxt, const char* cancelTxt, const char* applyTxt
@@ -156,7 +156,7 @@ void PreferencesPopupBox::update(void) {
 						int pref = (int)_settingsShadow.editorColumnIndicator;
 						SetNextItemWidth(GetContentRegionAvail().x);
 						if (Combo("", &pref, items, BITTY_COUNTOF(items)))
-							_settingsShadow.editorColumnIndicator = (Workspace::Settings::ColumnIndicator)pref;
+							_settingsShadow.editorColumnIndicator = (Bitty::Workspace::Settings::ColumnIndicator)pref;
 					}
 					PopID();
 
@@ -178,7 +178,7 @@ void PreferencesPopupBox::update(void) {
 						int pref = (int)_settingsShadow.editorIndentRule;
 						SetNextItemWidth(GetContentRegionAvail().x);
 						if (Combo("", &pref, items, BITTY_COUNTOF(items)))
-							_settingsShadow.editorIndentRule = (Workspace::Settings::IndentRules)pref;
+							_settingsShadow.editorIndentRule = (Bitty::Workspace::Settings::IndentRules)pref;
 					}
 					PopID();
 
@@ -208,7 +208,7 @@ void PreferencesPopupBox::update(void) {
 				SameLine();
 				TextUnformatted(_theme->windowPreferences_Graphics_FixCanvasRatioQ());
 				if (IsItemHovered()) {
-					VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
+					Bitty::VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(WIDGETS_TOOLTIP_PADDING, WIDGETS_TOOLTIP_PADDING));
 
 					SetTooltip(_theme->windowPreferences_Graphics_FixCanvasRatioTooltip());
 				}
@@ -328,7 +328,7 @@ void PreferencesPopupBox::update(void) {
 }
 
 AboutPopupBox::AboutPopupBox(
-	class Window* wnd, class Renderer* rnd, class Primitives* primitives,
+	Bitty::Window* wnd, Bitty::Renderer* rnd, Bitty::Primitives* primitives,
 	const std::string &title,
 	const ConfirmHandler &confirm,
 	const char* confirmTxt
@@ -348,10 +348,10 @@ AboutPopupBox::AboutPopupBox(
 	const char* curlVerPtr = curl_version();
 	if (curlVerPtr) {
 		curlVer = curlVerPtr;
-		const size_t begin = Text::indexOf(curlVer, "/");
+		const size_t begin = Bitty::Text::indexOf(curlVer, "/");
 		if (begin != std::string::npos)
 			curlVer = curlVer.substr(begin + 1);
-		const size_t end = Text::indexOf(curlVer, " ");
+		const size_t end = Bitty::Text::indexOf(curlVer, " ");
 		if (end != std::string::npos)
 			curlVer = curlVer.substr(0, end);
 	}
@@ -361,14 +361,14 @@ AboutPopupBox::AboutPopupBox(
 	_desc = "v" BITTY_VERSION_STRING " - An itty bitty 2D game engine";
 
 	_specs += "Built for " BITTY_OS ", ";
-	_specs += Platform::isLittleEndian() ? "little-endian" : "big-endian";
+	_specs += Bitty::Platform::isLittleEndian() ? "little-endian" : "big-endian";
 	_specs += ", with " BITTY_CP "\n";
 	_specs += "\n";
 
 	_specs += "Libraries:\n";
 	_specs += "        Lua v" LUA_VERSION_MAJOR "." LUA_VERSION_MINOR "." LUA_VERSION_RELEASE "\n";
-	_specs += "        SDL v" + Text::toString(sdlVer.major) + "." + Text::toString(sdlVer.minor) + "." + Text::toString(sdlVer.patch) + "\n";
-	_specs += "  SDL mixer v" + Text::toString(sdlMixVer.major) + "." + Text::toString(sdlMixVer.minor) + "." + Text::toString(sdlMixVer.patch) + "\n";
+	_specs += "        SDL v" + Bitty::Text::toString(sdlVer.major) + "." + Bitty::Text::toString(sdlVer.minor) + "." + Bitty::Text::toString(sdlVer.patch) + "\n";
+	_specs += "  SDL mixer v" + Bitty::Text::toString(sdlMixVer.major) + "." + Bitty::Text::toString(sdlMixVer.minor) + "." + Bitty::Text::toString(sdlMixVer.patch) + "\n";
 	_specs += "      ImGui v" IMGUI_VERSION "\n";
 	_specs += "   Chipmunk v" + std::string(cpVersionString) +  "\n";
 #if !defined BITTY_OS_HTML
@@ -387,7 +387,7 @@ AboutPopupBox::AboutPopupBox(
 	_specs += "\n";
 
 #if BITTY_EFFECTS_ENABLED
-	Effects* effects = _primitives->effects();
+	Bitty::Effects* effects = _primitives->effects();
 	if (effects && effects->valid()) {
 		_specs += "Effects supported:\n";
 		_specs += "  ";
@@ -398,14 +398,14 @@ AboutPopupBox::AboutPopupBox(
 
 	_specs += "Render target supported:\n";
 	_specs += "  ";
-	_specs += Text::toString(rnd->renderTargetSupported());
+	_specs += Bitty::Text::toString(rnd->renderTargetSupported());
 	_specs += "\n";
 
 	_specs += "Max texture size:\n";
 	_specs += "  ";
-	_specs += Text::toString(rnd->maxTextureWidth());
+	_specs += Bitty::Text::toString(rnd->maxTextureWidth());
 	_specs += "x";
-	_specs += Text::toString(rnd->maxTextureHeight());
+	_specs += Bitty::Text::toString(rnd->maxTextureHeight());
 	_specs += "\n";
 
 	const int dspIdx = wnd->displayIndex();
@@ -413,11 +413,11 @@ AboutPopupBox::AboutPopupBox(
 	SDL_GetDisplayDPI(dspIdx, &ddpi, &hdpi, &vdpi);
 	_specs += "DPI:\n";
 	_specs += "  (DDPI) ";
-	_specs += Text::toString(ddpi);
+	_specs += Bitty::Text::toString(ddpi);
 	_specs += ", (HDPI) ";
-	_specs += Text::toString(hdpi);
+	_specs += Bitty::Text::toString(hdpi);
 	_specs += ", (VDPI) ";
-	_specs += Text::toString(vdpi);
+	_specs += Bitty::Text::toString(vdpi);
 	_specs += "\n";
 
 	_specs += "Chunk decoders:\n";
@@ -467,7 +467,7 @@ void AboutPopupBox::update(void) {
 		TextUnformatted(_desc);
 
 		{
-			VariableGuard<decltype(style.ItemSpacing)> guardItemSpacing(&style.ItemSpacing, style.ItemSpacing, ImVec2());
+			Bitty::VariableGuard<decltype(style.ItemSpacing)> guardItemSpacing(&style.ItemSpacing, style.ItemSpacing, ImVec2());
 
 			TextUnformatted("  by ");
 			SameLine();
@@ -528,7 +528,7 @@ void AboutPopupBox::update(void) {
 }
 
 PausedPopupBox::PausedPopupBox(
-	class Renderer* rnd,
+	Bitty::Renderer* rnd,
 	const ResumeHandler &resume, const OptionsHandler &options, const AboutHandler &about,
 	const std::string &resumeTxt, const std::string &optionsTxt, const std::string &aboutTxt
 ) : _renderer(rnd),

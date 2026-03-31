@@ -17,6 +17,8 @@
 ** Object and variant
 */
 
+namespace Bitty {
+
 int Object::compare(const Object* other) const {
 	if (!other)
 		return 1;
@@ -387,12 +389,16 @@ std::string Variant::toString(void) const {
 	return "unknown";
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Enumerable class
 */
+
+namespace Bitty {
 
 Enumerable::~Enumerable() {
 	onEnumerableDestructing();
@@ -434,12 +440,16 @@ void Enumerable::onEnumeratorDestructing(IEnumerator* obj) {
 	delete obj;
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** List and dictionary class
 */
+
+namespace Bitty {
 
 class ListImpl : public List {
 private:
@@ -689,6 +699,8 @@ Dictionary* Dictionary::create(void) {
 void Dictionary::destroy(Dictionary* ptr) {
 	DictionaryImpl* impl = static_cast<DictionaryImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

@@ -19,6 +19,8 @@
 ** Paintable commands
 */
 
+namespace Bitty {
+
 namespace Commands {
 
 namespace Paintable {
@@ -334,6 +336,8 @@ public:
 
 	virtual const char* toString(void) const override;
 };
+
+}
 
 }
 

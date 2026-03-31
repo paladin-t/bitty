@@ -21,6 +21,8 @@
 ** Sound editor
 */
 
+namespace Bitty {
+
 class EditorSoundImpl : public EditorSound {
 private:
 	bool _opened = false;
@@ -334,6 +336,8 @@ EditorSound* EditorSound::create(void) {
 void EditorSound::destroy(EditorSound* ptr) {
 	EditorSoundImpl* impl = static_cast<EditorSoundImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

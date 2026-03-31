@@ -32,6 +32,8 @@
 ** Primitive command
 */
 
+namespace Bitty {
+
 struct Cmd {
 public:
 	enum Types {
@@ -2504,12 +2506,16 @@ public:
 	}
 };
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Primitive command queue
 */
+
+namespace Bitty {
 
 /**
  * @brief Queue for primitive commands.
@@ -2704,12 +2710,16 @@ public:
 	}
 };
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Primitives
 */
+
+namespace Bitty {
 
 class PrimitivesImpl : public Primitives {
 private:
@@ -3947,6 +3957,8 @@ Primitives* Primitives::create(bool withAudio) {
 void Primitives::destroy(Primitives* ptr) {
 	PrimitivesImpl* impl = static_cast<PrimitivesImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

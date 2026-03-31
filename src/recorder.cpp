@@ -57,6 +57,8 @@
 ** Recorder
 */
 
+namespace Bitty {
+
 class RecorderImpl : public Recorder {
 private:
 	typedef std::list<Bytes::Ptr> Frames;
@@ -343,6 +345,8 @@ Recorder* Recorder::create(SaveHandler save, unsigned fps) {
 void Recorder::destroy(Recorder* ptr) {
 	RecorderImpl* impl = static_cast<RecorderImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

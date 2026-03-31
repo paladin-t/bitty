@@ -36,7 +36,12 @@
 ** Forward declaration
 */
 
+namespace Bitty {
+
 class Renderer;
+
+}
+
 struct SDL_Surface;
 struct SDL_Texture;
 
@@ -56,7 +61,7 @@ struct Texture final {
 	SDL_Surface* surface = nullptr;
 	SDL_Texture* source = nullptr;
 
-	Texture(Renderer* rnd, unsigned char* pixels, int width, int height);
+	Texture(Bitty::Renderer* rnd, unsigned char* pixels, int width, int height);
 	~Texture();
 };
 
@@ -68,6 +73,8 @@ struct Texture final {
 ** {===========================================================================
 ** Threading guard
 */
+
+namespace Bitty {
 
 #if BITTY_THREADING_GUARD_ENABLED
 class ThreadingGuard {
@@ -96,6 +103,8 @@ public:
 
 extern ThreadingGuard graphicsThreadingGuard;
 #endif /* BITTY_THREADING_GUARD_ENABLED */
+
+}
 
 /* ===========================================================================} */
 

@@ -18,6 +18,8 @@
 ** Collectible
 */
 
+namespace Bitty {
+
 /**
  * @brief Collectible interface.
  */
@@ -26,6 +28,8 @@ public:
 	virtual int collect(void) = 0;
 	virtual int cleanup(void) = 0;
 };
+
+}
 
 /* ===========================================================================} */
 

@@ -20,6 +20,8 @@
 ** Randomizer
 */
 
+namespace Bitty {
+
 /**
  * @brief Randomizer algorithm.
  */
@@ -43,6 +45,8 @@ public:
 	static Randomizer* create(void);
 	static void destroy(Randomizer* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

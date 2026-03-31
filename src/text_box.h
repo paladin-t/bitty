@@ -22,6 +22,8 @@
 ** Text box
 */
 
+namespace Bitty {
+
 /**
  * @brief Text box object.
  */
@@ -86,6 +88,8 @@ public:
 	static TextBox* create(void);
 	static void destroy(TextBox* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

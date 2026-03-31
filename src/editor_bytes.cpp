@@ -19,6 +19,8 @@
 ** Bytes editor
 */
 
+namespace Bitty {
+
 class EditorBytesImpl : public EditorBytes, public ImGui::CodeEditor {
 private:
 	bool _opened = false;
@@ -398,6 +400,8 @@ EditorBytes* EditorBytes::create(void) {
 void EditorBytes::destroy(EditorBytes* ptr) {
 	EditorBytesImpl* impl = static_cast<EditorBytesImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

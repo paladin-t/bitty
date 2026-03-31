@@ -88,8 +88,21 @@
 #endif /* LUA_WRITE_REF_CONST */
 
 #ifndef LUA_LIB
-#	define LUA_LIB(R) [] (lua_State* L) -> int { Lua::lib(L, R); return 1; }
+#	define LUA_LIB(R) [] (lua_State* L) -> int { ::Lua::lib(L, R); return 1; }
 #endif /* LUA_LIB */
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
+** Forward declaration
+*/
+
+namespace Bitty {
+
+class Variant;
+
+}
 
 /* ===========================================================================} */
 
@@ -116,22 +129,22 @@ bool isPlugin(lua_State* L);
 
 /**< Variant. */
 
-void check(lua_State* L, class Variant* ret, Index idx = Index(1), TableOptions options = TableOptions());
-template<int Idx = 1> void check(lua_State* L, class Variant* ret) {
+void check(lua_State* L, Bitty::Variant* ret, Index idx = Index(1), TableOptions options = TableOptions());
+template<int Idx = 1> void check(lua_State* L, Bitty::Variant* ret) {
 	check(L, ret, Index(Idx));
 }
-void read(lua_State* L, class Variant* ret, Index idx = Index(1), TableOptions options = TableOptions());
-template<int Idx = 1> void read(lua_State* L, class Variant* ret) {
+void read(lua_State* L, Bitty::Variant* ret, Index idx = Index(1), TableOptions options = TableOptions());
+template<int Idx = 1> void read(lua_State* L, Bitty::Variant* ret) {
 	read(L, ret, Index(Idx));
 }
-template<> int write(lua_State* L, const class Variant* val);
-template<> int write(lua_State* L, class Variant* val);
+template<> int write(lua_State* L, const Bitty::Variant* val);
+template<> int write(lua_State* L, Bitty::Variant* val);
 
-int call(lua_State* L, const Function &func, int argc, const class Variant* argv);
-int call(class Variant* ret, lua_State* L, const Function &func);
-int call(class Variant* ret, lua_State* L, const Function &func, int argc, const class Variant* argv);
-int call(int retc, class Variant* retv, lua_State* L, const Function &func);
-int call(int retc, class Variant* retv, lua_State* L, const Function &func, int argc, const class Variant* argv);
+int call(lua_State* L, const Function &func, int argc, const Bitty::Variant* argv);
+int call(Bitty::Variant* ret, lua_State* L, const Function &func);
+int call(Bitty::Variant* ret, lua_State* L, const Function &func, int argc, const Bitty::Variant* argv);
+int call(int retc, Bitty::Variant* retv, lua_State* L, const Function &func);
+int call(int retc, Bitty::Variant* retv, lua_State* L, const Function &func, int argc, const Bitty::Variant* argv);
 
 }
 
@@ -142,11 +155,15 @@ int call(int retc, class Variant* retv, lua_State* L, const Function &func, int 
 ** Standard
 */
 
+namespace Bitty {
+
 namespace Lua {
 
 namespace Standard {
 
 void open(class Executable* exec);
+
+}
 
 }
 
@@ -159,11 +176,15 @@ void open(class Executable* exec);
 ** Libraries
 */
 
+namespace Bitty {
+
 namespace Lua {
 
 namespace Libs {
 
 void open(class Executable* exec);
+
+}
 
 }
 
@@ -176,11 +197,15 @@ void open(class Executable* exec);
 ** Engine
 */
 
+namespace Bitty {
+
 namespace Lua {
 
 namespace Engine {
 
 void open(class Executable* exec);
+
+}
 
 }
 
@@ -193,11 +218,15 @@ void open(class Executable* exec);
 ** Editor
 */
 
+namespace Bitty {
+
 namespace Lua {
 
 namespace Editor {
 
 void open(class Executable* exec);
+
+}
 
 }
 
@@ -209,6 +238,8 @@ void open(class Executable* exec);
 ** {===========================================================================
 ** Invoke
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -222,6 +253,8 @@ void callback(lua_State* L);
 
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
@@ -229,11 +262,15 @@ void callback(lua_State* L);
 ** Application
 */
 
+namespace Bitty {
+
 namespace Lua {
 
 namespace Application {
 
 void open(class Executable* exec);
+
+}
 
 }
 

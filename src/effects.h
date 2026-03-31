@@ -19,6 +19,8 @@
 ** Effects
 */
 
+namespace Bitty {
+
 /**
  * @brief Special effects.
  */
@@ -84,6 +86,8 @@ public:
 	static Effects* create(void);
 	static void destroy(Effects* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

@@ -53,6 +53,8 @@
 ** Lua scripting
 */
 
+namespace Bitty {
+
 ScriptingLua::ScriptingLua() {
 	_fps = 0;
 
@@ -136,7 +138,7 @@ void ScriptingLua::prepare(void) {
 	if (_L)
 		return;
 
-	_L = Lua::create(
+	_L = ::Lua::create(
 		[] (void* /* userdata */, void* ptr, size_t /* oldSize */, size_t newSize) -> void* {
 			if (newSize == 0) {
 				free(ptr);
@@ -150,9 +152,9 @@ void ScriptingLua::prepare(void) {
 	);
 
 	observer()->require(this);
-	assert(Lua::getTop(_L) == 0 && "Polluted Lua stack.");
+	assert(::Lua::getTop(_L) == 0 && "Polluted Lua stack.");
 
-	Lua::setLoader(_L, require);
+	::Lua::setLoader(_L, require);
 
 	hookNormal();
 }
@@ -162,13 +164,13 @@ void ScriptingLua::finish(void) {
 		LockGuard<decltype(_lock)> guard(_lock);
 
 		if (_quit && _quit->valid()) {
-			const int ret = Lua::invoke(
+			const int ret = ::Lua::invoke(
 				_L,
 				[] (lua_State* L, void* ud) -> void {
 					ScriptingLua* impl = (ScriptingLua*)ud;
 
-					check(L, Lua::call(L, *impl->_quit));
-					assert(Lua::getTop(L) == 0 && "Polluted Lua stack.");
+					check(L, ::Lua::call(L, *impl->_quit));
+					assert(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
 				},
 				this
 			);
@@ -223,7 +225,7 @@ void ScriptingLua::finish(void) {
 		_dependency.clear();
 
 		if (_L) {
-			Lua::destroy(_L);
+			::Lua::destroy(_L);
 			_L = nullptr;
 		}
 	} while (false);
@@ -303,9 +305,9 @@ bool ScriptingLua::setup(void) {
 
 			return false;
 		}
-		const int discarded = Lua::getTop(_L);
+		const int discarded = ::Lua::getTop(_L);
 		if (discarded > 0) {
-			Lua::pop(_L, discarded);
+			::Lua::pop(_L, discarded);
 
 			const std::string msg = Text::cformat(
 				discarded == 1 ?
@@ -319,53 +321,53 @@ bool ScriptingLua::setup(void) {
 		_dependency.pop_back();
 		assert(_dependency.empty());
 
-		Lua::Function setup;
-		Lua::getGlobal(_L, SCRIPTING_SETUP_FUNCTION_NAME);
-		Lua::read(_L, setup);
-		Lua::pop(_L);
+		::Lua::Function setup;
+		::Lua::getGlobal(_L, SCRIPTING_SETUP_FUNCTION_NAME);
+		::Lua::read(_L, setup);
+		::Lua::pop(_L);
 
-		Lua::getGlobal(_L, SCRIPTING_UPDATE_FUNCTION_NAME);
-		Lua::read(_L, _update);
-		Lua::pop(_L);
+		::Lua::getGlobal(_L, SCRIPTING_UPDATE_FUNCTION_NAME);
+		::Lua::read(_L, _update);
+		::Lua::pop(_L);
 
-		Lua::getGlobal(_L, SCRIPTING_QUIT_FUNCTION_NAME);
-		Lua::read(_L, _quit);
-		Lua::pop(_L);
+		::Lua::getGlobal(_L, SCRIPTING_QUIT_FUNCTION_NAME);
+		::Lua::read(_L, _quit);
+		::Lua::pop(_L);
 
-		Lua::getGlobal(_L, SCRIPTING_FOCUS_LOST_FUNCTION_NAME);
-		Lua::read(_L, _focusLost);
-		Lua::pop(_L);
+		::Lua::getGlobal(_L, SCRIPTING_FOCUS_LOST_FUNCTION_NAME);
+		::Lua::read(_L, _focusLost);
+		::Lua::pop(_L);
 
-		Lua::getGlobal(_L, SCRIPTING_FOCUS_GAINED_FUNCTION_NAME);
-		Lua::read(_L, _focusGained);
-		Lua::pop(_L);
+		::Lua::getGlobal(_L, SCRIPTING_FOCUS_GAINED_FUNCTION_NAME);
+		::Lua::read(_L, _focusGained);
+		::Lua::pop(_L);
 
-		Lua::getGlobal(_L, SCRIPTING_FILE_DROPPED_FUNCTION_NAME);
-		Lua::read(_L, _fileDropped);
-		Lua::pop(_L);
+		::Lua::getGlobal(_L, SCRIPTING_FILE_DROPPED_FUNCTION_NAME);
+		::Lua::read(_L, _fileDropped);
+		::Lua::pop(_L);
 
-		Lua::getGlobal(_L, SCRIPTING_RENDERER_RESET_FUNCTION_NAME);
-		Lua::read(_L, _rendererReset);
-		Lua::pop(_L);
+		::Lua::getGlobal(_L, SCRIPTING_RENDERER_RESET_FUNCTION_NAME);
+		::Lua::read(_L, _rendererReset);
+		::Lua::pop(_L);
 
-		assert(Lua::getTop(_L) == 0 && "Polluted Lua stack.");
+		assert(::Lua::getTop(_L) == 0 && "Polluted Lua stack.");
 		if (setup.valid()) {
 			struct Context {
 				ScriptingLua* impl = nullptr;
-				Lua::Function func;
+				::Lua::Function func;
 			};
 
 			Context ctx;
 			ctx.impl = this;
 			ctx.func = setup;
 
-			const int ret = Lua::invoke(
+			const int ret = ::Lua::invoke(
 				_L,
 				[] (lua_State* L, void* ud) -> void {
 					Context* ctx = (Context*)ud;
 
-					check(L, Lua::call(L, ctx->func));
-					assert(Lua::getTop(L) == 0 && "Polluted Lua stack.");
+					check(L, ::Lua::call(L, ctx->func));
+					assert(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
 				},
 				&ctx
 			);
@@ -392,23 +394,23 @@ bool ScriptingLua::cycle(double delta) {
 	if (_primitives)
 		_primitives->newFrame();
 
-	Lua::ProtectedFunction func = [] (lua_State* L, void* ud) -> void {
+	::Lua::ProtectedFunction func = [] (lua_State* L, void* ud) -> void {
 		ScriptingLua* impl = (ScriptingLua*)ud;
 
-		impl->_code = check(L, Lua::call(L, *impl->_update, impl->_delta));
-		assert(Lua::getTop(L) == 0 && "Polluted Lua stack.");
+		impl->_code = check(L, ::Lua::call(L, *impl->_update, impl->_delta));
+		assert(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
 	};
 #if BITTY_DEBUG_ENABLED
 	int ret = LUA_OK;
 	try {
-		ret = Lua::invoke(_L, func, this);
+		ret = ::Lua::invoke(_L, func, this);
 	} catch (const std::bad_alloc &) {
-		Lua::gc(_L);
+		::Lua::gc(_L);
 
-		Lua::error(_L, "Memory overflow.");
+		::Lua::error(_L, "Memory overflow.");
 	}
 #else /* BITTY_DEBUG_ENABLED */
-	const int ret = Lua::invoke(_L, func, this);
+	const int ret = ::Lua::invoke(_L, func, this);
 	if (_state == HALTING)
 		return false;
 #endif /* BITTY_DEBUG_ENABLED */
@@ -492,13 +494,13 @@ void ScriptingLua::sync(double delta) {
 			break;
 		case LOST:
 			if (_focusLost && _focusLost->valid()) {
-				const int ret = Lua::invoke(
+				const int ret = ::Lua::invoke(
 					_L,
 					[] (lua_State* L, void* ud) -> void {
 						ScriptingLua* impl = (ScriptingLua*)ud;
 
-						check(L, Lua::call(L, *impl->_focusLost));
-						assert(Lua::getTop(L) == 0 && "Polluted Lua stack.");
+						check(L, ::Lua::call(L, *impl->_focusLost));
+						assert(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
 					},
 					this
 				);
@@ -510,13 +512,13 @@ void ScriptingLua::sync(double delta) {
 			break;
 		case GAINED:
 			if (_focusGained && _focusGained->valid()) {
-				const int ret = Lua::invoke(
+				const int ret = ::Lua::invoke(
 					_L,
 					[] (lua_State* L, void* ud) -> void {
 						ScriptingLua* impl = (ScriptingLua*)ud;
 
-						check(L, Lua::call(L, *impl->_focusGained));
-						assert(Lua::getTop(L) == 0 && "Polluted Lua stack.");
+						check(L, ::Lua::call(L, *impl->_focusGained));
+						assert(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
 					},
 					this
 				);
@@ -533,13 +535,13 @@ void ScriptingLua::sync(double delta) {
 		LockGuard<decltype(_droppedFilesLock)> guard(_droppedFilesLock);
 
 		if (_fileDropped && _fileDropped->valid()) {
-			const int ret = Lua::invoke(
+			const int ret = ::Lua::invoke(
 				_L,
 				[] (lua_State* L, void* ud) -> void {
 					ScriptingLua* impl = (ScriptingLua*)ud;
 
-					check(L, Lua::call(L, *impl->_fileDropped, impl->_droppedFiles));
-					assert(Lua::getTop(L) == 0 && "Polluted Lua stack.");
+					check(L, ::Lua::call(L, *impl->_fileDropped, impl->_droppedFiles));
+					assert(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
 				},
 				this
 			);
@@ -552,13 +554,13 @@ void ScriptingLua::sync(double delta) {
 
 	if (_rendererResetting) {
 		if (_rendererReset && _rendererReset->valid()) {
-			const int ret = Lua::invoke(
+			const int ret = ::Lua::invoke(
 				_L,
 				[] (lua_State* L, void* ud) -> void {
 					ScriptingLua* impl = (ScriptingLua*)ud;
 
-					check(L, Lua::call(L, *impl->_rendererReset));
-					assert(Lua::getTop(L) == 0 && "Polluted Lua stack.");
+					check(L, ::Lua::call(L, *impl->_rendererReset));
+					assert(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
 				},
 				this
 			);
@@ -889,26 +891,26 @@ bool ScriptingLua::getVariable(const char* name_, const char* &type_, Variant* &
 
 	lua_Debug ar;
 	int lv = 0;
-	while (Lua::getStack(_L, lv++, &ar)) {
-		Lua::getInfo(_L, "u", &ar);
+	while (::Lua::getStack(_L, lv++, &ar)) {
+		::Lua::getInfo(_L, "u", &ar);
 
 		for (int i = 1; true; ++i) {
-			const char* name = Lua::getLocal(_L, &ar, i);
+			const char* name = ::Lua::getLocal(_L, &ar, i);
 			if (!name)
 				break;
 
 			if (strcmp(name_, name) == 0) {
 				if (var)
-					Lua::read(_L, var, Lua::Index(i));
+					::Lua::read(_L, var, ::Lua::Index(i));
 				if (type_)
-					type_ = Lua::typeNameOf(_L, i);
+					type_ = ::Lua::typeNameOf(_L, i);
 
-				Lua::pop(_L);
+				::Lua::pop(_L);
 
 				return true;
 			}
 
-			Lua::pop(_L);
+			::Lua::pop(_L);
 		}
 	}
 
@@ -925,37 +927,37 @@ bool ScriptingLua::setVariable(const char* name_, const Variant* var) const {
 
 	lua_Debug ar;
 	int lv = 0;
-	while (Lua::getStack(_L, lv++, &ar)) {
-		Lua::getInfo(_L, "u", &ar);
+	while (::Lua::getStack(_L, lv++, &ar)) {
+		::Lua::getInfo(_L, "u", &ar);
 
 		for (int i = 1; true; ++i) {
-			const char* name = Lua::getLocal(_L, &ar, i);
+			const char* name = ::Lua::getLocal(_L, &ar, i);
 			if (!name)
 				break;
 
 			if (strcmp(name_, name) == 0) {
-				Lua::pop(_L);
+				::Lua::pop(_L);
 				if (var)
-					Lua::write(_L, var);
+					::Lua::write(_L, var);
 				else
-					Lua::write(_L, nullptr);
-				const char* modified = Lua::setLocal(_L, &ar, i);
+					::Lua::write(_L, nullptr);
+				const char* modified = ::Lua::setLocal(_L, &ar, i);
 				assert(strcmp(modified, name) == 0); (void)modified;
 
-				Lua::pop(_L);
+				::Lua::pop(_L);
 
 				return true;
 			}
 
-			Lua::pop(_L);
+			::Lua::pop(_L);
 		}
 	}
 
 	if (var)
-		Lua::write(_L, var);
+		::Lua::write(_L, var);
 	else
-		Lua::write(_L, nullptr);
-	Lua::setGlobal(_L, name_);
+		::Lua::write(_L, nullptr);
+	::Lua::setGlobal(_L, name_);
 
 	return true;
 }
@@ -975,16 +977,16 @@ Executable::Invokable ScriptingLua::getInvokable(const char* name) const {
 		return nullptr;
 
 	Invokable invokable(
-		new Lua::Function(),
+		new ::Lua::Function(),
 		[] (void* ptr) -> void {
-			Lua::Function* func = (Lua::Function*)ptr;
+			::Lua::Function* func = (::Lua::Function*)ptr;
 			delete func;
 		}
 	);
-	Lua::Function &func = *(Lua::Function*)invokable.get();
-	Lua::getGlobal(_L, name);
-	Lua::read(_L, func);
-	Lua::pop(_L);
+	::Lua::Function &func = *(::Lua::Function*)invokable.get();
+	::Lua::getGlobal(_L, name);
+	::Lua::read(_L, func);
+	::Lua::pop(_L);
 	if (!func.valid())
 		return nullptr;
 
@@ -1011,21 +1013,21 @@ Variant ScriptingLua::invoke(Invokable func, int argc, const Variant* argv) {
 		ctx.argc = argc;
 		ctx.argv = argv;
 
-		const int ret = Lua::invoke(
+		const int ret = ::Lua::invoke(
 			_L,
 			[] (lua_State* L, void* ud) -> void {
 				Context* ctx = (Context*)ud;
 
 				check(
 					L,
-					Lua::call(
+					::Lua::call(
 						ctx->result,
 						L,
-						*(Lua::Function*)ctx->func.get(),
+						*(::Lua::Function*)ctx->func.get(),
 						ctx->argc, ctx->argv
 					)
 				);
-				assert(Lua::getTop(L) == 0 && "Polluted Lua stack.");
+				assert(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
 			},
 			&ctx
 		);
@@ -1041,7 +1043,7 @@ double ScriptingLua::delta(void) const {
 }
 
 void ScriptingLua::gc(void) {
-	Lua::gc(_L);
+	::Lua::gc(_L);
 }
 
 bool ScriptingLua::addUpdatable(class Updatable* ptr) {
@@ -1070,21 +1072,21 @@ int ScriptingLua::check(lua_State* L, int code) {
 		return LUA_OK;
 
 	std::string err;
-	Lua::read(L, err, Lua::Index(-1));
+	::Lua::read(L, err, ::Lua::Index(-1));
 
 	if (err.empty()) {
 		impl->observer()->error("Unknown error.");
 	} else {
 		impl->observer()->error(err.c_str());
 
-		Lua::pop(L, 1);
+		::Lua::pop(L, 1);
 	}
 
 	return code;
 }
 
 ScriptingLua* ScriptingLua::instanceOf(lua_State* L) {
-	ScriptingLua* impl = (ScriptingLua*)Lua::userdata(L);
+	ScriptingLua* impl = (ScriptingLua*)::Lua::userdata(L);
 
 	return impl;
 }
@@ -1109,13 +1111,13 @@ bool ScriptingLua::hasBreakpoint(const char* src, int ln) const {
 
 void ScriptingLua::hookNormal(void) {
 #if BITTY_DEBUG_ENABLED
-	Lua::setHook(_L, hookNormal, LUA_MASKLINE, 0);
+	::Lua::setHook(_L, hookNormal, LUA_MASKLINE, 0);
 #endif /* BITTY_DEBUG_ENABLED */
 }
 
 void ScriptingLua::hookBreak(void) {
 #if BITTY_DEBUG_ENABLED
-	Lua::setHook(_L, hookBreak, LUA_MASKCALL | LUA_MASKRET | LUA_MASKLINE, 0);
+	::Lua::setHook(_L, hookBreak, LUA_MASKCALL | LUA_MASKRET | LUA_MASKLINE, 0);
 #endif /* BITTY_DEBUG_ENABLED */
 }
 
@@ -1159,26 +1161,26 @@ void ScriptingLua::fillRecords(const char* srcHint, int lnHint) {
 				break;
 
 			if (strcmp(name, SCRIPTING_LUA_TEMPORARY_ID) == 0 || strcmp(name, SCRIPTING_LUA_C_TEMPORARY_ID) == 0) {
-				Lua::pop(L);
+				::Lua::pop(L);
 
 				continue;
 			}
 
 			Variant var = nullptr;
-			const int t = Lua::typeOf(L, -1);
-			const char* y = Lua::typeNameOf(L, -1);
-			Lua::TableOptions options;
+			const int t = ::Lua::typeOf(L, -1);
+			const char* y = ::Lua::typeNameOf(L, -1);
+			::Lua::TableOptions options;
 			options.viewable = true;
 			options.includeMetaTable = true;
 			options.maxLevelCount = BITTY_DEBUG_TABLE_LEVEL_MAX_COUNT + 1;
 			switch (t) {
 			case LUA_TSTRING:
-				Lua::read(L, &var, Lua::Index(-1), options);
+				::Lua::read(L, &var, ::Lua::Index(-1), options);
 
 				break;
 			case LUA_TTABLE:
 				// var = Variant(y); // Fill in its type name only.
-				Lua::read(L, &var, Lua::Index(-1), options); // Retrieve its value.
+				::Lua::read(L, &var, ::Lua::Index(-1), options); // Retrieve its value.
 
 				break;
 			case LUA_TFUNCTION: {
@@ -1188,7 +1190,7 @@ void ScriptingLua::fillRecords(const char* srcHint, int lnHint) {
 
 				break;
 			case LUA_TUSERDATA:
-				Lua::read(L, &var, Lua::Index(-1), options);
+				::Lua::read(L, &var, ::Lua::Index(-1), options);
 
 				break;
 			case LUA_TTHREAD: {
@@ -1198,7 +1200,7 @@ void ScriptingLua::fillRecords(const char* srcHint, int lnHint) {
 
 				break;
 			default:
-				Lua::read(L, &var, Lua::Index(-1), options);
+				::Lua::read(L, &var, ::Lua::Index(-1), options);
 				if (var.type() == Variant::STRING) {
 					std::string val = var.toString();
 					val = Text::replace(val, "\r", "\\r");
@@ -1211,14 +1213,14 @@ void ScriptingLua::fillRecords(const char* srcHint, int lnHint) {
 			}
 			record.variables.add(Variable(name, y, var, isUpvalue));
 
-			Lua::pop(L);
+			::Lua::pop(L);
 		}
 	};
 
 	lua_Debug ar;
 	int lv = 0;
-	while (Lua::getStack(_L, lv++, &ar)) {
-		Lua::getInfo(_L, "nSluf", &ar);
+	while (::Lua::getStack(_L, lv++, &ar)) {
+		::Lua::getInfo(_L, "nSluf", &ar);
 
 		const char* src = ar.source;
 		if (strcmp(src, SCRIPTING_LUA_UNKNOWN_FRAME) == 0 || strcmp(src, SCRIPTING_LUA_C_UNKNOWN_FRAME) == 0)
@@ -1233,7 +1235,7 @@ void ScriptingLua::fillRecords(const char* srcHint, int lnHint) {
 		fillVar(
 			_L, record,
 			[&] (lua_State* L, int i) -> const char* {
-				return Lua::getLocal(L, &ar, i);
+				return ::Lua::getLocal(L, &ar, i);
 			},
 			false
 		);
@@ -1241,12 +1243,12 @@ void ScriptingLua::fillRecords(const char* srcHint, int lnHint) {
 		fillVar(
 			_L, record,
 			[] (lua_State* L, int i) -> const char* {
-				return Lua::getUpvalue(L, -1, i);
+				return ::Lua::getUpvalue(L, -1, i);
 			},
 			true
 		);
 
-		Lua::pop(_L);
+		::Lua::pop(_L);
 	}
 }
 
@@ -1270,8 +1272,8 @@ void ScriptingLua::fillScope(Scope &scope, int level) {
 	scope.clear();
 
 	lua_Debug ar;
-	if (Lua::getStack(_L, level, &ar)) {
-		Lua::getInfo(_L, "nSl", &ar);
+	if (::Lua::getStack(_L, level, &ar)) {
+		::Lua::getInfo(_L, "nSl", &ar);
 		scope.fill(ar.source, ar.currentline, ar.linedefined, ar.name, ar.what);
 	}
 }
@@ -1283,7 +1285,7 @@ int ScriptingLua::require(lua_State* L) {
 		int result = 0;
 
 		const char* path = nullptr;
-		Lua::check<>(L, path);
+		::Lua::check<>(L, path);
 		if (!path)
 			return result;
 
@@ -1392,13 +1394,13 @@ int ScriptingLua::require(lua_State* L) {
 		return result;
 	};
 
-	return Lua::write(L, loader);
+	return ::Lua::write(L, loader);
 }
 
 void ScriptingLua::hookNormal(lua_State* L, lua_Debug* ar) {
 	ScriptingLua* impl = instanceOf(L);
 
-	Lua::getInfo(L, "Sl", ar);
+	::Lua::getInfo(L, "Sl", ar);
 	if (impl->hasBreakpoint(ar->source, ar->currentline)) {
 		if (impl->_state == RUNNING) {
 			impl->_state = PAUSED;
@@ -1417,13 +1419,13 @@ void ScriptingLua::hookNormal(lua_State* L, lua_Debug* ar) {
 		if (now > impl->_activity) {
 			const long long diff = now - impl->_activity;
 			if (diff >= impl->_timeout)
-				Lua::error(L, "Invoking timeout.");
+				::Lua::error(L, "Invoking timeout.");
 		}
 	} else {
 		if (impl->_state == HALTING) {
-			Lua::setHook(L, nullptr, LUA_MASKLINE, 0); // Cancel the current normal hook.
+			::Lua::setHook(L, nullptr, LUA_MASKLINE, 0); // Cancel the current normal hook.
 
-			Lua::error(L, "User abort.");
+			::Lua::error(L, "User abort.");
 		}
 	}
 }
@@ -1437,7 +1439,7 @@ void ScriptingLua::hookBreak(lua_State* L, lua_Debug* ar) {
 	if (active.what == "C")
 		return;
 
-	Lua::getInfo(L, "Sl", ar);
+	::Lua::getInfo(L, "Sl", ar);
 	switch (ar->event) {
 	case LUA_HOOKCALL: {
 			if (impl->_stepOver) {
@@ -1505,10 +1507,12 @@ void ScriptingLua::hookBreak(lua_State* L, lua_Debug* ar) {
 	}
 
 	if (impl->_state == HALTING) {
-		Lua::setHook(L, nullptr, LUA_MASKCALL | LUA_MASKRET | LUA_MASKLINE, 0); // Cancel the current break hook.
+		::Lua::setHook(L, nullptr, LUA_MASKCALL | LUA_MASKRET | LUA_MASKLINE, 0); // Cancel the current break hook.
 
-		Lua::error(L, "User abort.");
+		::Lua::error(L, "User abort.");
 	}
+}
+
 }
 
 /* ===========================================================================} */

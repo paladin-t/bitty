@@ -16,6 +16,8 @@
 ** Studio theme
 */
 
+namespace Bitty {
+
 ThemeStudio::ThemeStudio() {
 }
 
@@ -361,6 +363,8 @@ void ThemeStudio::setColor(const std::string &key, const std::string &idx, const
 		else if (idx == "error")
 			styleLight().errorColor = ImGui::GetColorU32((ImVec4)col);
 	}
+}
+
 }
 
 /* ===========================================================================} */

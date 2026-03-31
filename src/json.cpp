@@ -16,6 +16,8 @@
 ** JSON
 */
 
+namespace Bitty {
+
 class JsonImpl : public Json {
 private:
 	rapidjson::Document _document;
@@ -261,6 +263,8 @@ Json* Json::create(void) {
 void Json::destroy(Json* ptr) {
 	JsonImpl* impl = static_cast<JsonImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

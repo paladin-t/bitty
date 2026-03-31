@@ -18,6 +18,8 @@
 ** Editor
 */
 
+namespace Bitty {
+
 class Editor : public Editable {
 protected:
 	struct Ref {
@@ -35,6 +37,8 @@ protected:
 protected:
 	static Splitter split(void);
 };
+
+}
 
 /* ===========================================================================} */
 

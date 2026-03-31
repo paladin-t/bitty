@@ -34,6 +34,8 @@
 
 #if BITTY_WEB_ENABLED
 
+namespace Bitty {
+
 Fetch* Fetch::create(void) {
 #if defined BITTY_OS_HTML
 	FetchHtml* result = new FetchHtml();
@@ -56,6 +58,8 @@ void Fetch::destroy(Fetch* ptr) {
 #endif /* BITTY_OS_HTML */
 }
 
+}
+
 #endif /* BITTY_WEB_ENABLED */
 
 /* ===========================================================================} */
@@ -66,6 +70,8 @@ void Fetch::destroy(Fetch* ptr) {
 */
 
 #if BITTY_WEB_ENABLED
+
+namespace Bitty {
 
 Web* Web::create(const char* type) {
 #if defined BITTY_OS_HTML
@@ -117,6 +123,8 @@ void Web::destroy(Web* ptr) {
 		break;
 	}
 #endif /* BITTY_OS_HTML */
+}
+
 }
 
 #endif /* BITTY_WEB_ENABLED */

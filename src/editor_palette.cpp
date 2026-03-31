@@ -24,6 +24,8 @@
 ** Palette editor
 */
 
+namespace Bitty {
+
 class EditorPaletteImpl : public EditorPalette {
 private:
 	bool _opened = false;
@@ -493,6 +495,8 @@ EditorPalette* EditorPalette::create(void) {
 void EditorPalette::destroy(EditorPalette* ptr) {
 	EditorPaletteImpl* impl = static_cast<EditorPaletteImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

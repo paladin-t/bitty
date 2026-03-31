@@ -41,6 +41,8 @@ static NSString* platformTrimPath(NSString* originalPath) {
 ** IO
 */
 
+namespace Bitty {
+
 bool Platform::copyFile(const char* src, const char* dst) {
 	NSFileManager* filemgr = [NSFileManager defaultManager];
 	NSString* oldPath = [NSString stringWithCString: src encoding: NSUTF8StringEncoding];
@@ -268,12 +270,16 @@ void Platform::currentDirectory(const char* dir) {
 	chdir(dir);
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Surfing and browsing
 */
+
+namespace Bitty {
 
 void Platform::surf(const char* url) {
 	NSString* nsstr = [NSString stringWithCString: url encoding: NSUTF8StringEncoding];
@@ -286,12 +292,16 @@ void Platform::browse(const char* dir) {
 	[[NSWorkspace sharedWorkspace] selectFile: path inFileViewerRootedAtPath: @""];
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** OS
 */
+
+namespace Bitty {
 
 const char* Platform::os(void) {
 	return "MacOS";
@@ -316,12 +326,16 @@ void Platform::redirectIoToConsole(void) {
 	BITTY_MISSING
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** GUI
 */
+
+namespace Bitty {
 
 void Platform::msgbox(const char* text, const char* caption) {
 	NSString* nstxt = [NSString stringWithCString: text encoding: NSUTF8StringEncoding];
@@ -359,6 +373,8 @@ void Platform::useDarkMode(class Window* wnd) {
 void Platform::setWindowTransparentColor(class Window* wnd, const struct Color* col) {
 	(void)wnd;
 	(void)col;
+}
+
 }
 
 /* ===========================================================================} */

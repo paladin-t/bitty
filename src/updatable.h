@@ -18,6 +18,8 @@
 ** Updatable
 */
 
+namespace Bitty {
+
 /**
  * @brief Updatable interface.
  */
@@ -25,6 +27,8 @@ class Updatable {
 public:
 	virtual bool update(double delta) = 0;
 };
+
+}
 
 /* ===========================================================================} */
 

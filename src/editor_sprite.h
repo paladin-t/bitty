@@ -18,6 +18,8 @@
 ** Sprite editor
 */
 
+namespace Bitty {
+
 class EditorSprite : public Editor, public virtual Object {
 public:
 	BITTY_CLASS_TYPE('S', 'P', 'R', 'E')
@@ -25,6 +27,8 @@ public:
 	static EditorSprite* create(void);
 	static void destroy(EditorSprite* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

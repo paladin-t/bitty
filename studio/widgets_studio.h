@@ -15,6 +15,22 @@
 
 /*
 ** {===========================================================================
+** Forward declaration
+*/
+
+namespace Bitty {
+
+class Primitives;
+class Renderer;
+class ThemeStudio;
+class Window;
+
+}
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
 ** Studio widgets
 **
 ** @note Specialized widgets for Pro version.
@@ -26,22 +42,22 @@ namespace Studio {
 
 class PreferencesPopupBox : public PopupBox {
 public:
-	struct ConfirmHandler : public Handler<ConfirmHandler, void, const WorkspaceStudio::StudioSettings &> {
+	struct ConfirmHandler : public Bitty::Handler<ConfirmHandler, void, const Bitty::WorkspaceStudio::StudioSettings &> {
 		using Handler::Handler;
 	};
-	struct CancelHandler : public Handler<CancelHandler, void> {
+	struct CancelHandler : public Bitty::Handler<CancelHandler, void> {
 		using Handler::Handler;
 	};
-	struct ApplyHandler : public Handler<ApplyHandler, void, const WorkspaceStudio::StudioSettings &> {
+	struct ApplyHandler : public Bitty::Handler<ApplyHandler, void, const Bitty::WorkspaceStudio::StudioSettings &> {
 		using Handler::Handler;
 	};
 
 private:
-	class Primitives* _primitives = nullptr;
-	class ThemeStudio* _theme = nullptr;
+	Bitty::Primitives* _primitives = nullptr;
+	Bitty::ThemeStudio* _theme = nullptr;
 	std::string _title;
-	WorkspaceStudio::StudioSettings &_settings;
-	WorkspaceStudio::StudioSettings _settingsShadow;
+	Bitty::WorkspaceStudio::StudioSettings &_settings;
+	Bitty::WorkspaceStudio::StudioSettings _settingsShadow;
 	int _activeGamepadIndex = -1;
 	int _activeButtonIndex = -1;
 	bool _editable = true;
@@ -57,9 +73,9 @@ private:
 
 public:
 	PreferencesPopupBox(
-		class Primitives* primitives, class ThemeStudio* theme,
+		Bitty::Primitives* primitives, Bitty::ThemeStudio* theme,
 		const std::string &title,
-		WorkspaceStudio::StudioSettings &settings,
+		Bitty::WorkspaceStudio::StudioSettings &settings,
 		bool editable,
 		const ConfirmHandler &confirm, const CancelHandler &cancel, const ApplyHandler &applyHandler,
 		const char* confirmTxt /* nullable */, const char* cancelTxt /* nullable */, const char* applyTxt /* nullable */
@@ -71,12 +87,12 @@ public:
 
 class AboutPopupBox : public PopupBox {
 public:
-	struct ConfirmHandler : public Handler<ConfirmHandler, void> {
+	struct ConfirmHandler : public Bitty::Handler<ConfirmHandler, void> {
 		using Handler::Handler;
 	};
 
 protected:
-	class Primitives* _primitives = nullptr;
+	Bitty::Primitives* _primitives = nullptr;
 	std::string _title;
 	std::string _prefix;
 	std::string _name;
@@ -90,7 +106,7 @@ protected:
 
 public:
 	AboutPopupBox(
-		class Window* wnd, class Renderer* rnd, class Primitives* primitives,
+		Bitty::Window* wnd, Bitty::Renderer* rnd, Bitty::Primitives* primitives,
 		const std::string &title,
 		const ConfirmHandler &confirm,
 		const char* confirmTxt /* nullable */
@@ -102,18 +118,18 @@ public:
 
 class PausedPopupBox : public PopupBox {
 public:
-	struct ResumeHandler : public Handler<ResumeHandler, void> {
+	struct ResumeHandler : public Bitty::Handler<ResumeHandler, void> {
 		using Handler::Handler;
 	};
-	struct OptionsHandler : public Handler<OptionsHandler, void> {
+	struct OptionsHandler : public Bitty::Handler<OptionsHandler, void> {
 		using Handler::Handler;
 	};
-	struct AboutHandler : public Handler<AboutHandler, void> {
+	struct AboutHandler : public Bitty::Handler<AboutHandler, void> {
 		using Handler::Handler;
 	};
 
 private:
-	class Renderer* _renderer = nullptr;
+	Bitty::Renderer* _renderer = nullptr;
 	float _windowHeight = 0.0f;
 
 	ResumeHandler _resumeHandler = nullptr;
@@ -127,7 +143,7 @@ private:
 
 public:
 	PausedPopupBox(
-		class Renderer* rnd,
+		Bitty::Renderer* rnd,
 		const ResumeHandler &resume, const OptionsHandler &options, const AboutHandler &about,
 		const std::string &resumeTxt, const std::string &optionsTxt, const std::string &aboutTxt
 	);

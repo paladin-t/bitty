@@ -19,6 +19,8 @@
 ** Editable
 */
 
+namespace Bitty {
+
 /**
  * @brief Editable interface.
  */
@@ -116,6 +118,8 @@ public:
 	virtual void lostFocus(class Renderer* rnd, const class Project* project) = 0;
 	virtual void gainFocus(class Renderer* rnd, const class Project* project) = 0;
 };
+
+}
 
 /* ===========================================================================} */
 

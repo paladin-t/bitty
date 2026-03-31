@@ -27,6 +27,8 @@
 ** Operations
 */
 
+namespace Bitty {
+
 /**
  * @brief Asynchronized and synchronized operations for workspace.
  */
@@ -85,6 +87,8 @@ public:
 
 	static promise::Defer pluginRunMenuItem(class Renderer* rnd, Workspace* ws, const class Project* project, Plugin* plugin, const std::string &args);
 };
+
+}
 
 /* ===========================================================================} */
 

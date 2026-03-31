@@ -18,11 +18,15 @@
 ** Engine
 */
 
+namespace Bitty {
+
 namespace Lua {
 
 namespace Engine {
 
 void physics(class Executable* exec);
+
+}
 
 }
 

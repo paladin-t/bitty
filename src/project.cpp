@@ -26,6 +26,8 @@
 ** Project
 */
 
+namespace Bitty {
+
 Project::Factory::Factory() {
 }
 
@@ -628,6 +630,8 @@ int Project::foreach(Asset::List::Enumerator enumerator, bool second) {
 
 void Project::sort(void) {
 	_assets.sort();
+}
+
 }
 
 /* ===========================================================================} */

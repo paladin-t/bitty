@@ -76,6 +76,8 @@ static bool filesystemTextMatchWildcard(const std::wstring &str, const wchar_t* 
 ** Path
 */
 
+namespace Bitty {
+
 std::string Path::executableFile(void) {
 	std::string utfstr = Unicode::fromOs(Platform::executableFile());
 	uniform(utfstr);
@@ -477,12 +479,16 @@ bool Path::touchDirectory(const char* path) {
 	return true;
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** File info
 */
+
+namespace Bitty {
 
 class FileInfosImpl : public FileInfos {
 private:
@@ -769,12 +775,16 @@ void FileInfo::destroy(FileInfo* ptr) {
 	delete impl;
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Directory info
 */
+
+namespace Bitty {
 
 class DirectoryInfosImpl : public DirectoryInfos {
 private:
@@ -1134,6 +1144,8 @@ DirectoryInfo* DirectoryInfo::create(const char* path) {
 void DirectoryInfo::destroy(DirectoryInfo* ptr) {
 	DirectoryInfoImpl* impl = static_cast<DirectoryInfoImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

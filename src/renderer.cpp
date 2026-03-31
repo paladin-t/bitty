@@ -18,6 +18,8 @@
 ** Renderer
 */
 
+namespace Bitty {
+
 class RendererImpl : public Renderer {
 private:
 	SDL_Renderer* _renderer = nullptr;
@@ -281,6 +283,8 @@ Renderer* Renderer::create(void) {
 void Renderer::destroy(Renderer* ptr) {
 	RendererImpl* impl = static_cast<RendererImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

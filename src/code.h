@@ -19,6 +19,8 @@
 ** Code
 */
 
+namespace Bitty {
+
 /**
  * @brief Code resource object.
  */
@@ -38,6 +40,8 @@ public:
 	static Code* create(void);
 	static void destroy(Code* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

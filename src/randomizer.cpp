@@ -20,19 +20,19 @@
 
 #define FLOATATT(n) (DBL_##n)
 #define FIGS FLOATATT(MANT_DIG)
-#define MATHOP(op) (Double)op
+#define MATHOP(op) (Bitty::Double)op
 
 #ifndef RANDOMIZER_TRIM64
 #	define RANDOMIZER_TRIM64(x) ((x) & 0xffffffffffffffffu)
 #endif /* RANDOMIZER_TRIM64 */
 #ifndef RANDOMIZER_I2UINT
-#	define RANDOMIZER_I2UINT(x) ((UInt64)RANDOMIZER_TRIM64(x))
+#	define RANDOMIZER_I2UINT(x) ((Bitty::UInt64)RANDOMIZER_TRIM64(x))
 #endif /* RANDOMIZER_I2UINT */
 #ifndef RANDOMIZER_SHIFT64_FIG
 #	define RANDOMIZER_SHIFT64_FIG (64 - FIGS)
 #endif /* RANDOMIZER_SHIFT64_FIG */
 #ifndef RANDOMIZER_SCALE_FIG
-#	define RANDOMIZER_SCALE_FIG (MATHOP(0.5) / ((UInt64)1 << (FIGS - 1)))
+#	define RANDOMIZER_SCALE_FIG (MATHOP(0.5) / ((Bitty::UInt64)1 << (FIGS - 1)))
 #endif /* RANDOMIZER_SCALE_FIG */
 
 /* ===========================================================================} */
@@ -43,6 +43,8 @@
 **
 ** @note See: "./lib/lua/src/lmathlib.c" for the original implementation.
 */
+
+namespace Bitty {
 
 class RandomizerImpl : public Randomizer {
 private:
@@ -161,6 +163,8 @@ Randomizer* Randomizer::create(void) {
 void Randomizer::destroy(Randomizer* ptr) {
 	RandomizerImpl* impl = static_cast<RandomizerImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

@@ -19,6 +19,8 @@
 ** Sprite commands
 */
 
+namespace Bitty {
+
 namespace Commands {
 
 namespace Sprite {
@@ -325,6 +327,8 @@ public:
 	static Command* create(void);
 	static void destroy(Command* ptr);
 };
+
+}
 
 }
 

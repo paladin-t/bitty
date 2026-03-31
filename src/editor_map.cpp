@@ -28,6 +28,8 @@
 ** Map editor
 */
 
+namespace Bitty {
+
 class EditorMapImpl : public EditorMap {
 private:
 	typedef std::function<bool(const Math::Vec2i &, Editing::Dot &)> CelGetter;
@@ -1487,6 +1489,8 @@ EditorMap* EditorMap::create(void) {
 void EditorMap::destroy(EditorMap* ptr) {
 	EditorMapImpl* impl = static_cast<EditorMapImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

@@ -39,66 +39,66 @@ template<typename T> Complex analyserReadStream(void* &stream, int len, int chan
 	}
 }
 
-static Reader analyserReader(const Analyser::Spec &spec) {
+static Reader analyserReader(const Bitty::Analyser::Spec &spec) {
 	const int bitSize = SDL_AUDIO_BITSIZE(spec.format);
 	const bool isFloat = !!SDL_AUDIO_ISFLOAT(spec.format);
 	const bool isInt = !!SDL_AUDIO_ISINT(spec.format);
 	const bool isUnsigned = !!SDL_AUDIO_ISUNSIGNED(spec.format);
-	if (isFloat && bitSize == sizeof(Single) * 8) {
+	if (isFloat && bitSize == sizeof(Bitty::Single) * 8) {
 		return std::bind(
-			analyserReadStream<Single>,
+			analyserReadStream<Bitty::Single>,
 			std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,
 			1.0f
 		);
-	} else if (isInt && bitSize == sizeof(UInt8) * 8) {
+	} else if (isInt && bitSize == sizeof(Bitty::UInt8) * 8) {
 		if (isUnsigned) {
 			return std::bind(
-				analyserReadStream<UInt8>,
+				analyserReadStream<Bitty::UInt8>,
 				std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,
-				std::numeric_limits<UInt8>::max()
+				std::numeric_limits<Bitty::UInt8>::max()
 			);
 		} else {
 			return std::bind(
-				analyserReadStream<Int8>,
+				analyserReadStream<Bitty::Int8>,
 				std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,
-				std::numeric_limits<Int8>::max()
+				std::numeric_limits<Bitty::Int8>::max()
 			);
 		}
-	} else if (isInt && bitSize == sizeof(UInt16) * 8) {
+	} else if (isInt && bitSize == sizeof(Bitty::UInt16) * 8) {
 		if (isUnsigned) {
 			return std::bind(
-				analyserReadStream<UInt16>,
+				analyserReadStream<Bitty::UInt16>,
 				std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,
-				std::numeric_limits<UInt16>::max()
+				std::numeric_limits<Bitty::UInt16>::max()
 			);
 		} else {
 			return std::bind(
-				analyserReadStream<Int16>,
+				analyserReadStream<Bitty::Int16>,
 				std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,
-				std::numeric_limits<Int16>::max()
+				std::numeric_limits<Bitty::Int16>::max()
 			);
 		}
-	} else if (isInt && bitSize == sizeof(UInt32) * 8) {
+	} else if (isInt && bitSize == sizeof(Bitty::UInt32) * 8) {
 		if (isUnsigned) {
 			return std::bind(
-				analyserReadStream<UInt32>,
+				analyserReadStream<Bitty::UInt32>,
 				std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,
-				std::numeric_limits<UInt32>::max()
+				std::numeric_limits<Bitty::UInt32>::max()
 			);
 		} else {
 			return std::bind(
-				analyserReadStream<Int32>,
+				analyserReadStream<Bitty::Int32>,
 				std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,
-				std::numeric_limits<Int32>::max()
+				std::numeric_limits<Bitty::Int32>::max()
 			);
 		}
 	} else {
 		fprintf(stderr, "Unsupported audio spec: %dHz, by %d formatted, with %d channels.\n", spec.frequency, spec.format, spec.channels);
 
 		return std::bind(
-			analyserReadStream<UInt8>,
+			analyserReadStream<Bitty::UInt8>,
 			std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,
-			std::numeric_limits<UInt8>::max()
+			std::numeric_limits<Bitty::UInt8>::max()
 		);
 	}
 }
@@ -109,6 +109,8 @@ static Reader analyserReader(const Analyser::Spec &spec) {
 ** {===========================================================================
 ** Analyser
 */
+
+namespace Bitty {
 
 Analyser::Spec Analyser::deviceSpec(void) {
 	Spec result;
@@ -189,6 +191,8 @@ void Analyser::analyse(const Spec &spec, void* stream, int len, float columns[AN
 	for (int i = 0; i < ANALYSER_COLUMN_COUNT; ++i)
 		columns[i] = Math::clamp((out[i].r + out[i].i) * 0.5f, -0.9f, 0.9f);
 	kiss_fft_free(fft);
+}
+
 }
 
 /* ===========================================================================} */

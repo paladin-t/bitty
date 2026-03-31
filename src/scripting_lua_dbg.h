@@ -20,6 +20,8 @@
 ** Lua scripting debug
 */
 
+namespace Bitty {
+
 struct Breakpoint {
 	std::string source;
 	int line = -1; // 1-based.
@@ -129,6 +131,8 @@ struct Scope {
 	bool operator == (const Scope &other) const;
 	bool operator != (const Scope &other) const;
 };
+
+}
 
 /* ===========================================================================} */
 

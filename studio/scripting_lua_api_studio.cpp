@@ -3,7 +3,7 @@
 **
 ** An itty bitty 2D game engine.
 **
-** Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2026 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -20,6 +20,8 @@
 
 namespace Lua { // Library.
 
+using namespace ::Bitty;
+
 /**< Bytes. */
 
 LUA_CHECK_OBJ(Bytes)
@@ -29,12 +31,16 @@ LUA_WRITE_OBJ_CONST(Bytes)
 
 }
 
+using namespace ::Lua;
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Libraries
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -53,12 +59,16 @@ void studio(class Executable* exec) {
 
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Engine
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -77,12 +87,16 @@ void studio(class Executable* exec) {
 
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Application
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -101,12 +115,16 @@ void studio(class Executable* exec) {
 
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Studio
 */
+
+namespace Bitty {
 
 namespace Lua {
 
@@ -119,6 +137,8 @@ void studio(class Executable* exec) {
 	lua_State* L = (lua_State*)exec->pointer();
 
 	(void)L;
+}
+
 }
 
 }

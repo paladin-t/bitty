@@ -154,6 +154,10 @@ static bool platformRemoveToTrashBin(const char* src) {
 ** IO
 */
 
+std::string platformBinPath;
+
+namespace Bitty {
+
 bool Platform::copyFile(const char* src, const char* dst) {
 	const filesystem::copy_options options =
 		filesystem::copy_options::overwrite_existing |
@@ -293,8 +297,6 @@ std::string Platform::absoluteOf(const std::string &path) {
 	return result;
 }
 
-std::string platformBinPath;
-
 std::string Platform::executableFile(void) {
 	return platformBinPath;
 }
@@ -376,12 +378,16 @@ void Platform::currentDirectory(const char* dir) {
 	chdir(dir);
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Surfing and browsing
 */
+
+namespace Bitty {
 
 void Platform::surf(const char* url) {
 	std::string cmd = "xdg-open \"";
@@ -397,12 +403,16 @@ void Platform::browse(const char* dir) {
 	system(cmd.c_str());
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** OS
 */
+
+namespace Bitty {
 
 const char* Platform::os(void) {
 	return "Linux";
@@ -436,12 +446,16 @@ void Platform::redirectIoToConsole(void) {
 	BITTY_MISSING
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** GUI
 */
+
+namespace Bitty {
 
 void Platform::msgbox(const char* text, const char* caption) {
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, caption, text, nullptr);
@@ -471,6 +485,8 @@ void Platform::useDarkMode(class Window* wnd) {
 void Platform::setWindowTransparentColor(class Window* wnd, const struct Color* col) {
 	(void)wnd;
 	(void)col;
+}
+
 }
 
 /* ===========================================================================} */

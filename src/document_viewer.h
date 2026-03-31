@@ -22,6 +22,8 @@
 ** Document viewer
 */
 
+namespace Bitty {
+
 /**
  * @brief Document viewer object.
  */
@@ -79,6 +81,8 @@ public:
 	static DocumentViewer* create(void);
 	static void destroy(DocumentViewer* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

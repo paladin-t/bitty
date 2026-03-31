@@ -17,6 +17,8 @@
 ** Sprite
 */
 
+namespace Bitty {
+
 class SpriteImpl : public Sprite {
 private:
 	struct Frame {
@@ -555,6 +557,8 @@ Sprite* Sprite::create(int width, int height) {
 void Sprite::destroy(Sprite* ptr) {
 	SpriteImpl* impl = static_cast<SpriteImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

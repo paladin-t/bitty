@@ -18,6 +18,8 @@
 ** Bytes editor
 */
 
+namespace Bitty {
+
 class EditorBytes : public Editable, public virtual Object {
 public:
 	BITTY_CLASS_TYPE('B', 'Y', 'T', 'E')
@@ -25,6 +27,8 @@ public:
 	static EditorBytes* create(void);
 	static void destroy(EditorBytes* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

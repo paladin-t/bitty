@@ -22,8 +22,8 @@
 ** Macros and constants
 */
 
-static_assert(!std::numeric_limits<Resources::Id>::is_signed, "Wrong type.");
-static_assert(sizeof(Resources::Id) == sizeof(Font::Codepoint), "Wrong size.");
+static_assert(!std::numeric_limits<Bitty::Resources::Id>::is_signed, "Wrong type.");
+static_assert(sizeof(Bitty::Resources::Id) == sizeof(Bitty::Font::Codepoint), "Wrong size.");
 
 /* ===========================================================================} */
 
@@ -31,6 +31,8 @@ static_assert(sizeof(Resources::Id) == sizeof(Font::Codepoint), "Wrong size.");
 ** {===========================================================================
 ** Resource key
 */
+
+namespace Bitty {
 
 class ResourceKey {
 public:
@@ -154,12 +156,16 @@ public:
 	}
 };
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Resources
 */
+
+namespace Bitty {
 
 class ResourcesImpl : public Resources {
 private:
@@ -271,8 +277,8 @@ public:
 		Dictionary::iterator it = _dictionary.begin();
 		while (it != _dictionary.end()) {
 			Object::Ptr &ptr = it->second;
-			if (ptr->type() == ::Map::TYPE()) {
-				::Map::Ptr map = Object::as<::Map::Ptr>(ptr);
+			if (ptr->type() == ::Bitty::Map::TYPE()) {
+				::Bitty::Map::Ptr map = Bitty::Object::as<::Bitty::Map::Ptr>(ptr);
 				if (map) {
 					map->cleanup();
 					++resetCount;
@@ -299,10 +305,10 @@ public:
 		_font->fromBytes(RES_FONT_PROGGY_CLEAN, BITTY_COUNTOF(RES_FONT_PROGGY_CLEAN), RESOURCES_FONT_DEFAULT_SIZE, 0);
 	}
 
-	virtual ::Texture::Ptr load(class Renderer* rnd, const char* path) override {
+	virtual ::Bitty::Texture::Ptr load(class Renderer* rnd, const char* path) override {
 		return fromCacheOrFile(rnd, path);
 	}
-	virtual ::Object::Ptr load(const class Project* project, Asset &req) override {
+	virtual ::Bitty::Object::Ptr load(const class Project* project, Asset &req) override {
 		Object::Ptr ref = nullptr;
 		if (req.ref) {
 			switch (req.ref->type()) {
@@ -323,27 +329,27 @@ public:
 
 		return fromCacheOrAsset<Object::Ptr, Asset>(
 			project,
-			[] (::Asset* asset, Asset &req) -> Object::Ptr {
+			[] (::Bitty::Asset* asset, Asset &req) -> Object::Ptr {
 				switch (asset->type()) {
-				case ::Image::TYPE(): {
-						::Texture::Ptr ptr = asset->texture(::Asset::RUNNING);
+				case ::Bitty::Image::TYPE(): {
+						::Bitty::Texture::Ptr ptr = asset->texture(::Bitty::Asset::RUNNING);
 
 						return ptr;
 					}
-				case ::Sound::TYPE(): {
+				case ::Bitty::Sound::TYPE(): {
 						unsigned target = req.target();
-						if (target != ::Sfx::TYPE() && target != ::Music::TYPE())
-							target = ::Sfx::TYPE();
+						if (target != ::Bitty::Sfx::TYPE() && target != ::Bitty::Music::TYPE())
+							target = ::Bitty::Sfx::TYPE();
 						Object::Ptr ptr = asset->sound(target);
 
 						return ptr;
 					}
 				}
 
-				Object::Ptr ptr = asset->object(::Asset::RUNNING);
+				Object::Ptr ptr = asset->object(::Bitty::Asset::RUNNING);
 				switch (asset->type()) {
-				case ::Sprite::TYPE(): // Fall through.
-				case ::Map::TYPE():
+				case ::Bitty::Sprite::TYPE(): // Fall through.
+				case ::Bitty::Map::TYPE():
 					if (ptr) {
 						Object* raw = nullptr;
 						if (ptr->clone(&raw))
@@ -358,60 +364,60 @@ public:
 			req, ref, req.target()
 		);
 	}
-	virtual ::Texture::Ptr load(class Renderer* rnd, Glyph &req, int* width, int* height) override {
+	virtual ::Bitty::Texture::Ptr load(class Renderer* rnd, Glyph &req, int* width, int* height) override {
 		return fromCacheOrCharacter(rnd, req, width, height);
 	}
-	virtual ::Palette::Ptr load(const class Project* project, Palette &req) override {
-		return fromCacheOrAsset<::Palette::Ptr, Palette>(
+	virtual ::Bitty::Palette::Ptr load(const class Project* project, Palette &req) override {
+		return fromCacheOrAsset<::Bitty::Palette::Ptr, Palette>(
 			project,
-			[] (::Asset* asset, Palette &/* req */) -> ::Palette::Ptr {
-				Object::Ptr obj = asset->object(::Asset::RUNNING);
+			[] (::Bitty::Asset* asset, Palette &/* req */) -> ::Bitty::Palette::Ptr {
+				Object::Ptr obj = asset->object(::Bitty::Asset::RUNNING);
 				if (!obj)
 					return nullptr;
 
-				::Palette::Ptr ptr = Object::as<::Palette::Ptr>(obj);
+				::Bitty::Palette::Ptr ptr = Object::as<::Bitty::Palette::Ptr>(obj);
 
 				return ptr;
 			},
 			req, nullptr
 		);
 	}
-	virtual ::Texture::Ptr load(const class Project* project, Texture &req) override {
+	virtual ::Bitty::Texture::Ptr load(const class Project* project, Texture &req) override {
 		Object::Ptr ref = nullptr;
 		if (req.ref && req.ref->pointer)
 			ref = req.ref->pointer;
 
-		return fromCacheOrAsset<::Texture::Ptr, Texture>(
+		return fromCacheOrAsset<::Bitty::Texture::Ptr, Texture>(
 			project,
-			[] (::Asset* asset, Texture &req) -> ::Texture::Ptr {
-				Object::Ptr obj = asset->object(::Asset::RUNNING);
+			[] (::Bitty::Asset* asset, Texture &req) -> ::Bitty::Texture::Ptr {
+				Object::Ptr obj = asset->object(::Bitty::Asset::RUNNING);
 				if (obj)
-					req.source = Object::as<::Image::Ptr>(obj);
+					req.source = Object::as<::Bitty::Image::Ptr>(obj);
 
-				::Texture::Ptr ptr = asset->texture(::Asset::RUNNING);
+				::Bitty::Texture::Ptr ptr = asset->texture(::Bitty::Asset::RUNNING);
 
 				return ptr;
 			},
-			req, ref, ::Image::TYPE()
+			req, ref, ::Bitty::Image::TYPE()
 		);
 	}
-	virtual ::Sprite::Ptr load(const class Project* project, Sprite &req) override {
+	virtual ::Bitty::Sprite::Ptr load(const class Project* project, Sprite &req) override {
 		Object::Ptr ref = nullptr;
 		if (req.ref && req.ref->pointer)
 			ref = req.ref->pointer;
 
-		return fromCacheOrAsset<::Sprite::Ptr, Sprite>(
+		return fromCacheOrAsset<::Bitty::Sprite::Ptr, Sprite>(
 			project,
-			[] (::Asset* asset, Sprite &/* req */) -> ::Sprite::Ptr {
-				Object::Ptr obj = asset->object(::Asset::RUNNING);
+			[] (::Bitty::Asset* asset, Sprite &/* req */) -> ::Bitty::Sprite::Ptr {
+				Object::Ptr obj = asset->object(::Bitty::Asset::RUNNING);
 				if (!obj)
 					return nullptr;
 
-				::Sprite::Ptr ptr = Object::as<::Sprite::Ptr>(obj);
+				::Bitty::Sprite::Ptr ptr = Object::as<::Bitty::Sprite::Ptr>(obj);
 				if (ptr) {
-					::Sprite* raw = nullptr;
+					::Bitty::Sprite* raw = nullptr;
 					if (ptr->clone(&raw))
-						ptr = ::Sprite::Ptr(raw);
+						ptr = ::Bitty::Sprite::Ptr(raw);
 				}
 
 				return ptr;
@@ -419,23 +425,23 @@ public:
 			req, ref
 		);
 	}
-	virtual ::Map::Ptr load(const class Project* project, Map &req) override {
+	virtual ::Bitty::Map::Ptr load(const class Project* project, Map &req) override {
 		Object::Ptr ref = nullptr;
 		if (req.ref && req.ref->pointer)
 			ref = req.ref->pointer;
 
-		return fromCacheOrAsset<::Map::Ptr, Map>(
+		return fromCacheOrAsset<::Bitty::Map::Ptr, Map>(
 			project,
-			[] (::Asset* asset, Map &/* req */) -> ::Map::Ptr {
-				Object::Ptr obj = asset->object(::Asset::RUNNING);
+			[] (::Bitty::Asset* asset, Map &/* req */) -> ::Bitty::Map::Ptr {
+				Object::Ptr obj = asset->object(::Bitty::Asset::RUNNING);
 				if (!obj)
 					return nullptr;
 
-				::Map::Ptr ptr = Object::as<::Map::Ptr>(obj);
+				::Bitty::Map::Ptr ptr = Object::as<::Bitty::Map::Ptr>(obj);
 				if (ptr) {
-					::Map* raw = nullptr;
+					::Bitty::Map* raw = nullptr;
 					if (ptr->clone(&raw))
-						ptr = ::Map::Ptr(raw);
+						ptr = ::Bitty::Map::Ptr(raw);
 				}
 
 				return ptr;
@@ -443,30 +449,30 @@ public:
 			req, ref
 		);
 	}
-	virtual ::Sfx::Ptr load(const class Project* project, Sfx &req) override {
-		return fromCacheOrAsset<::Sfx::Ptr, Sfx>(
+	virtual ::Bitty::Sfx::Ptr load(const class Project* project, Sfx &req) override {
+		return fromCacheOrAsset<::Bitty::Sfx::Ptr, Sfx>(
 			project,
-			[] (::Asset* asset, Sfx &/* req */) -> ::Sfx::Ptr {
-				Object::Ptr obj = asset->sound(::Sfx::TYPE());
+			[] (::Bitty::Asset* asset, Sfx &/* req */) -> ::Bitty::Sfx::Ptr {
+				Object::Ptr obj = asset->sound(::Bitty::Sfx::TYPE());
 				if (!obj)
 					return nullptr;
 
-				::Sfx::Ptr ptr = Object::as<::Sfx::Ptr>(obj);
+				::Bitty::Sfx::Ptr ptr = Object::as<::Bitty::Sfx::Ptr>(obj);
 
 				return ptr;
 			},
 			req, nullptr
 		);
 	}
-	virtual ::Music::Ptr load(const class Project* project, Music &req) override {
-		return fromCacheOrAsset<::Music::Ptr, Music>(
+	virtual ::Bitty::Music::Ptr load(const class Project* project, Music &req) override {
+		return fromCacheOrAsset<::Bitty::Music::Ptr, Music>(
 			project,
-			[] (::Asset* asset, Music &/* req */) -> ::Music::Ptr {
-				Object::Ptr obj = asset->sound(::Music::TYPE());
+			[] (::Bitty::Asset* asset, Music &/* req */) -> ::Bitty::Music::Ptr {
+				Object::Ptr obj = asset->sound(::Bitty::Music::TYPE());
 				if (!obj)
 					return nullptr;
 
-				::Music::Ptr ptr = Object::as<::Music::Ptr>(obj);
+				::Bitty::Music::Ptr ptr = Object::as<::Bitty::Music::Ptr>(obj);
 
 				return ptr;
 			},
@@ -541,7 +547,7 @@ public:
 	}
 
 private:
-	::Texture::Ptr fromCacheOrFile(class Renderer* rnd, const char* path) {
+	::Bitty::Texture::Ptr fromCacheOrFile(class Renderer* rnd, const char* path) {
 		if (!rnd)
 			return nullptr;
 		if (!path)
@@ -552,16 +558,16 @@ private:
 		if (it == _dictionary.end()) {
 			File* file = File::create();
 			Bytes* bytes = Bytes::create();
-			::Image* img = ::Image::create(nullptr);
+			::Bitty::Image* img = ::Bitty::Image::create(nullptr);
 			if (file->open(path, Stream::READ)) {
 				file->readBytes(bytes);
 				file->close();
 			}
 			img->fromBytes(bytes);
-			::Texture::Ptr ptr(::Texture::create());
-			ptr->fromBytes(rnd, ::Texture::STATIC, img->pixels(), img->width(), img->height(), 0, ::Texture::NEAREST);
-			ptr->blend(::Texture::BLEND);
-			::Image::destroy(img);
+			::Bitty::Texture::Ptr ptr(::Bitty::Texture::create());
+			ptr->fromBytes(rnd, ::Bitty::Texture::STATIC, img->pixels(), img->width(), img->height(), 0, ::Bitty::Texture::NEAREST);
+			ptr->blend(::Bitty::Texture::BLEND);
+			::Bitty::Image::destroy(img);
 			Bytes::destroy(bytes);
 			File::destroy(file);
 
@@ -569,12 +575,12 @@ private:
 
 			return ptr;
 		} else {
-			::Texture::Ptr ptr = Object::as<::Texture::Ptr>(it->second);
+			::Bitty::Texture::Ptr ptr = Object::as<::Bitty::Texture::Ptr>(it->second);
 
 			return ptr;
 		}
 	}
-	::Texture::Ptr fromCacheOrCharacter(class Renderer* rnd, Glyph &req, int* outWidth, int* outHeight) {
+	::Bitty::Texture::Ptr fromCacheOrCharacter(Renderer* rnd, Glyph &req, int* outWidth, int* outHeight) {
 		if (outWidth)
 			*outWidth = -1;
 		if (outHeight)
@@ -583,7 +589,7 @@ private:
 		if (!rnd)
 			return nullptr;
 
-		::Texture::Ptr ptr = req.pointer;
+		::Bitty::Texture::Ptr ptr = req.pointer;
 		if (ptr) {
 			if (outWidth)
 				*outWidth = ptr->width();
@@ -613,9 +619,9 @@ private:
 				return nullptr;
 			}
 			assert((int)bytes->count() == width * height * sizeof(Color));
-			ptr = ::Texture::Ptr(::Texture::create());
-			ptr->fromBytes(rnd, ::Texture::STATIC, bytes->pointer(), width, height, 0, ::Texture::NEAREST);
-			ptr->blend(::Texture::BLEND);
+			ptr = ::Bitty::Texture::Ptr(::Bitty::Texture::create());
+			ptr->fromBytes(rnd, ::Bitty::Texture::STATIC, bytes->pointer(), width, height, 0, ::Bitty::Texture::NEAREST);
+			ptr->blend(::Bitty::Texture::BLEND);
 			Bytes::destroy(bytes);
 
 			if (outWidth)
@@ -629,14 +635,14 @@ private:
 
 			return ptr;
 		} else {
-			ptr = Object::as<::Texture::Ptr>(it->second);
+			ptr = Object::as<::Bitty::Texture::Ptr>(it->second);
 			req.pointer = ptr;
 			req._processed = true;
 
 			return ptr;
 		}
 	}
-	template<typename P, typename Q, typename R> P fromCacheOrAsset(const class Project* project, std::function<P(::Asset*, Q &)> getObj, Q &req, R r, unsigned y = P::element_type::TYPE()) {
+	template<typename P, typename Q, typename R> P fromCacheOrAsset(const Project* project, std::function<P(::Bitty::Asset*, Q &)> getObj, Q &req, R r, unsigned y = P::element_type::TYPE()) {
 		if (!project)
 			return nullptr;
 
@@ -647,8 +653,8 @@ private:
 		if (req._processed)
 			return nullptr;
 
-		auto retrieveObj = [getObj] (::Asset* asset, Q &req) -> P {
-			if (!asset || !asset->prepare(::Asset::RUNNING, true))
+		auto retrieveObj = [getObj] (::Bitty::Asset* asset, Q &req) -> P {
+			if (!asset || !asset->prepare(::Bitty::Asset::RUNNING, true))
 				return nullptr;
 
 			return getObj(asset, req);
@@ -659,11 +665,11 @@ private:
 			Bytes* buf = nullptr;
 
 			unsigned type = y;
-			if (type == ::Sfx::TYPE() || type == ::Music::TYPE())
+			if (type == ::Bitty::Sfx::TYPE() || type == ::Bitty::Music::TYPE())
 				type = Sound::TYPE();
 
 			// Get by entry name.
-			::Asset* asset = prj->get(req._asset.c_str());
+			::Bitty::Asset* asset = prj->get(req._asset.c_str());
 			if (asset) // Got.
 				ptr = retrieveObj(asset, req);
 			if (ptr)
@@ -968,6 +974,8 @@ Resources* Resources::create(void) {
 void Resources::destroy(Resources* ptr) {
 	ResourcesImpl* impl = static_cast<ResourcesImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

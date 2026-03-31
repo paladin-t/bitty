@@ -24,6 +24,8 @@
 ** Numeric types
 */
 
+namespace Bitty {
+
 typedef unsigned char Byte;
 
 typedef int Int;
@@ -50,12 +52,16 @@ typedef float Single;
 
 typedef double Double;
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Simple structures
 */
+
+namespace Bitty {
 
 namespace Math {
 
@@ -658,12 +664,16 @@ typedef Rot<Real> Rotf;
 
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Complex structures
 */
+
+namespace Bitty {
 
 namespace Math {
 
@@ -716,12 +726,16 @@ template<typename T, typename R = Real> struct Circle {
 
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Math utilities
 */
+
+namespace Bitty {
 
 namespace Math {
 
@@ -808,12 +822,16 @@ int rand(void);
 
 }
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Intersections
 */
+
+namespace Bitty {
 
 namespace Math {
 
@@ -970,6 +988,8 @@ template<typename T, int S> inline bool intersects(const Rect<T, S> &rect0, cons
 // Aliases.
 template<typename T, int S> inline bool intersects(const Rect<T, S> &rect, const Vec2<T> &point) {
 	return intersects<T, S>(point, rect);
+}
+
 }
 
 }

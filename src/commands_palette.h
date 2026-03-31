@@ -19,6 +19,8 @@
 ** Palette commands
 */
 
+namespace Bitty {
+
 namespace Commands {
 
 namespace Palette {
@@ -98,6 +100,8 @@ public:
 	static Command* create(void);
 	static void destroy(Command* ptr);
 };
+
+}
 
 }
 

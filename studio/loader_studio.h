@@ -3,7 +3,7 @@
 **
 ** An itty bitty 2D game engine.
 **
-** Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2026 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -18,6 +18,8 @@
 ** {===========================================================================
 ** Studio loader
 */
+
+namespace Bitty {
 
 /**
  * @brief Loader middleware. Override or modify this class to make your own
@@ -35,6 +37,8 @@ public:
 	virtual class Bytes* decode(const class Project* project, const class Asset* asset, class Bytes* buf) const override;
 	virtual class Bytes* encode(const class Project* project, const class Asset* asset, class Bytes* buf) const override;
 };
+
+}
 
 /* ===========================================================================} */
 

@@ -35,6 +35,8 @@
 ** Lua scripting
 */
 
+namespace Bitty {
+
 class ScriptingLua : public Scripting {
 protected:
 	typedef std::set<std::string> Requirement;
@@ -193,6 +195,8 @@ protected:
 	static void hookNormal(lua_State* L, lua_Debug* ar);
 	static void hookBreak(lua_State* L, lua_Debug* ar);
 };
+
+}
 
 /* ===========================================================================} */
 

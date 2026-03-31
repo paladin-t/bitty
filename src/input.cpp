@@ -22,6 +22,8 @@
 ** Input
 */
 
+namespace Bitty {
+
 class InputImpl : public Input {
 private:
 	struct Joystick {
@@ -707,7 +709,7 @@ public:
 
 	virtual int updateOnscreenGamepad(
 		class Window* wnd_, class Renderer* rnd,
-		struct ImFont* font,
+		ImFont* font,
 		bool swapAB,
 		float scale,
 		float paddingX_, float paddingY_
@@ -1357,6 +1359,8 @@ Input* Input::create(void) {
 void Input::destroy(Input* ptr) {
 	InputImpl* impl = static_cast<InputImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

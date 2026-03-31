@@ -18,6 +18,8 @@
 ** Editor customized by plugin
 */
 
+namespace Bitty {
+
 class EditorPlugin : public Editable, public virtual Object {
 public:
 	BITTY_CLASS_TYPE('P', 'L', 'G', 'E')
@@ -25,6 +27,8 @@ public:
 	static EditorPlugin* create(void);
 	static void destroy(EditorPlugin* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

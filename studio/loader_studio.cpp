@@ -3,7 +3,7 @@
 **
 ** An itty bitty 2D game engine.
 **
-** Copyright (C) 2020 - 2025 Tony Wang, all rights reserved
+** Copyright (C) 2020 - 2026 Tony Wang, all rights reserved
 **
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
@@ -14,6 +14,8 @@
 ** {===========================================================================
 ** Studio loader
 */
+
+namespace Bitty {
 
 LoaderStudio::LoaderStudio() {
 }
@@ -46,6 +48,8 @@ class Bytes* LoaderStudio::encode(const class Project* /* project */, const clas
 	// reuses the input object rather than creating new one.
 
 	return buf;
+}
+
 }
 
 /* ===========================================================================} */

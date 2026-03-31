@@ -54,6 +54,8 @@
 ** Studio workspace
 */
 
+namespace Bitty {
+
 WorkspaceStudio::StudioSettings::RecentTouched::RecentTouched() {
 }
 
@@ -1969,6 +1971,8 @@ void WorkspaceStudio::showPaused(class Window* wnd, class Renderer* rnd, const c
 			)
 		)
 	);
+}
+
 }
 
 /* ===========================================================================} */

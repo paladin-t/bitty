@@ -17,6 +17,8 @@
 ** Database
 */
 
+namespace Bitty {
+
 class DatabaseImpl : public Database {
 private:
 	enum class BlobTypes {
@@ -244,6 +246,8 @@ Database* Database::create(void) {
 void Database::destroy(Database* ptr) {
 	DatabaseImpl* impl = static_cast<DatabaseImpl*>(ptr);
 	delete impl;
+}
+
 }
 
 /* ===========================================================================} */

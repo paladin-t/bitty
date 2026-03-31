@@ -19,6 +19,8 @@
 ** Path
 */
 
+namespace Bitty {
+
 /**
  * @brief Path utilities.
  */
@@ -73,12 +75,16 @@ public:
 	static bool touchDirectory(const char* path);
 };
 
+}
+
 /* ===========================================================================} */
 
 /*
 ** {===========================================================================
 ** Informations
 */
+
+namespace Bitty {
 
 class FileInfo;
 
@@ -196,6 +202,8 @@ public:
 	static DirectoryInfo* create(const char* path);
 	static void destroy(DirectoryInfo* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 

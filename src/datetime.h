@@ -19,6 +19,8 @@
 ** Date time
 */
 
+namespace Bitty {
+
 /**
  * @brief Date time utilities.
  */
@@ -106,6 +108,8 @@ public:
 	 */
 	static void sleep(int ms);
 };
+
+}
 
 /* ===========================================================================} */
 

@@ -23,7 +23,7 @@
 
 #ifndef WEB_STATE
 #	define WEB_STATE(P, I, W, O) \
-	VariableGuard<decltype(P)> __PROC__(&(P), (I), (W)); \
+	Bitty::VariableGuard<decltype(P)> __PROC__(&(P), (I), (W)); \
 	if (!(__PROC__).changed()) { \
 		O; \
 	}
@@ -46,7 +46,7 @@ static void webGetGmtTimeString(char* buf, size_t bufLen, time_t* t) {
 
 static int webEventHandler(struct mg_connection* nc, void* cbdata) {
 	struct mg_context* ctx = mg_get_context(nc);
-	WebCivetWeb* web = (WebCivetWeb*)mg_get_user_data(ctx);
+	Bitty::WebCivetWeb* web = (Bitty::WebCivetWeb*)mg_get_user_data(ctx);
 
 	web->callback(nc, cbdata);
 
@@ -63,6 +63,8 @@ static int webEventHandler(struct mg_connection* nc, void* cbdata) {
 */
 
 #if BITTY_WEB_ENABLED
+
+namespace Bitty {
 
 WebCivetWeb::WebCivetWeb() {
 	_opened = false;
@@ -392,7 +394,7 @@ void WebCivetWeb::callback(const RequestedHandler &cb) {
 	_rspdHandler = cb;
 }
 
-void WebCivetWeb::callback(struct mg_connection* nc, void* cbdata) {
+void WebCivetWeb::callback(mg_connection* nc, void* cbdata) {
 	if (onHttp(nc, cbdata))
 		return;
 }
@@ -434,7 +436,7 @@ void WebCivetWeb::doPoll(void) {
 	// Do nothing.
 }
 
-bool WebCivetWeb::onHttp(struct mg_connection* nc, void* cbdata) {
+bool WebCivetWeb::onHttp(mg_connection* nc, void* cbdata) {
 	(void)cbdata;
 
 	const struct mg_request_info* ri = mg_get_request_info(nc);
@@ -478,6 +480,8 @@ bool WebCivetWeb::onHttp(struct mg_connection* nc, void* cbdata) {
 	} while (false);
 
 	return true;
+}
+
 }
 
 #endif /* BITTY_WEB_ENABLED */

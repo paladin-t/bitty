@@ -18,6 +18,8 @@
 ** Sound editor
 */
 
+namespace Bitty {
+
 class EditorSound : public Editable, public virtual Object {
 public:
 	BITTY_CLASS_TYPE('S', 'N', 'D', 'E')
@@ -25,6 +27,8 @@ public:
 	static EditorSound* create(void);
 	static void destroy(EditorSound* ptr);
 };
+
+}
 
 /* ===========================================================================} */
 
