@@ -118,7 +118,7 @@ public:
 	TextBoxImpl() {
 	}
 	virtual ~TextBoxImpl() override {
-		assert(!_opened && "Not closed");
+		BITTY_ASSERT(!_opened && "Not closed");
 	}
 
 	virtual unsigned type(void) const override {

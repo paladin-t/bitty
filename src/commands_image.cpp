@@ -278,7 +278,7 @@ int Resize::redo(Object::Ptr obj, int argc, const Variant* argv) {
 				(const char*)tmp->pointer(), (char*)old()->pointer(),
 				(int)tmp->count(), (int)old()->count()
 			);
-			assert(n);
+			BITTY_ASSERT(n);
 			old()->resize((size_t)n);
 		} else {
 			bytes(0);
@@ -306,7 +306,7 @@ int Resize::undo(Object::Ptr obj, int argc, const Variant* argv) {
 			(int)old()->count(), (int)tmp->count()
 		);
 		(void)n;
-		assert(n == (int)bytes());
+		BITTY_ASSERT(n == (int)bytes());
 		img->fromBytes(tmp.get());
 	} else {
 		img->fromBytes(old().get());

@@ -529,7 +529,7 @@ public:
 			memcpy(_pixels, iptr, width * height);
 			_width = width;
 			_height = height;
-			_palettedBits = bitCount; assert(_palettedBits == 0 || _palettedBits == IMAGE_PALETTE_BITS);
+			_palettedBits = bitCount; BITTY_ASSERT(_palettedBits == 0 || _palettedBits == IMAGE_PALETTE_BITS);
 		}
 		if (_pixels) {
 			_channels = 1;
@@ -553,7 +553,7 @@ public:
 			memcpy(_pixels, iptr, width * height * 4);
 			_width = width;
 			_height = height;
-			_palettedBits = bitCount; assert(_palettedBits == 0 || _palettedBits == IMAGE_PALETTE_BITS);
+			_palettedBits = bitCount; BITTY_ASSERT(_palettedBits == 0 || _palettedBits == IMAGE_PALETTE_BITS);
 		}
 		if (_pixels) {
 			_channels = 4;

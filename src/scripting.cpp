@@ -53,7 +53,7 @@ bool Scripting::open(
 
 		break;
 	default:
-		assert(false && "Unknown.");
+		BITTY_ASSERT(false && "Unknown.");
 
 		break;
 	}
@@ -80,7 +80,7 @@ bool Scripting::close(void) {
 
 		break;
 	default:
-		assert(false && "Unknown.");
+		BITTY_ASSERT(false && "Unknown.");
 
 		break;
 	}
@@ -110,7 +110,7 @@ Scripting* Scripting::create(Languages language) {
 	case LUA:
 		return new ScriptingLua();
 	default:
-		assert(false && "Not implemented.");
+		BITTY_ASSERT(false && "Not implemented.");
 
 		return nullptr;
 	}
@@ -125,7 +125,7 @@ void Scripting::destroy(Executable* ptr) {
 
 		break;
 	default:
-		assert(false && "Not implemented.");
+		BITTY_ASSERT(false && "Not implemented.");
 
 		break;
 	}

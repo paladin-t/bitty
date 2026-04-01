@@ -821,7 +821,7 @@ private:
 					if (!it.second) {
 						fprintf(stderr, "Duplicated identifier: \"%s\"\n", txt.c_str());
 
-						assert(false && "Duplicated identifier.");
+						BITTY_ASSERT(false && "Duplicated identifier.");
 					}
 				}
 			}

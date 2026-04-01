@@ -110,7 +110,7 @@ public:
 		return _hasValue ? _value : default_;
 	}
 	T get(void) {
-		assert(_hasValue);
+		BITTY_ASSERT(_hasValue);
 
 		return _value;
 	}

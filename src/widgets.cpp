@@ -2311,7 +2311,7 @@ void RefSelector(
 
 		break;
 	default:
-		assert(false && "Impossible.");
+		BITTY_ASSERT(false && "Impossible.");
 
 		return;
 	}

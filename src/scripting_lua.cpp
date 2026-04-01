@@ -152,7 +152,7 @@ void ScriptingLua::prepare(void) {
 	);
 
 	observer()->require(this);
-	assert(::Lua::getTop(_L) == 0 && "Polluted Lua stack.");
+	BITTY_ASSERT(::Lua::getTop(_L) == 0 && "Polluted Lua stack.");
 
 	::Lua::setLoader(_L, require);
 
@@ -170,7 +170,7 @@ void ScriptingLua::finish(void) {
 					ScriptingLua* impl = (ScriptingLua*)ud;
 
 					check(L, ::Lua::call(L, *impl->_quit));
-					assert(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
+					BITTY_ASSERT(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
 				},
 				this
 			);
@@ -295,13 +295,13 @@ bool ScriptingLua::setup(void) {
 		entry = "=" + ent;
 		if (check(_L, luaL_loadbuffer(_L, src.c_str(), src.size(), entry.c_str())) != LUA_OK) {
 			_dependency.pop_back();
-			assert(_dependency.empty());
+			BITTY_ASSERT(_dependency.empty());
 
 			return false;
 		}
 		if (check(_L, lua_pcall(_L, 0, LUA_MULTRET, 0)) != LUA_OK) {
 			_dependency.pop_back();
-			assert(_dependency.empty());
+			BITTY_ASSERT(_dependency.empty());
 
 			return false;
 		}
@@ -319,7 +319,7 @@ bool ScriptingLua::setup(void) {
 		}
 
 		_dependency.pop_back();
-		assert(_dependency.empty());
+		BITTY_ASSERT(_dependency.empty());
 
 		::Lua::Function setup;
 		::Lua::getGlobal(_L, SCRIPTING_SETUP_FUNCTION_NAME);
@@ -350,7 +350,7 @@ bool ScriptingLua::setup(void) {
 		::Lua::read(_L, _rendererReset);
 		::Lua::pop(_L);
 
-		assert(::Lua::getTop(_L) == 0 && "Polluted Lua stack.");
+		BITTY_ASSERT(::Lua::getTop(_L) == 0 && "Polluted Lua stack.");
 		if (setup.valid()) {
 			struct Context {
 				ScriptingLua* impl = nullptr;
@@ -367,7 +367,7 @@ bool ScriptingLua::setup(void) {
 					Context* ctx = (Context*)ud;
 
 					check(L, ::Lua::call(L, ctx->func));
-					assert(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
+					BITTY_ASSERT(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
 				},
 				&ctx
 			);
@@ -398,7 +398,7 @@ bool ScriptingLua::cycle(double delta) {
 		ScriptingLua* impl = (ScriptingLua*)ud;
 
 		impl->_code = check(L, ::Lua::call(L, *impl->_update, impl->_delta));
-		assert(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
+		BITTY_ASSERT(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
 	};
 #if BITTY_DEBUG_ENABLED
 	int ret = LUA_OK;
@@ -500,7 +500,7 @@ void ScriptingLua::sync(double delta) {
 						ScriptingLua* impl = (ScriptingLua*)ud;
 
 						check(L, ::Lua::call(L, *impl->_focusLost));
-						assert(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
+						BITTY_ASSERT(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
 					},
 					this
 				);
@@ -518,7 +518,7 @@ void ScriptingLua::sync(double delta) {
 						ScriptingLua* impl = (ScriptingLua*)ud;
 
 						check(L, ::Lua::call(L, *impl->_focusGained));
-						assert(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
+						BITTY_ASSERT(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
 					},
 					this
 				);
@@ -541,7 +541,7 @@ void ScriptingLua::sync(double delta) {
 					ScriptingLua* impl = (ScriptingLua*)ud;
 
 					check(L, ::Lua::call(L, *impl->_fileDropped, impl->_droppedFiles));
-					assert(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
+					BITTY_ASSERT(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
 				},
 				this
 			);
@@ -560,7 +560,7 @@ void ScriptingLua::sync(double delta) {
 					ScriptingLua* impl = (ScriptingLua*)ud;
 
 					check(L, ::Lua::call(L, *impl->_rendererReset));
-					assert(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
+					BITTY_ASSERT(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
 				},
 				this
 			);
@@ -942,7 +942,7 @@ bool ScriptingLua::setVariable(const char* name_, const Variant* var) const {
 				else
 					::Lua::write(_L, nullptr);
 				const char* modified = ::Lua::setLocal(_L, &ar, i);
-				assert(strcmp(modified, name) == 0); (void)modified;
+				BITTY_ASSERT(strcmp(modified, name) == 0); (void)modified;
 
 				::Lua::pop(_L);
 
@@ -1027,7 +1027,7 @@ Variant ScriptingLua::invoke(Invokable func, int argc, const Variant* argv) {
 						ctx->argc, ctx->argv
 					)
 				);
-				assert(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
+				BITTY_ASSERT(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
 			},
 			&ctx
 		);

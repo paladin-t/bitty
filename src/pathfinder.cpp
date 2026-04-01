@@ -218,7 +218,7 @@ private:
 		x -= _west;
 		y -= _north;
 		int r = x + y * width();
-		assert(r >= 0 && r < width() * height());
+		BITTY_ASSERT(r >= 0 && r < width() * height());
 
 		return r;
 	}

@@ -1027,7 +1027,7 @@ bool Workspace::focus(const char* src, int ln) {
 }
 
 void Workspace::require(Executable*) {
-	assert(false && "Not implemented.");
+	BITTY_ASSERT(false && "Not implemented.");
 }
 
 void Workspace::stop(void) {
@@ -2408,7 +2408,7 @@ bool Workspace::canvas(class Window* wnd, class Renderer* rnd, const class Proje
 		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
 		ImGui::SetNextWindowSize(wndSize, ImGuiCond_Always);
 	} else {
-		assert(false && "Impossible.");
+		BITTY_ASSERT(false && "Impossible.");
 	}
 
 	bool opened = true;

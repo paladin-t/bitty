@@ -509,9 +509,9 @@ public:
 				(const MD_CHAR*)_content.c_str(), (MD_SIZE)_content.length(),
 				&_renderer, &context
 			);
-			assert(_blockStack.empty());
-			assert(_spanStack.empty());
-			assert(_scaleStack.empty());
+			BITTY_ASSERT(_blockStack.empty());
+			BITTY_ASSERT(_spanStack.empty());
+			BITTY_ASSERT(_scaleStack.empty());
 			while (!_blockStack.empty())
 				_blockStack.pop();
 			while (!_spanStack.empty())
@@ -553,9 +553,9 @@ public:
 					(const MD_CHAR*)_tableOfContent.c_str(), (MD_SIZE)_tableOfContent.length(),
 					&_renderer, &context
 				);
-				assert(_blockStack.empty());
-				assert(_spanStack.empty());
-				assert(_scaleStack.empty());
+				BITTY_ASSERT(_blockStack.empty());
+				BITTY_ASSERT(_spanStack.empty());
+				BITTY_ASSERT(_scaleStack.empty());
 				while (!_blockStack.empty())
 					_blockStack.pop();
 				while (!_spanStack.empty())
@@ -615,7 +615,7 @@ private:
 
 			break;
 		case MD_BLOCK_OL:
-			assert(_listItemCount == 0 && "Wrong data.");
+			BITTY_ASSERT(_listItemCount == 0 && "Wrong data.");
 
 			if (++context->indent > 1)
 				ImGui::Indent();
@@ -623,7 +623,7 @@ private:
 			break;
 		case MD_BLOCK_LI: {
 				if (y == MD_BLOCK_OL) {
-					assert(_listItemCount <= (int)_listItemIndeces.size() && "Wrong data.");
+					BITTY_ASSERT(_listItemCount <= (int)_listItemIndeces.size() && "Wrong data.");
 
 					ImFont* font = _boldFont ? _boldFont : (ImFont*)context->theme->fontBlock_Bold();
 					ImGui::PushFont(font);
@@ -853,7 +853,7 @@ private:
 		case MD_SPAN_A: {
 				MD_SPAN_A_DETAIL* a = (MD_SPAN_A_DETAIL*)detail;
 				context->hrefSize = std::min((size_t)a->href.size, BITTY_COUNTOF(context->href));
-				assert(a->href.size <= BITTY_COUNTOF(context->href));
+				BITTY_ASSERT(a->href.size <= BITTY_COUNTOF(context->href));
 				if (context->hrefSize == BITTY_COUNTOF(context->href)) {
 					memcpy(context->href, a->href.text, context->hrefSize - 3);
 					memcpy(context->href + context->hrefSize - 3, "...", 3);
@@ -1192,7 +1192,7 @@ private:
 	void debugLog(const char* msg, Context* /* context */) {
 		fprintf(stderr, "%s", msg);
 
-		assert(!msg);
+		BITTY_ASSERT(!msg);
 	}
 };
 

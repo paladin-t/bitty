@@ -1305,7 +1305,7 @@ private:
 			clearOverlay(rnd);
 
 		Command* back = _commands->back();
-		assert(back->type() == T::TYPE());
+		BITTY_ASSERT(back->type() == T::TYPE());
 		T* cmd = Command::as<T>(back);
 		if (_object->paletted()) {
 			Color col;

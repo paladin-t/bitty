@@ -142,7 +142,7 @@ public:
 				(const char*)_cache->pointer(), (char*)compressed->pointer(),
 				(int)_cache->count(), (int)compressed->count()
 			);
-			assert(n);
+			BITTY_ASSERT(n);
 			if (n) {
 				compressed->resize((size_t)n);
 
@@ -326,7 +326,7 @@ private:
 			(int)compressed->count(), (int)_cache->count() - headerSize
 		);
 		(void)n;
-		assert(n && n == (int)(_cache->count() - headerSize)); (void)n;
+		BITTY_ASSERT(n && n == (int)(_cache->count() - headerSize)); (void)n;
 
 		img->fromBytes(_cache.get());
 		_cache->clear();

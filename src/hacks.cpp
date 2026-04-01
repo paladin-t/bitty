@@ -68,7 +68,7 @@ void ThreadingGuard::end(void) {
 
 void ThreadingGuard::validate(void) {
 	const std::thread::id current = std::this_thread::get_id();
-	assert(_executableThreadId != current && "Cannot access from this thread.");
+	BITTY_ASSERT(_executableThreadId != current && "Cannot access from this thread.");
 }
 
 ThreadingGuard graphicsThreadingGuard;

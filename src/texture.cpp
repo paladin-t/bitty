@@ -197,7 +197,7 @@ public:
 
 				// Create a new texture.
 				_texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, expWidth, expHeight);
-				assert(_texture);
+				BITTY_ASSERT(_texture);
 
 				// Fill with the old pixels.
 				const SDL_Rect rect{ 0, 0, _width, _height };
@@ -238,7 +238,7 @@ public:
 
 				// Create a new texture.
 				_texture = SDL_CreateTexture(renderer, fmt, SDL_TEXTUREACCESS_TARGET, expWidth, expHeight);
-				assert(_texture);
+				BITTY_ASSERT(_texture);
 
 				// Fill with the old pixels.
 				SDL_Texture* tmptex = SDL_CreateTexture(renderer, fmt, SDL_TEXTUREACCESS_STATIC, _width, _height);

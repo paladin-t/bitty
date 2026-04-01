@@ -630,7 +630,7 @@ static void checkOrRead(lua_State* L, Variant* ret, Index idx, References &refs,
 
 		break;
 	default:
-		assert(false && "Impossible.");
+		BITTY_ASSERT(false && "Impossible.");
 
 		break;
 	}
@@ -7480,7 +7480,7 @@ static void Network_setOnReceived(lua_State* L, Network::Ptr &obj, const Functio
 
 				break;
 			default:
-				assert(false && "Impossible.");
+				BITTY_ASSERT(false && "Impossible.");
 
 				break;
 			}
@@ -13097,7 +13097,7 @@ void callback(lua_State* L) {
 
 			break;
 		}
-		assert(getTop(L) == 0 && "Polluted Lua stack.");
+		BITTY_ASSERT(getTop(L) == 0 && "Polluted Lua stack.");
 	};
 	while (!invokeCalls.empty()) {
 		InvokeCall calling = invokeCalls.front();

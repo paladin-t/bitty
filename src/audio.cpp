@@ -180,7 +180,7 @@ public:
 		return _playing;
 	}
 	virtual bool play(bool loop, FeedHandler feeder, StopHandler stopper) override {
-		assert(!_soundOccupation);
+		BITTY_ASSERT(!_soundOccupation);
 
 		_feeder = feeder;
 		_stopper = stopper;
@@ -346,7 +346,7 @@ private:
 	static void soundFed(int chan, void* stream, int len, void* udata) {
 		(void)chan;
 
-		assert(chan == MIX_CHANNEL_POST);
+		BITTY_ASSERT(chan == MIX_CHANNEL_POST);
 
 		SoundImpl* impl = (SoundImpl*)udata;
 		FeedHandler feeder = impl->_feeder;
@@ -359,7 +359,7 @@ private:
 	static void soundDone(int chan, void* /* stream */) {
 		(void)chan;
 
-		assert(chan == MIX_CHANNEL_POST);
+		BITTY_ASSERT(chan == MIX_CHANNEL_POST);
 	}
 };
 

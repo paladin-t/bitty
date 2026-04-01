@@ -2132,7 +2132,7 @@ public:
 
 			break;
 		default:
-			assert(false && "Not implemented.");
+			BITTY_ASSERT(false && "Not implemented.");
 
 			break;
 		}
@@ -2312,7 +2312,7 @@ public:
 
 			break;
 		default:
-			assert(false && "Not implemented.");
+			BITTY_ASSERT(false && "Not implemented.");
 
 			break;
 		}
@@ -2435,7 +2435,7 @@ public:
 
 			break;
 		case Cmd::PGET:
-			assert(false && "Impossible.");
+			BITTY_ASSERT(false && "Impossible.");
 
 			break;
 		case Cmd::PSET:
@@ -2443,7 +2443,7 @@ public:
 
 			break;
 		case Cmd::MGET:
-			assert(false && "Impossible.");
+			BITTY_ASSERT(false && "Impossible.");
 
 			break;
 		case Cmd::MSET:
@@ -2499,7 +2499,7 @@ public:
 
 			break;
 		default:
-			assert(false && "Not implemented.");
+			BITTY_ASSERT(false && "Not implemented.");
 
 			break;
 		}
@@ -2532,7 +2532,7 @@ public:
 	 * @brief Transfers all commands from this queue to another queue.
 	 */
 	void transferTo(CmdQueue &other) {
-		assert(other._cmds.empty());
+		BITTY_ASSERT(other._cmds.empty());
 
 		other._cmds.reserve(_cmds.size());
 		for (int i = 0; i < (int)_cmds.size(); ++i) {

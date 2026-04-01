@@ -290,7 +290,7 @@ bool FetchCurl::update(double) {
 
 	LockGuard<decltype(_lock)> guard(_lock);
 
-	assert(_state == RESPONDED);
+	BITTY_ASSERT(_state == RESPONDED);
 #if BITTY_MULTITHREAD_ENABLED
 	if (_thread.joinable())
 		_thread.join();

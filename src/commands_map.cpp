@@ -295,7 +295,7 @@ int Resize::redo(Object::Ptr obj, int, const Variant*) {
 			(const char*)tmp->pointer(), (char*)old()->pointer(),
 			(int)tmp->count(), (int)old()->count()
 		);
-		assert(n);
+		BITTY_ASSERT(n);
 		if (n < (int)tmp->count()) {
 			old()->resize((size_t)n);
 		} else {
@@ -320,7 +320,7 @@ int Resize::undo(Object::Ptr obj, int, const Variant*) {
 			(int)old()->count(), (int)tmp->count()
 		);
 		(void)n;
-		assert(n == (int)bytes());
+		BITTY_ASSERT(n == (int)bytes());
 		Texture::Ptr texture = nullptr;
 		::Bitty::Map::Tiles tiles;
 		if (map->tiles(tiles))

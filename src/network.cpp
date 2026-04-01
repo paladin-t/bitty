@@ -36,7 +36,7 @@ Network* Network::create(const char* type) {
 	if (strcmp(type, "libuv") == 0 || strcmp(type, "default") == 0) {
 		result = new NetworkLibuv();
 	} else {
-		assert(false && "Unknown backend type.");
+		BITTY_ASSERT(false && "Unknown backend type.");
 	}
 
 	return result;
@@ -51,7 +51,7 @@ void Network::destroy(Network* ptr) {
 
 		break;
 	default:
-		assert(false && "Unknown backend type.");
+		BITTY_ASSERT(false && "Unknown backend type.");
 
 		break;
 	}

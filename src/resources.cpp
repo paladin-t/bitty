@@ -618,7 +618,7 @@ private:
 
 				return nullptr;
 			}
-			assert((int)bytes->count() == width * height * sizeof(Color));
+			BITTY_ASSERT((int)bytes->count() == width * height * sizeof(Color));
 			ptr = ::Bitty::Texture::Ptr(::Bitty::Texture::create());
 			ptr->fromBytes(rnd, ::Bitty::Texture::STATIC, bytes->pointer(), width, height, 0, ::Bitty::Texture::NEAREST);
 			ptr->blend(::Bitty::Texture::BLEND);
@@ -789,7 +789,7 @@ bool Resources::Async::await(void) {
 	for (int i = 0; i < TIMEOUT / STEP && !_processed; ++i) // Wait until processed or timeout.
 		DateTime::sleep(STEP);
 #else /* BITTY_MULTITHREAD_ENABLED */
-	assert(_processed);
+	BITTY_ASSERT(_processed);
 #endif /* BITTY_MULTITHREAD_ENABLED */
 
 	return _processed;

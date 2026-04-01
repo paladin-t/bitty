@@ -703,7 +703,7 @@ private:
 				break;
 
 			file->readBytes(before, entry.begin);
-			assert(entry.size >= entry.count);
+			BITTY_ASSERT(entry.size >= entry.count);
 			file->poke(entry.end + (entry.size - entry.count));
 			file->readLine();
 			file->readBytes(after);

@@ -135,7 +135,7 @@ static std::string networkGetInterfaces(void) {
 }
 
 static void networkAddressToString(const uv_tcp_t* tcp, Bitty::Network::AddressName &addr) {
-	assert(BITTY_COUNTOF(addr.text) >= strlen(NETWORK_NULL_STRING) + 1);
+	BITTY_ASSERT(BITTY_COUNTOF(addr.text) >= strlen(NETWORK_NULL_STRING) + 1);
 	memset(&addr, 0, sizeof(Bitty::Network::AddressName));
 	memcpy(addr.text, NETWORK_NULL_STRING, strlen(NETWORK_NULL_STRING));
 
@@ -233,7 +233,7 @@ static Bitty::Bytes* networkReceiveBytes(uv_stream_t* /* handle */, ssize_t /* n
 						(size_t)(*up - sizeof(Bitty::Network::BytesSize))
 					);
 				} else {
-					assert(false && "Wrong data.");
+					BITTY_ASSERT(false && "Wrong data.");
 				}
 				receiving->removeFront((size_t)(*up));
 
@@ -246,7 +246,7 @@ static Bitty::Bytes* networkReceiveBytes(uv_stream_t* /* handle */, ssize_t /* n
 				cached->clear();
 				cached->writeBytes(receiving->pointer(), receiving->count());
 			} else {
-				assert(false && "Wrong data.");
+				BITTY_ASSERT(false && "Wrong data.");
 			}
 			receiving->removeFront(receiving->count());
 
@@ -392,7 +392,7 @@ bool NetworkLibuv::open(const char* addr, Protocols protocol, bool* toconn_, boo
 		strdirt = straddr;
 		_protocol = protocol;
 	}
-	assert((withudp || withtcp || withws) && "Unknown protocol.");
+	BITTY_ASSERT((withudp || withtcp || withws) && "Unknown protocol.");
 
 	bool toconn = false, tobind = false;
 	std::string ipaddr;
@@ -441,7 +441,7 @@ bool NetworkLibuv::open(const char* addr, Protocols protocol, bool* toconn_, boo
 			port = (int)lval;
 		}
 	}
-	assert((toconn || tobind) && "Unknown operation.");
+	BITTY_ASSERT((toconn || tobind) && "Unknown operation.");
 
 	// Open.
 	doOpen(withudp, withtcp, withws, toconn, tobind, ipaddr.c_str(), port);
@@ -902,7 +902,7 @@ void NetworkLibuv::onReceived(uv_stream_t* handle, ssize_t nread, const uv_buf_t
 
 		break;
 	default:
-		assert(false && "Unknown data type.");
+		BITTY_ASSERT(false && "Unknown data type.");
 
 		break;
 	}
@@ -1045,7 +1045,7 @@ void NetworkLibuv::doOpen(bool withudp, bool withtcp, bool withws, bool toconn, 
 			_ready = ret ? IDLE : READY;
 		}
 	} else if (withws) {
-		assert(false && "Not implemented.");
+		BITTY_ASSERT(false && "Not implemented.");
 	}
 }
 
@@ -1072,17 +1072,17 @@ bool NetworkLibuv::doPush(void* ptr, size_t sz, DataTypes y, PushHandler pusher)
 	switch (y) {
 	case STREAM:
 		bytes = (Bytes*)ptr;
-		assert(bytes->count() == sz && "Wrong data.");
+		BITTY_ASSERT(bytes->count() == sz && "Wrong data.");
 
 		break;
 	case BYTES:
 		bytes = (Bytes*)ptr;
-		assert(bytes->count() == sz && "Wrong data.");
+		BITTY_ASSERT(bytes->count() == sz && "Wrong data.");
 
 		break;
 	case STRING:
 		str.assign((const char*)ptr, sz);
-		assert(str.length() == sz && "Wrong data.");
+		BITTY_ASSERT(str.length() == sz && "Wrong data.");
 
 		break;
 	case JSON:
@@ -1096,7 +1096,7 @@ bool NetworkLibuv::doPush(void* ptr, size_t sz, DataTypes y, PushHandler pusher)
 
 		break;
 	default:
-		assert(false && "Unknown data type.");
+		BITTY_ASSERT(false && "Unknown data type.");
 
 		return false;
 	}

@@ -115,7 +115,7 @@ public:
 		_document = Document::create();
 	}
 	virtual ~DocumentViewerImpl() override {
-		assert(!_opened && "Not closed");
+		BITTY_ASSERT(!_opened && "Not closed");
 
 		Document::destroy(_document);
 		_document = nullptr;

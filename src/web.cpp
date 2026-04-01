@@ -79,7 +79,7 @@ Web* Web::create(const char* type) {
 	if (strcmp(type, "html") == 0 || strcmp(type, "default") == 0) {
 		result = new WebHtml();
 	} else {
-		assert(false && "Unknown backend type.");
+		BITTY_ASSERT(false && "Unknown backend type.");
 	}
 
 	return result;
@@ -88,7 +88,7 @@ Web* Web::create(const char* type) {
 	if (strcmp(type, "civetweb") == 0 || strcmp(type, "default") == 0) {
 		result = new WebCivetWeb();
 	} else {
-		assert(false && "Unknown backend type.");
+		BITTY_ASSERT(false && "Unknown backend type.");
 	}
 
 	return result;
@@ -105,7 +105,7 @@ void Web::destroy(Web* ptr) {
 
 		break;
 	default:
-		assert(false && "Unknown backend type.");
+		BITTY_ASSERT(false && "Unknown backend type.");
 
 		break;
 	}
@@ -118,7 +118,7 @@ void Web::destroy(Web* ptr) {
 
 		break;
 	default:
-		assert(false && "Unknown backend type.");
+		BITTY_ASSERT(false && "Unknown backend type.");
 
 		break;
 	}

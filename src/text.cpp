@@ -783,7 +783,7 @@ bool Text::matchWildcard(const std::string &str, const char* wildcard, bool case
 	case '?':
 		return matchWildcard(string + s.length, wildcard + w.length, caseInsensitive) || matchWildcard(string, wildcard + w.length, caseInsensitive);
 	default:
-		assert(false);
+		BITTY_ASSERT(false);
 
 		return false;
 	}

@@ -418,7 +418,7 @@ bool palette(
 	const float size = std::min(width / X_COUNT, ImGui::GetFontSize() * 4);
 
 	const int count = ptr->count();
-	assert(count == IMAGE_PALETTE_COLOR_COUNT);
+	BITTY_ASSERT(count == IMAGE_PALETTE_COLOR_COUNT);
 	for (int i = 0; i < count; ++i) {
 		Color color;
 		ptr->get(i, color);
@@ -2681,7 +2681,7 @@ bool toCheckpoint(const Project* project, const char* name, Checkpoint &checkpoi
 			(const char*)cache->pointer(), (char*)bytes->pointer(),
 			(int)cache->count(), (int)bytes->count()
 		);
-		assert(n);
+		BITTY_ASSERT(n);
 		if (n)
 			bytes->resize((size_t)n);
 
@@ -2726,7 +2726,7 @@ bool fromCheckpoint(const Project* project, const char* name, Checkpoint &checkp
 			(int)bytes->count(), (int)cache->count()
 		);
 		(void)n;
-		assert(n == (int)checkpoint.originalSize);
+		BITTY_ASSERT(n == (int)checkpoint.originalSize);
 		result = asset->reload(Asset::EDITING, cache.get(), nullptr, false);
 
 		fprintf(stdout, "Restored checkpoint from %d bytes, decompressed from %d bytes.\n", (int)cache->count(), (int)bytes->count());

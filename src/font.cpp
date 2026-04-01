@@ -227,7 +227,7 @@ private:
 					const int y = j;
 					size_t pos = (x + y * width_) * sizeof(Color);
 					if (pos + sizeof(Color) > out->count()) {
-						assert(false && "Font position out of bounds.");
+						BITTY_ASSERT(false && "Font position out of bounds.");
 
 						continue;
 					}
@@ -317,7 +317,7 @@ private:
 					const int y = j + height_ + y0 - y1;
 					size_t pos = (x + y * width_) * sizeof(Color);
 					if (pos + sizeof(Color) > out->count()) {
-						assert(false && "Font position out of bounds.");
+						BITTY_ASSERT(false && "Font position out of bounds.");
 
 						continue;
 					}

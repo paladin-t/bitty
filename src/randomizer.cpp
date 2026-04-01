@@ -132,7 +132,7 @@ private:
 			#if (LUA_MAXUNSIGNED >> 31) >= 3
 			lim |= (lim >> 32);
 			#endif
-			assert((lim & (lim + 1)) == 0 && lim >= n && (lim >> 1) < n);
+			BITTY_ASSERT((lim & (lim + 1)) == 0 && lim >= n && (lim >> 1) < n);
 			while ((ran &= lim) > n)
 				ran = RANDOMIZER_I2UINT(next(state));
 

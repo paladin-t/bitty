@@ -5979,7 +5979,7 @@ static int Space_addShape(lua_State* L) {
 
 		cpShape* ptr = cpSpaceAddShape(obj->get(), shape->get());
 		if (ptr) {
-			assert(ptr == shape->get());
+			BITTY_ASSERT(ptr == shape->get());
 
 			SpaceData* spaceData = SpaceData::get(obj->get());
 			spaceData->shapeCache.add(shape->get(), *shape);
@@ -6070,7 +6070,7 @@ static int Space_addBody(lua_State* L) {
 
 		cpBody* ptr = cpSpaceAddBody(obj->get(), body->get());
 		if (ptr) {
-			assert(ptr == body->get());
+			BITTY_ASSERT(ptr == body->get());
 
 			SpaceData* spaceData = SpaceData::get(obj->get());
 			spaceData->bodyCache.add(body->get(), *body);
@@ -6187,7 +6187,7 @@ static int Space_addConstraint(lua_State* L) {
 
 		cpConstraint* ptr = cpSpaceAddConstraint(obj->get(), constraint->get());
 		if (ptr) {
-			assert(ptr == constraint->get());
+			BITTY_ASSERT(ptr == constraint->get());
 
 			SpaceData* spaceData = SpaceData::get(obj->get());
 			spaceData->constraintCache.add(constraint->get(), *constraint);

@@ -924,7 +924,7 @@ private:
 						}
 					}
 #endif /* Platform macro. */
-					assert(key >= 0 && key < BITTY_COUNTOF(io.KeysDown));
+					BITTY_ASSERT(key >= 0 && key < BITTY_COUNTOF(io.KeysDown));
 					if (!_context.imeCompositing)
 						io.KeysDown[key] = evt.type == SDL_KEYDOWN;
 					io.KeyShift = !!(mod & KMOD_SHIFT);

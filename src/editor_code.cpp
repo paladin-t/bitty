@@ -1088,7 +1088,7 @@ private:
 			if (!it.second) {
 				fprintf(stderr, "Duplicated identifier: \"%s\"\n", k);
 
-				assert(false && "Duplicated identifier.");
+				BITTY_ASSERT(false && "Duplicated identifier.");
 			}
 		}
 

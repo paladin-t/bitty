@@ -22,6 +22,8 @@
 ** Utilities
 */
 
+#if BITTY_WEB_ENABLED
+
 static unsigned webGetId(void) {
 	static unsigned seed = 1;
 	while (seed == 0)
@@ -158,34 +160,36 @@ EM_JS(
 );
 #else /* BITTY_OS_HTML */
 static void webFetchPerform(unsigned /* id */, const char* /* url */, const char* /* options */) {
-	assert(false && "Not implemented.");
+	BITTY_ASSERT(false && "Not implemented.");
 }
 static bool webFetchUpdate(unsigned /* id */) {
-	assert(false && "Not implemented.");
+	BITTY_ASSERT(false && "Not implemented.");
 
 	return false;
 }
 static unsigned webFetchGetRespondedCount(unsigned /* id */) {
-	assert(false && "Not implemented.");
+	BITTY_ASSERT(false && "Not implemented.");
 
 	return 0;
 }
 static const char* webFetchGetResponded(unsigned /* id */) {
-	assert(false && "Not implemented.");
+	BITTY_ASSERT(false && "Not implemented.");
 
 	return "";
 }
 static const char* webFetchGetError(unsigned /* id */) {
-	assert(false && "Not implemented.");
+	BITTY_ASSERT(false && "Not implemented.");
 
 	return "";
 }
 static bool webFetchRemove(unsigned /* id */) {
-	assert(false && "Not implemented.");
+	BITTY_ASSERT(false && "Not implemented.");
 
 	return false;
 }
 #endif /* BITTY_OS_HTML */
+
+#endif /* BITTY_WEB_ENABLED */
 
 /* ===========================================================================} */
 

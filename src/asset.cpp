@@ -450,7 +450,7 @@ bool Asset::prepare(Usages usage, bool shallow) {
 
 				break;
 			default:
-				assert(false && "Not implemented.");
+				BITTY_ASSERT(false && "Not implemented.");
 
 				break;
 			}
@@ -570,7 +570,7 @@ bool Asset::finish(Usages usage, bool shallow) {
 				} else if (Editable::is<EditorBytes>(edit)) {
 					EditorBytes::destroy(Editable::as<EditorBytes>(edit));
 				} else {
-					assert(false && "Impossible.");
+					BITTY_ASSERT(false && "Impossible.");
 
 					delete edit;
 				}
@@ -578,7 +578,7 @@ bool Asset::finish(Usages usage, bool shallow) {
 
 				break;
 			default:
-				assert(false && "Not implemented.");
+				BITTY_ASSERT(false && "Not implemented.");
 
 				break;
 			}
@@ -881,7 +881,7 @@ bool Asset::reload(Usages usage, class Bytes* buf, Object::Ptr ref, bool implici
 
 		return true;
 	default:
-		assert(false && "Not implemented.");
+		BITTY_ASSERT(false && "Not implemented.");
 
 		return false;
 	}
@@ -1042,7 +1042,7 @@ bool Asset::save(Usages usage, class Bytes* buf) {
 
 		break;
 	default:
-		assert(false && "Not implemented.");
+		BITTY_ASSERT(false && "Not implemented.");
 
 		return false;
 	}
@@ -1562,7 +1562,7 @@ Object::Ptr Asset::fromBlank(Usages usage, const class Project* project, unsigne
 
 		break;
 	default:
-		assert(false && "Not implemented.");
+		BITTY_ASSERT(false && "Not implemented.");
 
 		break;
 	}

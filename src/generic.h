@@ -332,7 +332,7 @@ public:
 				return val_ == val;
 			}
 		);
-		assert(sit != second.end());
+		BITTY_ASSERT(sit != second.end());
 		second.erase(sit);
 
 		return 1;

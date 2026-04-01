@@ -63,7 +63,7 @@ static bool filesystemTextMatchWildcard(const std::wstring &str, const wchar_t* 
 	case '?':
 		return filesystemTextMatchWildcard(string + 1, wildcard + 1) || filesystemTextMatchWildcard(string, wildcard + 1);
 	default:
-		assert(false);
+		BITTY_ASSERT(false);
 
 		return false;
 	}

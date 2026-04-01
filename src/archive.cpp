@@ -44,7 +44,7 @@ Archive* Archive::create(Formats type) {
 	case ZIP:
 		return archive_create_zip();
 	default:
-		assert(false && "Unknown.");
+		BITTY_ASSERT(false && "Unknown.");
 
 		return nullptr;
 	}
@@ -62,7 +62,7 @@ void Archive::destroy(Archive* ptr) {
 
 		break;
 	default:
-		assert(false && "Unknown.");
+		BITTY_ASSERT(false && "Unknown.");
 
 		break;
 	}

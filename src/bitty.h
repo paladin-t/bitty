@@ -401,6 +401,14 @@
 #	endif /* BITTY_CP_VC */
 #endif /* BITTY_STRICMP */
 
+#ifndef BITTY_ASSERT
+#	if defined BITTY_OS_APPLE
+#		define BITTY_ASSERT(EXPR) ((void)0)
+#	else /* BITTY_OS_APPLE */
+#		define BITTY_ASSERT(EXPR) assert(EXPR)
+#	endif /* BITTY_OS_APPLE */
+#endif /* BITTY_ASSERT */
+
 #ifndef BITTY_UNIQUE_NAME
 #	define BITTY_CONCAT_INNER(A, B) A##B
 #	define BITTY_CONCAT(A, B) BITTY_CONCAT_INNER(A, B)
