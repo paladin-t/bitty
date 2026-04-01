@@ -220,6 +220,7 @@ public:
 		bool projectAutoBackup = false;
 
 		bool bannerVisible = true;
+		bool bannerFileButtonsVisible = true;
 
 		bool assetsVisible = true;
 
@@ -372,6 +373,7 @@ protected:
 	BITTY_PROPERTY_READONLY(float, menuHeight)
 	BITTY_PROPERTY_READONLY(float, bannerHeight)
 	BITTY_PROPERTY_READONLY_PTR(bool, bannerVisible)
+	BITTY_PROPERTY_READONLY_PTR(bool, bannerFileButtonsVisible)
 	BITTY_PROPERTY_READONLY(bool, headVisible)
 
 	BITTY_PROPERTY_READONLY(float, assetsWidth)

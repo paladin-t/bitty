@@ -195,6 +195,8 @@ public:
 	BITTY_PROPERTY_READONLY(std::string, menuHelp_Manual)
 	BITTY_PROPERTY_READONLY(std::string, menuHelp_About)
 
+	BITTY_PROPERTY_READONLY(std::string, menuBanner_FileButtons)
+
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_AlreadyExists)
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_CannotAddMoreFrame)
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_CannotLoadProject)
@@ -364,6 +366,12 @@ public:
 	BITTY_PROPERTY_READONLY(std::string, statusItemSound_Artist)
 	BITTY_PROPERTY_READONLY(std::string, statusItemSound_Album)
 	BITTY_PROPERTY_READONLY(std::string, statusItemSound_Copyright)
+
+	BITTY_PROPERTY_PTR(class Texture, iconNew)
+	BITTY_PROPERTY_PTR(class Texture, iconOpen)
+	BITTY_PROPERTY_PTR(class Texture, iconOpenMore)
+	BITTY_PROPERTY_PTR(class Texture, iconSave)
+	BITTY_PROPERTY_PTR(class Texture, iconSave_Gray)
 
 	BITTY_PROPERTY_PTR(class Texture, iconPlay)
 	BITTY_PROPERTY_PTR(class Texture, iconPlay_Gray)

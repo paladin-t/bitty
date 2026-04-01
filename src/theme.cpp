@@ -265,6 +265,8 @@ bool Theme::open(class Renderer* rnd) {
 	menuHelp_Manual("Manual");
 	menuHelp_About("About");
 
+	menuBanner_FileButtons("File Buttons");
+
 	dialogPrompt_AlreadyExists("Already exists.");
 	dialogPrompt_CannotAddMoreFrame("Cannot add more frame.");
 	dialogPrompt_CannotLoadProject("Cannot load project.");
@@ -447,6 +449,12 @@ bool Theme::open(class Renderer* rnd) {
 	statusItemSound_Album("     Album:");
 	statusItemSound_Copyright(" Copyright:");
 
+	iconNew(createTexture(rnd, RES_ICON_NEW, BITTY_COUNTOF(RES_ICON_NEW)));
+	iconOpen(createTexture(rnd, RES_ICON_OPEN, BITTY_COUNTOF(RES_ICON_OPEN)));
+	iconOpenMore(createTexture(rnd, RES_ICON_OPEN_MORE, BITTY_COUNTOF(RES_ICON_OPEN_MORE)));
+	iconSave(createTexture(rnd, RES_ICON_SAVE, BITTY_COUNTOF(RES_ICON_SAVE)));
+	iconSave_Gray(createTexture(rnd, RES_ICON_SAVE_GRAY, BITTY_COUNTOF(RES_ICON_SAVE_GRAY)));
+
 	iconPlay(createTexture(rnd, RES_ICON_PLAY, BITTY_COUNTOF(RES_ICON_PLAY)));
 	iconPlay_Gray(createTexture(rnd, RES_ICON_PLAY_GRAY, BITTY_COUNTOF(RES_ICON_PLAY_GRAY)));
 	iconPause(createTexture(rnd, RES_ICON_PAUSE, BITTY_COUNTOF(RES_ICON_PAUSE)));
@@ -536,6 +544,12 @@ bool Theme::close(class Renderer* rnd) {
 	_opened = false;
 
 	style(nullptr);
+
+	destroyTexture(rnd, iconNew());
+	destroyTexture(rnd, iconOpen());
+	destroyTexture(rnd, iconOpenMore());
+	destroyTexture(rnd, iconSave());
+	destroyTexture(rnd, iconSave_Gray());
 
 	destroyTexture(rnd, iconPlay());
 	destroyTexture(rnd, iconPlay_Gray());

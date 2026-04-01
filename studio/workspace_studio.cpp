@@ -84,6 +84,7 @@ WorkspaceStudio::StudioSettings &WorkspaceStudio::StudioSettings::operator = (co
 	projectAutoBackup = other.projectAutoBackup;
 
 	bannerVisible = other.bannerVisible;
+	bannerFileButtonsVisible = other.bannerFileButtonsVisible;
 	assetsVisible = other.assetsVisible;
 
 	editorIndentRule = other.editorIndentRule;
@@ -151,6 +152,8 @@ bool WorkspaceStudio::StudioSettings::operator != (const StudioSettings &other) 
 	}
 
 	if (bannerVisible != other.bannerVisible)
+		return true;
+	if (bannerFileButtonsVisible != other.bannerFileButtonsVisible)
 		return true;
 	if (assetsVisible != other.assetsVisible)
 		return true;

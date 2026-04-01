@@ -457,6 +457,7 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 	menuHeight(0.0f);
 	bannerHeight(0.0f);
 	bannerVisible(&settings()->bannerVisible);
+	bannerFileButtonsVisible(&settings()->bannerFileButtonsVisible);
 	headVisible(false);
 
 	assetsWidth(0.0f);
@@ -1237,6 +1238,7 @@ bool Workspace::load(class Window* wnd, class Renderer* rnd, const class Project
 	Jpath::get(doc, settings()->applicationPauseOnEsc, "application", "pause_on_esc");
 
 	Jpath::get(doc, settings()->bannerVisible, "banner", "visible");
+	Jpath::get(doc, settings()->bannerFileButtonsVisible, "banner", "fill_buttons", "visible");
 	Jpath::get(doc, settings()->assetsVisible, "assets", "visible");
 
 	Jpath::get(doc, settings()->projectPreference, "project", "preference");
@@ -1356,6 +1358,7 @@ bool Workspace::save(class Window* wnd, class Renderer*, const class Project*, c
 	Jpath::set(doc, doc, settings()->applicationPauseOnEsc, "application", "pause_on_esc");
 
 	Jpath::set(doc, doc, settings()->bannerVisible, "banner", "visible");
+	Jpath::set(doc, doc, settings()->bannerFileButtonsVisible, "banner", "fill_buttons", "visible");
 	Jpath::set(doc, doc, settings()->assetsVisible, "assets", "visible");
 
 	Jpath::set(doc, doc, settings()->projectPreference, "project", "preference");
@@ -1670,6 +1673,8 @@ void Workspace::banner(class Window* /* wnd */, class Renderer* rnd, const class
 
 	VariableGuard<decltype(style.WindowBorderSize)> guardBorderSize(&style.WindowBorderSize, style.WindowBorderSize, 0.0f);
 
+	bool openBtnCtx = false;
+	bool openBnrCtx = false;
 	ImGui::SetNextWindowPos(ImVec2(0.0f, menuHeight()), ImGuiCond_Always);
 	ImGui::SetNextWindowSize(
 		ImVec2((float)rnd->width(), bannerHeight()),
@@ -1677,6 +1682,7 @@ void Workspace::banner(class Window* /* wnd */, class Renderer* rnd, const class
 	);
 	if (ImGui::Begin("@Bnr", nullptr, WORKSPACE_WND_FLAGS_DOCK_NO_TITLE)) {
 		const ImVec2 buttonSize(32 * io.FontGlobalScale, 32 * io.FontGlobalScale);
+		const ImVec2 smallButtonSize(8 * io.FontGlobalScale, 32 * io.FontGlobalScale);
 
 		bool any = false;
 		unsigned type = 0;
@@ -1684,6 +1690,44 @@ void Workspace::banner(class Window* /* wnd */, class Renderer* rnd, const class
 		const char* undoable = nullptr;
 		const char* redoable = nullptr;
 		editingAssetStates(project, &any, &type, nullptr, nullptr, &pastable, nullptr, &undoable, &redoable);
+
+		bool prjDirty = false;
+		bool prjPersisted = false;
+		bool prjArchived = false;
+		projectStates(project, &prjDirty, &prjPersisted, &prjArchived, nullptr);
+
+		if (*bannerFileButtonsVisible()) {
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+			if (ImGui::ImageButton(theme()->iconNew()->pointer(rnd), buttonSize)) {
+				Operations::projectStop(rnd, this, project, exec, primitives);
+
+				Operations::fileNew(rnd, this, project, exec);
+			}
+			ImGui::SameLine();
+			if (ImGui::ImageButton(theme()->iconOpen()->pointer(rnd), buttonSize)) {
+				Operations::projectStop(rnd, this, project, exec, primitives);
+
+				Operations::fileOpenFile(rnd, this, project, exec);
+			}
+			ImGui::SameLine();
+			if (ImGui::ImageButton(theme()->iconOpenMore()->pointer(rnd), smallButtonSize)) {
+				openBtnCtx = true;
+			}
+			ImGui::SameLine();
+			if (prjDirty) {
+				if (ImGui::ImageButton(theme()->iconSave()->pointer(rnd), buttonSize)) {
+					if (prjArchived) {
+						Operations::fileSaveFile(rnd, this, project, false);
+					} else {
+						Operations::fileSaveDirectory(rnd, this, project, false);
+					}
+				}
+			} else {
+				ImGui::ImageButton(theme()->iconSave_Gray()->pointer(rnd), buttonSize);
+			}
+			ImGui::PopStyleVar();
+			ImGui::SameLine();
+		}
 
 		switch (currentState()) {
 		case Executable::READY:
@@ -1786,8 +1830,43 @@ void Workspace::banner(class Window* /* wnd */, class Renderer* rnd, const class
 
 		bannerHeight(ImGui::GetItemRectSize().y + style.WindowPadding.y * 2);
 
+		if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+			openBnrCtx = true;
+
 		ImGui::End();
 	}
+
+	if (openBtnCtx)
+		ImGui::OpenPopup("@Btn/Ctx");
+
+	if (openBnrCtx)
+		ImGui::OpenPopup("@Bnr/Ctx");
+
+	do {
+		VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(8, 8));
+		VariableGuard<decltype(style.ItemSpacing)> guardItemSpacing(&style.ItemSpacing, style.ItemSpacing, ImVec2(8, 4));
+
+		if (ImGui::BeginPopup("@Btn/Ctx")) {
+			if (ImGui::MenuItem(theme()->menuFile_Open())) {
+				Operations::projectStop(rnd, this, project, exec, primitives);
+
+				Operations::fileOpenFile(rnd, this, project, exec);
+			}
+			if (ImGui::MenuItem(theme()->menuFile_OpenDirectory())) {
+				Operations::projectStop(rnd, this, project, exec, primitives);
+
+				Operations::fileOpenDirectory(rnd, this, project, exec);
+			}
+
+			ImGui::EndPopup();
+		}
+
+		if (ImGui::BeginPopup("@Bnr/Ctx")) {
+			ImGui::MenuItem(theme()->menuBanner_FileButtons(), nullptr, bannerFileButtonsVisible());
+
+			ImGui::EndPopup();
+		}
+	} while (false);
 }
 
 void Workspace::assets(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
