@@ -30,6 +30,11 @@ extern "C" {
 }
 #include <assert.h>
 
+#if defined _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable: 4702)   
+#endif /* _MSC_VER */
+
 /*
 ** {===========================================================================
 ** C++ wrapper around Lua
@@ -1208,3 +1213,7 @@ void setLoader(lua_State* L, lua_CFunction loader) {
 }
 
 /* ===========================================================================} */
+
+#if defined _MSC_VER
+#	pragma warning(pop)
+#endif /* _MSC_VER */
