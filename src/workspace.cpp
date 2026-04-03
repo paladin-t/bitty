@@ -3300,7 +3300,15 @@ void Workspace::scene(class Window* wnd, class Renderer* rnd, const class Projec
 		rnd->clear(&col);
 	}
 	if (canvasTexture()->width() != srcSize.x || canvasTexture()->height() != srcSize.y) {
-		canvasTexture()->resize(rnd, srcSize.x, srcSize.y);
+		if (!canvasTexture()->resize(rnd, srcSize.x, srcSize.y)) {
+			fprintf(stderr, "Recreate canvas texture due to device reset.\n");
+
+			canvasTexture(Texture::Ptr(Texture::create()));
+			canvasTexture()->scale(canvasScaleMode());
+			canvasTexture()->blend(Texture::BLEND);
+
+			primitives->canvas(canvasTexture());
+		}
 	}
 
 	// Calculate the widget area.
