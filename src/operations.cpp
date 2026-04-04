@@ -3436,6 +3436,8 @@ void Operations::projectRun(class Renderer* rnd, Workspace* ws, const class Proj
 
 		do {
 			Asset* infoAsset = prj->info();
+			if (!infoAsset)
+				break;
 			infoAsset->prepare(Asset::RUNNING, false);
 			Object::Ptr &infoObj = infoAsset->object(Asset::RUNNING);
 			if (!infoObj)

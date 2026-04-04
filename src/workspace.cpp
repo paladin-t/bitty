@@ -624,7 +624,7 @@ void Workspace::refreshWindowTitle(const class Project* project) {
 #else /* BITTY_DEBUG */
 	std::string wndTitle = std::string(BITTY_TITLE " v" BITTY_VERSION_STRING);
 #endif /* BITTY_DEBUG */
-	if (project) {
+	if (project && !project->path().empty()) {
 		const std::string abspath = Path::absoluteOf(project->path());
 		wndTitle += std::string("  [") + project->title() + " - " + abspath + std::string("]");
 		// Or use the following line instead to show title only.
