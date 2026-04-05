@@ -97,6 +97,7 @@ public:
 	BITTY_PROPERTY_READONLY(std::string, menuFile)
 	BITTY_PROPERTY_READONLY(std::string, menuFile_New)
 	BITTY_PROPERTY_READONLY(std::string, menuFile_Open)
+	BITTY_PROPERTY_READONLY(std::string, menuFile_OpenFile)
 	BITTY_PROPERTY_READONLY(std::string, menuFile_OpenDirectory)
 	BITTY_PROPERTY_READONLY(std::string, menuFile_OpenExamples)
 	BITTY_PROPERTY_READONLY(std::string, menuFile_OpenRecent)

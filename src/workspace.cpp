@@ -1675,6 +1675,7 @@ void Workspace::banner(class Window* /* wnd */, class Renderer* rnd, const class
 
 	bool openBtnCtx = false;
 	bool openBnrCtx = false;
+	ImVec2 btnCtxPos;
 	ImGui::SetNextWindowPos(ImVec2(0.0f, menuHeight()), ImGuiCond_Always);
 	ImGui::SetNextWindowSize(
 		ImVec2((float)rnd->width(), bannerHeight()),
@@ -1710,9 +1711,11 @@ void Workspace::banner(class Window* /* wnd */, class Renderer* rnd, const class
 				Operations::fileOpenFile(rnd, this, project, exec);
 			}
 			ImGui::SameLine();
+			btnCtxPos.x = ImGui::GetCursorPosX();
 			if (ImGui::ImageButton(theme()->iconOpenMore()->pointer(rnd), smallButtonSize)) {
 				openBtnCtx = true;
 			}
+			btnCtxPos.y = ImGui::GetCursorPosY() + 17;
 			ImGui::SameLine();
 			if (prjDirty) {
 				if (ImGui::ImageButton(theme()->iconSave()->pointer(rnd), buttonSize)) {
@@ -1846,8 +1849,11 @@ void Workspace::banner(class Window* /* wnd */, class Renderer* rnd, const class
 		VariableGuard<decltype(style.WindowPadding)> guardWindowPadding(&style.WindowPadding, style.WindowPadding, ImVec2(8, 8));
 		VariableGuard<decltype(style.ItemSpacing)> guardItemSpacing(&style.ItemSpacing, style.ItemSpacing, ImVec2(8, 4));
 
+		if (ImGui::IsPopupOpen("@Btn/Ctx")) {
+			ImGui::SetNextWindowPos(btnCtxPos, ImGuiCond_Always);
+		}
 		if (ImGui::BeginPopup("@Btn/Ctx")) {
-			if (ImGui::MenuItem(theme()->menuFile_Open())) {
+			if (ImGui::MenuItem(theme()->menuFile_OpenFile())) {
 				Operations::projectStop(rnd, this, project, exec, primitives);
 
 				Operations::fileOpenFile(rnd, this, project, exec);

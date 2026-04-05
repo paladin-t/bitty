@@ -167,6 +167,7 @@ bool Theme::open(class Renderer* rnd) {
 	menuFile("File");
 	menuFile_New("New");
 	menuFile_Open("Open...");
+	menuFile_OpenFile("Open File...");
 	menuFile_OpenDirectory("Open Directory...");
 	menuFile_OpenExamples("Open Examples");
 	menuFile_OpenRecent("Open Recent");
