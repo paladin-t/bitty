@@ -17,8 +17,8 @@
 - [Compiling from Source](#compiling-from-source)
 	- [Startup Project](#startup-project)
 	- [Windows](#windows)
-	- [MacOS](#macos)
 	- [Linux](#linux)
+	- [MacOS](#macos)
 	- [Other Platforms](#other-platforms)
 - [Community and Contributing](#community-and-contributing)
 - [Documentation](#documentation)
@@ -197,33 +197,6 @@ Dependencies: Visual Studio (with C++ development tools installed).
 
 </details>
 
-### MacOS
-
-Dependencies: Xcode.
-
-<details>
-<summary>Steps</summary>
-
-1. Build cURL
-	1. Execute:
-		```sh
-		cd lib/curl
-		./MacOSX-Framework
-		cd ../..
-		```
-2. Build SDL2
-	1. Compile framework from "lib/sdl/Xcode/SDL/SDL.xcodeproj"
-	2. Reveal "SDL2.framework" in Finder
-	3. Copy "SDL2.framework" to both "lib/sdl/lib/" and "/Library/Frameworks/" (used in following step)
-3. Build SDL2_mixer
-	1. Compile framework from "lib/sdl_mixer/Xcode/SDL_mixer.xcodeproj"
-	2. Reveal "SDL2_mixer.framework" in Finder
-	3. Copy "SDL2_mixer.framework" to "lib/sdl_mixer/lib/"
-4. Build Bitty Engine
-	1. Compile from "bitty.xcodeproj"
-
-</details>
-
 ### Linux
 
 Dependencies: CMake, GCC.
@@ -289,6 +262,33 @@ cd bitty.linux
 cmake . -DBITTY_LIB_CURL_USE_LOCAL=FALSE -DBITTY_LIB_LIBUV_USE_LOCAL=FALSE -DBITTY_LIB_SDL_USE_LOCAL=FALSE && make
 cd ..
 ```
+
+</details>
+
+### MacOS
+
+Dependencies: Xcode.
+
+<details>
+<summary>Steps</summary>
+
+1. Build cURL
+	1. Execute:
+		```sh
+		cd lib/curl
+		./build_macos.sh
+		cd ../..
+		```
+2. Build SDL2
+	1. Compile framework from "lib/sdl/Xcode/SDL/SDL.xcodeproj"
+	2. Reveal "SDL2.framework" in Finder
+	3. Copy "SDL2.framework" to both "lib/sdl/lib/" and "/Library/Frameworks/" (used in following step)
+3. Use pre-built "lib/sdl_mixer/lib/SDL2_mixer.framework" or build SDL2_mixer
+	1. Compile framework from "lib/sdl_mixer/Xcode/SDL_mixer.xcodeproj"
+	2. Reveal "SDL2_mixer.framework" in Finder
+	3. Copy "SDL2_mixer.framework" to "lib/sdl_mixer/lib/"
+4. Build Bitty Engine
+	1. Compile from "bitty.xcodeproj"
 
 </details>
 
