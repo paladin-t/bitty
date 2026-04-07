@@ -1,3 +1,16 @@
+### v1.8.0 Apr. 7, 2026
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added native Apple Silicon support
+* Added namespace `Bitty` to the source code of the engine
+* Added new, open, and save buttons to the banner area
+* Improved `Path.documentDirectory` fallback on Windows
+* Improved `Path.savedGamesDirectory` fallback on Windows
+* Fixed memory leak of `Path.savedGamesDirectory` on Windows
+* Fixed a game canvas reset issue when switching fullscreen mode
+* Fixed a crash bug when running an empty project
+
 ### v1.7.1 Mar. 24, 2026
 
 Enhanced modules, improved usability, fixed some bugs.
