@@ -1,0 +1,6 @@
+framework module gme {
+  umbrella header "gme.h"
+  export *
+
+  module * { export * }
+}

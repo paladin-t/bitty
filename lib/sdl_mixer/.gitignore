@@ -14,7 +14,7 @@
 
 /build
 
-/lib/*.framework
+# /lib/*.framework
 
 /lib/x64/*.lib
 /lib/x64/*.dll

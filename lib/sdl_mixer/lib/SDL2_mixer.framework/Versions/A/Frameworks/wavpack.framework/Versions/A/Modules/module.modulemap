@@ -1,0 +1,6 @@
+framework module wavpack {
+  umbrella header "wavpack.h"
+  export *
+
+  module * { export * }
+}
