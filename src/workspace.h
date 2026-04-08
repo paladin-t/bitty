@@ -386,6 +386,8 @@ protected:
 	BITTY_PROPERTY_READONLY(bool, assetsFilteringInitialized)
 	BITTY_PROPERTY(std::string, assetsFilterInput)
 	BITTY_PROPERTY(Text::Array, assetsFilterPatterns)
+	BITTY_PROPERTY_READONLY(bool, assetsExpandAllDirectories)
+	BITTY_PROPERTY_READONLY(bool, assetsCollapseAllDirectories)
 
 	BITTY_PROPERTY_READONLY(Rect, bodyArea)
 

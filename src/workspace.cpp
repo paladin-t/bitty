@@ -468,6 +468,8 @@ bool Workspace::open(class Window* wnd, class Renderer* rnd, const class Project
 	assetsEditingIndex(-1);
 	assetsFiltering(false);
 	assetsFilteringInitialized(false);
+	assetsExpandAllDirectories(false);
+	assetsCollapseAllDirectories(false);
 
 	bodyArea(Rect(0.0f, 0.0f, 0.0f, 0.0f));
 
@@ -1958,15 +1960,24 @@ void Workspace::assets(class Window* wnd, class Renderer* rnd, const class Proje
 			);
 		};
 
+		const bool expandAll = assetsExpandAllDirectories();
+		const bool collapseAll = !expandAll && assetsCollapseAllDirectories();
+		assetsExpandAllDirectories(false);
+		assetsCollapseAllDirectories(false);
 		ImGui::Hierarchy hierarchy(
 			[&] (const std::string &dir) -> ImGui::Hierarchy::States {
-				ImGui::Hierarchy::States result;
-				ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanFullWidth;
-				result.opened = ImGui::TreeNode(
-					theme()->sliceDirectory()->pointer(rnd), theme()->sliceDirectory_Open()->pointer(rnd),
-					dir,
-					flags, ImGuiButtonFlags_None,
-					theme()->style()->iconColor
+				if (expandAll)
+					ImGui::SetNextItemOpen(true, ImGuiCond_Always);
+				else if (collapseAll)
+					ImGui::SetNextItemOpen(false, ImGuiCond_Always);
+				const ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanFullWidth;
+				const ImGui::Hierarchy::States result(
+					ImGui::TreeNode(
+						theme()->sliceDirectory()->pointer(rnd), theme()->sliceDirectory_Open()->pointer(rnd),
+						dir,
+						flags, ImGuiButtonFlags_None,
+						theme()->style()->iconColor
+					)
 				);
 
 				return result;
@@ -3697,9 +3708,16 @@ void Workspace::showAssetContextMenu(class Window* wnd, class Renderer* rnd, con
 			Operations::projectExport(rnd, this, project);
 		}
 #endif /* BITTY_TRIAL_ENABLED */
+		ImGui::Separator();
+		if (ImGui::MenuItem(theme()->menuProject_ExpandAll())) {
+			assetsExpandAllDirectories(true);
+		}
+		if (ImGui::MenuItem(theme()->menuProject_CollapseAll())) {
+			assetsCollapseAllDirectories(true);
+		}
 		if (prjPersisted) {
 			ImGui::Separator();
-			if (ImGui::MenuItem(theme()->menuProject_Reload())) {
+			if (ImGui::MenuItem(theme()->menuProject_ReloadProject())) {
 				Operations::projectStop(rnd, this, project, exec, primitives);
 
 				Operations::projectReload(rnd, this, project, exec);

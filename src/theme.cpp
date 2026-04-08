@@ -221,7 +221,10 @@ bool Theme::open(class Renderer* rnd) {
 	menuProject_AddFile("Add File...");
 	menuProject_Import("Import...");
 	menuProject_Export("Export...");
+	menuProject_ExpandAll("Expand All");
+	menuProject_CollapseAll("Collapse All");
 	menuProject_Reload("Reload");
+	menuProject_ReloadProject("Reload Project");
 	menuProject_Browse("Browse...");
 	menuProject_Explore("Explore...");
 
