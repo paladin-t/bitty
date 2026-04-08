@@ -89,14 +89,21 @@ public:
 
 class Hierarchy {
 public:
-	typedef std::function<bool(const std::string &)> BeginHandler;
+	struct States {
+		bool opened = false;
+
+		States();
+		explicit States(bool opened_);
+	};
+
+	typedef std::function<States(const std::string &)> BeginHandler;
 	typedef std::function<void(void)> EndHandler;
 
 private:
 	BeginHandler _begin = nullptr;
 	EndHandler _end = nullptr;
 
-	std::stack<bool> _opened;
+	std::stack<States> _stack;
 	int _dec = 0;
 	Bitty::Text::Array _inc;
 	Bitty::Text::Array _path;
@@ -107,7 +114,7 @@ public:
 	void prepare(void);
 	void finish(void);
 
-	bool with(Bitty::Text::Array::const_iterator begin, Bitty::Text::Array::const_iterator end);
+	States with(Bitty::Text::Array::const_iterator begin, Bitty::Text::Array::const_iterator end);
 };
 
 class PopupBox {

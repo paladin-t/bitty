@@ -61,42 +61,52 @@ void Initializer::reset(void) {
 	_ticks = 0;
 }
 
+Hierarchy::States::States() {
+}
+
+Hierarchy::States::States(bool opened_) :
+	opened(opened_)
+{
+}
+
 Hierarchy::Hierarchy(BeginHandler begin, EndHandler end) : _begin(begin), _end(end) {
 }
 
 void Hierarchy::prepare(void) {
-	_opened.push(true);
+	_stack.push(States(true));
 }
 
 void Hierarchy::finish(void) {
-	while (_opened.size() > 1) {
-		if (_opened.top() && _end)
+	while (_stack.size() > 1) {
+		if (_stack.top().opened && _end)
 			_end();
-		_opened.pop();
+		_stack.pop();
 	}
 }
 
-bool Hierarchy::with(Bitty::Text::Array::const_iterator begin, Bitty::Text::Array::const_iterator end) {
+Hierarchy::States Hierarchy::with(Bitty::Text::Array::const_iterator begin, Bitty::Text::Array::const_iterator end) {
 	Bitty::Compare::diff(begin, end, _path.begin(), _path.end(), &_dec, &_inc); // Calculate difference between the current entry and the last `path`.
 	_path.assign(begin, end); // Assign for calculation during the next loop step.
 
 	for (int i = 0; i < _dec; ++i) {
-		if (_opened.top() && _end)
+		if (_stack.top().opened && _end)
 			_end();
-		_opened.pop();
+		_stack.pop();
 	}
 	for (const std::string &dir : _inc) {
-		if (_opened.top()) {
-			if (_begin)
-				_opened.push(_begin(dir));
-			else
-				_opened.push(false);
+		if (_stack.top().opened) {
+			if (_begin) {
+				const States s = _begin(dir);
+				_stack.push(s);
+			} else {
+				_stack.push(States(false));
+			}
 		} else {
-			_opened.push(false);
+			_stack.push(States(false));
 		}
 	}
 
-	return _opened.top();
+	return _stack.top();
 }
 
 PopupBox::PopupBox() {
@@ -2364,8 +2374,8 @@ void AssetSelectAll(
 	selected.clear();
 
 	Hierarchy hierarchy(
-		[] (const std::string &) -> bool {
-			return true;
+		[] (const std::string &) -> Hierarchy::States {
+			return Hierarchy::States(true);
 		},
 		[] (void) -> void {
 		}
@@ -2392,7 +2402,8 @@ void AssetSelectAll(
 					end = entry.parts().end();
 				}
 
-				if (hierarchy.with(begin, end)) {
+				const Hierarchy::States s = hierarchy.with(begin, end);
+				if (s.opened) {
 					const std::string &full = entry.name();
 					selected.insert(full);
 				}
@@ -2417,8 +2428,10 @@ bool AssetSelector(
 		*total = 0;
 
 	Hierarchy hierarchy(
-		[&] (const std::string &dir) -> bool {
-			return TreeNode(dir_tex_id, open_dir_tex_id, dir, ImGuiTreeNodeFlags_None, ImGuiButtonFlags_None, col);
+		[&] (const std::string &dir) -> Hierarchy::States {
+			return Hierarchy::States(
+				TreeNode(dir_tex_id, open_dir_tex_id, dir, ImGuiTreeNodeFlags_None, ImGuiButtonFlags_None, col)
+			);
 		},
 		[] (void) -> void {
 			TreePop();
@@ -2449,7 +2462,8 @@ bool AssetSelector(
 					end = entry.parts().end();
 				}
 
-				if (hierarchy.with(begin, end)) {
+				const Hierarchy::States s = hierarchy.with(begin, end);
+				if (s.opened) {
 					const std::string &file = entry.parts().back();
 					const std::string &full = entry.name();
 					const Bitty::Text::Set::iterator it = selected.find(full);
@@ -2489,8 +2503,10 @@ bool AssetSelector(
 		*total = 0;
 
 	Hierarchy hierarchy(
-		[&] (const std::string &dir) -> bool {
-			return TreeNode(dir_tex_id, open_dir_tex_id, dir, ImGuiTreeNodeFlags_None, ImGuiButtonFlags_None, col);
+		[&] (const std::string &dir) -> Hierarchy::States {
+			return Hierarchy::States(
+				TreeNode(dir_tex_id, open_dir_tex_id, dir, ImGuiTreeNodeFlags_None, ImGuiButtonFlags_None, col)
+			);
 		},
 		[] (void) -> void {
 			TreePop();
@@ -2521,7 +2537,8 @@ bool AssetSelector(
 					end = entry.parts().end();
 				}
 
-				if (hierarchy.with(begin, end)) {
+				const Hierarchy::States s = hierarchy.with(begin, end);
+				if (s.opened) {
 					const std::string &file = entry.parts().back();
 					ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
 					if (selected == entry.name()) {
@@ -2553,8 +2570,10 @@ bool AssetMenu(
 	bool result = false;
 
 	Hierarchy hierarchy(
-		[] (const std::string &dir) -> bool {
-			return BeginMenu(dir);
+		[] (const std::string &dir) -> Hierarchy::States {
+			return Hierarchy::States(
+				BeginMenu(dir)
+			);
 		},
 		[] (void) -> void {
 			EndMenu();
@@ -2582,7 +2601,8 @@ bool AssetMenu(
 					end = entry.parts().end();
 				}
 
-				if (hierarchy.with(begin, end)) {
+				const Hierarchy::States s = hierarchy.with(begin, end);
+				if (s.opened) {
 					const std::string &file = entry.parts().back();
 					ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
 					if (selected == entry.name()) {
@@ -2613,8 +2633,10 @@ bool ExampleMenu(
 	selected.clear();
 
 	Hierarchy hierarchy(
-		[] (const std::string &dir) -> bool {
-			return BeginMenu(dir);
+		[] (const std::string &dir) -> Hierarchy::States {
+			return Hierarchy::States(
+				BeginMenu(dir)
+			);
 		},
 		[] (void) -> void {
 			EndMenu();
@@ -2632,7 +2654,8 @@ bool ExampleMenu(
 			end = entry.parts().end();
 		}
 
-		if (hierarchy.with(begin, end)) {
+		const Hierarchy::States s = hierarchy.with(begin, end);
+		if (s.opened) {
 			std::string file = entry.parts().back();
 			const std::string dotBit = "." BITTY_PROJECT_EXT;
 			if (Bitty::Text::endsWith(file, dotBit, true))
@@ -2661,8 +2684,10 @@ bool PluginMenu(
 	selected = nullptr;
 
 	Hierarchy hierarchy(
-		[] (const std::string &dir) -> bool {
-			return BeginMenu(dir);
+		[] (const std::string &dir) -> Hierarchy::States {
+			return Hierarchy::States(
+				BeginMenu(dir)
+			);
 		},
 		[] (void) -> void {
 			EndMenu();
@@ -2688,7 +2713,8 @@ bool PluginMenu(
 			end = entry.parts().end();
 		}
 
-		if (hierarchy.with(begin, end)) {
+		const Hierarchy::States s = hierarchy.with(begin, end);
+		if (s.opened) {
 			std::string file = entry.parts().back();
 			const std::string dotBit = "." BITTY_PROJECT_EXT;
 			if (Bitty::Text::endsWith(file, dotBit, true))
@@ -2716,8 +2742,10 @@ bool DocumentMenu(
 	selected.clear();
 
 	Hierarchy hierarchy(
-		[] (const std::string &dir) -> bool {
-			return BeginMenu(dir);
+		[] (const std::string &dir) -> Hierarchy::States {
+			return Hierarchy::States(
+				BeginMenu(dir)
+			);
 		},
 		[] (void) -> void {
 			EndMenu();
@@ -2735,7 +2763,8 @@ bool DocumentMenu(
 			end = entry.parts().end();
 		}
 
-		if (hierarchy.with(begin, end)) {
+		const Hierarchy::States s = hierarchy.with(begin, end);
+		if (s.opened) {
 			std::string file = entry.parts().back();
 			const std::string dotBit = "." BITTY_PROJECT_EXT;
 			if (Bitty::Text::endsWith(file, dotBit, true))

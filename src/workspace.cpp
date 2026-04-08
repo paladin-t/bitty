@@ -1959,13 +1959,17 @@ void Workspace::assets(class Window* wnd, class Renderer* rnd, const class Proje
 		};
 
 		ImGui::Hierarchy hierarchy(
-			[&] (const std::string &dir) -> bool {
-				return ImGui::TreeNode(
+			[&] (const std::string &dir) -> ImGui::Hierarchy::States {
+				ImGui::Hierarchy::States result;
+				ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanFullWidth;
+				result.opened = ImGui::TreeNode(
 					theme()->sliceDirectory()->pointer(rnd), theme()->sliceDirectory_Open()->pointer(rnd),
 					dir,
-					ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanFullWidth, ImGuiButtonFlags_None,
+					flags, ImGuiButtonFlags_None,
 					theme()->style()->iconColor
 				);
+
+				return result;
 			},
 			[] (void) -> void {
 				ImGui::TreePop();
@@ -2010,7 +2014,8 @@ void Workspace::assets(class Window* wnd, class Renderer* rnd, const class Proje
 						end = entry.parts().end();
 					}
 
-					if (hierarchy.with(begin, end)) {
+					const ImGui::Hierarchy::States s = hierarchy.with(begin, end);
+					if (s.opened) {
 						const std::string &file = entry.parts().back();
 						ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanFullWidth;
 						if (states->selected()) {
