@@ -147,6 +147,7 @@ public:
 		Error(const std::string &msg, bool isWarning_, bool withLineNumber_);
 	};
 	typedef std::map<int, Error> ErrorMarkers;
+
 	typedef std::unordered_map<int, bool> Breakpoints;
 
 	typedef std::array<ImU32, (size_t)PaletteIndex::Max> Palette;
@@ -220,6 +221,7 @@ public:
 	typedef std::function<bool(ImGuiKey)> KeyPressed;
 	typedef std::function<ImVec2(const ImVec2 &)> ImePositionUpdated;
 
+	typedef std::function<bool(int)> IsDeadLine;
 	typedef std::function<void(bool)> Colorized;
 	typedef std::function<void(bool)> Modified;
 	typedef std::function<void(int, bool)> HeadClicked;
@@ -253,6 +255,7 @@ public:
 	ImePositionUpdated GetImePositionUpdatedHandler(void) const;
 	void SetImePositionUpdatedHandler(const ImePositionUpdated &aHandler);
 	void SetKeyPressedHandler(const KeyPressed &aHandler);
+	void SetIsDeadLineHandler(const IsDeadLine &aHandler);
 	void SetColorizedHandler(const Colorized &aHandler);
 	void SetModifiedHandler(const Modified &aHandler);
 	void SetHeadClickedHandler(const HeadClicked &aHandler);
@@ -431,7 +434,7 @@ protected:
 
 	typedef std::vector<UndoRecord> UndoBuffer;
 
-	void RenderText(int &aOffset, const ImVec2 &aPosition, ImU32 aPalette, ImU32 aColor, const char* aText, const std::list<Glyph> &aGlyphs, int aWidth, int aNonAsciiCount);
+	void RenderText(int ln, int &aOffset, const ImVec2 &aPosition, ImU32 aPalette, ImU32 aColor, const char* aText, const std::list<Glyph> &aGlyphs, int aWidth, int aNonAsciiCount);
 	void Colorize(int aFromLine = 0, int aCount = -1);
 	void ColorizeRange(int aFromLine = 0, int aToLine = 0);
 	bool ColorizeMultilineComments(void);
@@ -496,6 +499,7 @@ protected:
 	} LastAutoIndent;
 	ImePositionUpdated ImePositionUpdatedHandler;
 	KeyPressed KeyPressedHandler;
+	IsDeadLine IsDeadLineHandler;
 	Colorized ColorizedHandler;
 	Modified ModifiedHandler;
 	HeadClicked HeadClickedHandler;

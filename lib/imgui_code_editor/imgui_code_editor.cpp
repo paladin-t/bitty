@@ -1584,7 +1584,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 							color == (unsigned)PaletteIndex::Identifier && prevColor == (unsigned)PaletteIndex::Default);
 				if (!sameColor && !TextBuffer.empty()) {
 					const ImU32 targetColor = prevColor >= (ImU32)PaletteIndex::Max ? prevColor : Plt[(int)prevColor];
-					RenderText(offset, textScreenPos, prevColor, targetColor, TextBuffer.c_str(), GlyphBuffer, width, nonAsciiCount);
+					RenderText(lineNo, offset, textScreenPos, prevColor, targetColor, TextBuffer.c_str(), GlyphBuffer, width, nonAsciiCount);
 					textScreenPos.x += CharAdv.x * width;
 					TextBuffer.clear();
 					GlyphBuffer.clear();
@@ -1599,7 +1599,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 
 			if (!TextBuffer.empty()) {
 				const ImU32 targetColor = prevColor >= (ImU32)PaletteIndex::Max ? prevColor : Plt[(int)prevColor];
-				RenderText(offset, textScreenPos, prevColor, targetColor, TextBuffer.c_str(), GlyphBuffer, width, nonAsciiCount);
+				RenderText(lineNo, offset, textScreenPos, prevColor, targetColor, TextBuffer.c_str(), GlyphBuffer, width, nonAsciiCount);
 				TextBuffer.clear();
 				GlyphBuffer.clear();
 			}
@@ -1788,6 +1788,10 @@ void CodeEditor::SetImePositionUpdatedHandler(const ImePositionUpdated &aHandler
 
 void CodeEditor::SetKeyPressedHandler(const KeyPressed &aHandler) {
 	KeyPressedHandler = aHandler;
+}
+
+void CodeEditor::SetIsDeadLineHandler(const IsDeadLine &aHandler) {
+	IsDeadLineHandler = aHandler;
 }
 
 void CodeEditor::SetColorizedHandler(const Colorized &aHandler) {
@@ -3383,8 +3387,20 @@ const CodeEditor::Palette &CodeEditor::GetRetroBluePalette(void) {
 	return plt;
 }
 
-void CodeEditor::RenderText(int &aOffset, const ImVec2 &aPosition, ImU32 aPalette, ImU32 aColor, const char* aText, const std::list<Glyph> &aGlyphs, int aWidth, int aNonAsciiCount) {
+void CodeEditor::RenderText(int ln, int &aOffset, const ImVec2 &aPosition, ImU32 aPalette, ImU32 aColor, const char* aText, const std::list<Glyph> &aGlyphs, int aWidth, int aNonAsciiCount) {
 	ImDrawList* drawList = GetWindowDrawList();
+
+	if (IsDeadLineHandler && IsDeadLineHandler(ln)) {
+		/*aColor &= 0xffffffff & ~(0xff << IM_COL32_A_SHIFT);
+		aColor |= 0x90 << IM_COL32_A_SHIFT;*/
+		ImVec4 col = ColorConvertU32ToFloat4(aColor);
+		float h, s, v;
+		ColorConvertRGBtoHSV(col.x, col.y, col.z, h, s, v);
+		s *= 0.3f;
+		ColorConvertHSVtoRGB(h, s, v, col.x, col.y, col.z);
+		col.w = 0.8f;
+		aColor = ColorConvertFloat4ToU32(col);
+	}
 
 	const bool procSpaces =
 		(aPalette == (ImU32)PaletteIndex::Default) ||
