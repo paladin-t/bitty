@@ -4410,6 +4410,21 @@ static int File_writeLine(lua_State* L) {
 	return write(L, 0);
 }
 
+static int File_flush(lua_State* L) {
+	File::Ptr* obj = nullptr;
+
+	if (obj) {
+		obj->get()->flush();
+
+		return 0;
+	} else {
+		error(L, "File expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
 static void open_File(lua_State* L) {
 	def(
 		L, "File",
@@ -4455,6 +4470,7 @@ static void open_File(lua_State* L) {
 			luaL_Reg{ "writeBytes", File_writeBytes },
 			luaL_Reg{ "writeString", File_writeString },
 			luaL_Reg{ "writeLine", File_writeLine },
+			luaL_Reg{ "flush", File_flush },
 			luaL_Reg{ nullptr, nullptr }
 		),
 		nullptr, nullptr
