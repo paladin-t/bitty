@@ -11,6 +11,14 @@
 #include "bytes.h"
 #include "encoding.h"
 #include "file_handle.h"
+#if defined BITTY_OS_WIN
+#	include <io.h>
+#elif defined BITTY_OS_MAC
+#	include <fcntl.h>
+#	include <unistd.h>
+#elif defined BITTY_OS_LINUX
+#	include <unistd.h>
+#endif /* Platform macro. */
 
 /*
 ** {===========================================================================
@@ -454,6 +462,21 @@ public:
 		fputc('\n', _file);
 
 		return 1;
+	}
+
+	virtual void flush(void) override {
+		if (!_file)
+			return;
+
+		fflush(_file);
+
+#if defined BITTY_OS_WIN
+		_commit(_fileno(_file));
+#elif defined BITTY_OS_MAC
+		fcntl(fileno(fp), F_FULLFSYNC);;
+#elif defined BITTY_OS_LINUX
+		fsync(_fileno(_file));
+#endif /* Platform macro. */
 	}
 
 private:

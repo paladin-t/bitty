@@ -418,6 +418,10 @@ public:
 		return 1;
 	}
 
+	virtual void flush(void) override {
+		// Do nothing.
+	}
+
 	virtual const Byte &get(size_t index) const override {
 		return _collection.at(index);
 	}

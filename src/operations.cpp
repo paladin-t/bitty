@@ -3576,6 +3576,8 @@ void Operations::projectStop(class Renderer* rnd, Workspace* ws, const class Pro
 	ws->refreshWindowTitle(project);
 
 	ws->currentState(exec ? exec->current() : Executable::READY);
+
+	ws->flushLogFile();
 }
 
 void Operations::debugBreak(Workspace* ws, const class Project*, Executable* exec) {

@@ -755,6 +755,17 @@ bool Workspace::closeLogFile(void) {
 	return true;
 }
 
+bool Workspace::flushLogFile(void) {
+	LockGuard<decltype(logLock())> guard(logLock());
+
+	if (!logFile())
+		return false;
+
+	logFile()->flush();
+
+	return true;
+}
+
 #if BITTY_BAKE_ENABLED
 #	if !BITTY_MULTITHREAD_ENABLED
 void Workspace::touchBake(void) {

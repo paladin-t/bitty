@@ -506,9 +506,22 @@ public:
 	 */
 	virtual unsigned update(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, unsigned fps, bool alive, bool* indicated) = 0;
 
+	/**
+	 * @brief Gets whether the log file is opened.
+	 */
 	bool isLogFileOpened(void);
+	/**
+	 * @brief Opens the log file.
+	 */
 	bool openLogFile(void);
+	/**
+	 * @brief Closes the log file.
+	 */
 	bool closeLogFile(void);
+	/**
+	 * @brief Flushes the log file onto disk.
+	 */
+	bool flushLogFile(void);
 
 #if BITTY_BAKE_ENABLED
 #	if !BITTY_MULTITHREAD_ENABLED

@@ -100,6 +100,8 @@ public:
 	virtual int writeLine(const char* val) = 0;
 	virtual int writeLine(const std::string &val) = 0;
 	virtual int writeLine(void) = 0;
+
+	virtual void flush(void) = 0;
 };
 
 }
