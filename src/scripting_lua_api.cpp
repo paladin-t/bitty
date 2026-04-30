@@ -1083,8 +1083,6 @@ static int message(lua_State* L, MessageTypes type) {
 			return error(L, "`tostring` must return a string to `print`.");
 
 		msg += str;
-		if (i > 1)
-			msg += "\t";
 
 		pop(L); // Pop result.
 	}

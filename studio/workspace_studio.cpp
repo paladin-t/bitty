@@ -1894,10 +1894,15 @@ void WorkspaceStudio::showPreferences(class Window* wnd, class Renderer*, const 
 
 			if (sets.debugLogEnabled != settings()->debugLogEnabled) {
 				settings()->debugLogEnabled = sets.debugLogEnabled;
-				if (!isLogFileOpened() && sets.debugLogEnabled)
-					openLogFile();
-				else if (isLogFileOpened() && !sets.debugLogEnabled)
+				if (isLogFileOpened() && !sets.debugLogEnabled)
 					closeLogFile();
+			}
+			if (sets.debugLogPath != settings()->debugLogPath) {
+				settings()->debugLogPath = sets.debugLogPath;
+				if (isLogFileOpened()) {
+					closeLogFile();
+					openLogFile();
+				}
 			}
 
 			primitives->input()->config(sets.inputGamepads, INPUT_GAMEPAD_COUNT);

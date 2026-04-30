@@ -452,10 +452,6 @@ promise::Defer Operations::fileNew(class Renderer* rnd, Workspace* ws, const cla
 			prj->add(asset);
 		}
 
-		if (ws->isLogFileOpened())
-			ws->closeLogFile();
-		ws->openLogFile();
-
 		df.resolve(true);
 	};
 
@@ -542,10 +538,6 @@ promise::Defer Operations::fileOpenFile(class Renderer* rnd, Workspace* ws, cons
 		ws->touchedFile(path_.c_str());
 
 		ws->refreshWindowTitle(prj);
-
-		if (ws->isLogFileOpened())
-			ws->closeLogFile();
-		ws->openLogFile();
 
 		df.resolve(true);
 
@@ -675,10 +667,6 @@ promise::Defer Operations::fileOpenDirectory(class Renderer* rnd, Workspace* ws,
 
 		ws->refreshWindowTitle(prj);
 
-		if (ws->isLogFileOpened())
-			ws->closeLogFile();
-		ws->openLogFile();
-
 		df.resolve(true);
 
 #if defined BITTY_DEBUG
@@ -744,10 +732,6 @@ promise::Defer Operations::fileOpenExample(class Renderer* rnd, Workspace* ws, c
 		ws->touchedExample(path_.c_str());
 
 		ws->refreshWindowTitle(prj);
-
-		if (ws->isLogFileOpened())
-			ws->closeLogFile();
-		ws->openLogFile();
 
 		df.resolve(true);
 	};
@@ -939,8 +923,6 @@ promise::Defer Operations::fileClose(class Renderer* rnd, Workspace* ws, const c
 						} while (false);
 
 						ws->refreshWindowTitle(nullptr);
-
-						ws->closeLogFile();
 
 						df.resolve(arg);
 					}
@@ -3450,6 +3432,10 @@ void Operations::projectRun(class Renderer* rnd, Workspace* ws, const class Proj
 		if (!prj)
 			break;
 
+		if (ws->isLogFileOpened())
+			ws->closeLogFile();
+		ws->openLogFile();
+
 		prj->cleanup(Asset::RUNNING);
 
 		do {
@@ -3576,6 +3562,8 @@ void Operations::projectStop(class Renderer* rnd, Workspace* ws, const class Pro
 	ws->refreshWindowTitle(project);
 
 	ws->currentState(exec ? exec->current() : Executable::READY);
+
+	ws->closeLogFile();
 
 	ws->flushLogFile();
 }

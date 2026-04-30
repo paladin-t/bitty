@@ -12,6 +12,7 @@
 #include "theme_studio.h"
 #include "widgets_studio.h"
 #include "../src/effects.h"
+#include "../src/filesystem.h"
 #include "../src/platform.h"
 #include "../src/primitives.h"
 #include "../src/renderer.h"
@@ -216,8 +217,10 @@ void PreferencesPopupBox::update(void) {
 
 						SetNextItemWidth(GetContentRegionAvail().x);
 						if (_settingsShadow.debugLogEnabled) {
-							if (InputText("", _logPathBuffer, sizeof(_logPathBuffer), ImGuiInputTextFlags_AutoSelectAll))
+							if (InputText("", _logPathBuffer, sizeof(_logPathBuffer), ImGuiInputTextFlags_AutoSelectAll)) {
 								_settingsShadow.debugLogPath = _logPathBuffer;
+								Bitty::Path::uniform(_settingsShadow.debugLogPath);
+							}
 						} else {
 							BeginDisabled();
 							{

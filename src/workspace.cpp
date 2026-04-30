@@ -1377,7 +1377,9 @@ bool Workspace::load(class Window* wnd, class Renderer* rnd, const class Project
 
 	Jpath::get(doc, settings()->debugVisible, "debug", "visible");
 	Jpath::get(doc, settings()->debugLogEnabled, "debug", "log_enabled");
-	if (!Jpath::get(doc, settings()->debugLogPath, "debug", "log_path") || settings()->debugLogPath.empty()) {
+	if (Jpath::get(doc, settings()->debugLogPath, "debug", "log_path") && !settings()->debugLogPath.empty()) {
+		Path::uniform(settings()->debugLogPath);
+	} else {
 		const std::string writableDir = Path::writableDirectory();
 		const std::string logPath = Path::combine(writableDir.c_str(), "log.txt");
 		settings()->debugLogPath = logPath;
