@@ -8,6 +8,7 @@
 ** For the latest info, see https://github.com/paladin-t/bitty/
 */
 
+#define NOMINMAX
 #include "theme_studio.h"
 #include "widgets_studio.h"
 #include "../src/effects.h"
@@ -52,6 +53,10 @@ PreferencesPopupBox::PreferencesPopupBox(
 	_confirmHandler(confirm), _cancelHandler(cancel), _applyHandler(applyHandler)
 {
 	_settingsShadow = _settings;
+
+	const std::string &logPath = _settingsShadow.debugLogPath;
+	memset(_logPathBuffer, 0, sizeof(_logPathBuffer));
+	memcpy(_logPathBuffer, logPath.c_str(), std::min(sizeof(_logPathBuffer) - 1, logPath.length()));
 
 	if (confirmTxt)
 		_confirmText = confirmTxt;
@@ -187,6 +192,41 @@ void PreferencesPopupBox::update(void) {
 					TextUnformatted(_theme->windowPreferences_Editor_Console());
 
 					Checkbox(_theme->windowPreferences_Editor_ClearOnStart(), &_settingsShadow.consoleClearOnStart);
+				}
+				PopID();
+
+				Separator();
+
+				PushID(_theme->windowPreferences_Editor_Log());
+				{
+					TextUnformatted(_theme->windowPreferences_Editor_Log());
+
+					PushID("#Log");
+					{
+						Checkbox(_theme->windowPreferences_Editor_LogToFile(), &_settingsShadow.debugLogEnabled);
+					}
+					PopID();
+
+					PushID("#Logp");
+					{
+						AlignTextToFramePadding();
+						TextUnformatted(_theme->windowPreferences_Editor_LogFilePath());
+
+						SameLine();
+
+						SetNextItemWidth(GetContentRegionAvail().x);
+						if (_settingsShadow.debugLogEnabled) {
+							if (InputText("", _logPathBuffer, sizeof(_logPathBuffer), ImGuiInputTextFlags_AutoSelectAll))
+								_settingsShadow.debugLogPath = _logPathBuffer;
+						} else {
+							BeginDisabled();
+							{
+								InputText("", _logPathBuffer, sizeof(_logPathBuffer), ImGuiInputTextFlags_AutoSelectAll);
+							}
+							EndDisabled();
+						}
+					}
+					PopID();
 				}
 				PopID();
 

@@ -14,7 +14,6 @@
 #include "datetime.h"
 #include "effects.h"
 #include "encoding.h"
-#include "file_handle.h"
 #include "filesystem.h"
 #include "platform.h"
 #include "primitives.h"

@@ -11,7 +11,6 @@
 #include "bytes.h"
 #include "effects.h"
 #include "encoding.h"
-#include "file_handle.h"
 #include "filesystem.h"
 #include "renderer.h"
 #include "window.h"

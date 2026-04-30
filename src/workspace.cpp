@@ -14,7 +14,6 @@
 #include "datetime.h"
 #include "editable.h"
 #include "encoding.h"
-#include "file_handle.h"
 #include "filesystem.h"
 #include "operations.h"
 #include "platform.h"
@@ -701,6 +700,61 @@ void Workspace::touchedExample(const char*) {
 	// Do nothing.
 }
 
+bool Workspace::isLogFileOpened(void) {
+	LockGuard<decltype(logLock())> guard(logLock());
+
+	return !!logFile();
+}
+
+bool Workspace::openLogFile(void) {
+	if (!settings()->debugLogEnabled) // Log is not enabled.
+		return false; // Ignore.
+
+	LockGuard<decltype(logLock())> guard(logLock());
+
+	if (logFile()) // A log file aldready exists.
+		return true; // Ignore.
+
+	if (settings()->debugLogPath.empty())
+		return false;
+
+	logFile(File::Ptr(File::create()));
+	if (!logFile())
+		return false;
+
+	if (!logFile()->open(settings()->debugLogPath.c_str(), Stream::WRITE)) {
+		logFile(nullptr);
+
+		return false;
+	}
+
+	if (!Path::existsFile(settings()->debugLogPath.c_str())) {
+		logFile()->close();
+		logFile(nullptr);
+
+		return false;
+	}
+
+	return true;
+}
+
+bool Workspace::closeLogFile(void) {
+	LockGuard<decltype(logLock())> guard(logLock());
+
+	if (!logFile())
+		return true;
+
+	if (!logFile()->close()) {
+		logFile(nullptr);
+
+		return false;
+	}
+
+	logFile(nullptr);
+
+	return true;
+}
+
 #if BITTY_BAKE_ENABLED
 #	if !BITTY_MULTITHREAD_ENABLED
 void Workspace::touchBake(void) {
@@ -813,61 +867,103 @@ void Workspace::clear(void) {
 }
 
 bool Workspace::print(const char* msg) {
-	LockGuard<decltype(consoleLock())> guard(consoleLock());
+	do {
+		LockGuard<decltype(consoleLock())> guard(consoleLock());
 
 #if defined BITTY_OS_HTML
-	const bool withConsole = false;
+		const bool withConsole = false;
 #else /* BITTY_OS_HTML */
-	const bool withConsole = consoleEnabled();
+		const bool withConsole = consoleEnabled();
 #endif /* BITTY_OS_HTML */
-	if (withConsole) {
-		consoleTextBox()->AppendText(msg, theme()->style()->messageColor);
-		consoleTextBox()->AppendText("\n", theme()->style()->messageColor);
-		consoleTextBox()->MoveBottom();
-	}
+		if (withConsole) {
+			consoleTextBox()->AppendText(msg, theme()->style()->messageColor);
+			consoleTextBox()->AppendText("\n", theme()->style()->messageColor);
+			consoleTextBox()->MoveBottom();
+		}
+	} while (false);
 
 	const std::string osstr = Unicode::toOs(msg);
 	fprintf(stdout, "%s\n", osstr.c_str());
+
+	do {
+		LockGuard<decltype(logLock())> guard(logLock());
+
+		if (!logFile())
+			break;
+
+		std::string tm;
+		DateTime::now(tm);
+		const std::string log = "[MESSAGE " + tm + "] " + osstr + "\n";
+		logFile()->writeString(log);
+	} while (false);
 
 	return true;
 }
 
 bool Workspace::warn(const char* msg) {
-	LockGuard<decltype(consoleLock())> guard(consoleLock());
+	do {
+		LockGuard<decltype(consoleLock())> guard(consoleLock());
 
 #if defined BITTY_OS_HTML
-	const bool withConsole = false;
+		const bool withConsole = false;
 #else /* BITTY_OS_HTML */
-	const bool withConsole = consoleEnabled();
+		const bool withConsole = consoleEnabled();
 #endif /* BITTY_OS_HTML */
-	if (withConsole) {
-		consoleTextBox()->AppendText(msg, theme()->style()->warningColor);
-		consoleTextBox()->AppendText("\n", theme()->style()->warningColor);
-		consoleTextBox()->MoveBottom();
-	}
+		if (withConsole) {
+			consoleTextBox()->AppendText(msg, theme()->style()->warningColor);
+			consoleTextBox()->AppendText("\n", theme()->style()->warningColor);
+			consoleTextBox()->MoveBottom();
+		}
+	} while (false);
 
 	const std::string osstr = Unicode::toOs(msg);
 	fprintf(stderr, "%s\n", osstr.c_str());
+
+	do {
+		LockGuard<decltype(logLock())> guard(logLock());
+
+		if (!logFile())
+			break;
+
+		std::string tm;
+		DateTime::now(tm);
+		const std::string log = "[WARN " + tm + "] " + osstr + "\n";
+		logFile()->writeString(log);
+	} while (false);
 
 	return true;
 }
 
 bool Workspace::error(const char* msg) {
-	LockGuard<decltype(consoleLock())> guard(consoleLock());
+	do {
+		LockGuard<decltype(consoleLock())> guard(consoleLock());
 
 #if defined BITTY_OS_HTML
-	const bool withConsole = false;
+		const bool withConsole = false;
 #else /* BITTY_OS_HTML */
-	const bool withConsole = consoleEnabled();
+		const bool withConsole = consoleEnabled();
 #endif /* BITTY_OS_HTML */
-	if (withConsole) {
-		consoleTextBox()->AppendText(msg, theme()->style()->errorColor);
-		consoleTextBox()->AppendText("\n", theme()->style()->errorColor);
-		consoleTextBox()->MoveBottom();
-	}
+		if (withConsole) {
+			consoleTextBox()->AppendText(msg, theme()->style()->errorColor);
+			consoleTextBox()->AppendText("\n", theme()->style()->errorColor);
+			consoleTextBox()->MoveBottom();
+		}
+	} while (false);
 
 	const std::string osstr = Unicode::toOs(msg);
 	fprintf(stderr, "%s\n", osstr.c_str());
+
+	do {
+		LockGuard<decltype(logLock())> guard(logLock());
+
+		if (!logFile())
+			break;
+
+		std::string tm;
+		DateTime::now(tm);
+		const std::string log = "[ERROR " + tm + "] " + osstr + "\n";
+		logFile()->writeString(log);
+	} while (false);
 
 	return true;
 }
@@ -1269,6 +1365,12 @@ bool Workspace::load(class Window* wnd, class Renderer* rnd, const class Project
 	Jpath::get(doc, settings()->canvasFixRatio, "canvas", "fix_ratio");
 
 	Jpath::get(doc, settings()->debugVisible, "debug", "visible");
+	Jpath::get(doc, settings()->debugLogEnabled, "debug", "log_enabled");
+	if (!Jpath::get(doc, settings()->debugLogPath, "debug", "log_path") || settings()->debugLogPath.empty()) {
+		const std::string writableDir = Path::writableDirectory();
+		const std::string logPath = Path::combine(writableDir.c_str(), "log.txt");
+		settings()->debugLogPath = logPath;
+	}
 
 	Jpath::get(doc, settings()->consoleVisible, "console", "visible");
 	Jpath::get(doc, settings()->consoleClearOnStart, "console", "clear_on_start");
@@ -1381,6 +1483,8 @@ bool Workspace::save(class Window* wnd, class Renderer*, const class Project*, c
 	Jpath::set(doc, doc, settings()->canvasFixRatio, "canvas", "fix_ratio");
 
 	Jpath::set(doc, doc, settings()->debugVisible, "debug", "visible");
+	Jpath::set(doc, doc, settings()->debugLogEnabled, "debug", "log_enabled");
+	Jpath::set(doc, doc, settings()->debugLogPath, "debug", "log_path");
 
 	Jpath::set(doc, doc, settings()->consoleVisible, "console", "visible");
 	Jpath::set(doc, doc, settings()->consoleClearOnStart, "console", "clear_on_start");

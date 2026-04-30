@@ -58,6 +58,7 @@ private:
 	std::string _title;
 	Bitty::WorkspaceStudio::StudioSettings &_settings;
 	Bitty::WorkspaceStudio::StudioSettings _settingsShadow;
+	char _logPathBuffer[BITTY_MAX_PATH]; // Fixed size.
 	int _activeGamepadIndex = -1;
 	int _activeButtonIndex = -1;
 	bool _editable = true;

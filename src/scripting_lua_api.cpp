@@ -15,7 +15,6 @@
 #include "document_viewer.h"
 #include "effects.h"
 #include "encoding.h"
-#include "file_handle.h"
 #include "filesystem.h"
 #include "network.h"
 #include "noiser.h"

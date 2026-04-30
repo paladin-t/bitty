@@ -347,10 +347,13 @@ bool Theme::open(class Renderer* rnd) {
 	windowPreferences_Editor_ColumnIndicator("Comlmn indicator");
 	windowPreferences_Editor_Console("Console:");
 	windowPreferences_Editor_IgnoreDotFiles("Ignore dot files");
-	windowPreferences_Editor_IndentWith("     Indent with");
+	windowPreferences_Editor_IndentWith("Indent with     ");
 	windowPreferences_Editor_LoadLastProjectAtStartup("Load last project at startup");
+	windowPreferences_Editor_Log("Log:");
+	windowPreferences_Editor_LogFilePath("Log file path   ");
+	windowPreferences_Editor_LogToFile("Log to file     ");
 	windowPreferences_Editor_None("None");
-	windowPreferences_Editor_PackageFormat("Package format");
+	windowPreferences_Editor_PackageFormat("Package format  ");
 	windowPreferences_Editor_Project("Project:");
 	windowPreferences_Editor_ShowRecentOpenedProjects("Show recent opened projects");
 	windowPreferences_Editor_ShowWhiteSpaces("Show white spaces");

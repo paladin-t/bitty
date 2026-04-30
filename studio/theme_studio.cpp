@@ -245,7 +245,7 @@ bool ThemeStudio::open(class Renderer* rnd) {
 	styleIndex(DARK);
 
 	windowPreferences_Theme("Theme:");
-	windowPreferences_Style("Style         ");
+	windowPreferences_Style("Style           ");
 
 	fprintf(stdout, "Theme opened.\n");
 

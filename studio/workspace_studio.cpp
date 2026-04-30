@@ -15,7 +15,6 @@
 #include "../src/code.h"
 #include "../src/editable.h"
 #include "../src/encoding.h"
-#include "../src/file_handle.h"
 #include "../src/filesystem.h"
 #include "../src/operations.h"
 #include "../src/platform.h"
@@ -100,6 +99,8 @@ WorkspaceStudio::StudioSettings &WorkspaceStudio::StudioSettings::operator = (co
 	canvasFixRatio = other.canvasFixRatio;
 
 	debugVisible = other.debugVisible;
+	debugLogEnabled = other.debugLogEnabled;
+	debugLogPath = other.debugLogPath;
 
 	consoleVisible = other.consoleVisible;
 	consoleClearOnStart = other.consoleClearOnStart;
@@ -178,6 +179,12 @@ bool WorkspaceStudio::StudioSettings::operator != (const StudioSettings &other) 
 
 	if (debugVisible != other.debugVisible)
 		return true;
+
+	if (debugLogEnabled != other.debugLogEnabled ||
+		debugLogPath != other.debugLogPath
+	) {
+		return true;
+	}
 
 	if (consoleVisible != other.consoleVisible || 
 		consoleClearOnStart != other.consoleClearOnStart
@@ -1883,6 +1890,14 @@ void WorkspaceStudio::showPreferences(class Window* wnd, class Renderer*, const 
 							editor->post(Editable::SET_SHOW_SPACES, sets.editorShowWhiteSpaces);
 					}
 				);
+			}
+
+			if (sets.debugLogEnabled != settings()->debugLogEnabled) {
+				settings()->debugLogEnabled = sets.debugLogEnabled;
+				if (!isLogFileOpened() && sets.debugLogEnabled)
+					openLogFile();
+				else if (isLogFileOpened() && !sets.debugLogEnabled)
+					closeLogFile();
 			}
 
 			primitives->input()->config(sets.inputGamepads, INPUT_GAMEPAD_COUNT);

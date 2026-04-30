@@ -14,6 +14,7 @@
 #include "bitty.h"
 #include "asset.h"
 #include "dispatchable.h"
+#include "file_handle.h"
 #include "widgets.h"
 
 /*
@@ -237,6 +238,8 @@ public:
 		bool canvasFixRatio = true;
 
 		bool debugVisible = true;
+		bool debugLogEnabled = false;
+		std::string debugLogPath;
 
 		bool consoleVisible = true;
 		bool consoleClearOnStart = true;
@@ -426,6 +429,9 @@ protected:
 	BITTY_PROPERTY_READONLY(bool, consoleEnabled)
 	BITTY_FIELD(Mutex, consoleLock)
 
+	BITTY_PROPERTY_READONLY(File::Ptr, logFile)
+	BITTY_FIELD(Mutex, logLock)
+
 public:
 	Workspace();
 	virtual ~Workspace();
@@ -499,6 +505,10 @@ public:
 	 * @brief Updates the workspace for one frame.
 	 */
 	virtual unsigned update(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, unsigned fps, bool alive, bool* indicated) = 0;
+
+	bool isLogFileOpened(void);
+	bool openLogFile(void);
+	bool closeLogFile(void);
 
 #if BITTY_BAKE_ENABLED
 #	if !BITTY_MULTITHREAD_ENABLED
