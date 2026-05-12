@@ -793,7 +793,7 @@ private:
 			if (ext != schema.extension)
 				continue;
 
-			const Variant schema_ = plugin->run(Plugin::Functions::SCHEMA, "");
+			const Variant schema_ = plugin->run(Plugin::Functions::SCHEMA, "", nullptr);
 			if (schema_.type() != Variant::OBJECT)
 				continue;
 			Object::Ptr obj = (Object::Ptr)schema_;
@@ -880,7 +880,7 @@ private:
 		if (ext != schema.extension)
 			return;
 
-		plugin->run(Plugin::Functions::COMPILER, "");
+		plugin->run(Plugin::Functions::COMPILER, "", nullptr);
 
 		check(ws, project);
 	}

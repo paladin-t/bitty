@@ -3845,7 +3845,25 @@ promise::Defer Operations::pluginRunMenuItem(class Renderer*, Workspace* ws, con
 				[ws, df, plugin, args_] (void) -> void {
 					OPERATIONS_AUTO_CLOSE_POPUP(ws)
 
-					plugin->run(Plugin::Functions::MENU, args_);
+					Plugin::Errors error = Plugin::Errors::NONE;
+					plugin->run(Plugin::Functions::MENU, args_, &error);
+					switch (error) {
+					case Plugin::Errors::ALREADY_RUNNING:
+						df.reject();
+
+						ws->messagePopupBox(
+							ws->theme()->dialogPrompt_AlreadyRunning(),
+							nullptr,
+							nullptr,
+							nullptr
+						);
+
+						return;
+					default:
+						// Do nothing.
+
+						break;
+					}
 
 					df.resolve(true);
 				},

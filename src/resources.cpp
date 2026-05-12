@@ -15,7 +15,6 @@
 #include "project.h"
 #include "resources.h"
 #include "resource/inline_resource.h"
-#include <unordered_map>
 
 /*
 ** {===========================================================================

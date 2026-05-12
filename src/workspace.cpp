@@ -1601,7 +1601,7 @@ void Workspace::loadPlugins(class Renderer* rnd, const class Project* project) {
 			project,
 			entry.c_str()
 		);
-		if (plugin->open()) {
+		if (plugin->open(nullptr)) {
 			if (plugin->instant())
 				plugin->close();
 

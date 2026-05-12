@@ -21,6 +21,9 @@
 #ifndef PLUGIN_USAGE_FUNCTION
 #	define PLUGIN_USAGE_FUNCTION "usage"
 #endif /* PLUGIN_USAGE_FUNCTION */
+#ifndef PLUGIN_MUTEX_FUNCTION
+#	define PLUGIN_MUTEX_FUNCTION "mutex"
+#endif /* PLUGIN_MUTEX_FUNCTION */
 #ifndef PLUGIN_SCHEMA_INVOKABLE_NAME
 #	define PLUGIN_SCHEMA_INVOKABLE_NAME "schema"
 #endif /* PLUGIN_SCHEMA_INVOKABLE_NAME */
@@ -73,7 +76,7 @@ Plugin::~Plugin() {
 	close();
 }
 
-bool Plugin::open(void) {
+bool Plugin::open(Errors* error) {
 	close();
 
 	LockGuard<RecursiveMutex>::UniquePtr acquired;
@@ -96,96 +99,27 @@ bool Plugin::open(void) {
 	_executable->prepare();
 	_executable->setup();
 
-	do {
-		if (usage() != Usages::NONE)
-			break;
-
-		Executable::Invokable func = _executable->getInvokable(PLUGIN_USAGE_FUNCTION);
-
-		if (!func)
-			break;
-
-		const Variant usg = _executable->invoke(func);
-		if (usg.type() != Variant::OBJECT)
-			break;
-		Object::Ptr obj = (Object::Ptr)usg;
-		if (!obj)
-			break;
-		if (!Object::is<IList::Ptr>(obj))
-			break;
-
-		IList::Ptr lst = Object::as<IList::Ptr>(obj);
-		for (int i = 0; i < lst->count(); ++i) {
-			const Variant elem = lst->at(i);
-
-			if (elem.type() != Variant::STRING) {
-				const std::string str = elem.toString();
-				fprintf(stderr, "Unknown usage option: %s.", str.c_str());
-
-				continue;
-			}
-
-			const std::string item = (const std::string)elem;
-			if (item == PLUGIN_USAGE_MENU)
-				usage((Usages)((unsigned)usage() | (unsigned)Usages::MENU));
-			else if (item == PLUGIN_USAGE_COMPILER)
-				usage((Usages)((unsigned)usage() | (unsigned)Usages::COMPILER));
-			else
-				fprintf(stderr, "Unknown usage option: \"%s\".", item.c_str());
-		}
-	} while (false);
+	resolveUsage();
 
 	entry(Entry(_project->title()));
 	order(_project->order());
+	_mutexInvokable = _executable->getInvokable(PLUGIN_MUTEX_FUNCTION);
 	_schemaInvokable = _executable->getInvokable(PLUGIN_SCHEMA_INVOKABLE_NAME);
 	_menuInvokable = _executable->getInvokable(PLUGIN_MENU_INVOKABLE_NAME);
 	_compilerInvokable = _executable->getInvokable(PLUGIN_COMPILER_INVOKABLE_NAME);
 
-	do {
-		if (!is(Usages::COMPILER))
-			continue;
+	resolveSchema();
 
-		Executable::Invokable func = _schemaInvokable;
-
-		if (!func)
-			break;
-
-		const Variant schema_ = _executable->invoke(func);
-		if (schema_.type() != Variant::OBJECT)
-			break;
-		Object::Ptr obj = (Object::Ptr)schema_;
-		if (!obj)
-			break;
-		if (!Object::is<IDictionary::Ptr>(obj))
-			break;
-
-		IDictionary::Ptr dict = Object::as<IDictionary::Ptr>(obj);
-		if (dict->contains("name")) {
-			const Variant elem = dict->get("name");
-			do {
-				if (elem.type() != Variant::STRING)
-					break;
-
-				const std::string str = elem.toString();
-				schema().name = str;
-			} while (false);
-		}
-		if (dict->contains("extension")) {
-			const Variant elem = dict->get("extension");
-			do {
-				if (elem.type() != Variant::STRING)
-					break;
-
-				const std::string str = elem.toString();
-				schema().extension = str;
-			} while (false);
-		}
-	} while (false);
+	if (!lockExclusivelyRunning(error))
+		return false;
 
 	return true;
 }
 
 bool Plugin::close(void) {
+	unlockExclusivelyRunning();
+
+	_mutexInvokable = nullptr;
 	_schemaInvokable = nullptr;
 	_menuInvokable = nullptr;
 	_compilerInvokable = nullptr;
@@ -230,7 +164,7 @@ bool Plugin::is(Usages usage_) const {
 	return ((unsigned)usage() & (unsigned)usage_) != (unsigned)Usages::NONE;
 }
 
-Variant Plugin::run(Functions function, const std::string &args) {
+Variant Plugin::run(Functions function, const std::string &args, Errors* error) {
 	if (function == Functions::NONE)
 		return nullptr;
 
@@ -252,8 +186,13 @@ Variant Plugin::run(Functions function, const std::string &args) {
 	if (entry().empty())
 		return nullptr;
 
-	if (!opened())
-		open();
+	if (!opened()) {
+		if (!open(error))
+			return Variant(nullptr);
+	} else {
+		if (!lockExclusivelyRunning(error))
+			return Variant(nullptr);
+	}
 	Executable::Invokable func = nullptr;
 	switch (function) {
 	case Functions::SCHEMA:
@@ -303,6 +242,148 @@ void Plugin::update(double delta) {
 
 bool Plugin::opened(void) const {
 	return _project && _executable;
+}
+
+bool Plugin::lockExclusivelyRunning(Errors* error) {
+	if (error)
+		*error = Errors::NONE;
+
+	do {
+		if (!is(Usages::MENU))
+			break;
+
+		const std::string mutexName = resolveMutexName();
+		if (mutexName.empty())
+			break;
+
+		if (!_executionMutex.try_lock(mutexName)) {
+			if (error)
+				*error = Errors::ALREADY_RUNNING;
+
+			return false;
+		}
+
+		if (_exclusively)
+			break;
+		_exclusively = true;
+	} while (false);
+
+	return true;
+}
+
+void Plugin::unlockExclusivelyRunning(void) {
+	do {
+		if (!_exclusively)
+			break;
+
+		if (!is(Usages::MENU))
+			break;
+
+		const std::string mutexName = resolveMutexName();
+		if (mutexName.empty())
+			break;
+
+		_executionMutex.unlock(mutexName);
+
+		_exclusively = false;
+	} while (false);
+}
+
+void Plugin::resolveUsage(void) {
+	if (usage() != Usages::NONE)
+		return;
+
+	Executable::Invokable func = _executable->getInvokable(PLUGIN_USAGE_FUNCTION);
+
+	if (!func)
+		return;
+
+	const Variant usg = _executable->invoke(func);
+	if (usg.type() != Variant::OBJECT)
+		return;
+	Object::Ptr obj = (Object::Ptr)usg;
+	if (!obj)
+		return;
+	if (!Object::is<IList::Ptr>(obj))
+		return;
+
+	IList::Ptr lst = Object::as<IList::Ptr>(obj);
+	for (int i = 0; i < lst->count(); ++i) {
+		const Variant elem = lst->at(i);
+
+		if (elem.type() != Variant::STRING) {
+			const std::string str = elem.toString();
+			fprintf(stderr, "Unknown usage option: %s.", str.c_str());
+
+			continue;
+		}
+
+		const std::string item = (const std::string)elem;
+		if (item == PLUGIN_USAGE_MENU)
+			usage((Usages)((unsigned)usage() | (unsigned)Usages::MENU));
+		else if (item == PLUGIN_USAGE_COMPILER)
+			usage((Usages)((unsigned)usage() | (unsigned)Usages::COMPILER));
+		else
+			fprintf(stderr, "Unknown usage option: \"%s\".", item.c_str());
+	}
+}
+
+void Plugin::resolveSchema(void) {
+	if (!is(Usages::COMPILER))
+		return;
+
+	Executable::Invokable func = _schemaInvokable;
+
+	if (!func)
+		return;
+
+	const Variant schema_ = _executable->invoke(func);
+	if (schema_.type() != Variant::OBJECT)
+		return;
+	Object::Ptr obj = (Object::Ptr)schema_;
+	if (!obj)
+		return;
+	if (!Object::is<IDictionary::Ptr>(obj))
+		return;
+
+	IDictionary::Ptr dict = Object::as<IDictionary::Ptr>(obj);
+	if (dict->contains("name")) {
+		const Variant elem = dict->get("name");
+		do {
+			if (elem.type() != Variant::STRING)
+				break;
+
+			const std::string str = elem.toString();
+			schema().name = str;
+		} while (false);
+	}
+	if (dict->contains("extension")) {
+		const Variant elem = dict->get("extension");
+		do {
+			if (elem.type() != Variant::STRING)
+				break;
+
+			const std::string str = elem.toString();
+			schema().extension = str;
+		} while (false);
+	}
+}
+
+std::string Plugin::resolveMutexName(void) const {
+	if (!is(Usages::MENU))
+		return "";
+
+	Executable::Invokable func = _mutexInvokable;
+
+	if (!func)
+		return "";
+
+	const Variant mutexName_ = _executable->invoke(func);
+	if (mutexName_.type() != Variant::STRING)
+		return "";
+	const std::string mutexName = (std::string)mutexName_;
+
+	return mutexName;
 }
 
 }

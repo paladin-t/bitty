@@ -18,6 +18,7 @@
 #	include <atomic>
 #endif /* BITTY_MULTITHREAD_ENABLED */
 #include <mutex>
+#include <unordered_map>
 
 /*
 ** {===========================================================================
@@ -283,6 +284,103 @@ public:
 	}
 	~ProcedureGuard() {
 		_post(_ptr);
+	}
+};
+
+/**
+ * @brief Named mutex.
+ */
+class NamedMutex {
+private:
+	struct MutexData {
+		typedef std::shared_ptr<MutexData> Ptr;
+
+		std::mutex lock;
+#if BITTY_MULTITHREAD_ENABLED
+		std::atomic<int> useCount{ 0 };
+#else /* BITTY_MULTITHREAD_ENABLED */
+		int useCount = 0;
+#endif /* BITTY_MULTITHREAD_ENABLED */
+	};
+
+	typedef std::unordered_map<std::string, MutexData::Ptr> Collection;
+
+	Mutex _lock;
+	Collection _collection;
+
+public:
+	NamedMutex() = default;
+	NamedMutex(const NamedMutex &) = delete;
+	NamedMutex &operator = (const NamedMutex &) = delete;
+
+	void lock(const std::string &key) {
+		MutexData::Ptr data = nullptr;
+		{
+			LockGuard<Mutex> guard(_lock);
+
+			Collection::const_iterator it = _collection.find(key);
+			if (it == _collection.end()) {
+				data = std::make_shared<MutexData>();
+				_collection[key] = data;
+			} else {
+				data = it->second;
+			}
+			++data->useCount;
+		}
+
+		data->lock.lock();
+	}
+
+	bool try_lock(const std::string &key) {
+		MutexData::Ptr data = nullptr;
+		{
+			LockGuard<Mutex> guard(_lock);
+
+			Collection::const_iterator it = _collection.find(key);
+			if (it == _collection.end()) {
+				data = std::make_shared<MutexData>();
+				_collection[key] = data;
+			} else {
+				data = it->second;
+			}
+			++data->useCount;
+		} 
+
+		if (data->lock.try_lock())
+			return true;
+
+		{
+			LockGuard<Mutex> guard(_lock);
+
+			--data->useCount;
+			if (data->useCount == 0)
+				_collection.erase(key);
+
+			return false;
+		}
+	}
+
+	void unlock(const std::string &key) {
+		MutexData::Ptr data = nullptr;
+		{
+			LockGuard<Mutex> guard(_lock);
+
+			Collection::const_iterator it = _collection.find(key);
+			if (it == _collection.end())
+				return;
+
+			data = it->second;
+		}
+
+		data->lock.unlock();
+
+		{
+			LockGuard<Mutex> guard(_lock);
+
+			--data->useCount;
+			if (data->useCount == 0)
+				_collection.erase(key); 
+		}
 	}
 };
 

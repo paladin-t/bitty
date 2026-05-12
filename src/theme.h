@@ -202,6 +202,7 @@ public:
 	BITTY_PROPERTY_READONLY(std::string, menuBanner_FileButtons)
 
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_AlreadyExists)
+	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_AlreadyRunning)
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_CannotAddMoreFrame)
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_CannotLoadProject)
 	BITTY_PROPERTY_READONLY(std::string, dialogPrompt_CannotReadFromCurrentProject)

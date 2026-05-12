@@ -272,6 +272,7 @@ bool Theme::open(class Renderer* rnd) {
 	menuBanner_FileButtons("File Buttons");
 
 	dialogPrompt_AlreadyExists("Already exists.");
+	dialogPrompt_AlreadyRunning("Already running.");
 	dialogPrompt_CannotAddMoreFrame("Cannot add more frame.");
 	dialogPrompt_CannotLoadProject("Cannot load project.");
 	dialogPrompt_CannotReadFromCurrentProject("Cannot read from current project.");

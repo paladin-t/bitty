@@ -73,6 +73,11 @@ public:
 		unsigned type(void) const;
 	};
 
+	enum class Errors : unsigned {
+		NONE,
+		ALREADY_RUNNING
+	};
+
 public:
 	BITTY_PROPERTY(Entry, entry)
 	BITTY_PROPERTY_READONLY(Usages, usage)
@@ -87,9 +92,12 @@ private:
 
 	class Project* _project = nullptr;
 	Executable* _executable = nullptr;
+	Executable::Invokable _mutexInvokable = nullptr;
 	Executable::Invokable _schemaInvokable = nullptr;
 	Executable::Invokable _menuInvokable = nullptr;
 	Executable::Invokable _compilerInvokable = nullptr;
+	bool _exclusively = false;
+	NamedMutex _executionMutex;
 	double _ticks = 0.0;
 
 public:
@@ -101,19 +109,26 @@ public:
 	);
 	~Plugin();
 
-	bool open(void);
+	bool open(Errors* error /* nullable */);
 	bool close(void);
 
 	bool instant(void) const;
 
 	bool is(Usages usage) const;
 
-	Variant run(Functions function, const std::string &args);
+	Variant run(Functions function, const std::string &args, Errors* error /* nullable */);
 
 	void update(double delta);
 
 private:
 	bool opened(void) const;
+
+	bool lockExclusivelyRunning(Errors* error);
+	void unlockExclusivelyRunning(void);
+
+	void resolveUsage(void);
+	void resolveSchema(void);
+	std::string resolveMutexName(void) const;
 };
 
 }
