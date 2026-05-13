@@ -55,25 +55,4 @@ void promise(class Executable* exec);
 
 /* ===========================================================================} */
 
-/*
-** {===========================================================================
-** Application
-*/
-
-namespace Bitty {
-
-namespace Lua {
-
-namespace Application {
-
-void promise(class Executable* exec);
-
-}
-
-}
-
-}
-
-/* ===========================================================================} */
-
 #endif /* __SCRIPTING_LUA_API_PROMISES_H__ */

@@ -56,7 +56,8 @@ public:
 		bool operator != (const StudioSettings &other) const;
 	};
 
-	typedef std::function<Variant(int, const Variant*)> AsyncHandler;
+	typedef std::vector<Variant> DeferredInvoking;
+	typedef std::vector<DeferredInvoking> DeferredInvokings;
 	typedef std::function<Variant(int, const Variant*)> InvokeHandler;
 
 protected:
@@ -73,8 +74,10 @@ protected:
 
 	Text::Array _droppedFiles;
 
-	AsyncHandler _asyncHandler = nullptr;
+	Atomic<bool> _hasDeferredInvokings;
+	DeferredInvokings _deferredInvokings;
 	InvokeHandler _invokeHandler = nullptr;
+	Mutex _lockDeferredInvokings;
 
 public:
 	WorkspaceStudio();
@@ -99,7 +102,6 @@ public:
 	virtual unsigned update(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, unsigned fps, bool alive, bool* indicated) override;
 
 	virtual void require(Executable* exec) override;
-	virtual Variant async(int argc, const Variant* argv) override;
 	virtual Variant invoke(int argc, const Variant* argv) override;
 
 	virtual void focusGained(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) override;
@@ -118,14 +120,20 @@ protected:
 	virtual void loadProject(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, const Text::Dictionary &options);
 	virtual void unloadProject(const class Project* project, Executable* exec) override;
 
+	virtual void plugins(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta) override;
+	using Workspace::plugins;
+
 private:
 	unsigned updateEditing(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, unsigned fps, bool alive, bool* indicated);
 	unsigned updateBuilding(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, unsigned fps, bool alive, bool* indicated);
 
 	void refresh(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 
-	void bindAsyncAndInvokeHandlers(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
-	void unbindAsyncAndInvokeHandlers(void);
+	void bindInvokeHandlers(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
+	void unbindInvokeHandlers(void);
+
+	void deferInvoking(int argc, const Variant* argv);
+	void executeDeferredInvokings(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 
 	void addRecentTouched(StudioSettings::RecentTouched::Types type, const char* path);
 	void openRecentTouched(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, StudioSettings::RecentTouched::Types type, int idx, const char* path);

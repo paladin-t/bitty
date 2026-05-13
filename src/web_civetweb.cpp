@@ -187,7 +187,9 @@ bool WebCivetWeb::respond(unsigned code) {
 		mg_printf(
 			conn, "%s",
 			"HTTP/1.0 400 Bad Request\r\n"
-			"Content-Length: 0\r\n\r\n"
+			"Content-Length: 0\r\n"
+			"Access-Control-Allow-Origin: *\r\n"
+			"\r\n"
 		);
 
 		break;
@@ -195,7 +197,9 @@ bool WebCivetWeb::respond(unsigned code) {
 		mg_printf(
 			conn, "%s",
 			"HTTP/1.0 401 Unauthorized\r\n"
-			"Content-Length: 0\r\n\r\n"
+			"Content-Length: 0\r\n"
+			"Access-Control-Allow-Origin: *\r\n"
+			"\r\n"
 		);
 
 		break;
@@ -203,7 +207,9 @@ bool WebCivetWeb::respond(unsigned code) {
 		mg_printf(
 			conn, "%s",
 			"HTTP/1.0 403 Forbidden\r\n"
-			"Content-Length: 0\r\n\r\n"
+			"Content-Length: 0\r\n"
+			"Access-Control-Allow-Origin: *\r\n"
+			"\r\n"
 		);
 
 		break;
@@ -211,7 +217,9 @@ bool WebCivetWeb::respond(unsigned code) {
 		mg_printf(
 			conn, "%s",
 			"HTTP/1.0 405 Method Not Allowed\r\n"
-			"Content-Length: 0\r\n\r\n"
+			"Content-Length: 0\r\n"
+			"Access-Control-Allow-Origin: *\r\n"
+			"\r\n"
 		);
 
 		break;
@@ -219,7 +227,9 @@ bool WebCivetWeb::respond(unsigned code) {
 		mg_printf(
 			conn, "%s",
 			"HTTP/1.0 406 Not Acceptable\r\n"
-			"Content-Length: 0\r\n\r\n"
+			"Content-Length: 0\r\n"
+			"Access-Control-Allow-Origin: *\r\n"
+			"\r\n"
 		);
 
 		break;
@@ -227,7 +237,9 @@ bool WebCivetWeb::respond(unsigned code) {
 		mg_printf(
 			conn, "%s",
 			"HTTP/1.0 414 URI Too Long\r\n"
-			"Content-Length: 0\r\n\r\n"
+			"Content-Length: 0\r\n"
+			"Access-Control-Allow-Origin: *\r\n"
+			"\r\n"
 		);
 
 		break;
@@ -235,7 +247,9 @@ bool WebCivetWeb::respond(unsigned code) {
 		mg_printf(
 			conn, "%s",
 			"HTTP/1.0 415 Unsupported Media Type\r\n"
-			"Content-Length: 0\r\n\r\n"
+			"Content-Length: 0\r\n"
+			"Access-Control-Allow-Origin: *\r\n"
+			"\r\n"
 		);
 
 		break;
@@ -243,7 +257,9 @@ bool WebCivetWeb::respond(unsigned code) {
 		mg_printf(
 			conn, "%s",
 			"HTTP/1.0 500 Internal Server Error\r\n"
-			"Content-Length: 0\r\n\r\n"
+			"Content-Length: 0\r\n"
+			"Access-Control-Allow-Origin: *\r\n"
+			"\r\n"
 		);
 
 		break;
@@ -251,7 +267,9 @@ bool WebCivetWeb::respond(unsigned code) {
 		mg_printf(
 			conn, "%s",
 			"HTTP/1.0 501 Not Implemented\r\n"
-			"Content-Length: 0\r\n\r\n"
+			"Content-Length: 0\r\n"
+			"Access-Control-Allow-Origin: *\r\n"
+			"\r\n"
 		);
 
 		break;
@@ -259,7 +277,9 @@ bool WebCivetWeb::respond(unsigned code) {
 		mg_printf(
 			conn, "%s",
 			"HTTP/1.0 503 Service Unavailable\r\n"
-			"Content-Length: 0\r\n\r\n"
+			"Content-Length: 0\r\n"
+			"Access-Control-Allow-Origin: *\r\n"
+			"\r\n"
 		);
 
 		break;
@@ -267,7 +287,9 @@ bool WebCivetWeb::respond(unsigned code) {
 		mg_printf(
 			conn, "%s",
 			"HTTP/1.0 505 HTTP Version Not Supported\r\n"
-			"Content-Length: 0\r\n\r\n"
+			"Content-Length: 0\r\n"
+			"Access-Control-Allow-Origin: *\r\n"
+			"\r\n"
 		);
 
 		break;
@@ -276,7 +298,9 @@ bool WebCivetWeb::respond(unsigned code) {
 		mg_printf(
 			conn, "%s",
 			"HTTP/1.0 404 Not Found\r\n"
-			"Content-Length: 0\r\n\r\n"
+			"Content-Length: 0\r\n"
+			"Access-Control-Allow-Origin: *\r\n"
+			"\r\n"
 		);
 
 		break;
@@ -306,14 +330,14 @@ bool WebCivetWeb::respond(const char* data, const char* mimeType_) {
 		"Accept-Ranges: bytes\r\n"
 		"Connection: close\r\n"
 		"Content-Type: %s\r\n"
-		"Content-Length: %zu\r\n",
+		"Content-Length: %zu\r\n"
+		"Access-Control-Allow-Origin: *\r\n"
+		"\r\n",
 		currentTime,
 		mimeType.c_str(),
 		len
 	);
-	mg_write(conn, "\r\n", 2);
 	mg_write(conn, data, (int)len);
-	mg_write(conn, "\r\n", 2);
 
 	return true;
 }
@@ -340,14 +364,14 @@ bool WebCivetWeb::respond(const class Json* data, const char* mimeType_) {
 		"Accept-Ranges: bytes\r\n"
 		"Connection: close\r\n"
 		"Content-Type: %s\r\n"
-		"Content-Length: %zu\r\n",
+		"Content-Length: %zu\r\n"
+		"Access-Control-Allow-Origin: *\r\n"
+		"\r\n",
 		currentTime,
 		mimeType.c_str(),
 		content.length()
 	);
-	mg_write(conn, "\r\n", 2);
 	mg_write(conn, content.c_str(), (int)content.length());
-	mg_write(conn, "\r\n", 2);
 
 	return true;
 }
@@ -372,14 +396,14 @@ bool WebCivetWeb::respond(const class Bytes* data, const char* mimeType_) {
 		"Accept-Ranges: bytes\r\n"
 		"Connection: close\r\n"
 		"Content-Type: %s\r\n"
-		"Content-Length: %zu\r\n",
+		"Content-Length: %zu\r\n"
+		"Access-Control-Allow-Origin: *\r\n"
+		"\r\n",
 		currentTime,
 		mimeType.c_str(),
 		data->count()
 	);
-	mg_write(conn, "\r\n", 2);
 	mg_write(conn, (const char*)data->pointer(), (int)data->count());
-	mg_write(conn, "\r\n", 2);
 
 	return true;
 }

@@ -400,7 +400,7 @@ public:
 	 * @param[out] wheelX
 	 * @param[out] wheelY
 	 */
-	virtual bool mouse(int btn, int* x /* nullable */, int* y /* nullable */, bool* b0 /* nullable */, bool* b1 /* nullable */, bool* b2 /* nullable */, int* wheelX /* nullable */, int* wheelY /* nullable */) const = 0;
+	virtual bool mouse(int idx, int* x /* nullable */, int* y /* nullable */, bool* b0 /* nullable */, bool* b1 /* nullable */, bool* b2 /* nullable */, int* wheelX /* nullable */, int* wheelY /* nullable */) const = 0;
 	/**
 	 * @brief Sets the mouse cursor indicator with a function.
 	 */
@@ -476,6 +476,13 @@ public:
 	 * @note By the graphics thread.
 	 */
 	virtual void indicator(Image::Ptr img /* nullable */, float x, float y) = 0;
+
+	/**
+	 * @brief Simulates user input.
+	 *
+	 * @note By the graphics thread.
+	 */
+	virtual bool simulateInput(int argc, const Variant* argv) = 0;
 
 	/**
 	 * @brief Forbids command synchronizing.

@@ -766,6 +766,27 @@ bool Workspace::flushLogFile(void) {
 	return true;
 }
 
+bool Workspace::readLogFile(std::string &content) {
+	LockGuard<decltype(logLock())> guard(logLock());
+
+	if (logFile()) // Still logging.
+		return false;
+
+	File::Ptr file(File::create());
+	if (!file->open(settings()->debugLogPath.c_str(), Stream::READ))
+		return false;
+
+	if (!file->readString(content)) {
+		file->close();
+
+		return false;
+	}
+
+	file->close();
+
+	return true;
+}
+
 #if BITTY_BAKE_ENABLED
 #	if !BITTY_MULTITHREAD_ENABLED
 void Workspace::touchBake(void) {
@@ -1149,10 +1170,6 @@ void Workspace::built(void) {
 	print(msg.c_str());
 
 	buildingDone() = true;
-}
-
-Variant Workspace::async(int, const Variant*) {
-	return Variant(nullptr);
 }
 
 Variant Workspace::invoke(int, const Variant*) {
@@ -3273,7 +3290,7 @@ void Workspace::promise(class Window*, class Renderer*, const class Project*) {
 	}
 }
 
-void Workspace::plugins(class Window*, class Renderer*, const class Project*, double delta) {
+void Workspace::plugins(class Window*, class Renderer*, const class Project*, Executable*, class Primitives*, double delta) {
 	if (!pluginsEnabled())
 		return;
 

@@ -522,6 +522,12 @@ public:
 	 * @brief Flushes the log file onto disk.
 	 */
 	bool flushLogFile(void);
+	/**
+	 * @brief Reads the log file.
+	 *
+	 * @param[out] content
+	 */
+	bool readLogFile(std::string &content);
 
 #if BITTY_BAKE_ENABLED
 #	if !BITTY_MULTITHREAD_ENABLED
@@ -608,10 +614,6 @@ public:
 	 * @brief Implements `Executable::Observer`. A project has been built.
 	 */
 	virtual void built(void) override;
-	/**
-	 * @brief Called by plugins to asynchronously invoke automation actions, etc.
-	 */
-	virtual Variant async(int argc, const Variant* argv) override;
 	/**
 	 * @brief Implements `Executable::Observer`. Called by plugins to invoke automation actions, etc.
 	 */
@@ -724,7 +726,7 @@ protected:
 	void debug(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, unsigned fps);
 	void console(class Window* wnd, class Renderer* rnd, const class Project* project);
 	void promise(class Window* wnd, class Renderer* rnd, const class Project* project);
-	void plugins(class Window* wnd, class Renderer* rnd, const class Project* project, double delta);
+	virtual void plugins(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta);
 	void finish(class Window* wnd, class Renderer* rnd, const class Project* project);
 
 	void waitingPopupBox(

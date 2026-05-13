@@ -112,10 +112,6 @@ public:
 		 */
 		virtual void built(void) = 0;
 		/**
-		 * @brief Called by plugins to asynchronously invoke automation actions, etc.
-		 */
-		virtual Variant async(int argc, const Variant* argv) = 0;
-		/**
 		 * @brief Called by plugins to invoke automation actions, etc.
 		 */
 		virtual Variant invoke(int argc, const Variant* argv) = 0;

@@ -2512,6 +2512,91 @@ public:
 
 /*
 ** {===========================================================================
+** Input simulation
+*/
+
+struct InputSimulation {
+	enum class Types : unsigned {
+		BTN,
+		BTNP,
+		KEY,
+		KEYP,
+		MOUSE,
+		COUNT
+	};
+	typedef std::array<InputSimulation, (size_t)Types::COUNT> Array;
+
+	Types type = Types::BTN;
+	union {
+		struct {
+			int button;
+			int index;
+		} btn;
+		struct {
+			int button;
+			int index;
+		} btnp;
+		struct {
+			int key;
+		} key;
+		struct {
+			int key;
+		} keyp;
+		struct {
+			int index;
+			int x;
+			int y;
+			bool button0;
+			bool button1;
+			bool button2;
+			int wheelX;
+			int wheelY;
+		} mouse;
+	};
+	bool valid = false;
+
+	InputSimulation() {
+	}
+	InputSimulation(Types y, int btn_, int idx) {
+		type = y;
+		if (type == Types::BTN) {
+			btn.button = btn_;
+			btn.index = idx;
+		} else {
+			btnp.button = btn_;
+			btnp.index = idx;
+		}
+		valid = true;
+	}
+	InputSimulation(Types y, int key_) {
+		type = y;
+		if (type == Types::KEY) {
+			key.key = key_;
+		} else {
+			keyp.key = key_;
+		}
+		valid = true;
+	}
+	InputSimulation(Types y, int idx, int x, int y_, bool btn0, bool btn1, bool btn2, int wheelX, int wheelY) {
+		type = y;
+		if (type == Types::MOUSE) {
+			mouse.index = idx;
+			mouse.x = x;
+			mouse.y = y_;
+			mouse.button0 = btn0;
+			mouse.button1 = btn1;
+			mouse.button2 = btn2;
+			mouse.wheelX = wheelX;
+			mouse.wheelY = wheelY;
+		}
+		valid = true;
+	}
+};
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
 ** Primitive command queue
 */
 
@@ -2593,6 +2678,9 @@ private:
 	bool _syncing = false;
 	bool _forbidden = false;
 
+	InputSimulation::Array _consumingInputSimulations;
+	InputSimulation::Array _producingInputSimulations;
+
 	Mutex _lock;
 
 public:
@@ -2624,11 +2712,36 @@ public:
 
 		_blocking |= block;
 	}
+
+	/**
+	 * @brief Produces an input simulation.
+	 */
+	void simulate(const InputSimulation &sim) {
+		LockGuard<decltype(_lock)> guard(_lock);
+
+		_producingInputSimulations[(size_t)sim.type] = sim;
+	}
+	/**
+	 * @brief Consumes an input simulation.
+	 */
+	void simulated(InputSimulation::Types y, InputSimulation &sim) {
+		sim = _consumingInputSimulations[(size_t)y];
+	}
+
 	/**
 	 * @brief Commits the producing queue to consuming, and gets ready for future producing.
 	 */
 	int commit(void) {
 		_lock.lock();
+
+		for (int i = 0; i < (int)InputSimulation::Types::COUNT; ++i) {
+			if (_producingInputSimulations[i].valid) {
+				_consumingInputSimulations[i] = _producingInputSimulations[i];
+				_producingInputSimulations[i].valid = false;
+			} else if(_consumingInputSimulations[i].valid) {
+				_consumingInputSimulations[i].valid = false;
+			}
+		}
 
 		const bool blocking = _blocking;
 		_blocking = false;
@@ -3371,12 +3484,26 @@ public:
 	}
 
 	virtual int btn(int btn, int idx) const override {
+#if BITTY_MULTITHREAD_ENABLED
+		InputSimulation sim;
+		_buffer.simulated(InputSimulation::Types::BTN, sim);
+		if (sim.valid && sim.btn.button == btn && sim.btn.index == idx)
+			return true;
+#endif /* BITTY_MULTITHREAD_ENABLED */
+
 		if (idx >= 0)
 			return _input->buttonDown(btn, idx);
 
 		return _input->controllerDown(btn, -idx - 1); // -1-based to 0-based.
 	}
 	virtual int btnp(int btn, int idx) const override {
+#if BITTY_MULTITHREAD_ENABLED
+		InputSimulation sim;
+		_buffer.simulated(InputSimulation::Types::BTNP, sim);
+		if (sim.valid && sim.btnp.button == btn && sim.btnp.index == idx)
+			return true;
+#endif /* BITTY_MULTITHREAD_ENABLED */
+
 		if (idx >= 0)
 			return _input->buttonUp(btn, idx);
 
@@ -3389,13 +3516,50 @@ public:
 		commit(var, nullptr, true);
 	}
 	virtual bool key(int key) const override {
+#if BITTY_MULTITHREAD_ENABLED
+		InputSimulation sim;
+		_buffer.simulated(InputSimulation::Types::KEY, sim);
+		if (sim.valid && sim.key.key == key)
+			return true;
+#endif /* BITTY_MULTITHREAD_ENABLED */
+
 		return _input->keyDown(key);
 	}
 	virtual bool keyp(int key) const override {
+#if BITTY_MULTITHREAD_ENABLED
+		InputSimulation sim;
+		_buffer.simulated(InputSimulation::Types::KEYP, sim);
+		if (sim.valid && sim.keyp.key == key)
+			return true;
+#endif /* BITTY_MULTITHREAD_ENABLED */
+
 		return _input->keyUp(key);
 	}
-	virtual bool mouse(int btn, int* x, int* y, bool* b0, bool* b1, bool* b2, int* wheelX, int* wheelY) const override {
-		return _input->mouse(btn, x, y, b0, b1, b2, wheelX, wheelY);
+	virtual bool mouse(int idx, int* x, int* y, bool* b0, bool* b1, bool* b2, int* wheelX, int* wheelY) const override {
+#if BITTY_MULTITHREAD_ENABLED
+		InputSimulation sim;
+		_buffer.simulated(InputSimulation::Types::MOUSE, sim);
+		if (sim.valid && sim.mouse.index == idx) {
+			if (x)
+				*x = sim.mouse.x;
+			if (y)
+				*y = sim.mouse.y;
+			if (b0)
+				*b0 = sim.mouse.button0;
+			if (b1)
+				*b1 = sim.mouse.button1;
+			if (b2)
+				*b2 = sim.mouse.button2;
+			if (wheelX)
+				*wheelX = sim.mouse.wheelX;
+			if (wheelY)
+				*wheelY = sim.mouse.wheelY;
+
+			return true;
+		}
+#endif /* BITTY_MULTITHREAD_ENABLED */
+
+		return _input->mouse(idx, x, y, b0, b1, b2, wheelX, wheelY);
 	}
 	virtual void cursor(Function func) const override {
 		CmdVariant var;
@@ -3656,6 +3820,62 @@ public:
 		}
 	}
 
+	virtual bool simulateInput(int argc, const Variant* argv) override {
+#if BITTY_MULTITHREAD_ENABLED
+		const std::string y = unpack<std::string>(argc, argv, 0, "");
+		if (y.empty())
+			return false;
+
+		if (y == "btn") {
+			const Variant::Int btn = unpack<Variant::Int>(argc, argv, 1, 0);
+			const Variant::Int idx = unpack<Variant::Int>(argc, argv, 2, 0);
+			const InputSimulation sim(InputSimulation::Types::BTN, (int)btn, (int)idx);
+			_buffer.simulate(sim);
+
+			return true;
+		} else if (y == "btnp") {
+			const Variant::Int btn = unpack<Variant::Int>(argc, argv, 1, 0);
+			const Variant::Int idx = unpack<Variant::Int>(argc, argv, 2, 0);
+			const InputSimulation sim(InputSimulation::Types::BTNP, (int)btn, (int)idx);
+			_buffer.simulate(sim);
+
+			return true;
+		} else if (y == "key") {
+			const Variant::Int key = unpack<Variant::Int>(argc, argv, 1, 0);
+			const InputSimulation sim(InputSimulation::Types::KEY, (int)key);
+			_buffer.simulate(sim);
+
+			return true;
+		} else if (y == "keyp") {
+			const Variant::Int key = unpack<Variant::Int>(argc, argv, 1, 0);
+			const InputSimulation sim(InputSimulation::Types::KEYP, (int)key);
+			_buffer.simulate(sim);
+
+			return true;
+		} else if (y == "mouse") {
+			const Variant::Int idx = unpack<Variant::Int>(argc, argv, 1, 0);
+			const Variant::Int x = unpack<Variant::Int>(argc, argv, 2, 0);
+			const Variant::Int y_ = unpack<Variant::Int>(argc, argv, 3, 0);
+			const bool btn0 = unpack<bool>(argc, argv, 4, false);
+			const bool btn1 = unpack<bool>(argc, argv, 5, false);
+			const bool btn2 = unpack<bool>(argc, argv, 6, false);
+			const Variant::Int wheelX = unpack<Variant::Int>(argc, argv, 7, 0);
+			const Variant::Int wheelY = unpack<Variant::Int>(argc, argv, 8, 0);
+			const InputSimulation sim(InputSimulation::Types::MOUSE, (int)idx, (int)x, (int)y_, btn0, btn1, btn2, (int)wheelX, (int)wheelY);
+			_buffer.simulate(sim);
+
+			return true;
+		} else {
+			return false;
+		}
+#else /* BITTY_MULTITHREAD_ENABLED */
+		(void)argc;
+		(void)argv;
+
+		return false;
+#endif /* BITTY_MULTITHREAD_ENABLED */
+	}
+
 	virtual void forbid(void) override {
 #if BITTY_MULTITHREAD_ENABLED
 		_buffer.forbid();
@@ -3807,6 +4027,10 @@ private:
 		h = (T)_clip.height();
 
 		return true;
+	}
+
+	template<typename Arg> static Arg unpack(int argc, const Variant* argv, int idx, Arg default_) {
+		return (0 <= idx && idx < argc && argv) ? (Arg)argv[idx] : default_;
 	}
 
 	void saveStates(void) {

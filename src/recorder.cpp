@@ -14,6 +14,7 @@
 #include "file_handle.h"
 #include "filesystem.h"
 #include "platform.h"
+#include "plus.h"
 #include "recorder.h"
 #include "text.h"
 #include "texture.h"
@@ -78,18 +79,26 @@ private:
 	Bytes::Ptr _cache = nullptr;
 	int _footprint = 0;
 
+	mutable RecursiveMutex _lock;
+
 public:
 	RecorderImpl(SaveHandler save, unsigned fps) : _save(save), _fps(fps) {
 	}
 	virtual ~RecorderImpl() override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
 		clear();
 	}
 
 	virtual bool recording(void) const override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
 		return !!_recording;
 	}
 
 	virtual void startRecordingToImage(void) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
 		_recordToImage = true;
 		_recordedToImage = nullptr;
 
@@ -99,6 +108,8 @@ public:
 		_footprint = 0;
 	}
 	virtual Image::Ptr recordedImage(bool clear) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
 		Image::Ptr result = _recordedToImage;
 		if (clear)
 			_recordedToImage = nullptr;
@@ -107,6 +118,8 @@ public:
 	}
 
 	virtual void start(int frameCount) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
 		_recordToImage = false;
 		_recordedToImage = nullptr;
 
@@ -116,6 +129,8 @@ public:
 		_footprint = 0;
 	}
 	virtual void stop(void) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
 		promise::Defer canSave = promise::newPromise([] (promise::Defer df) -> void { df.resolve(); });
 		if (_save)
 			canSave = _save();
@@ -137,6 +152,8 @@ public:
 	}
 
 	virtual void update(class Window* /* wnd */, class Renderer* rnd, class Texture* tex) override {
+		LockGuard<decltype(_lock)> guard(_lock);
+
 		if (!_recording)
 			return;
 
@@ -188,13 +205,11 @@ private:
 		if (_frames.empty())
 			return;
 
-		const bool single = _frames.size() == 1;
-
 		fprintf(stdout, "Recorded %d frames in %d bytes.\n", (int)_frames.size(), _footprint);
 
 		// Save.
 		Image::Ptr img(Image::create(nullptr));
-		if (single) {
+		if (!_frames.empty()) {
 			// Get the only frame.
 			Bytes::Ptr compressed = _frames.front();
 

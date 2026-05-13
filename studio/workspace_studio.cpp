@@ -206,6 +206,8 @@ WorkspaceStudio::WorkspaceStudio() {
 	_theme = new ThemeStudio();
 
 	_loader = new LoaderStudio();
+
+	_hasDeferredInvokings = false;
 }
 
 WorkspaceStudio::~WorkspaceStudio() {
@@ -300,7 +302,7 @@ bool WorkspaceStudio::open(class Window* wnd, class Renderer* rnd, const class P
 	}
 #endif /* BITTY_OS_LINUX */
 
-	bindAsyncAndInvokeHandlers(wnd, rnd, project, exec, primitives);
+	bindInvokeHandlers(wnd, rnd, project, exec, primitives);
 
 	if (toBuild()) {
 		Plugin::Array::const_iterator exists = std::find_if(
@@ -361,7 +363,7 @@ bool WorkspaceStudio::close(class Window* wnd, class Renderer* rnd, const class 
 		return false;
 	_opened = false;
 
-	unbindAsyncAndInvokeHandlers();
+	unbindInvokeHandlers();
 
 	Operations::fileClean(rnd, this, project);
 
@@ -488,9 +490,6 @@ void WorkspaceStudio::require(Executable* exec) {
 		// Promise.
 		Lua::Standard::promise(exec);
 		Lua::Libs::promise(exec);
-		if (exec->editing()) {
-			Lua::Application::promise(exec);
-		}
 
 		// Studio.
 		if (exec->primitives()) {
@@ -508,13 +507,6 @@ void WorkspaceStudio::require(Executable* exec) {
 	if (lang & Executable::NATIVE) {
 		// Do nothing.
 	}
-}
-
-Variant WorkspaceStudio::async(int argc, const Variant* argv) {
-	if (!_asyncHandler)
-		return Variant(nullptr);
-
-	return _asyncHandler(argc, argv);
 }
 
 Variant WorkspaceStudio::invoke(int argc, const Variant* argv) {
@@ -804,6 +796,12 @@ void WorkspaceStudio::unloadProject(const class Project* project, Executable* ex
 	prj->readonly(false);
 }
 
+void WorkspaceStudio::plugins(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta) {
+	Workspace::plugins(wnd, rnd, project, exec, primitives, delta);
+
+	executeDeferredInvokings(wnd, rnd, project, exec, primitives);
+}
+
 unsigned WorkspaceStudio::updateEditing(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, unsigned fps, bool alive, bool* indicated) {
 	// Prepare.
 	unsigned result = 0;
@@ -843,7 +841,7 @@ unsigned WorkspaceStudio::updateEditing(class Window* wnd, class Renderer* rnd, 
 	}
 
 	// Plugins.
-	plugins(wnd, rnd, project, delta);
+	plugins(wnd, rnd, project, exec, primitives, delta);
 
 	// Finish.
 	finish(wnd, rnd, project);
@@ -869,7 +867,7 @@ unsigned WorkspaceStudio::updateBuilding(class Window* wnd, class Renderer* rnd,
 	}
 
 	// Plugins.
-	plugins(wnd, rnd, project, delta);
+	plugins(wnd, rnd, project, exec, primitives, delta);
 
 	// Finish.
 	finish(wnd, rnd, project);
@@ -885,172 +883,189 @@ void WorkspaceStudio::refresh(class Window* wnd, class Renderer*, const class Pr
 	}
 }
 
-void WorkspaceStudio::bindAsyncAndInvokeHandlers(class Window*, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
-	_asyncHandler = [rnd, this, project, exec, primitives] (int argc, const Variant* argv) -> Variant {
-		// Get the promise.
-		const Object::Ptr promiseObj = unpack<Object::Ptr>(argc, argv, 0, nullptr);
-		if (!promiseObj)
-			return Variant(nullptr);
-		Promise::Ptr promisePtr = Object::as<Promise::Ptr>(promiseObj);
-		if (!promisePtr)
-			return Variant(nullptr);
-
-		// Get the command.
-		const std::string cmd = unpack<std::string>(argc, argv, 1, "");
-		if (cmd.empty())
-			return Variant(nullptr);
-
-		// Match commands.
-		do {
-			if (cmd != "screenshot")
-				break;
-
-			if (!executing() || recorder()->recording()) {
-				Executable::PromiseHandler handler = [] (Variant* ret, bool &/* resolved */, bool &rejected) -> bool {
-					if (ret)
-						*ret = nullptr;
-
-					rejected = true;
-
-					return true;
-				};
-				promise(promisePtr, handler);
-
-				return Variant(true);
-			}
-
-			recorder()->startRecordingToImage();
-
-			Executable::PromiseHandler handler = [this] (Variant* ret, bool &resolved, bool &rejected) -> bool {
-				Image::Ptr img = recorder()->recordedImage(true);
-				if (!img)
-					return false; // Pending.
-
-				if (img->width() == 0 && img->height() == 0) {
-					if (ret)
-						*ret = nullptr;
-
-					rejected = true;
-
-					return true;
-				}
-
-				if (ret)
-					*ret = Object::Ptr(img);
-
-				resolved = true;
-
-				return true;
-			};
-			promise(promisePtr, handler);
-
-			return Variant(true);
-		} while (false);
-
-		// No match.
-		return Variant(nullptr);
-	};
-
+void WorkspaceStudio::bindInvokeHandlers(class Window*, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
 	_invokeHandler = [rnd, this, project, exec, primitives] (int argc, const Variant* argv) -> Variant {
 		// Get the command.
 		const std::string cmd = unpack<std::string>(argc, argv, 0, "");
 		if (cmd.empty())
 			return Variant(nullptr);
 
-		// Common functions.
-		auto findPlugin = [this] (const std::string &mutex) -> Plugin* {
-			Plugin::Array::iterator exists = std::find_if(
-				plugins().begin(), plugins().end(),
-				[&] (const Plugin *val) -> bool {
-					return val->mutex() == mutex;
-				}
-			);
-			if (exists != plugins().end())
-				return *exists;
-
-			return nullptr;
-		};
-
 		// Match commands.
-		do {
-			if (cmd != "run")
-				break;
-
-			Operations::projectRun(rnd, this, project, exec, primitives);
+		if (cmd == "stop-plugin") {
+			deferInvoking(argc, argv);
 
 			return Variant(true);
-		} while (false);
+		}
 
-		do {
-			if (cmd != "stop")
-				break;
-
-			Operations::projectStop(rnd, this, project, exec, primitives);
+		if (cmd == "run") {
+			deferInvoking(argc, argv);
 
 			return Variant(true);
-		} while (false);
+		}
 
-		do {
-			if (cmd != "break")
-				break;
-
-			Operations::debugBreak(this, project, exec);
+		if (cmd == "stop") {
+			deferInvoking(argc, argv);
 
 			return Variant(true);
-		} while (false);
+		}
 
-		do {
-			if (cmd != "continue")
-				break;
-
-			Operations::debugContinue(this, project, exec);
+		if (cmd == "break") {
+			deferInvoking(argc, argv);
 
 			return Variant(true);
-		} while (false);
+		}
 
-		do {
-			if (cmd != "reload")
-				break;
-
-			bool prjPersisted = false;
-			projectStates(project, nullptr, &prjPersisted, nullptr, nullptr);
-
-			if (!prjPersisted)
-				break;
-
-			Operations::projectStop(rnd, this, project, exec, primitives);
-
-			Operations::projectReload(rnd, this, project, exec);
+		if (cmd == "continue") {
+			deferInvoking(argc, argv);
 
 			return Variant(true);
-		} while (false);
+		}
 
-		do {
-			if (cmd != "stop-plugin")
-				break;
+		if (cmd == "reload") {
+			deferInvoking(argc, argv);
 
-			const std::string mutex = unpack<std::string>(argc, argv, 1, "");
-			if (mutex.empty())
-				return Variant(nullptr);
+			return Variant(true);
+		}
 
-			Plugin* plugin = findPlugin(mutex);
-			if (!plugin)
-				return Variant(nullptr);
+		if (cmd == "sim-input") {
+			if (argc < 2)
+				return Variant(false);
 
-			const bool ret = plugin->stop();
+			const int argc_ = argc - 1;
+			const Variant* argv_ = argv + 1;
+			const bool ret = primitives->simulateInput(argc_, argv_);
 
 			return Variant(ret);
-		} while (false);
+		}
+
+		if (cmd == "take-screenshot") {
+			if (!executing())
+				return Variant(nullptr);
+
+			recorder()->startRecordingToImage();
+
+			return Variant(true);
+		}
+
+		if (cmd == "get-screenshot") {
+			Image::Ptr img = recorder()->recordedImage(true);
+			if (!img)
+				return Variant(nullptr); // Pending.
+
+			if (img->width() == 0 && img->height() == 0)
+				return Variant(nullptr);
+
+			return Variant(Object::Ptr(img));
+		}
+
+		if (cmd == "read-log") {
+			std::string log;
+			const bool ret = readLogFile(log);
+			if (!ret)
+				return Variant(nullptr);
+
+			return Variant(log);
+		}
 
 		// No match.
 		return Variant(nullptr);
 	};
 }
 
-void WorkspaceStudio::unbindAsyncAndInvokeHandlers(void) {
-	_asyncHandler = nullptr;
-
+void WorkspaceStudio::unbindInvokeHandlers(void) {
 	_invokeHandler = nullptr;
+}
+
+void WorkspaceStudio::deferInvoking(int argc, const Variant* argv) {
+	DeferredInvoking invoke;
+	for (int i = 0; i < argc; ++i) {
+		const Variant &arg = argv[i];
+		invoke.push_back(arg);
+	}
+
+	{
+		LockGuard<decltype(_lockDeferredInvokings)> guard(_lockDeferredInvokings);
+
+		_deferredInvokings.push_back(std::move(invoke));
+	}
+
+	_hasDeferredInvokings = true;
+}
+
+void WorkspaceStudio::executeDeferredInvokings(class Window*, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) {
+	auto findPlugin = [this] (const std::string &mutex) -> Plugin* {
+		Plugin::Array::iterator exists = std::find_if(
+			plugins().begin(), plugins().end(),
+			[&] (const Plugin *val) -> bool {
+				return val->mutex() == mutex;
+			}
+		);
+		if (exists != plugins().end())
+			return *exists;
+
+		return nullptr;
+	};
+
+	if (!_hasDeferredInvokings)
+		return;
+
+	DeferredInvokings localInvokings;
+	{
+		LockGuard<decltype(_lockDeferredInvokings)> guard(_lockDeferredInvokings);
+
+		if (_deferredInvokings.empty())
+			return;
+
+		localInvokings.swap(_deferredInvokings); 
+	}
+
+	_hasDeferredInvokings = false;
+
+	for (const DeferredInvoking &invoke : localInvokings) {
+		const int argc = (int)invoke.size();
+		const Variant* argv = &invoke.front();
+
+		const std::string cmd = unpack<std::string>(argc, argv, 0, "");
+		if (cmd.empty())
+			continue;
+
+		if (cmd == "stop-plugin") {
+			const std::string mutex = unpack<std::string>(argc, argv, 1, "");
+			if (!mutex.empty()) {
+				Plugin* plugin = findPlugin(mutex);
+				if (plugin)
+					plugin->stop();
+			}
+		}
+
+		if (cmd == "run") {
+			Operations::projectRun(rnd, this, project, exec, primitives);
+		}
+
+		if (cmd == "stop") {
+			Operations::projectStop(rnd, this, project, exec, primitives);
+		}
+
+		if (cmd == "break") {
+			Operations::debugBreak(this, project, exec);
+		}
+
+		if (cmd == "continue") {
+			Operations::debugContinue(this, project, exec);
+		}
+
+		if (cmd == "reload") {
+			bool prjPersisted = false;
+			projectStates(project, nullptr, &prjPersisted, nullptr, nullptr);
+
+			if (prjPersisted) {
+				Operations::projectStop(rnd, this, project, exec, primitives);
+
+				Operations::projectReload(rnd, this, project, exec);
+			}
+		}
+	}
+	_deferredInvokings.clear();
 }
 
 void WorkspaceStudio::addRecentTouched(StudioSettings::RecentTouched::Types type, const char* path) {

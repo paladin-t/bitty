@@ -11,6 +11,7 @@
 #include "bitty.h"
 #include "bytes.h"
 #include "filesystem.h"
+#include "image.h"
 #include "project.h"
 #include "scripting_lua.h"
 #include "scripting_lua_api_plugin.h"
@@ -30,6 +31,13 @@ LUA_CHECK_OBJ(Bytes)
 LUA_READ_OBJ(Bytes)
 LUA_WRITE_OBJ(Bytes)
 LUA_WRITE_OBJ_CONST(Bytes)
+
+/**< Image. */
+
+LUA_CHECK_OBJ(Image)
+LUA_READ_OBJ(Image)
+LUA_WRITE_OBJ(Image)
+LUA_WRITE_OBJ_CONST(Image)
 
 }
 
@@ -77,6 +85,14 @@ static int Plugin_invoke(lua_State* L) {
 		args.push_back(val);
 	}
 	const Variant ret = impl->observer()->invoke((int)args.size(), &args.front());
+	if (ret.type() == Variant::OBJECT) {
+		Object::Ptr obj = (Object::Ptr)ret;
+		if (obj && Object::is<Image::Ptr>(obj)) {
+			Image::Ptr img = Object::as<Image::Ptr>(obj);
+			if (img)
+				return write(L, &img);
+		}
+	}
 
 	return write(L, &ret);
 }
