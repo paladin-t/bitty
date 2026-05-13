@@ -51,7 +51,7 @@ public:
 		HALTING
 	};
 
-	typedef std::function<bool(Variant*)> PromiseHandler;
+	typedef std::function<bool(Variant*, bool &, bool &)> PromiseHandler;
 
 	class Observer {
 	public:

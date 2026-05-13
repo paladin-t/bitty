@@ -13,7 +13,6 @@
 #include "encoding.h"
 #include "file_handle.h"
 #include "filesystem.h"
-#include "image.h"
 #include "platform.h"
 #include "recorder.h"
 #include "text.h"
@@ -65,6 +64,8 @@ private:
 
 private:
 	SaveHandler _save = nullptr;
+	bool _recordToImage = false;
+	Image::Ptr _recordedToImage = nullptr;
 	unsigned _fps = BITTY_ACTIVE_FRAME_RATE;
 	unsigned _frameSkipping = 0;
 
@@ -88,7 +89,27 @@ public:
 		return !!_recording;
 	}
 
+	virtual void startRecordingToImage(void) override {
+		_recordToImage = true;
+		_recordedToImage = nullptr;
+
+		_frameSkipping = RECORDER_SKIP_FRAME_COUNT;
+
+		_recording = 1;
+		_footprint = 0;
+	}
+	virtual Image::Ptr recordedImage(bool clear) override {
+		Image::Ptr result = _recordedToImage;
+		if (clear)
+			_recordedToImage = nullptr;
+
+		return result;
+	}
+
 	virtual void start(int frameCount) override {
+		_recordToImage = false;
+		_recordedToImage = nullptr;
+
 		_frameSkipping = RECORDER_SKIP_FRAME_COUNT;
 
 		_recording = std::max(frameCount, 1);
@@ -102,7 +123,10 @@ public:
 		canSave
 			.then(
 				[&] (void) -> void {
-					save();
+					if (_recordToImage)
+						saveToImage();
+					else
+						save();
 				}
 			)
 			.always(
@@ -159,6 +183,27 @@ public:
 	}
 
 private:
+	void saveToImage(void) {
+		// Prepare.
+		if (_frames.empty())
+			return;
+
+		const bool single = _frames.size() == 1;
+
+		fprintf(stdout, "Recorded %d frames in %d bytes.\n", (int)_frames.size(), _footprint);
+
+		// Save.
+		Image::Ptr img(Image::create(nullptr));
+		if (single) {
+			// Get the only frame.
+			Bytes::Ptr compressed = _frames.front();
+
+			toImage(compressed, img); // Decompress and load the frame to an image object.
+		}
+
+		_recordToImage = false;
+		_recordedToImage = img;
+	}
 	void save(void) {
 		// Prepare.
 		if (_frames.empty())

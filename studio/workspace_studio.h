@@ -56,6 +56,9 @@ public:
 		bool operator != (const StudioSettings &other) const;
 	};
 
+	typedef std::function<Variant(int, const Variant*)> AsyncHandler;
+	typedef std::function<Variant(int, const Variant*)> InvokeHandler;
+
 protected:
 	BITTY_PROPERTY_READONLY_PTR(const char, autorun)
 
@@ -69,6 +72,9 @@ protected:
 	class Loader* _loader = nullptr;
 
 	Text::Array _droppedFiles;
+
+	AsyncHandler _asyncHandler = nullptr;
+	InvokeHandler _invokeHandler = nullptr;
 
 public:
 	WorkspaceStudio();
@@ -93,6 +99,8 @@ public:
 	virtual unsigned update(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, unsigned fps, bool alive, bool* indicated) override;
 
 	virtual void require(Executable* exec) override;
+	virtual Variant async(int argc, const Variant* argv) override;
+	virtual Variant invoke(int argc, const Variant* argv) override;
 
 	virtual void focusGained(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) override;
 	virtual void focusLost(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives) override;
@@ -115,6 +123,9 @@ private:
 	unsigned updateBuilding(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, double delta, unsigned fps, bool alive, bool* indicated);
 
 	void refresh(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
+
+	void bindAsyncAndInvokeHandlers(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
+	void unbindAsyncAndInvokeHandlers(void);
 
 	void addRecentTouched(StudioSettings::RecentTouched::Types type, const char* path);
 	void openRecentTouched(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives, StudioSettings::RecentTouched::Types type, int idx, const char* path);

@@ -12,6 +12,7 @@
 #define __RECORDER_H__
 
 #include "bitty.h"
+#include "image.h"
 #if defined BITTY_CP_VC
 #	pragma warning(push)
 #	pragma warning(disable : 4100)
@@ -40,6 +41,9 @@ public:
 	virtual ~Recorder();
 
 	virtual bool recording(void) const = 0;
+
+	virtual void startRecordingToImage(void) = 0;
+	virtual Image::Ptr recordedImage(bool clear) = 0;
 
 	virtual void start(int frameCount = -1) = 0;
 	virtual void stop(void) = 0;

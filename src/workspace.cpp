@@ -1151,83 +1151,11 @@ void Workspace::built(void) {
 	buildingDone() = true;
 }
 
-Variant Workspace::async(int argc, const Variant* argv) {
-	// Get the promise.
-	const Object::Ptr promiseObj = unpack<Object::Ptr>(argc, argv, 0, nullptr);
-	if (!promiseObj)
-		return Variant(nullptr);
-	Promise::Ptr promisePtr = Object::as<Promise::Ptr>(promiseObj);
-	if (!promisePtr)
-		return Variant(nullptr);
-
-	// Get the command.
-	const std::string cmd = unpack<std::string>(argc, argv, 1, "");
-	if (cmd.empty())
-		return Variant(nullptr);
-
-	// Match commands.
-	do {
-		if (cmd != "async-test")
-			break;
-
-		Executable::PromiseHandler handler = [] (Variant* ret) -> bool {
-			if (ret)
-				*ret = nullptr;
-
-			// TODO
-			if (ret)
-				*ret = 42;
-
-			return true;
-		};
-		promise(promisePtr, handler);
-
-		return Variant(true);
-	} while (false);
-
-	// No match.
+Variant Workspace::async(int, const Variant*) {
 	return Variant(nullptr);
 }
 
-Variant Workspace::invoke(int argc, const Variant* argv) {
-	// Get the command.
-	const std::string cmd = unpack<std::string>(argc, argv, 0, "");
-	if (cmd.empty())
-		return Variant(nullptr);
-
-	// Common functions.
-	auto findPlugin = [this] (const std::string &mutex) -> Plugin* {
-		Plugin::Array::iterator exists = std::find_if(
-			plugins().begin(), plugins().end(),
-			[&] (const Plugin *val) -> bool {
-				return val->mutex() == mutex;
-			}
-		);
-		if (exists != plugins().end())
-			return *exists;
-
-		return nullptr;
-	};
-
-	// Match commands.
-	do {
-		if (cmd != "stop-plugin")
-			break;
-
-		const std::string mutex = unpack<std::string>(argc, argv, 1, "");
-		if (mutex.empty())
-			return Variant(nullptr);
-
-		Plugin* plugin = findPlugin(mutex);
-		if (!plugin)
-			return Variant(nullptr);
-
-		const bool ret = plugin->stop();
-
-		return Variant(ret);
-	} while (false);
-
-	// No match.
+Variant Workspace::invoke(int, const Variant*) {
 	return Variant(nullptr);
 }
 
@@ -3166,22 +3094,26 @@ void Workspace::promise(class Window*, class Renderer*, const class Project*) {
 	switch (popupPromiseType()) {
 	case FUNCTION: {
 			Variant ret = nullptr;
-			const bool resolved = popupPromiseHandler()(&ret);
+			bool resolved = false;
+			bool rejected = false;
+			const bool finished = popupPromiseHandler()(&ret, resolved, rejected);
 
-			if (resolved)
-				popupPromise()->resolve(ret);
-			else
-				popupPromise()->reject(nullptr);
+			if (finished) {
+				if (resolved)
+					popupPromise()->resolve(ret);
+				else
+					popupPromise()->reject(nullptr);
 
-			popupPromise(nullptr);
+				popupPromise(nullptr);
 
-			popupPromiseType(NONE);
-			popupPromiseHandler(nullptr);
-			popupPromiseContent().clear();
-			popupPromiseDefault().clear();
-			popupPromiseConfirmText().clear();
-			popupPromiseDenyText().clear();
-			popupPromiseCancelText().clear();
+				popupPromiseType(NONE);
+				popupPromiseHandler(nullptr);
+				popupPromiseContent().clear();
+				popupPromiseDefault().clear();
+				popupPromiseConfirmText().clear();
+				popupPromiseDenyText().clear();
+				popupPromiseCancelText().clear();
+			}
 		}
 
 		break;

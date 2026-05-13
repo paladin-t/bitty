@@ -660,7 +660,7 @@ static int Platform_openFile_Promise(lua_State* L) {
 	Promise::Ptr promise = nullptr;
 	int result = Standard::Promise_ctor(L, promise, false);
 
-	Executable::PromiseHandler handler = [title, default_, filter, multiselect] (Variant* ret) -> bool {
+	Executable::PromiseHandler handler = [title, default_, filter, multiselect] (Variant* ret, bool &resolved, bool &rejected) -> bool {
 		if (ret)
 			*ret = nullptr;
 
@@ -673,8 +673,11 @@ static int Platform_openFile_Promise(lua_State* L) {
 			filter,
 			options
 		);
-		if (open.result().empty() || open.result().front().empty())
-			return false;
+		if (open.result().empty() || open.result().front().empty()) {
+			rejected = true;
+
+			return true;
+		}
 
 		if (multiselect) {
 			IList::Ptr ret_(List::create());
@@ -692,6 +695,8 @@ static int Platform_openFile_Promise(lua_State* L) {
 			if (ret)
 				*ret = ret_;
 		}
+
+		resolved = true;
 
 		return true;
 	};
@@ -792,7 +797,7 @@ static int Platform_saveFile_Promise(lua_State* L) {
 	Promise::Ptr promise = nullptr;
 	int result = Standard::Promise_ctor(L, promise, false);
 
-	Executable::PromiseHandler handler = [title, default_, filter] (Variant* ret) -> bool {
+	Executable::PromiseHandler handler = [title, default_, filter] (Variant* ret, bool &resolved, bool &rejected) -> bool {
 		if (ret)
 			*ret = nullptr;
 
@@ -801,14 +806,19 @@ static int Platform_saveFile_Promise(lua_State* L) {
 			default_,
 			filter
 		);
-		if (save.result().empty())
-			return false;
+		if (save.result().empty()) {
+			rejected = true;
+
+			return true;
+		}
 
 		std::string ret_ = save.result();
 		Path::uniform(ret_);
 
 		if (ret)
 			*ret = ret_;
+
+		resolved = true;
 
 		return true;
 	};
@@ -889,7 +899,7 @@ static int Platform_selectDirectory_Promise(lua_State* L) {
 	Promise::Ptr promise = nullptr;
 	int result = Standard::Promise_ctor(L, promise, false);
 
-	Executable::PromiseHandler handler = [title, default_] (Variant* ret) -> bool {
+	Executable::PromiseHandler handler = [title, default_] (Variant* ret, bool &resolved, bool &rejected) -> bool {
 		if (ret)
 			*ret = nullptr;
 
@@ -897,14 +907,19 @@ static int Platform_selectDirectory_Promise(lua_State* L) {
 			title,
 			default_
 		);
-		if (open.result().empty())
-			return false;
+		if (open.result().empty()) {
+			rejected = true;
+
+			return true;
+		}
 
 		std::string ret_ = open.result();
 		Path::uniform(ret_);
 
 		if (ret)
 			*ret = ret_;
+
+		resolved = true;
 
 		return true;
 	};

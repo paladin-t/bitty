@@ -3838,41 +3838,31 @@ void Operations::debugClearBreakpoints(Workspace*, const class Project* project,
 }
 
 promise::Defer Operations::pluginRunMenuItem(class Renderer*, Workspace* ws, const class Project*, Plugin* plugin, const std::string &args) {
+	const std::string args_ = args;
+
 	return promise::newPromise(
-		[&] (promise::Defer df) -> void {
-			const std::string args_ = args;
-			ImGui::WaitingPopupBox::TimeoutHandler timeout(
-				[ws, df, plugin, args_] (void) -> void {
-					OPERATIONS_AUTO_CLOSE_POPUP(ws)
+		[&, args_] (promise::Defer df) -> void {
+			Plugin::Errors error = Plugin::Errors::NONE;
+			plugin->run(Plugin::Functions::MENU, args_, &error);
+			switch (error) {
+			case Plugin::Errors::ALREADY_RUNNING:
+				df.reject();
 
-					Plugin::Errors error = Plugin::Errors::NONE;
-					plugin->run(Plugin::Functions::MENU, args_, &error);
-					switch (error) {
-					case Plugin::Errors::ALREADY_RUNNING:
-						df.reject();
+				ws->messagePopupBox(
+					ws->theme()->dialogPrompt_AlreadyRunning(),
+					nullptr,
+					nullptr,
+					nullptr
+				);
 
-						ws->messagePopupBox(
-							ws->theme()->dialogPrompt_AlreadyRunning(),
-							nullptr,
-							nullptr,
-							nullptr
-						);
+				return;
+			default:
+				// Do nothing.
 
-						return;
-					default:
-						// Do nothing.
+				break;
+			}
 
-						break;
-					}
-
-					df.resolve(true);
-				},
-				nullptr
-			);
-			ws->waitingPopupBox(
-				ws->theme()->dialogPrompt_Running(),
-				timeout
-			);
+			df.resolve(true);
 		}
 	);
 }
