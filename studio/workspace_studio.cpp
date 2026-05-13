@@ -484,6 +484,9 @@ void WorkspaceStudio::require(Executable* exec) {
 		// Promise.
 		Lua::Standard::promise(exec);
 		Lua::Libs::promise(exec);
+		if (exec->editing()) {
+			Lua::Application::promise(exec);
+		}
 
 		// Studio.
 		if (exec->primitives()) {

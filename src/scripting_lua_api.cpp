@@ -14814,6 +14814,20 @@ static void open_Debug(lua_State* L) {
 	);
 }
 
+/**< Plugin. */
+
+static void open_Plugin(lua_State* L) {
+	def(
+		L, "Plugin",
+		LUA_LIB(
+			array<luaL_Reg>()
+		),
+		array<luaL_Reg>(),
+		array<luaL_Reg>(),
+		nullptr, nullptr
+	);
+}
+
 /**< Categories. */
 
 void open(class Executable* exec) {
@@ -14834,6 +14848,9 @@ void open(class Executable* exec) {
 
 	// Debug.
 	open_Debug(L);
+
+	// Plugin.
+	open_Plugin(L);
 }
 
 }

@@ -609,6 +609,10 @@ public:
 	 */
 	virtual void built(void) override;
 	/**
+	 * @brief Called by plugins to asynchronously invoke automation actions, etc.
+	 */
+	virtual Variant async(int argc, const Variant* argv) override;
+	/**
 	 * @brief Implements `Executable::Observer`. Called by plugins to invoke automation actions, etc.
 	 */
 	virtual Variant invoke(int argc, const Variant* argv) override;

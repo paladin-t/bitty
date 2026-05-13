@@ -76,9 +76,9 @@ static int Plugin_invoke(lua_State* L) {
 		read(L, &val, Index(i + 1));
 		args.push_back(val);
 	}
-	impl->observer()->invoke((int)args.size(), &args.front());
+	const Variant ret = impl->observer()->invoke((int)args.size(), &args.front());
 
-	return 0;
+	return write(L, &ret);
 }
 
 static int Plugin_built(lua_State* L) {
@@ -90,27 +90,13 @@ static int Plugin_built(lua_State* L) {
 }
 
 static void open_Plugin(lua_State* L) {
-	req(
+	getGlobal(L, "Plugin");
+	setTable(
 		L,
-		array(
-			luaL_Reg{
-				"Plugin",
-				[] (lua_State* L) -> int {
-					lib(
-						L,
-						array(
-							luaL_Reg{ "invoke", Plugin_invoke },
-							luaL_Reg{ "built", Plugin_built }, // Frame synchronized.
-							luaL_Reg{ nullptr, nullptr }
-						)
-					);
-
-					return 1;
-				}
-			},
-			luaL_Reg{ nullptr, nullptr }
-		)
+		"invoke", Plugin_invoke,
+		"built", Plugin_built
 	);
+	pop(L);
 }
 
 /**< Project. */

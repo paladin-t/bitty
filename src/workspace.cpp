@@ -1151,6 +1151,44 @@ void Workspace::built(void) {
 	buildingDone() = true;
 }
 
+Variant Workspace::async(int argc, const Variant* argv) {
+	// Get the promise.
+	const Object::Ptr promiseObj = unpack<Object::Ptr>(argc, argv, 0, nullptr);
+	if (!promiseObj)
+		return Variant(nullptr);
+	Promise::Ptr promisePtr = Object::as<Promise::Ptr>(promiseObj);
+	if (!promisePtr)
+		return Variant(nullptr);
+
+	// Get the command.
+	const std::string cmd = unpack<std::string>(argc, argv, 1, "");
+	if (cmd.empty())
+		return Variant(nullptr);
+
+	// Match commands.
+	do {
+		if (cmd != "async-test")
+			break;
+
+		Executable::PromiseHandler handler = [] (Variant* ret) -> bool {
+			if (ret)
+				*ret = nullptr;
+
+			// TODO
+			if (ret)
+				*ret = 42;
+
+			return true;
+		};
+		promise(promisePtr, handler);
+
+		return Variant(true);
+	} while (false);
+
+	// No match.
+	return Variant(nullptr);
+}
+
 Variant Workspace::invoke(int argc, const Variant* argv) {
 	// Get the command.
 	const std::string cmd = unpack<std::string>(argc, argv, 0, "");
@@ -1184,14 +1222,9 @@ Variant Workspace::invoke(int argc, const Variant* argv) {
 		if (!plugin)
 			return Variant(nullptr);
 
-		std::string msg;
-		if (plugin->stop())
-			msg = Text::format("Stopped plugin \"{0}\".", { mutex });
-		else
-			msg = Text::format("Plugin \"{0}\" is not running.", { mutex });
-		print(msg.c_str());
+		const bool ret = plugin->stop();
 
-		return Variant(true);
+		return Variant(ret);
 	} while (false);
 
 	// No match.

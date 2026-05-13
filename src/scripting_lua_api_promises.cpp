@@ -12,7 +12,7 @@
 #include "bytes.h"
 #include "datetime.h"
 #include "filesystem.h"
-#include "json.h"
+#include "image.h"
 #include "scripting_lua.h"
 #include "scripting_lua_api_promises.h"
 #include "web.h"
@@ -63,6 +63,13 @@ LUA_CHECK_OBJ(Bytes)
 LUA_READ_OBJ(Bytes)
 LUA_WRITE_OBJ(Bytes)
 LUA_WRITE_OBJ_CONST(Bytes)
+
+/**< Image. */
+
+LUA_CHECK_OBJ(Image)
+LUA_READ_OBJ(Image)
+LUA_WRITE_OBJ(Image)
+LUA_WRITE_OBJ_CONST(Image)
 
 /**< JSON. */
 
@@ -194,6 +201,12 @@ static int Promise_call(lua_State* L, Function::Ptr* ptr, const Variant &arg) {
 		bytes = Object::as<Bytes::Ptr>(obj);
 	if (bytes)
 		return ScriptingLua::check(L, call(L, **ptr, &bytes));
+
+	Image::Ptr img = nullptr;
+	if (Object::is<Image::Ptr>(obj))
+		img = Object::as<Image::Ptr>(obj);
+	if (img)
+		return ScriptingLua::check(L, call(L, **ptr, &img));
 
 	Json::Ptr json = nullptr;
 	if (Object::is<Json::Ptr>(obj))
@@ -410,7 +423,7 @@ static int waitbox(lua_State* L) {
 	read<>(L, content);
 
 	if (impl->observer()->promising()) {
-		error(L, "Too many pending popups.");
+		error(L, "Too many pending promises.");
 
 		return 0;
 	}
@@ -456,7 +469,7 @@ static int msgbox(lua_State* L) {
 		cancelTxt = EXECUTABLE_ANY_NAME;
 
 	if (impl->observer()->promising()) {
-		error(L, "Too many pending popups.");
+		error(L, "Too many pending promises.");
 
 		return 0;
 	}
@@ -488,7 +501,7 @@ static int input(lua_State* L) {
 		read<>(L, prompt);
 
 	if (impl->observer()->promising()) {
-		error(L, "Too many pending popups.");
+		error(L, "Too many pending promises.");
 
 		return 0;
 	}
@@ -515,7 +528,7 @@ static int input(lua_State* L) {
 		read<>(L, prompt);
 
 	if (impl->observer()->promising()) {
-		error(L, "Too many pending popups.");
+		error(L, "Too many pending promises.");
 
 		return 0;
 	}
@@ -1266,6 +1279,69 @@ void promise(class Executable* exec) {
 
 	// Web.
 	open_Web(L);
+}
+
+}
+
+}
+
+}
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
+** Application
+*/
+
+namespace Bitty {
+
+namespace Lua {
+
+namespace Application {
+
+/**< Plugin. */
+
+static int Plugin_async(lua_State* L) {
+	typedef std::vector<Variant> Args;
+
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	const int n = getTop(L);
+	Args args;
+	for (int i = 0; i < n; ++i) {
+		Variant val = nullptr;
+		read(L, &val, Index(i + 1));
+		args.push_back(val);
+	}
+
+	Promise::Ptr promise = nullptr;
+	int result = Standard::Promise_ctor(L, promise, true);
+
+	Variant promiseVar(promise);
+	args.insert(args.begin(), promiseVar);
+	impl->observer()->async((int)args.size(), &args.front());
+
+	return result;
+}
+
+static void open_Plugin(lua_State* L) {
+	getGlobal(L, "Plugin");
+	setTable(
+		L,
+		"async", Plugin_async
+	);
+	pop(L);
+}
+
+/**< Categories. */
+
+void promise(class Executable* exec) {
+	// Prepare.
+	lua_State* L = (lua_State*)exec->pointer();
+
+	// Plugin.
+	open_Plugin(L);
 }
 
 }
