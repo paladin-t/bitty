@@ -82,6 +82,7 @@ public:
 	BITTY_PROPERTY(Entry, entry)
 	BITTY_PROPERTY_READONLY(Usages, usage)
 	BITTY_PROPERTY(unsigned, order)
+	BITTY_PROPERTY(std::string, mutex)
 	BITTY_PROPERTY(Schema, schema)
 
 private:
@@ -117,6 +118,7 @@ public:
 	bool is(Usages usage) const;
 
 	Variant run(Functions function, const std::string &args, Errors* error /* nullable */);
+	bool stop(void);
 
 	void update(double delta);
 
@@ -127,8 +129,8 @@ private:
 	void unlockExclusivelyRunning(void);
 
 	void resolveUsage(void);
+	void resolveMutexName(void);
 	void resolveSchema(void);
-	std::string resolveMutexName(void) const;
 };
 
 }

@@ -609,6 +609,10 @@ public:
 	 */
 	virtual void built(void) override;
 	/**
+	 * @brief Implements `Executable::Observer`. Called by plugins to invoke automation actions, etc.
+	 */
+	virtual Variant invoke(int argc, const Variant* argv) override;
+	/**
 	 * @brief Implements `Executable::Observer`. Gets the size of the application.
 	 */
 	virtual Math::Vec2i applicationSize(void) override;
@@ -794,6 +798,10 @@ protected:
 
 	void beginSplash(class Window* wnd, class Renderer* rnd, const class Project* project);
 	void endSplash(class Window* wnd, class Renderer* rnd, const Text::Dictionary &options);
+
+	template<typename Arg> static Arg unpack(int argc, const Variant* argv, int idx, Arg default_) {
+		return (0 <= idx && idx < argc && argv) ? (Arg)argv[idx] : default_;
+	}
 };
 
 }

@@ -108,6 +108,7 @@ bool Plugin::open(Errors* error) {
 	_menuInvokable = _executable->getInvokable(PLUGIN_MENU_INVOKABLE_NAME);
 	_compilerInvokable = _executable->getInvokable(PLUGIN_COMPILER_INVOKABLE_NAME);
 
+	resolveMutexName();
 	resolveSchema();
 
 	if (!lockExclusivelyRunning(error))
@@ -223,6 +224,15 @@ Variant Plugin::run(Functions function, const std::string &args, Errors* error) 
 	return result;
 }
 
+bool Plugin::stop(void) {
+	if (!_executable)
+		return false;
+
+	close();
+
+	return true;
+}
+
 void Plugin::update(double delta) {
 	if (!opened())
 		return;
@@ -252,11 +262,10 @@ bool Plugin::lockExclusivelyRunning(Errors* error) {
 		if (!is(Usages::MENU))
 			break;
 
-		const std::string mutexName = resolveMutexName();
-		if (mutexName.empty())
+		if (mutex().empty())
 			break;
 
-		if (!_executionMutex.try_lock(mutexName)) {
+		if (!_executionMutex.try_lock(mutex())) {
 			if (error)
 				*error = Errors::ALREADY_RUNNING;
 
@@ -279,11 +288,10 @@ void Plugin::unlockExclusivelyRunning(void) {
 		if (!is(Usages::MENU))
 			break;
 
-		const std::string mutexName = resolveMutexName();
-		if (mutexName.empty())
+		if (mutex().empty())
 			break;
 
-		_executionMutex.unlock(mutexName);
+		_executionMutex.unlock(mutex());
 
 		_exclusively = false;
 	} while (false);
@@ -328,6 +336,23 @@ void Plugin::resolveUsage(void) {
 	}
 }
 
+void Plugin::resolveMutexName(void) {
+	if (!is(Usages::MENU))
+		return;
+
+	Executable::Invokable func = _mutexInvokable;
+
+	if (!func)
+		return;
+
+	const Variant mutexName_ = _executable->invoke(func);
+	if (mutexName_.type() != Variant::STRING)
+		return;
+	const std::string mutexName = (std::string)mutexName_;
+
+	mutex(mutexName);
+}
+
 void Plugin::resolveSchema(void) {
 	if (!is(Usages::COMPILER))
 		return;
@@ -367,23 +392,6 @@ void Plugin::resolveSchema(void) {
 			schema().extension = str;
 		} while (false);
 	}
-}
-
-std::string Plugin::resolveMutexName(void) const {
-	if (!is(Usages::MENU))
-		return "";
-
-	Executable::Invokable func = _mutexInvokable;
-
-	if (!func)
-		return "";
-
-	const Variant mutexName_ = _executable->invoke(func);
-	if (mutexName_.type() != Variant::STRING)
-		return "";
-	const std::string mutexName = (std::string)mutexName_;
-
-	return mutexName;
 }
 
 }

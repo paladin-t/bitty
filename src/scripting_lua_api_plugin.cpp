@@ -64,6 +64,23 @@ namespace Application {
 
 /**< Plugin. */
 
+static int Plugin_invoke(lua_State* L) {
+	typedef std::vector<Variant> Args;
+
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+
+	const int n = getTop(L);
+	Args args;
+	for (int i = 0; i < n; ++i) {
+		Variant val = nullptr;
+		read(L, &val, Index(i + 1));
+		args.push_back(val);
+	}
+	impl->observer()->invoke((int)args.size(), &args.front());
+
+	return 0;
+}
+
 static int Plugin_built(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
@@ -82,6 +99,7 @@ static void open_Plugin(lua_State* L) {
 					lib(
 						L,
 						array(
+							luaL_Reg{ "invoke", Plugin_invoke },
 							luaL_Reg{ "built", Plugin_built }, // Frame synchronized.
 							luaL_Reg{ nullptr, nullptr }
 						)

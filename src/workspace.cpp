@@ -1151,6 +1151,53 @@ void Workspace::built(void) {
 	buildingDone() = true;
 }
 
+Variant Workspace::invoke(int argc, const Variant* argv) {
+	// Get the command.
+	const std::string cmd = unpack<std::string>(argc, argv, 0, "");
+	if (cmd.empty())
+		return Variant(nullptr);
+
+	// Common functions.
+	auto findPlugin = [this] (const std::string &mutex) -> Plugin* {
+		Plugin::Array::iterator exists = std::find_if(
+			plugins().begin(), plugins().end(),
+			[&] (const Plugin *val) -> bool {
+				return val->mutex() == mutex;
+			}
+		);
+		if (exists != plugins().end())
+			return *exists;
+
+		return nullptr;
+	};
+
+	// Match commands.
+	do {
+		if (cmd != "stop-plugin")
+			break;
+
+		const std::string mutex = unpack<std::string>(argc, argv, 1, "");
+		if (mutex.empty())
+			return Variant(nullptr);
+
+		Plugin* plugin = findPlugin(mutex);
+		if (!plugin)
+			return Variant(nullptr);
+
+		std::string msg;
+		if (plugin->stop())
+			msg = Text::format("Stopped plugin \"{0}\".", { mutex });
+		else
+			msg = Text::format("Plugin \"{0}\" is not running.", { mutex });
+		print(msg.c_str());
+
+		return Variant(true);
+	} while (false);
+
+	// No match.
+	return Variant(nullptr);
+}
+
 Math::Vec2i Workspace::applicationSize(void) {
 	LockGuard<decltype(applicationSizeLock())> guard(applicationSizeLock());
 
