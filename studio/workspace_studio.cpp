@@ -917,6 +917,13 @@ void WorkspaceStudio::bindInvokeHandlers(class Window*, class Renderer* rnd, con
 			return Variant(ret);
 		}
 
+		if (cmd == "get-canvas-size") {
+			const Math::Vec2i sz = canvasSize();
+			const std::string ret = Text::format("{ \"x\": {0}, \"y\": {1} }", { Text::toString(sz.x), Text::toString(sz.y) });
+
+			return Variant(ret);
+		}
+
 		if (cmd == "take-screenshot") {
 			if (!executing())
 				return Variant(nullptr);
