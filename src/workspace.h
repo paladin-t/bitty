@@ -430,6 +430,7 @@ protected:
 	BITTY_FIELD(Mutex, consoleLock)
 
 	BITTY_PROPERTY_READONLY(File::Ptr, logFile)
+	BITTY_PROPERTY(std::string, logCache)
 	BITTY_FIELD(Mutex, logLock)
 
 public:
@@ -523,11 +524,15 @@ public:
 	 */
 	bool flushLogFile(void);
 	/**
-	 * @brief Reads the log file.
+	 * @brief Reads the log in memory.
 	 *
 	 * @param[out] content
 	 */
-	bool readLogFile(std::string &content);
+	bool readLog(std::string &content);
+	/**
+	 * @brief Clears the log in memory.
+	 */
+	bool clearLog(void);
 
 #if BITTY_BAKE_ENABLED
 #	if !BITTY_MULTITHREAD_ENABLED

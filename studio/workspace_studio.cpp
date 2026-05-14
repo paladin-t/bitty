@@ -939,11 +939,19 @@ void WorkspaceStudio::bindInvokeHandlers(class Window*, class Renderer* rnd, con
 
 		if (cmd == "read-log") {
 			std::string log;
-			const bool ret = readLogFile(log);
+			const bool ret = readLog(log);
 			if (!ret)
 				return Variant(nullptr);
 
 			return Variant(log);
+		}
+
+		if (cmd == "clear-log") {
+			const bool ret = clearLog();
+			if (!ret)
+				return Variant(nullptr);
+
+			return Variant(true);
 		}
 
 		// No match.

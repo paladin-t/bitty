@@ -728,6 +728,8 @@ bool Workspace::openLogFile(void) {
 		return false;
 	}
 
+	logCache().clear();
+
 	if (!Path::existsFile(settings()->debugLogPath.c_str())) {
 		logFile()->close();
 		logFile(nullptr);
@@ -766,23 +768,18 @@ bool Workspace::flushLogFile(void) {
 	return true;
 }
 
-bool Workspace::readLogFile(std::string &content) {
+bool Workspace::readLog(std::string &content) {
 	LockGuard<decltype(logLock())> guard(logLock());
 
-	if (logFile()) // Still logging.
-		return false;
+	content = logCache();
 
-	File::Ptr file(File::create());
-	if (!file->open(settings()->debugLogPath.c_str(), Stream::READ))
-		return false;
+	return true;
+}
 
-	if (!file->readString(content)) {
-		file->close();
+bool Workspace::clearLog(void) {
+	LockGuard<decltype(logLock())> guard(logLock());
 
-		return false;
-	}
-
-	file->close();
+	logCache().clear();
 
 	return true;
 }
@@ -927,6 +924,8 @@ bool Workspace::print(const char* msg) {
 		DateTime::now(tm);
 		const std::string log = "[MESSAGE " + tm + "] " + osstr + "\n";
 		logFile()->writeString(log);
+
+		logCache(logCache() + log);
 	} while (false);
 
 	return true;
@@ -961,6 +960,8 @@ bool Workspace::warn(const char* msg) {
 		DateTime::now(tm);
 		const std::string log = "[WARN " + tm + "] " + osstr + "\n";
 		logFile()->writeString(log);
+
+		logCache(logCache() + log);
 	} while (false);
 
 	return true;
@@ -995,6 +996,8 @@ bool Workspace::error(const char* msg) {
 		DateTime::now(tm);
 		const std::string log = "[ERROR " + tm + "] " + osstr + "\n";
 		logFile()->writeString(log);
+
+		logCache(logCache() + log);
 	} while (false);
 
 	return true;
