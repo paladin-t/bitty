@@ -567,7 +567,9 @@ promise::Defer Operations::fileOpenFile(class Renderer* rnd, Workspace* ws, cons
 }
 
 promise::Defer Operations::fileOpenDirectory(class Renderer* rnd, Workspace* ws, const class Project* project, Executable* exec, const char* path_) {
-	const std::string path = path_ ? path_ : "";
+	std::string path = path_ ? path_ : "";
+	if (!path.empty() && (path.back() == '/' || path.back() == '\\'))
+		path.pop_back();
 	auto next = [ws, project, exec, path] (promise::Defer df) -> void {
 		OPERATIONS_AUTO_CLOSE_POPUP(ws)
 

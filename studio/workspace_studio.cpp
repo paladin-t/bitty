@@ -891,37 +891,16 @@ void WorkspaceStudio::bindInvokeHandlers(class Window*, class Renderer* rnd, con
 			return Variant(nullptr);
 
 		// Match commands.
-		if (cmd == "stop-plugin") {
-			deferInvoking(argc, argv);
-
-			return Variant(true);
-		}
-
-		if (cmd == "run") {
-			deferInvoking(argc, argv);
-
-			return Variant(true);
-		}
-
-		if (cmd == "stop") {
-			deferInvoking(argc, argv);
-
-			return Variant(true);
-		}
-
-		if (cmd == "break") {
-			deferInvoking(argc, argv);
-
-			return Variant(true);
-		}
-
-		if (cmd == "continue") {
-			deferInvoking(argc, argv);
-
-			return Variant(true);
-		}
-
-		if (cmd == "reload") {
+		if (
+			cmd == "stop-plugin" ||
+			cmd == "run" ||
+			cmd == "stop" ||
+			cmd == "break" ||
+			cmd == "continue" ||
+			cmd == "reload" ||
+			cmd == "open" ||
+			cmd == "close"
+		) {
 			deferInvoking(argc, argv);
 
 			return Variant(true);
@@ -1033,8 +1012,15 @@ void WorkspaceStudio::executeDeferredInvokings(class Window*, class Renderer* rn
 			const std::string mutex = unpack<std::string>(argc, argv, 1, "");
 			if (!mutex.empty()) {
 				Plugin* plugin = findPlugin(mutex);
-				if (plugin)
-					plugin->stop();
+				if (plugin) {
+					if (plugin->stop()) {
+						const std::string msg = Text::format("Stopped plugin \"{0}\".", { mutex });
+						print(msg.c_str());
+					} else {
+						const std::string msg = Text::format("Plugin \"{0}\" is not running.", { mutex });
+						print(msg.c_str());
+					}
+				}
 			}
 		}
 
@@ -1063,6 +1049,26 @@ void WorkspaceStudio::executeDeferredInvokings(class Window*, class Renderer* rn
 
 				Operations::projectReload(rnd, this, project, exec);
 			}
+		}
+
+		if (cmd == "open") {
+			const std::string path = unpack<std::string>(argc, argv, 1, "");
+
+			if (Path::existsFile(path.c_str())) {
+				Operations::projectStop(rnd, this, project, exec, primitives);
+
+				Operations::fileOpenFile(rnd, this, project, exec, path.c_str());
+			} else if (Path::existsDirectory(path.c_str())) {
+				Operations::projectStop(rnd, this, project, exec, primitives);
+
+				Operations::fileOpenDirectory(rnd, this, project, exec, path.c_str());
+			}
+		}
+
+		if (cmd == "close") {
+			Operations::projectStop(rnd, this, project, exec, primitives);
+
+			Operations::fileClose(rnd, this, project, exec);
 		}
 	}
 	_deferredInvokings.clear();
