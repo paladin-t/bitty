@@ -284,7 +284,7 @@ void FetchCurl::clear(void) {
 
 bool FetchCurl::update(double) {
 	if (_state == IDLE)
-		return true;
+		return false;
 	if (_state == BUSY)
 		return true;
 

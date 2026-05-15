@@ -485,8 +485,14 @@ bool ScriptingLua::pending(void) const {
 }
 
 void ScriptingLua::sync(double delta) {
-	for (Updatable* up : _updatables)
-		up->update(delta);
+	if (!_updatables.empty()) {
+		for (Updatables::iterator it = _updatables.begin(); it != _updatables.end(); ) {
+			if (!(*it)->update(delta))
+				it = _updatables.erase(it);
+			else
+				++it;
+		}
+	}
 
 	do {
 		switch (_focusing) {

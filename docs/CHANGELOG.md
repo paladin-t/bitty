@@ -1,3 +1,14 @@
+### v1.9.0 May. 15, 2026
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added an "Automation Server" plugin
+* Added two menu items to expand or collapse all assets directories
+* Added a logging to file mechanism
+* Added a `file:flush()` method
+* Fixed a responding issue of the `Web` backend
+* Fixed a potential memory leak of `Promise` in plugins
+
 ### v1.8.0 Apr. 7, 2026
 
 Enhanced modules, improved usability, fixed some bugs.

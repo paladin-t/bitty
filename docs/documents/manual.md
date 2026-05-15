@@ -864,6 +864,7 @@ Being the same as Lua list, a `File`'s index starts from 1. Implements a `Stream
 * `file:writeLine(val)`: writes a line of text and moves the cursor forward
 	* `val`: the line to write
 	* returns the written size in bytes
+* `file:flush()`: flushes the content of the file onto disk
 
 Note that when open a file as `Stream.Append`, it always writes data at the end of the file, expanding it, and `file:poke(...)` are ignored.
 
