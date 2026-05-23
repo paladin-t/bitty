@@ -13,11 +13,12 @@
 
 #include "bitty.h"
 #include <functional>
-#include <memory>
 #if BITTY_MULTITHREAD_ENABLED
 #	include <atomic>
 #endif /* BITTY_MULTITHREAD_ENABLED */
+#include <memory>
 #include <mutex>
+#include <string>
 #include <unordered_map>
 
 /*
