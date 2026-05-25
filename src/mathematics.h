@@ -797,8 +797,7 @@ template<typename T> inline T lerp(T lo, T hi, float f) {
  * @return Hash code.
  */
 template<typename T> inline size_t hash(size_t start, const T &val) {
-	std::hash<T> hasher;
-	const size_t result = start ^ hasher(val) + 0x9e3779b9 + (start << 6) + (start >> 2);
+	const size_t result = start ^ std::hash<T>{}(val) + 0x9e3779b9 + (start << 6) + (start >> 2);
 
 	return result;
 }
