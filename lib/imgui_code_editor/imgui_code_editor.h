@@ -194,6 +194,9 @@ public:
 		Keywords Symbols;
 		Identifiers Ids;
 		Identifiers PreprocIds;
+		Keywords AsmKeys;
+		Identifiers AsmIds;
+		Keywords AsmSymbols;
 		std::string CommentStart, CommentEnd;
 		Char CommentException = '\0';
 		std::string SimpleCommentHead;
@@ -222,6 +225,7 @@ public:
 	typedef std::function<ImVec2(const ImVec2 &)> ImePositionUpdated;
 
 	typedef std::function<bool(int)> IsDeadLine;
+	typedef std::function<bool(int)> IsAsmLine;
 	typedef std::function<void(bool)> Colorized;
 	typedef std::function<void(bool)> Modified;
 	typedef std::function<void(int, bool)> HeadClicked;
@@ -256,6 +260,7 @@ public:
 	void SetImePositionUpdatedHandler(const ImePositionUpdated &aHandler);
 	void SetKeyPressedHandler(const KeyPressed &aHandler);
 	void SetIsDeadLineHandler(const IsDeadLine &aHandler);
+	void SetIsAsmLineHandler(const IsAsmLine &aHandler);
 	void SetColorizedHandler(const Colorized &aHandler);
 	void SetModifiedHandler(const Modified &aHandler);
 	void SetHeadClickedHandler(const HeadClicked &aHandler);
@@ -500,6 +505,7 @@ protected:
 	ImePositionUpdated ImePositionUpdatedHandler;
 	KeyPressed KeyPressedHandler;
 	IsDeadLine IsDeadLineHandler;
+	IsAsmLine IsAsmLineHandler;
 	Colorized ColorizedHandler;
 	Modified ModifiedHandler;
 	HeadClicked HeadClickedHandler;

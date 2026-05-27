@@ -1794,6 +1794,10 @@ void CodeEditor::SetIsDeadLineHandler(const IsDeadLine &aHandler) {
 	IsDeadLineHandler = aHandler;
 }
 
+void CodeEditor::SetIsAsmLineHandler(const IsAsmLine &aHandler) {
+	IsAsmLineHandler = aHandler;
+}
+
 void CodeEditor::SetColorizedHandler(const Colorized &aHandler) {
 	ColorizedHandler = aHandler;
 }
@@ -3496,6 +3500,7 @@ void CodeEditor::ColorizeRange(int aFromLine, int aToLine) {
 	const int endLine = std::max(0, std::min((int)CodeLines.size(), aToLine));
 	for (int i = aFromLine; i < endLine; ++i) {
 		bool preproc = false;
+		const bool asmLine = IsAsmLineHandler && IsAsmLineHandler(i);
 		Line &line = CodeLines[i];
 		buffer.clear();
 		for (Glyph &g : CodeLines[i].Glyphs) {
@@ -3550,7 +3555,15 @@ void CodeEditor::ColorizeRange(int aFromLine, int aToLine) {
 						if (!LangDef.CaseSensitive)
 							std::transform(LastSymbol.begin(), LastSymbol.end(), LastSymbol.begin(), ICE_CASE_FUNC);
 
-						if (!preproc) {
+						if (asmLine) {
+							// Inside asm blocks, use asm-specific keyword/identifier sets.
+							if (LangDef.AsmKeys.find(LastSymbol) != LangDef.AsmKeys.end())
+								color = PaletteIndex::Keyword;
+							else if (LangDef.AsmIds.find(LastSymbol) != LangDef.AsmIds.end())
+								color = PaletteIndex::KnownIdentifier;
+							else if (LangDef.AsmSymbols.find(LastSymbol) != LangDef.AsmSymbols.end())
+								color = PaletteIndex::Symbol;
+						} else if (!preproc) {
 							if (LangDef.Keys.find(LastSymbol) != LangDef.Keys.end())
 								color = PaletteIndex::Keyword;
 							else if (LangDef.Symbols.find(LastSymbol) != LangDef.Symbols.end())
