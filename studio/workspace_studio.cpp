@@ -94,6 +94,7 @@ WorkspaceStudio::StudioSettings &WorkspaceStudio::StudioSettings::operator = (co
 	editorGlobalSearch = other.editorGlobalSearch;
 	editorAlwaysShowTransparentBackground = other.editorAlwaysShowTransparentBackground;
 	editorAlwaysShowGrids = other.editorAlwaysShowGrids;
+	editorFineZoomingEnabled = other.editorFineZoomingEnabled;
 
 	canvasState = other.canvasState;
 	canvasFixRatio = other.canvasFixRatio;
@@ -166,7 +167,8 @@ bool WorkspaceStudio::StudioSettings::operator != (const StudioSettings &other) 
 		editorMatchWholeWord != other.editorMatchWholeWord ||
 		editorGlobalSearch != other.editorGlobalSearch ||
 		editorAlwaysShowTransparentBackground != other.editorAlwaysShowTransparentBackground ||
-		editorAlwaysShowGrids != other.editorAlwaysShowGrids
+		editorAlwaysShowGrids != other.editorAlwaysShowGrids ||
+		editorFineZoomingEnabled != other.editorFineZoomingEnabled
 	) {
 		return true;
 	}
@@ -1789,6 +1791,9 @@ void WorkspaceStudio::menu(class Window* wnd, class Renderer* rnd, const class P
 			if (type == Image::TYPE()) {
 				if (referencing == 0) {
 					ImGui::Separator();
+					if (ImGui::MenuItem(_theme->menuEdit_FineZooming(), nullptr, &_settings.editorFineZoomingEnabled)) {
+						changeAssetMagnification(wnd, rnd, project);
+					}
 					if (ImGui::MenuItem(_theme->menuEdit_AlwaysShowBackground(), nullptr, &_settings.editorAlwaysShowTransparentBackground)) {
 						// Do nothing.
 					}
@@ -1815,7 +1820,15 @@ void WorkspaceStudio::menu(class Window* wnd, class Renderer* rnd, const class P
 			}
 			if (referencing != 0) {
 				ImGui::Separator();
+				if (type == Sprite::TYPE()) {
+					if (ImGui::MenuItem(_theme->menuEdit_FineZooming(), nullptr, &_settings.editorFineZoomingEnabled)) {
+						changeAssetMagnification(wnd, rnd, project);
+					}
+				}
 				if (type == Map::TYPE()) {
+					if (ImGui::MenuItem(_theme->menuEdit_FineZooming(), nullptr, &_settings.editorFineZoomingEnabled)) {
+						changeAssetMagnification(wnd, rnd, project);
+					}
 					if (ImGui::MenuItem(_theme->menuEdit_AlwaysShowBackground(), nullptr, &_settings.editorAlwaysShowTransparentBackground)) {
 						// Do nothing.
 					}

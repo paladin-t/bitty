@@ -1791,6 +1791,123 @@ bool magnifiable(
 	return result;
 }
 
+bool magnifiable(
+	Renderer* rnd, Workspace* ws,
+	int* val,
+	int minVal, int maxVal,
+	float width,
+	bool allowShortcuts,
+	bool* focused
+) {
+	ImGuiIO &io = ImGui::GetIO();
+	ImGuiStyle &style = ImGui::GetStyle();
+
+	Theme* theme = ws->theme();
+
+	bool result = false;
+	const bool focusingWnd = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
+
+	if (focused)
+		*focused = false;
+
+	if (width <= 0)
+		width = ImGui::GetContentRegionAvail().x;
+	constexpr const int X_COUNT = EDITING_ITEM_COUNT_PER_LINE;
+	float xOffset = 0;
+	float size = width / X_COUNT;
+	const float iconSize = (float)theme->iconMove()->width(); // Borrowed.
+	if (size > iconSize) {
+		size = iconSize * (int)(size / iconSize);
+		xOffset = (width - size * X_COUNT) * 0.5f;
+	}
+	const float dragWidth = size * (EDITING_ITEM_COUNT_PER_LINE - 1);
+
+	ImGui::PushID("@Sz");
+
+	const char* const TOOLTIP = theme->tooltipEditing_Magnifiable().c_str();
+	const Shortcut shortcuts[] = {
+		Shortcut(SDL_SCANCODE_MINUS),
+		Shortcut(SDL_SCANCODE_EQUALS)
+	};
+
+	VariableGuard<decltype(style.FramePadding)> guardFramePadding(&style.FramePadding, style.FramePadding, ImVec2());
+
+	ImGui::Dummy(ImVec2(xOffset, 0));
+	ImGui::SameLine();
+
+	const ImVec4 btnCol = ImGui::GetStyleColorVec4(ImGuiCol_ChildBg);
+	ImGui::PushStyleColor(ImGuiCol_Button, btnCol);
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, btnCol);
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, btnCol);
+
+	if (ImGui::ImageButton(theme->iconMagnify()->pointer(rnd), ImVec2(size, size), ImColor(IM_COL32_WHITE), false, TOOLTIP) && focusingWnd) {
+		result = true;
+
+		if (val) {
+			if (++*val > maxVal)
+				*val = minVal;
+		}
+	}
+#if WORKSPACE_MODIFIER_KEY == WORKSPACE_MODIFIER_KEY_CTRL
+	const bool modifier = io.KeyCtrl;
+#elif WORKSPACE_MODIFIER_KEY == WORKSPACE_MODIFIER_KEY_CMD
+	const bool modifier = io.KeySuper;
+#endif /* WORKSPACE_MODIFIER_KEY */
+	const bool zoomOut = shortcuts[0].pressed() || (*val > minVal && modifier && io.MouseWheel < 0);
+	const bool zoomIn = shortcuts[1].pressed() || (*val < maxVal && modifier && io.MouseWheel > 0);
+	if (allowShortcuts && focusingWnd && zoomOut) {
+		result = true;
+
+		if (val) {
+			if (--*val < minVal)
+				*val = maxVal;
+		}
+	} else if (allowShortcuts && focusingWnd && zoomIn) {
+		result = true;
+
+		if (val) {
+			if (++*val >= maxVal + 1)
+				*val = minVal;
+		}
+	}
+
+	ImGui::PopStyleColor(3);
+
+	ImGui::SameLine();
+
+	const ImVec2 curPos = ImGui::GetCursorPos();
+
+	bool changed = false;
+	int szVal = *val;
+	ImGui::PushID("@Sz");
+	{
+		VariableGuard<decltype(style.FramePadding)> guardFramePadding_(&style.FramePadding, style.FramePadding, guardFramePadding.previous());
+
+		ImGui::Dummy(ImVec2(xOffset, 0));
+		ImGui::SameLine();
+		const float posY = ImGui::GetCursorPosY() + 5;
+		ImGui::SetCursorPosY(posY);
+		ImGui::SetNextItemWidth(dragWidth);
+		if (ImGui::DragInt("", &szVal, 1.0f, minVal, maxVal, "%d")) {
+			*val = szVal;
+			changed = true;
+		}
+		if (ImGui::GetActiveID() == ImGui::GetID("")) {
+			if (focused)
+				*focused = true;
+		}
+		ImGui::SameLine();
+	}
+	ImGui::PopID();
+
+	ImGui::SetCursorPos(curPos);
+	ImGui::NewLine();
+
+	ImGui::PopID();
+
+	return result;
+}
+
 bool weighable(
 	Renderer* rnd,
 	Workspace* ws,

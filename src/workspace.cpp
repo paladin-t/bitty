@@ -1399,6 +1399,7 @@ bool Workspace::load(class Window* wnd, class Renderer* rnd, const class Project
 	Jpath::get(doc, settings()->editorGlobalSearch, "editor", "global_search");
 	Jpath::get(doc, settings()->editorAlwaysShowTransparentBackground, "editor", "always_show_transparent_background");
 	Jpath::get(doc, settings()->editorAlwaysShowGrids, "editor", "always_show_grids");
+	Jpath::get(doc, settings()->editorFineZoomingEnabled, "editor", "fine_zooming_enabled");
 
 	Jpath::get(doc, settings()->canvasState, "canvas", "state");
 	Jpath::get(doc, settings()->canvasFixRatio, "canvas", "fix_ratio");
@@ -1519,6 +1520,7 @@ bool Workspace::save(class Window* wnd, class Renderer*, const class Project*, c
 	Jpath::set(doc, doc, settings()->editorGlobalSearch, "editor", "global_search");
 	Jpath::set(doc, doc, settings()->editorAlwaysShowTransparentBackground, "editor", "always_show_transparent_background");
 	Jpath::set(doc, doc, settings()->editorAlwaysShowGrids, "editor", "always_show_grids");
+	Jpath::set(doc, doc, settings()->editorFineZoomingEnabled, "editor", "fine_zooming_enabled");
 
 	Jpath::set(doc, doc, settings()->canvasState, "canvas", "state");
 	Jpath::set(doc, doc, settings()->canvasFixRatio, "canvas", "fix_ratio");
@@ -4182,6 +4184,27 @@ void Workspace::filterAssets(class Window*, class Renderer* rnd, const class Pro
 
 		ImGui::EndPopup();
 	}
+}
+
+void Workspace::changeAssetMagnification(class Window*, class Renderer*, const class Project* project) {
+	LockGuard<RecursiveMutex>::UniquePtr acquired;
+	Project* prj = project->acquire(acquired);
+	if (!prj)
+		return;
+
+	prj->foreach(
+		[&] (Asset* &asset, Asset::List::Index) -> void {
+			Asset::States* states = asset->states();
+			if (states->activity() == Asset::States::CLOSED)
+				return;
+
+			Editable* editor = asset->editor();
+			if (!editor)
+				return;
+
+			editor->post(Editable::MAGNIFICATION_CHANGED, settings()->editorFineZoomingEnabled);
+		}
+	);
 }
 
 void Workspace::resizeAsset(class Window* /* wnd */, class Renderer* rnd, const class Project* project, Asset::List::Index index) {

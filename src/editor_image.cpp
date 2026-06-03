@@ -23,6 +23,17 @@
 
 /*
 ** {===========================================================================
+** Macros and constants
+*/
+
+constexpr const int MAGNIFICATIONS[] = {
+	1, 4, 8, 16
+};
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
 ** Image editor
 */
 
@@ -573,6 +584,24 @@ public:
 
 	virtual Variant post(unsigned msg, int argc, const Variant* argv) override {
 		switch (msg) {
+		case MAGNIFICATION_CHANGED: {
+				const bool fineZooming = unpack<bool>(argc, argv, 0, false);
+
+				if (fineZooming) {
+					_tools.magnification = Math::clamp(MAGNIFICATIONS[_tools.magnification], MAGNIFICATIONS[0], MAGNIFICATIONS[BITTY_COUNTOF(MAGNIFICATIONS) - 1]);
+				} else {
+					int idx = 0;
+					for (int i = 0; i < (int)BITTY_COUNTOF(MAGNIFICATIONS); ++i) {
+						if (_tools.magnification >= MAGNIFICATIONS[i])
+							idx = i;
+						else
+							break;
+					}
+					_tools.magnification = Math::clamp(idx, 0, (int)BITTY_COUNTOF(MAGNIFICATIONS) - 1);
+				}
+			}
+
+			return Variant(true);
 		case RESIZE: {
 				if (_object->paletted())
 					return Variant(false);
@@ -658,15 +687,18 @@ public:
 				Editing::Brush cursor = _cursor;
 				const bool withCursor = _tools.painting != Editing::Tools::MOVE;
 
-				constexpr const float MAGNIFICATIONS[] = {
-					1, 4, 8, 16
-				};
+				if (ws->settings()->editorFineZoomingEnabled) {
+					_tools.magnification = Math::clamp(_tools.magnification, MAGNIFICATIONS[0], MAGNIFICATIONS[BITTY_COUNTOF(MAGNIFICATIONS) - 1]);
+				} else {
+					_tools.magnification = Math::clamp(_tools.magnification, 0, (int)BITTY_COUNTOF(MAGNIFICATIONS) - 1);
+				}
+				const int scale = ws->settings()->editorFineZoomingEnabled ? _tools.magnification : MAGNIFICATIONS[_tools.magnification];
 				_painting.set(
 					Editing::image(
 						rnd,
 						ws,
 						_object.get(), _texture.get(),
-						_object->width() * MAGNIFICATIONS[_tools.magnification],
+						(float)_object->width() * scale,
 						withCursor ? &cursor : nullptr, false,
 						_selection.brush.empty() ? nullptr : &_selection.brush,
 						_overlay.texture ? _overlay.texture.get() : nullptr,
@@ -795,7 +827,17 @@ public:
 			}
 
 			ImGui::NewLine();
-			Editing::Tools::magnifiable(rnd, ws, &_tools.magnification, spwidth, ws->canUseShortcuts());
+			if (ws->settings()->editorFineZoomingEnabled) {
+				Editing::Tools::magnifiable(
+					rnd, ws,
+					&_tools.magnification,
+					MAGNIFICATIONS[0], MAGNIFICATIONS[BITTY_COUNTOF(MAGNIFICATIONS) - 1],
+					spwidth, true,
+					nullptr
+				);
+			} else {
+				Editing::Tools::magnifiable(rnd, ws, &_tools.magnification, spwidth, ws->canUseShortcuts());
+			}
 
 			switch (_tools.painting) {
 			case Editing::Tools::PENCIL: // Fall through.

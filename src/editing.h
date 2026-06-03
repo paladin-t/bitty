@@ -422,6 +422,19 @@ bool magnifiable(
 );
 
 /**
+ * @param[in, out] val
+ * @param[in, out] focused
+ */
+bool magnifiable(
+	Renderer* rnd, Workspace* ws,
+	int* val,
+	int minVal, int maxVal,
+	float width = -1.0f,
+	bool allowShortcuts = true,
+	bool* focused = nullptr
+);
+
+/**
  * @param[in, out] cursor
  */
 bool weighable(

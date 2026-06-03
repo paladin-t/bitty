@@ -233,6 +233,7 @@ public:
 		bool editorGlobalSearch = false;
 		bool editorAlwaysShowTransparentBackground = false;
 		bool editorAlwaysShowGrids = false;
+		bool editorFineZoomingEnabled = false;
 
 		unsigned canvasState = POPUP;
 		bool canvasFixRatio = true;
@@ -800,6 +801,7 @@ protected:
 	void showAssetContextMenu(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec, class Primitives* primitives);
 	void copyCodeForAsset(class Window* wnd, class Renderer* rnd, const class Project* project);
 	void filterAssets(class Window* wnd, class Renderer* rnd, const class Project* project, Executable* exec);
+	void changeAssetMagnification(class Window* wnd, class Renderer* rnd, const class Project* project);
 	void resizeAsset(class Window* wnd, class Renderer* rnd, const class Project* project, Asset::List::Index index);
 	void resizeAssetGrid(class Window* wnd, class Renderer* rnd, const class Project* project, Asset::List::Index index);
 	void resizeAssetTile(class Window* wnd, class Renderer* rnd, const class Project* project, Asset::List::Index index);

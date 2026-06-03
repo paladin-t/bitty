@@ -23,6 +23,16 @@
 
 /*
 ** {===========================================================================
+** Macros and constants
+*/
+
+constexpr const int MIN_MAGNIFICATION = 1;
+constexpr const int MAX_MAGNIFICATION = 16;
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
 ** Sprite editor
 */
 
@@ -441,7 +451,23 @@ public:
 		}
 	}
 
-	virtual Variant post(unsigned, int, const Variant*) override {
+	virtual Variant post(unsigned msg, int argc, const Variant* argv) override {
+		switch (msg) {
+		case MAGNIFICATION_CHANGED: {
+				const bool fineZooming = unpack<bool>(argc, argv, 0, false);
+
+				if (fineZooming) {
+					_tools.magnification = Math::clamp(_tools.magnification + 1, MIN_MAGNIFICATION, MAX_MAGNIFICATION);
+				} else {
+					_tools.magnification = Math::clamp(_tools.magnification - 1, 0, 3);
+				}
+			}
+
+			return Variant(true);
+		default: // Do nothing.
+			break;
+		}
+
 		return Variant(false);
 	}
 
@@ -556,13 +582,19 @@ public:
 				refreshStatus(wnd, rnd, ws, _cursor);
 			}
 
+			if (ws->settings()->editorFineZoomingEnabled) {
+				_tools.magnification = Math::clamp(_tools.magnification, MIN_MAGNIFICATION, MAX_MAGNIFICATION);
+			} else {
+				_tools.magnification = Math::clamp(_tools.magnification, 0, 3);
+			}
+			const int mag = ws->settings()->editorFineZoomingEnabled ? _tools.magnification : _tools.magnification + 1;
 			bool painting = false;
 			if (_tools.viewIndex == 0) {
 				painting = Editing::sprite(
 					rnd,
 					ws,
 					_object.get(),
-					ImGui::GetContentRegionAvail().x, (float)(_tools.magnification + 1),
+					ImGui::GetContentRegionAvail().x, (float)mag,
 					&_cursor, true,
 					std::bind(&EditorSpriteImpl::animationAdded, this, rnd, ws),
 					std::bind(&EditorSpriteImpl::animationRemoved, this, rnd, ws, std::placeholders::_1),
@@ -586,7 +618,7 @@ public:
 					rnd,
 					ws,
 					_object.get(),
-					ImGui::GetContentRegionAvail().x, (float)(_tools.magnification + 1),
+					ImGui::GetContentRegionAvail().x, (float)mag,
 					&_cursor, true,
 					_animations,
 					&_focus,
@@ -719,7 +751,17 @@ public:
 			} while (false);
 
 			ImGui::NewLine();
-			Editing::Tools::magnifiable(rnd, ws, &_tools.magnification, -1.0f, ws->canUseShortcuts());
+			if (ws->settings()->editorFineZoomingEnabled) {
+				Editing::Tools::magnifiable(
+					rnd, ws,
+					&_tools.magnification,
+					MIN_MAGNIFICATION, MAX_MAGNIFICATION,
+					spwidth, true,
+					nullptr
+				);
+			} else {
+				Editing::Tools::magnifiable(rnd, ws, &_tools.magnification, -1.0f, ws->canUseShortcuts());
+			}
 
 			_tools.focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);
 			statusBarActived |= ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);

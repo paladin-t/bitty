@@ -25,6 +25,16 @@
 
 /*
 ** {===========================================================================
+** Macros and constants
+*/
+
+constexpr const int MIN_MAGNIFICATION = 1;
+constexpr const int MAX_MAGNIFICATION = 16;
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
 ** Map editor
 */
 
@@ -579,6 +589,17 @@ public:
 			}
 
 			return Variant(true);
+		case MAGNIFICATION_CHANGED: {
+				const bool fineZooming = unpack<bool>(argc, argv, 0, false);
+
+				if (fineZooming) {
+					_tools.magnification = Math::clamp(_tools.magnification + 1, MIN_MAGNIFICATION, MAX_MAGNIFICATION);
+				} else {
+					_tools.magnification = Math::clamp(_tools.magnification - 1, 0, 3);
+				}
+			}
+
+			return Variant(true);
 		case RESIZE: {
 				const Variant::Int width = unpack<Variant::Int>(argc, argv, 0, 0);
 				const Variant::Int height = unpack<Variant::Int>(argc, argv, 1, 0);
@@ -654,6 +675,12 @@ public:
 			Editing::Tiler cursor = _cursor;
 			const bool withCursor = _tools.painting != Editing::Tools::MOVE;
 
+			if (ws->settings()->editorFineZoomingEnabled) {
+				_tools.magnification = Math::clamp(_tools.magnification, MIN_MAGNIFICATION, MAX_MAGNIFICATION);
+			} else {
+				_tools.magnification = Math::clamp(_tools.magnification, 0, 3);
+			}
+			const int mag = ws->settings()->editorFineZoomingEnabled ? _tools.magnification : _tools.magnification + 1;
 			const ImVec2 content = ImGui::GetContentRegionAvail();
 			float width_ = (float)(_object->width() * _tileSize.x);
 			if (content.x / _tileSize.x > 1600 || content.y / _tileSize.y > 1600) {
@@ -672,7 +699,7 @@ public:
 				width_ *= 2;
 				_tools.scaled = true;
 			}
-			width_ *= (float)(_tools.magnification + 1);
+			width_ *= (float)mag;
 
 			_painting.set(
 				Editing::map(
@@ -809,7 +836,17 @@ public:
 			}
 
 			ImGui::NewLine();
-			Editing::Tools::magnifiable(rnd, ws, &_tools.magnification, -1.0f, ws->canUseShortcuts());
+			if (ws->settings()->editorFineZoomingEnabled) {
+				Editing::Tools::magnifiable(
+					rnd, ws,
+					&_tools.magnification,
+					MIN_MAGNIFICATION, MAX_MAGNIFICATION,
+					spwidth, true,
+					nullptr
+				);
+			} else {
+				Editing::Tools::magnifiable(rnd, ws, &_tools.magnification, -1.0f, ws->canUseShortcuts());
+			}
 
 			switch (_tools.painting) {
 			case Editing::Tools::PENCIL: // Fall through.
