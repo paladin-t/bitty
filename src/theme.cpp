@@ -416,13 +416,13 @@ bool Theme::open(class Renderer* rnd) {
 	tooltipAssets_New("New");
 	tooltipAssets_Remove("Remove");
 
-	tooltipEditing_AddAnimation("Add animation");
-	tooltipEditing_AddFrame("Add frame");
+	tooltipEditing_AddAnimation("Add animation (shortcut: [)");
+	tooltipEditing_AddFrame("Add frame (shortcut: ])");
 	tooltipEditing_CaseSensitive("Case-sensitive");
 	tooltipEditing_DeleteAnimation("Delete animation");
 	tooltipEditing_DeleteFrame("Delete frame");
 	tooltipEditing_GlobalSearchForCode("Global search (for code)");
-	tooltipEditing_InsertFrame("Insert frame");
+	tooltipEditing_InsertFrame("Insert frame (shortcut: \\)");
 #if WORKSPACE_MODIFIER_KEY == WORKSPACE_MODIFIER_KEY_CTRL
 	tooltipEditing_Magnifiable("(-/+ or Ctrl+Mouse Wheel)");
 #elif WORKSPACE_MODIFIER_KEY == WORKSPACE_MODIFIER_KEY_CMD

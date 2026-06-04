@@ -804,7 +804,7 @@ public:
 	}
 
 private:
-	void shortcuts(Window* /* wnd */, Renderer* /* rnd */, Workspace* ws) {
+	void shortcuts(Window* /* wnd */, Renderer* rnd, Workspace* ws) {
 		const Editing::Shortcut caps(SDL_SCANCODE_UNKNOWN, false, false, false, false, true);
 		const Editing::Shortcut num(SDL_SCANCODE_UNKNOWN, false, false, false, true, false);
 		_ref.gridsVisible = caps.pressed();
@@ -824,6 +824,19 @@ private:
 		const Editing::Shortcut esc(SDL_SCANCODE_ESCAPE);
 		if (esc.pressed())
 			_player = nullptr;
+
+		const Editing::Shortcut lbracket(SDL_SCANCODE_LEFTBRACKET);
+		const Editing::Shortcut rbracket(SDL_SCANCODE_RIGHTBRACKET);
+		const Editing::Shortcut backslash(SDL_SCANCODE_BACKSLASH);
+		if (lbracket.pressed()) {
+			animationAdded(rnd, ws);
+		} else if (rbracket.pressed()) {
+			const Editing::Frame frame(_cursor.animation, _cursor.index + 1);
+			frameInserted(rnd, ws, true, frame);
+		} else if (backslash.pressed()) {
+			const Editing::Frame frame = _cursor;
+			frameInserted(rnd, ws, false, frame);
+		}
 	}
 
 	void context(Window* /* wnd */, Renderer* /* rnd */, Workspace* ws) {
