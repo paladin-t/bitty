@@ -458,6 +458,20 @@ bool flippable(
 );
 
 /**
+ * @param[out] repeat
+ * @param[in, out] focused
+ */
+bool repeatable(
+	Renderer* rnd, Workspace* ws,
+	Math::Recti* repeat /* nullable */,
+	const Math::Recti &minVal, const Math::Recti &maxVal,
+	float width = -1.0f,
+	bool* focused = nullptr,
+	bool disabled = false,
+	const char* prompt = nullptr
+);
+
+/**
  * @param[in, out] cursor
  */
 bool tickable(

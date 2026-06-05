@@ -148,6 +148,7 @@ bool Theme::open(class Renderer* rnd) {
 	generic_Clear("Clear");
 	generic_Close("Close");
 	generic_Export("Export");
+	generic_Fill("Fill");
 	generic_Import("Import");
 	generic_Install("Install");
 	generic_List("List");
@@ -281,6 +282,7 @@ bool Theme::open(class Renderer* rnd) {
 	dialogPrompt_CannotSaveToReadonlyLocations("Cannot save to readonly locations.");
 	dialogPrompt_CannotSaveToNonemptyDirectory("Cannot save to nonempty directory.");
 	dialogPrompt_CannotWriteToCurrentProject("Cannot write to current project.");
+	dialogPrompt_Filling("Filling...");
 	dialogPrompt_GetFullVersionToSave("Get full version to save.");
 	dialogPrompt_InvalidArea("Invalid area.");
 	dialogPrompt_InvalidAsset("Invalid asset.");
@@ -291,6 +293,7 @@ bool Theme::open(class Renderer* rnd) {
 	dialogPrompt_NotUndoable("(Not undoable)");
 	dialogPrompt_PathDoesntExistRemoveThisRecord("Path doesn't exist,\nremove this record?");
 	dialogPrompt_Reading("Reading...");
+	dialogPrompt_Repeat("Repeat");
 	dialogPrompt_Running("Running...");
 	dialogPrompt_Saving("Saving...");
 	dialogPrompt_UnknownType("Unknown type.");

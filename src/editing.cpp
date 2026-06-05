@@ -2119,6 +2119,117 @@ bool flippable(
 	return result;
 }
 
+bool repeatable(
+	Renderer*, Workspace* ws,
+	Math::Recti* repeat,
+	const Math::Recti &minVal, const Math::Recti &maxVal,
+	float width,
+	bool* focused,
+	bool disabled,
+	const char* prompt
+) {
+	Theme* theme = ws->theme();
+
+	bool result = false;
+
+	if (focused)
+		*focused = false;
+
+	if (width <= 0)
+		width = ImGui::GetContentRegionAvail().x;
+	constexpr const int X_COUNT = EDITING_ITEM_COUNT_PER_LINE;
+	float xOffset = 0;
+	float size = width / X_COUNT;
+	const float iconSize = (float)theme->iconMove()->width(); // Borrowed.
+	if (size > iconSize) {
+		size = iconSize * (int)(size / iconSize);
+		xOffset = (width - size * X_COUNT) * 0.5f;
+	}
+	const float dragWidth = size * EDITING_ITEM_COUNT_PER_LINE;
+	const float buttonWidth = size * EDITING_ITEM_COUNT_PER_LINE - 1;
+
+	ImGui::PushID("@Rpt");
+
+	ImGui::Dummy(ImVec2(xOffset, 0));
+	ImGui::SameLine();
+	ImGui::AlignTextToFramePadding();
+	ImGui::TextUnformatted(prompt);
+
+	constexpr const char* const FORMATS[] = {
+		"L: x%d",
+		"U: x%d",
+		"R: x%d",
+		"D: x%d"
+	};
+	if (disabled) {
+		ImGui::BeginDisabled();
+		{
+			Int* newVal = (Int*)repeat;
+			const Int* minVal_ = (Int*)&minVal;
+			const Int* maxVal_ = (Int*)&maxVal;
+			for (int i = 0; i < 4; ++i) {
+				int rptVal = (int)newVal[i];
+				ImGui::PushID(i);
+				{
+					ImGui::Dummy(ImVec2(xOffset, 0));
+					ImGui::SameLine();
+					ImGui::SetNextItemWidth(dragWidth);
+					ImGui::DragInt("", &rptVal, 1.0f, minVal_[i], maxVal_[i], FORMATS[i]);
+					if (ImGui::GetActiveID() == ImGui::GetID("")) {
+						if (focused)
+							*focused = true;
+					}
+				}
+				ImGui::PopID();
+			}
+		}
+		ImGui::EndDisabled();
+	} else {
+		Int* newVal = (Int*)repeat;
+		const Int* minVal_ = (Int*)&minVal;
+		const Int* maxVal_ = (Int*)&maxVal;
+		bool changed = false;
+		for (int i = 0; i < 4; ++i) {
+			int rptVal = (int)newVal[i];
+			ImGui::PushID(i);
+			{
+				ImGui::Dummy(ImVec2(xOffset, 0));
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(dragWidth);
+				if (ImGui::DragInt("", &rptVal, 1.0f, minVal_[i], maxVal_[i], FORMATS[i])) {
+					newVal[i] = (Int)rptVal;
+					changed = true;
+				}
+				if (ImGui::GetActiveID() == ImGui::GetID("")) {
+					if (focused)
+						*focused = true;
+				}
+			}
+			ImGui::PopID();
+		}
+	}
+
+	ImGui::NewLine(1);
+	ImGui::Dummy(ImVec2(xOffset, 0));
+	if (repeat->xMin() == 0 && repeat->yMin() == 0 && repeat->xMax() == 0 && repeat->yMax() == 0) {
+		ImGui::BeginDisabled();
+		{
+			ImGui::SameLine();
+			ImGui::Button(theme->generic_Fill(), ImVec2(buttonWidth, 0));
+		}
+		ImGui::EndDisabled();
+	} else {
+		ImGui::SameLine();
+		if (ImGui::Button(theme->generic_Fill(), ImVec2(buttonWidth, 0))) {
+			result = true;
+		}
+	}
+
+	ImGui::PopID();
+
+	return result;
+}
+
 bool tickable(
 	Renderer* rnd,
 	Workspace* ws,

@@ -1219,6 +1219,10 @@ void Dummy(const ImVec2 &size, const ImVec4 &col) {
 	Dummy(size, ColorConvertFloat4ToU32(col));
 }
 
+void NewLine(float height) {
+	Dummy(ImVec2(0, height));
+}
+
 ImVec2 WindowResizingPadding(void) {
 	constexpr const float WINDOWS_RESIZE_FROM_EDGES_HALF_THICKNESS = 4.0f;
 

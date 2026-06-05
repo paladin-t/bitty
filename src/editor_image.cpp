@@ -13,6 +13,7 @@
 #include "editor_image.h"
 #include "encoding.h"
 #include "image.h"
+#include "operations.h"
 #include "platform.h"
 #include "theme.h"
 #include "workspace.h"
@@ -168,6 +169,7 @@ private:
 		Editing::Tools::Tools painting = Editing::Tools::PENCIL;
 		int magnification = 0;
 		int weighting = 0;
+		Math::Recti repeat;
 
 		bool gridsVisible = false;
 		Math::Vec2i gridUnit = Math::Vec2i(0, 0);
@@ -186,6 +188,7 @@ private:
 			painting = Editing::Tools::PENCIL;
 			magnification = 0;
 			weighting = 0;
+			repeat = Math::Recti();
 
 			gridsVisible = false;
 			gridUnit = Math::Vec2i(0, 0);
@@ -284,6 +287,7 @@ public:
 		_commands->registerFactory<Commands::Image::Cut>();
 		_commands->registerFactory<Commands::Image::Paste>();
 		_commands->registerFactory<Commands::Image::Delete>();
+		_commands->registerFactory<Commands::Image::Repeat>();
 		_commands->registerFactory<Commands::Image::Resize>();
 
 		_checkpoint.fill();
@@ -875,6 +879,35 @@ public:
 				}
 			}
 
+			if (!_tools.post) {
+				Math::Recti sel;
+				const int size = _selection.area(sel);
+				if (size) {
+					const Math::Recti minRepeat(std::numeric_limits<Int8>::min(), std::numeric_limits<Int8>::min(), 0, 0);
+					const Math::Recti maxRepeat(0, 0, std::numeric_limits<Int8>::max(), std::numeric_limits<Int8>::max());
+					if (
+						Editing::Tools::repeatable(
+							rnd, ws,
+							&_tools.repeat,
+							minRepeat, maxRepeat,
+							spwidth,
+							nullptr,
+							false,
+							ws->theme()->dialogPrompt_Repeat().c_str()
+						)
+					) {
+						Operations::popupWait(rnd, ws, ws->theme()->dialogPrompt_Filling().c_str())
+							.then(
+								[rnd, ws, this, sel] (void) -> void {
+									repeatToolUp(rnd, sel, _tools.repeat);
+
+									_tools.repeat = Math::Recti();
+								}
+							);
+					}
+				}
+			}
+
 			_tools.focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows); // Ignore shortcuts when the window is not focused.
 			statusBarActived |= ImGui::IsWindowFocused();
 		}
@@ -1397,6 +1430,57 @@ private:
 			_commands->back()->redo(_object, &_texture);
 
 		destroyOverlay();
+	}
+
+	void repeatToolUp(Renderer*, const Math::Recti &area, const Math::Recti &repeat) {
+		if (!_binding.getPixel || !_binding.setPixel)
+			return;
+
+		const int objW = _object->width();
+		const int objH = _object->height();
+		const int xMin = area.xMin() + area.width() * repeat.xMin();
+		const int yMin = area.yMin() + area.height() * repeat.yMin();
+		const int xMax = area.xMax() + area.width() * repeat.xMax();
+		const int yMax = area.yMax() + area.height() * repeat.yMax();
+		const Math::Recti area_(std::max(0, xMin), std::max(0, yMin), std::min(objW - 1, xMax), std::min(objH - 1, yMax));
+		Editing::Dot::Array dots;
+		for (int j = yMin; j <= yMax; ++j) {
+			if (j < 0 || j >= objH)
+				continue;
+
+			const int y = j % area.height();
+			const int py = y + area.yMin();
+			for (int i = xMin; i <= xMax; ++i) {
+				if (i < 0 || i >= objW)
+					continue;
+
+				const int x = i % area.width();
+				const int px = x + area.xMin();
+
+				if (_object->paletted()) {
+					int idx = -1;
+					_object->get(px, py, idx);
+
+					Editing::Dot dot;
+					dot.indexed = idx;
+					dots.push_back(dot);
+				} else {
+					Color col;
+					_object->get(px, py, col);
+
+					Editing::Dot dot;
+					dot.colored = col;
+					dots.push_back(dot);
+				}
+			}
+		}
+		dots.shrink_to_fit();
+		BITTY_ASSERT(area_.width() * area_.height() == (int)dots.size() && "Wrong data.");
+
+		_commands->enqueue<Commands::Image::Repeat>()
+			->with(_binding.getPixel, _binding.setPixel)
+			->with(Math::Recti::byXYWH(area_.xMin(), area_.yMin(), area_.width(), area_.height()), dots)
+			->exec(_object);
 	}
 
 	int getPixels(Renderer*, const Math::Recti* area /* nullable */, Editing::Dots &dots) const {

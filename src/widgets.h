@@ -475,6 +475,8 @@ Rect LastItemRect(void);
 void Dummy(const ImVec2 &size, ImU32 col);
 void Dummy(const ImVec2 &size, const ImVec4 &col);
 
+void NewLine(float height);
+
 ImVec2 WindowResizingPadding(void);
 bool Begin(const std::string &name, bool* p_open = nullptr, ImGuiWindowFlags flags = ImGuiWindowFlags_None);
 void CentralizeWindow(void);
