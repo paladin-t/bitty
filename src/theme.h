@@ -348,6 +348,7 @@ public:
 	BITTY_PROPERTY_READONLY(std::string, tooltipEditing_DeleteFrame)
 	BITTY_PROPERTY_READONLY(std::string, tooltipEditing_GlobalSearchForCode)
 	BITTY_PROPERTY_READONLY(std::string, tooltipEditing_InsertFrame)
+	BITTY_PROPERTY_READONLY(std::string, tooltipEditing_ToolLassoWithTilewise)
 	BITTY_PROPERTY_READONLY(std::string, tooltipEditing_Magnifiable)
 	BITTY_PROPERTY_READONLY(std::string, tooltipEditing_MatchWholeWords)
 	BITTY_PROPERTY_READONLY(std::string, tooltipEditing_RenameAnimation)

@@ -74,6 +74,7 @@ private:
 
 	Editing::Brush _cursor;
 	struct {
+		bool tilewise = false;
 		Math::Vec2i initial = Math::Vec2i(-1, -1);
 		Editing::Brush brush;
 
@@ -81,6 +82,7 @@ private:
 		int idle = 0;
 
 		void clear(void) {
+			tilewise = false;
 			initial = Math::Vec2i(-1, -1);
 			brush = Editing::Brush();
 
@@ -826,7 +828,15 @@ public:
 			}
 
 			ImGui::NewLine();
-			if (Editing::Tools::paintable(rnd, ws, &_tools.painting, spwidth, ws->canUseShortcuts(), 0xffffffff & ~(1 << Editing::Tools::STAMP))) {
+			if (
+				Editing::Tools::paintable(
+					rnd, ws,
+					&_tools.painting,
+					spwidth,
+					ws->canUseShortcuts(), true,
+					0xffffffff & ~(1 << Editing::Tools::STAMP)
+				)
+			) {
 				destroyOverlay();
 			}
 
@@ -885,6 +895,7 @@ public:
 				if (size) {
 					const Math::Recti minRepeat(std::numeric_limits<Int8>::min(), std::numeric_limits<Int8>::min(), 0, 0);
 					const Math::Recti maxRepeat(0, 0, std::numeric_limits<Int8>::max(), std::numeric_limits<Int8>::max());
+					ImGui::NewLine();
 					if (
 						Editing::Tools::repeatable(
 							rnd, ws,
@@ -1275,11 +1286,23 @@ private:
 	}
 
 	void lassoToolDown(Renderer*) {
+		const Editing::Shortcut ctrl(SDL_SCANCODE_UNKNOWN, true, false, false);
+		_selection.tilewise = ctrl.pressed(false);
+
 		_selection.mouse = ImGui::GetMousePos();
 
 		_selection.initial = _cursor.position;
 		_selection.brush.position = _cursor.position;
 		_selection.brush.size = Math::Vec2i(1, 1);
+
+		if (_selection.tilewise) {
+			_selection.initial.x = (int)std::floor((float)_selection.initial.x / BITTY_MAP_TILE_DEFAULT_SIZE) * BITTY_MAP_TILE_DEFAULT_SIZE;
+			_selection.initial.y = (int)std::floor((float)_selection.initial.y / BITTY_MAP_TILE_DEFAULT_SIZE) * BITTY_MAP_TILE_DEFAULT_SIZE;
+			_selection.brush.position.x = (int)std::floor((float)_selection.brush.position.x / BITTY_MAP_TILE_DEFAULT_SIZE) * BITTY_MAP_TILE_DEFAULT_SIZE;
+			_selection.brush.position.y = (int)std::floor((float)_selection.brush.position.y / BITTY_MAP_TILE_DEFAULT_SIZE) * BITTY_MAP_TILE_DEFAULT_SIZE;
+			_selection.brush.size.x = (int)std::ceil((float)_selection.brush.size.x / BITTY_MAP_TILE_DEFAULT_SIZE) * BITTY_MAP_TILE_DEFAULT_SIZE;
+			_selection.brush.size.y = (int)std::ceil((float)_selection.brush.size.y / BITTY_MAP_TILE_DEFAULT_SIZE) * BITTY_MAP_TILE_DEFAULT_SIZE;
+		}
 	}
 	void lassoToolMove(Renderer*) {
 		const Math::Vec2i diff = _cursor.position - _selection.initial + Math::Vec2i(1, 1);
@@ -1287,6 +1310,17 @@ private:
 		const Math::Recti rect = Math::Recti::byXYWH(_selection.initial.x, _selection.initial.y, diff.x, diff.y);
 		_selection.brush.position = Math::Vec2i(rect.xMin(), rect.yMin());
 		_selection.brush.size = Math::Vec2i(rect.width(), rect.height());
+
+		if (_selection.tilewise) {
+			_selection.brush.position.x = (int)std::floor((float)_selection.brush.position.x / BITTY_MAP_TILE_DEFAULT_SIZE) * BITTY_MAP_TILE_DEFAULT_SIZE;
+			_selection.brush.position.y = (int)std::floor((float)_selection.brush.position.y / BITTY_MAP_TILE_DEFAULT_SIZE) * BITTY_MAP_TILE_DEFAULT_SIZE;
+			_selection.brush.size.x = (int)std::ceil((float)_selection.brush.size.x / BITTY_MAP_TILE_DEFAULT_SIZE) * BITTY_MAP_TILE_DEFAULT_SIZE;
+			_selection.brush.size.y = (int)std::ceil((float)_selection.brush.size.y / BITTY_MAP_TILE_DEFAULT_SIZE) * BITTY_MAP_TILE_DEFAULT_SIZE;
+			if (_selection.brush.position.x < _selection.initial.x)
+				_selection.brush.size.x = _selection.initial.x - _selection.brush.position.x + BITTY_MAP_TILE_DEFAULT_SIZE;
+			if (_selection.brush.position.y < _selection.initial.y)
+				_selection.brush.size.y = _selection.initial.y - _selection.brush.position.y + BITTY_MAP_TILE_DEFAULT_SIZE;
+		}
 	}
 	void lassoToolUp(Renderer*) {
 		const ImVec2 diff = ImGui::GetMousePos() - _selection.mouse;

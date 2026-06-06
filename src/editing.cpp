@@ -1545,7 +1545,7 @@ bool paintable(
 	Workspace* ws,
 	Tools* cursor,
 	float width,
-	bool allowShortcuts,
+	bool allowShortcuts, bool withTilewise,
 	unsigned mask
 ) {
 	ImGuiStyle &style = ImGui::GetStyle();
@@ -1579,12 +1579,12 @@ bool paintable(
 		theme->iconEllipse_Fill()->pointer(rnd),
 		theme->iconStamp()->pointer(rnd)
 	};
-	constexpr const char* const TOOLTIPS[] = {
+	const char* const TOOLTIPS[] = {
 		"(H)",
 		"(I)",
 		"(B)",
 		"(G)",
-		"(M)",
+		withTilewise ? theme->tooltipEditing_ToolLassoWithTilewise().c_str() : "(M)",
 		"(L)",
 		"(X)",
 		"(Shift+X)",

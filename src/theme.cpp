@@ -426,6 +426,7 @@ bool Theme::open(class Renderer* rnd) {
 	tooltipEditing_DeleteFrame("Delete frame");
 	tooltipEditing_GlobalSearchForCode("Global search (for code)");
 	tooltipEditing_InsertFrame("Insert frame (shortcut: \\)");
+	tooltipEditing_ToolLassoWithTilewise("(M) Hold Ctrl for tilewise");
 #if WORKSPACE_MODIFIER_KEY == WORKSPACE_MODIFIER_KEY_CTRL
 	tooltipEditing_Magnifiable("(-/+ or Ctrl+Mouse Wheel)");
 #elif WORKSPACE_MODIFIER_KEY == WORKSPACE_MODIFIER_KEY_CMD

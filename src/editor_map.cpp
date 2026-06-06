@@ -820,7 +820,14 @@ public:
 			ImGui::EndChild();
 
 			ImGui::NewLine();
-			if (Editing::Tools::paintable(rnd, ws, &_tools.painting, -1.0f, ws->canUseShortcuts())) {
+			if (
+				Editing::Tools::paintable(
+					rnd, ws,
+					&_tools.painting,
+					-1.0f,
+					ws->canUseShortcuts(), false
+				)
+			) {
 				if (_tools.painting == Editing::Tools::STAMP) {
 					_processors[Editing::Tools::STAMP] = Processor{
 						std::bind(&EditorMapImpl::stampToolDown, this, std::placeholders::_1),

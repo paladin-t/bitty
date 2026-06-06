@@ -406,7 +406,7 @@ bool paintable(
 	Workspace* ws,
 	Tools* cursor /* nullable */,
 	float width = -1.0f,
-	bool allowShortcuts = true,
+	bool allowShortcuts = true, bool withTilewise = false,
 	unsigned mask = 0xffffffff
 );
 
