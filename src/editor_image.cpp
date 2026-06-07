@@ -1482,13 +1482,18 @@ private:
 			if (j < 0 || j >= objH)
 				continue;
 
-			const int y = j % area.height();
+			int y = (j - area.yMin()) % area.height();
+			if (y < 0)
+				y += area.height();
 			const int py = y + area.yMin();
+
 			for (int i = xMin; i <= xMax; ++i) {
 				if (i < 0 || i >= objW)
 					continue;
 
-				const int x = i % area.width();
+				int x = (i - area.xMin()) % area.width();
+				if (x < 0)
+					x += area.width();
 				const int px = x + area.xMin();
 
 				if (_object->paletted()) {
