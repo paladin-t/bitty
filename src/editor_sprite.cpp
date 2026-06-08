@@ -831,7 +831,21 @@ private:
 		if (lbracket.pressed()) {
 			animationAdded(rnd, ws);
 		} else if (rbracket.pressed()) {
-			const Editing::Frame frame(_cursor.animation, _cursor.index + 1);
+			Editing::Frame tail;
+			for (int i = 0; i < _object->count(); ++i) {
+				const char* key = nullptr;
+				_object->get(i, nullptr, nullptr, nullptr, &key);
+				const char* anim = key;
+				if ((!anim || !(*anim)) && i == 0)
+					anim = EDITING_ANONYMOUS;
+				if (anim && *anim) { // First frame of an animation.
+					if (i > _cursor.index) break;
+					tail.animation = anim;
+				}
+				tail.index = i + 1; // Advance for inserting.
+			}
+
+			const Editing::Frame frame = tail;
 			frameInserted(rnd, ws, true, frame);
 		} else if (backslash.pressed()) {
 			const Editing::Frame frame = _cursor;
