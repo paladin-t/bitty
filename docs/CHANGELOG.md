@@ -1,3 +1,12 @@
+### v1.9.1 Jun. 8, 2026
+
+Improved usability.
+
+* Added an option for fine zooming with graphical asset editors
+* Added an operation to fill a tiles asset with selected patterns
+* Added shortcut keys for adding and removing sprite frames
+* Added tilewise selection on image assets when holding Ctrl
+
 ### v1.9.0 May. 15, 2026
 
 Enhanced modules, improved usability, fixed some bugs.
