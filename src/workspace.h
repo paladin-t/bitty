@@ -460,9 +460,21 @@ public:
 	 */
 	virtual class Theme* theme(void) const = 0;
 
+	/**
+	 * @brief Refreshes the application window title.
+	 */
 	virtual void refreshWindowTitle(const class Project* project);
+	/**
+	 * @brief Gets whether is skipping frames.
+	 */
 	virtual bool skipping(void);
+	/**
+	 * @brief Skips a frame.
+	 */
 	virtual void skipFrame(void);
+	/**
+	 * @brief Skips a few frames.
+	 */
 	virtual void skipFrame(int frames);
 	/**
 	 * @brief Gets whether prefers 2x scale for big display.

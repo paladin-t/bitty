@@ -29,6 +29,95 @@
 
 /*
 ** {===========================================================================
+** Input simulation
+*/
+
+namespace Bitty {
+
+struct InputSimulation {
+	enum class Types : unsigned {
+		BTN,
+		BTNP,
+		KEY,
+		KEYP,
+		MOUSE,
+		COUNT
+	};
+	typedef std::array<InputSimulation, (size_t)Types::COUNT> Array;
+
+	Types type = Types::BTN;
+	union {
+		struct {
+			int button;
+			int index;
+		} btn;
+		struct {
+			int button;
+			int index;
+		} btnp;
+		struct {
+			int key;
+		} key;
+		struct {
+			int key;
+		} keyp;
+		struct {
+			int index;
+			int x;
+			int y;
+			bool button0;
+			bool button1;
+			bool button2;
+			int wheelX;
+			int wheelY;
+		} mouse;
+	};
+	bool valid = false;
+
+	InputSimulation() {
+	}
+	InputSimulation(Types y, int btn_, int idx) {
+		type = y;
+		if (type == Types::BTN) {
+			btn.button = btn_;
+			btn.index = idx;
+		} else {
+			btnp.button = btn_;
+			btnp.index = idx;
+		}
+		valid = true;
+	}
+	InputSimulation(Types y, int key_) {
+		type = y;
+		if (type == Types::KEY) {
+			key.key = key_;
+		} else {
+			keyp.key = key_;
+		}
+		valid = true;
+	}
+	InputSimulation(Types y, int idx, int x, int y_, bool btn0, bool btn1, bool btn2, int wheelX, int wheelY) {
+		type = y;
+		if (type == Types::MOUSE) {
+			mouse.index = idx;
+			mouse.x = x;
+			mouse.y = y_;
+			mouse.button0 = btn0;
+			mouse.button1 = btn1;
+			mouse.button2 = btn2;
+			mouse.wheelX = wheelX;
+			mouse.wheelY = wheelY;
+		}
+		valid = true;
+	}
+};
+
+}
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
 ** Primitive command
 */
 
@@ -2507,91 +2596,6 @@ public:
 };
 
 }
-
-/* ===========================================================================} */
-
-/*
-** {===========================================================================
-** Input simulation
-*/
-
-struct InputSimulation {
-	enum class Types : unsigned {
-		BTN,
-		BTNP,
-		KEY,
-		KEYP,
-		MOUSE,
-		COUNT
-	};
-	typedef std::array<InputSimulation, (size_t)Types::COUNT> Array;
-
-	Types type = Types::BTN;
-	union {
-		struct {
-			int button;
-			int index;
-		} btn;
-		struct {
-			int button;
-			int index;
-		} btnp;
-		struct {
-			int key;
-		} key;
-		struct {
-			int key;
-		} keyp;
-		struct {
-			int index;
-			int x;
-			int y;
-			bool button0;
-			bool button1;
-			bool button2;
-			int wheelX;
-			int wheelY;
-		} mouse;
-	};
-	bool valid = false;
-
-	InputSimulation() {
-	}
-	InputSimulation(Types y, int btn_, int idx) {
-		type = y;
-		if (type == Types::BTN) {
-			btn.button = btn_;
-			btn.index = idx;
-		} else {
-			btnp.button = btn_;
-			btnp.index = idx;
-		}
-		valid = true;
-	}
-	InputSimulation(Types y, int key_) {
-		type = y;
-		if (type == Types::KEY) {
-			key.key = key_;
-		} else {
-			keyp.key = key_;
-		}
-		valid = true;
-	}
-	InputSimulation(Types y, int idx, int x, int y_, bool btn0, bool btn1, bool btn2, int wheelX, int wheelY) {
-		type = y;
-		if (type == Types::MOUSE) {
-			mouse.index = idx;
-			mouse.x = x;
-			mouse.y = y_;
-			mouse.button0 = btn0;
-			mouse.button1 = btn1;
-			mouse.button2 = btn2;
-			mouse.wheelX = wheelX;
-			mouse.wheelY = wheelY;
-		}
-		valid = true;
-	}
-};
 
 /* ===========================================================================} */
 
