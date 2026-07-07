@@ -676,7 +676,7 @@ size_t Text::lastIndexOf(const std::string &str, char what, size_t start) {
 }
 
 size_t Text::lastIndexOf(const std::string &str, const std::string &what, size_t start) {
-	return str.find_last_of(what, start);
+	return str.rfind(what, start);
 }
 
 bool Text::startsWith(const std::string &str, const std::string &what, bool caseInsensitive) {
@@ -917,17 +917,14 @@ std::string Text::format(const std::string &fmt, const std::initializer_list<std
 
 long Text::strtol(char const* str, char** endptr, int base) {
 	const long long ll = ::strtoll(str, endptr, base);
-	if (ll & 0xffffffff00000000) {
-		*endptr = (char*)str;
+	if (ll < std::numeric_limits<long>::min() || ll > std::numeric_limits<long>::max()) {
+		if (endptr)
+			*endptr = (char*)str;
 
 		return 0;
 	}
-	if (**endptr == '\0') {
-		long ret = 0;
-		memcpy(&ret, &ll, sizeof(long));
-
-		return ret;
-	}
+	if (**endptr == '\0')
+		return (long)ll;
 
 	return 0;
 }
@@ -941,7 +938,7 @@ long long Text::strtoll(char const* str, char** endptr, int base) {
 }
 
 unsigned long long Text::strtoull(char const* str, char** endptr, int base) {
-	unsigned long long ll = ::strtoll(str, endptr, base);
+	const unsigned long long ll = ::strtoull(str, endptr, base);
 	if (**endptr == '\0')
 		return ll;
 
