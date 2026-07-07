@@ -320,8 +320,10 @@ int Variant::compare(const Variant &other) const {
 			return -1;
 		if (_var.object && !other._var.object)
 			return 1;
+		if (!_var.object && !other._var.object)
+			return 0;
 
-		return _var.object->compare(other._var.object.get()) < 0;
+		return _var.object->compare(other._var.object.get());
 	}
 
 	return 0;
@@ -421,7 +423,7 @@ void Enumerable::onEnumerableDestructing(void) {
 
 		IEnumerator::Ptr ptr = wptr.lock();
 
-		return ptr->invalidate();
+		ptr->invalidate();
 	}
 }
 
