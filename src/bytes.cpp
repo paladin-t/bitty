@@ -443,8 +443,8 @@ public:
 	virtual size_t remove(size_t pos, size_t count) override {
 		if (pos >= _collection.size())
 			return 0;
-		if (pos + count >= _collection.size())
-			return 0;
+		if (pos + count > _collection.size())
+			count = _collection.size() - pos;
 
 		_collection.erase(_collection.begin() + pos, _collection.begin() + pos + count);
 
@@ -480,7 +480,7 @@ public:
 			return 0;
 
 		const size_t result = _collection.size() - pos;
-		_collection.erase(_collection.begin() + pos);
+		_collection.erase(_collection.begin() + pos, _collection.end());
 
 		if (empty())
 			_cursor = 0;
