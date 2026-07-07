@@ -352,8 +352,8 @@ template<typename T, typename R = Real> struct Vec3 {
 	Vec3 cross(const Vec3 &other) const {
 		return Vec3(
 			(T)(y * other.z - z * other.y),
-			(T)(z * x - x * other.z),
-			(T)(x * other.y - y * x)
+			(T)(z * other.x - x * other.z),
+			(T)(x * other.y - y * other.x)
 		);
 	}
 };
