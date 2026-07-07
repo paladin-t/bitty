@@ -217,9 +217,9 @@ bool Path::equals(const char* lpath, const char* rpath) {
 	std::string osl = Unicode::toOs(strl);
 	std::string osr = Unicode::toOs(strr);
 
-	if (osl.back() == '\\' || osl.back() == '/')
+	if (!osl.empty() && (osl.back() == '\\' || osl.back() == '/'))
 		osl.pop_back();
-	if (osr.back() == '\\' || osr.back() == '/')
+	if (!osr.empty() && (osr.back() == '\\' || osr.back() == '/'))
 		osr.pop_back();
 
 	return Platform::equal(osl.c_str(), osr.c_str());
@@ -241,9 +241,9 @@ bool Path::isParentOf(const char* lpath, const char* rpath) {
 	std::string osl = Unicode::toOs(strl);
 	std::string osr = Unicode::toOs(strr);
 
-	if (osl.back() == '\\' || osl.back() == '/')
+	if (!osl.empty() && (osl.back() == '\\' || osl.back() == '/'))
 		osl.pop_back();
-	if (osr.back() == '\\' || osr.back() == '/')
+	if (!osr.empty() && (osr.back() == '\\' || osr.back() == '/'))
 		osr.pop_back();
 
 	return Platform::isParentOf(osl.c_str(), osr.c_str());
