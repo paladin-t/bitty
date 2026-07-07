@@ -229,18 +229,17 @@ public:
 
 		if (x >= _width || y >= _height) {
 			if (expandable) {
-				bool resized = false;
+				int newW = _width;
+				int newH = _height;
 				if (x >= _width)
-					resized = resize(x, _height);
-				else if (y >= _height)
-					resized = resize(_width, y);
-				if (!resized)
+					newW = x + 1;
+				if (y >= _height)
+					newH = y + 1;
+				if (!resize(newW, newH))
 					return false;
 
 				for (Sub &sub : _subs)
 					sub.valid = false;
-
-				return true;
 			} else {
 				return false;
 			}
@@ -627,7 +626,7 @@ Math::Vec2i Map::Tiles::size(void) const {
 		w = _size.x;
 	}
 	if (_size.y <= 0) {
-		if (count.x > 0)
+		if (count.y > 0)
 			h = texture->height() / count.y;
 		else
 			h = 0;

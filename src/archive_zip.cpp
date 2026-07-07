@@ -71,7 +71,7 @@ public:
 		_forWriting = access == Stream::WRITE || access == Stream::APPEND || access == Stream::READ_WRITE;
 		_file = path;
 
-		std::string osstr = Unicode::toOs(_file.c_str());
+		const std::string osstr = Unicode::toOs(_file.c_str());
 
 		if (_forWriting) {
 			switch (access) {
