@@ -231,9 +231,9 @@ std::string Unicode::fromOs(const char* str) {
 	encodingWcharToBytes(wstrp, &strp, BITTY_COUNTOF(strb));
 	result = strp;
 	if (wstrp != wstr)
-		delete wstrp;
+		delete [] wstrp;
 	if (strp != strb)
-		delete strp;
+		delete [] strp;
 
 	return result;
 #else /* BITTY_OS_WIN */
@@ -256,9 +256,9 @@ std::string Unicode::toOs(const char* str) {
 	encodingWcharToBytesAnsi(wstrp, &strp, BITTY_COUNTOF(strb));
 	result = strp;
 	if (wstrp != wstr)
-		delete wstrp;
+		delete [] wstrp;
 	if (strp != strb)
-		delete strp;
+		delete [] strp;
 
 	return result;
 #else /* BITTY_OS_WIN */
@@ -281,7 +281,7 @@ std::string Unicode::fromWide(const wchar_t* str) {
 	encodingWcharToBytes(str, &strp, BITTY_COUNTOF(strb));
 	result = strp;
 	if (strp != strb)
-		delete strp;
+		delete [] strp;
 
 	return result;
 #elif ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_CUSTOM
@@ -317,7 +317,7 @@ std::wstring Unicode::toWide(const char* str) {
 	encodingBytesToWchar(str, &wstrp, BITTY_COUNTOF(wstr));
 	result = wstrp;
 	if (wstrp != wstr)
-		delete wstrp;
+		delete [] wstrp;
 
 	return result;
 #elif ENCODING_STRING_CONVERTER == ENCODING_STRING_CONVERTER_CUSTOM
@@ -500,25 +500,30 @@ bool Lz4::toBytes(class Bytes* val, const class Bytes* src) {
 	if (src->empty())
 		return true;
 
-	constexpr const int ONEK = 1024;
+	constexpr const int MAX_RETRIES = 20;
+	constexpr const int ONE_K = 1024;
 
 	int n = (int)src->count();
-	if (n <= 8 * ONEK)
+	if (n <= 8 * ONE_K)
 		n *= 8;
-	else if (n <= 16 * ONEK)
+	else if (n <= 16 * ONE_K)
 		n *= 4;
-	else if (n <= 32 * ONEK)
+	else if (n <= 32 * ONE_K)
 		n *= 2;
-	else if (n <= 64 * ONEK)
-		n = 64 * ONEK;
+	else if (n <= 64 * ONE_K)
+		n = 64 * ONE_K;
 	val->resize((size_t)n);
 	int ret = 0;
+	int retries = 0;
 	do {
 		ret = LZ4_decompress_safe(
 			(const char*)src->pointer(), (char*)val->pointer(),
 			(int)src->count(), (int)val->count()
 		);
 		if (ret < 0) {
+			if (++retries > MAX_RETRIES)
+				return false;
+
 			n *= 2;
 			val->resize((size_t)n);
 		}
