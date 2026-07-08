@@ -324,7 +324,7 @@ std::wstring Unicode::toWide(const char* str) {
 	std::string src = str;
 	const int l = (int)(src.length() * 4);
 	wchar_t* strp = new wchar_t [l];
-	memset(strp, 0, l);
+	memset(strp, 0, (size_t)l * sizeof(wchar_t));
 	encodingStrFromUtf8(strp, l, src.c_str(), nullptr, nullptr);
 	std::wstring result = strp;
 	delete [] strp;

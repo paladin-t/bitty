@@ -626,8 +626,11 @@ public:
 				mat.textureWrapT = GL_CLAMP_TO_EDGE;
 		}
 		mat.open(ws, vert.c_str(), frag.c_str(), &images, uniforms);
-		if (!mat.valid)
+		if (!mat.valid) {
+			mat.close();
+
 			return false;
+		}
 
 		// Active the material.
 		std::swap(mat, _material);
