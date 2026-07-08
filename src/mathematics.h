@@ -192,7 +192,7 @@ template<typename T, typename R = Real> struct Vec2 {
 		return (R)(x * other.x + y * other.y);
 	}
 	Vec2 cross(R other) const {
-		return Vec2((T)(x * other), (T)(x * -other));
+		return Vec2((T)(y * other), (T)(-x * other));
 	}
 	R cross(const Vec2 &other) const {
 		return (R)(x * other.y - y * other.x);
