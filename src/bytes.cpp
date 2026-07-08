@@ -209,6 +209,7 @@ public:
 		Byte* ln = nullptr;
 		size_t size = 0;
 		size_t capacity = 0;
+		bool newline = false;
 		while (!endOfStream()) {
 			++size;
 			if (capacity == 0) {
@@ -224,25 +225,38 @@ public:
 				if (readByte() != '\n')
 					poke(l);
 
+				newline = true;
+
 				break;
 			} else if (ln[size - 1] == '\n') {
+				newline = true;
+
 				break;
 			}
 		}
-		if (ln)
-			ln[size - 1] = '\0';
-		if (buf) {
-			if (size) {
-				*buf = new char[size];
-				memcpy(*buf, ln, size);
+		size_t len = 0;
+		if (ln) {
+			if (newline) {
+				ln[size - 1] = '\0';
+				len = size - 1;
 			} else {
-				*buf = new char[1];
-				**buf = '\0';
+				if (capacity < size + 1) {
+					capacity = size + 1;
+					ln = (Byte*)realloc(ln, capacity);
+				}
+				ln[size] = '\0';
+				len = size;
 			}
+		}
+		if (buf) {
+			*buf = new char[len + 1];
+			if (len > 0)
+				memcpy(*buf, ln, len);
+			(*buf)[len] = '\0';
 		}
 		free(ln);
 		if (readSize)
-			*readSize = size ? size - 1 : 0;
+			*readSize = len;
 
 		return true;
 

@@ -246,7 +246,12 @@ public:
 		char* ln = nullptr;
 		size_t size = 0;
 		size_t capacity = 0;
+		bool newline = false;
 		while (!feof(_file)) {
+			const int ch = fgetc(_file);
+			if (ch == EOF)
+				break;
+
 			++size;
 			if (capacity == 0) {
 				capacity = _STEP;
@@ -255,31 +260,44 @@ public:
 				capacity += _STEP;
 				ln = (char*)realloc(ln, capacity);
 			}
-			ln[size - 1] = (char)fgetc(_file);
+			ln[size - 1] = (char)ch;
 			if (ln[size - 1] == '\r') {
 				const long curPos = ftell(_file);
 				if (fgetc(_file) != '\n')
 					fseek(_file, curPos, SEEK_SET);
 
+				newline = true;
+
 				break;
 			} else if (ln[size - 1] == '\n') {
+				newline = true;
+
 				break;
 			}
 		}
-		if (ln)
-			ln[size - 1] = '\0';
-		if (buf) {
-			if (size) {
-				*buf = new char[size];
-				memcpy(*buf, ln, size);
+		size_t len = 0;
+		if (ln) {
+			if (newline) {
+				ln[size - 1] = '\0';
+				len = size - 1;
 			} else {
-				*buf = new char[1];
-				**buf = '\0';
+				if (capacity < size + 1) {
+					capacity = size + 1;
+					ln = (char*)realloc(ln, capacity);
+				}
+				ln[size] = '\0';
+				len = size;
 			}
+		}
+		if (buf) {
+			*buf = new char[len + 1];
+			if (len > 0)
+				memcpy(*buf, ln, len);
+			(*buf)[len] = '\0';
 		}
 		free(ln);
 		if (readSize)
-			*readSize = size ? size - 1 : 0;
+			*readSize = len;
 
 		return true;
 
