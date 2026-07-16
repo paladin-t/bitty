@@ -342,6 +342,74 @@ std::wstring Unicode::toWide(const std::string &str) {
 	return toWide(str.c_str());
 }
 
+std::string Unicode::fromUtf32(const char32_t* str) {
+	if (!str || !(*str))
+		return std::string();
+
+	std::string result;
+	while (*str) {
+		char32_t c = *str++;
+		if ((c >= 0xd800 && c <= 0xdfff) || c > 0x10ffff)
+			c = 0xfffd;
+		if (c < 0x80) {
+			result.push_back((char)c);
+		} else if (c < 0x800) {
+			result.push_back((char)(0xc0 | (c >> 6)));
+			result.push_back((char)(0x80 | (c & 0x3f)));
+		} else if (c < 0x10000) {
+			result.push_back((char)(0xe0 | (c >> 12)));
+			result.push_back((char)(0x80 | ((c >> 6) & 0x3f)));
+			result.push_back((char)(0x80 | (c & 0x3f)));
+		} else /* if (c < 0x110000) */ {
+			result.push_back((char)(0xf0 | (c >> 18)));
+			result.push_back((char)(0x80 | ((c >> 12) & 0x3f)));
+			result.push_back((char)(0x80 | ((c >> 6) & 0x3f)));
+			result.push_back((char)(0x80 | (c & 0x3f)));
+		}
+	}
+
+	return result;
+}
+
+std::string Unicode::fromUtf32(const std::u32string &str) {
+	return fromUtf32(str.c_str());
+}
+
+std::u32string Unicode::toUtf32(const char* str) {
+	if (!str || !(*str))
+		return std::u32string();
+
+	std::u32string result;
+	while (*str) {
+		const int n = expectUtf8(str);
+		if (!n)
+			break;
+
+		char32_t cp = 0;
+		const unsigned char* s = (const unsigned char*)str;
+		if (n == 1)
+			cp = s[0];
+		else if (n == 2)
+			cp = ((char32_t)(s[0] & 0x1f) << 6) | (s[1] & 0x3f);
+		else if (n == 3)
+			cp = ((char32_t)(s[0] & 0x0f) << 12) | ((char32_t)(s[1] & 0x3f) << 6) | (s[2] & 0x3f);
+		else if (n == 4)
+			cp = ((char32_t)(s[0] & 0x07) << 18) | ((char32_t)(s[1] & 0x3f) << 12) | ((char32_t)(s[2] & 0x3f) << 6) | (s[3] & 0x3f);
+		if ((cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10ffff)
+			cp = 0xfffd;
+
+		result.push_back(cp);
+
+		str += n;
+	}
+
+	return result;
+}
+
+std::u32string Unicode::toUtf32(const std::string &str) {
+	return toUtf32(str.c_str());
+}
+
 bool Unicode::isAscii(const char* str) {
 	if (!str || !*str)
 		return true;
@@ -371,6 +439,22 @@ bool Unicode::isUtf8(const char* str) {
 	}
 
 	return false;
+}
+
+bool Unicode::isPrintable(const char* str, size_t len) {
+	if (!str || !*str)
+		return true;
+
+	const char* end = str + len;
+	while (str < end) {
+		const int n = expectUtf8(str);
+		if (!n)
+			return false;
+
+		str += n;
+	}
+
+	return true;
 }
 
 int Unicode::expectUtf8(const char* ch) {

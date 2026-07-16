@@ -66,8 +66,14 @@ public:
 	static std::wstring toWide(const char* str);
 	static std::wstring toWide(const std::string &str);
 
+	static std::string fromUtf32(const char32_t* str);
+	static std::string fromUtf32(const std::u32string &str);
+	static std::u32string toUtf32(const char* str);
+	static std::u32string toUtf32(const std::string &str);
+
 	static bool isAscii(const char* str);
 	static bool isUtf8(const char* str);
+	static bool isPrintable(const char* str, size_t len);
 
 	static int expectUtf8(const char* ch);
 	static unsigned takeUtf8(const char* ch, int n);
