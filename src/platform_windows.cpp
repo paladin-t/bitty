@@ -493,8 +493,7 @@ void* Platform::dynamicOpen(const char* path) {
 	if (!path)
 		return nullptr;
 
-	const std::string osstr = Unicode::toOs(path);
-	HMODULE h = ::LoadLibraryA(osstr.c_str());
+	HMODULE h = ::LoadLibraryA(path);
 
 	return (void*)h;
 }

@@ -8065,6 +8065,281 @@ static void open_Platform(lua_State* L) {
 	pop(L);
 }
 
+/**< Ffi. */
+
+enum class FfiType {
+	Void,
+	LongLong,
+	Double,
+	String,
+	Unsigned,
+	UnsignedPtr
+};
+
+struct FfiSignature {
+	FfiType returnType = FfiType::Void;
+	std::string name;
+	std::vector<FfiType> paramTypes;
+};
+
+static FfiType Ffi_parseType(std::string s) {
+	s = Text::trim(s);
+	if (Text::startsWith(s, "const ", false))
+		s = Text::trim(s.substr(6));
+	s = Text::replace(s, " *", "*");
+	s = Text::replace(s, "* ", "*");
+	s = Text::trim(s);
+
+	if (s == "void")
+		return FfiType::Void;
+	if (s == "long long")
+		return FfiType::LongLong;
+	if (s == "double")
+		return FfiType::Double;
+	if (s == "char*")
+		return FfiType::String;
+	if (s == "unsigned")
+		return FfiType::Unsigned;
+	if (s == "unsigned*")
+		return FfiType::UnsignedPtr;
+
+	return FfiType::Void;
+}
+
+static bool Ffi_isTypeKeyword(const std::string &s) {
+	return
+		s == "void" || s == "long" || s == "double" ||
+		s == "char" || s == "unsigned" ||
+		s == "const";
+}
+
+static bool Ffi_parseSignature(const std::string &sig, FfiSignature &out) {
+	std::string s = Text::trim(sig);
+	if (!s.empty() && s.back() == ';')
+		s.pop_back();
+	s = Text::trim(s);
+
+	const size_t parenPos = s.find('(');
+	if (parenPos == std::string::npos)
+		return false;
+	const size_t closePos = s.rfind(')');
+	if (closePos == std::string::npos || closePos <= parenPos)
+		return false;
+
+	const std::string beforeParen = Text::trim(s.substr(0, parenPos));
+	const std::string paramsStr = Text::trim(s.substr(parenPos + 1, closePos - parenPos - 1));
+
+	const size_t nameEnd = beforeParen.size();
+	size_t nameStart = nameEnd;
+	while (nameStart > 0 && (isalnum((unsigned char)beforeParen[nameStart - 1]) || beforeParen[nameStart - 1] == '_'))
+		--nameStart;
+	if (nameStart == nameEnd)
+		return false;
+
+	out.name = beforeParen.substr(nameStart, nameEnd - nameStart);
+	out.returnType = Ffi_parseType(beforeParen.substr(0, nameStart));
+
+	out.paramTypes.clear();
+	if (paramsStr.empty() || paramsStr == "void") {
+		// No parameters.
+	} else {
+		const Text::Array params = Text::split(paramsStr, ",", 0);
+		for (const std::string &param : params) {
+			const std::string p = Text::trim(param);
+			const size_t pnameEnd = p.size();
+			size_t pnameStart = pnameEnd;
+			while (pnameStart > 0 && (isalnum((unsigned char)p[pnameStart - 1]) || p[pnameStart - 1] == '_'))
+				--pnameStart;
+			std::string ptypeStr;
+			if (pnameStart == pnameEnd) {
+				ptypeStr = p;
+			} else {
+				const std::string possibleName = p.substr(pnameStart, pnameEnd - pnameStart);
+				if (Ffi_isTypeKeyword(possibleName))
+					ptypeStr = p;
+				else
+					ptypeStr = Text::trim(p.substr(0, pnameStart));
+			}
+			out.paramTypes.push_back(Ffi_parseType(ptypeStr));
+		}
+	}
+
+	return true;
+}
+
+static void Ffi_call_void_ll(void* fn, long long a) {
+	((void(*)(long long))fn)(a);
+}
+static void Ffi_call_void_d(void* fn, double a) {
+	((void(*)(double))fn)(a);
+}
+static void Ffi_call_void_str_u(void* fn, const char* a, unsigned b) {
+	((void(*)(const char*, unsigned))fn)(a, b);
+}
+static long long Ffi_call_ll_void(void* fn) {
+	return ((long long(*)(void))fn)();
+}
+static double Ffi_call_d_void(void* fn) {
+	return ((double(*)(void))fn)();
+}
+static const char* Ffi_call_str_uptr(void* fn, unsigned* a) {
+	return ((const char*(*)(unsigned*))fn)(a);
+}
+
+static int Ffi_open(lua_State* L) {
+	const char* path = nullptr;
+	read<>(L, path);
+
+	if (!path || !*path) {
+		error(L, "String expected.");
+
+		return 0;
+	}
+
+	const std::string osstr = Unicode::toOs(path);
+	void* ptr = Platform::dynamicOpen(osstr.c_str());
+	if (!ptr)
+		return write(L, nullptr);
+
+	const uintptr_t handle = (uintptr_t)ptr;
+
+	return write(L, handle);
+}
+
+static int Ffi_close(lua_State* L) {
+	uintptr_t handle = 0;
+	read<>(L, handle);
+
+	if (handle)
+		Platform::dynamicClose((void*)handle);
+
+	return 0;
+}
+
+static int Ffi_call(lua_State* L) {
+	uintptr_t handle = 0;
+	const char* sigStr = nullptr;
+	read<>(L, handle, sigStr);
+
+	if (!handle) {
+		error(L, "Invalid library handle.");
+
+		return 0;
+	}
+	if (!sigStr || !*sigStr) {
+		error(L, "Invalid signature.");
+
+		return 0;
+	}
+
+	FfiSignature sig;
+	if (!Ffi_parseSignature(sigStr, sig)) {
+		error(L, "Failed to parse signature.");
+
+		return 0;
+	}
+
+	void* fn = Platform::dynamicSym((void*)handle, sig.name.c_str());
+	if (!fn) {
+		error(L, "Failed to resolve symbol.");
+
+		return 0;
+	}
+
+	if (sig.paramTypes.empty()) {
+		if (sig.returnType == FfiType::Void) {
+			((void(*)(void))fn)();
+
+			return 0;
+		}
+		if (sig.returnType == FfiType::LongLong) {
+			const long long ret = Ffi_call_ll_void(fn);
+
+			return write(L, ret);
+		}
+		if (sig.returnType == FfiType::Double) {
+			const double ret = Ffi_call_d_void(fn);
+
+			return write(L, ret);
+		}
+	} else if (sig.paramTypes.size() == 1) {
+		if (sig.returnType == FfiType::Void) {
+			if (sig.paramTypes[0] == FfiType::LongLong) {
+				long long arg0 = 0;
+				read(L, arg0, Index(3));
+
+				Ffi_call_void_ll(fn, arg0);
+
+				return 0;
+			}
+			if (sig.paramTypes[0] == FfiType::Double) {
+				double arg0 = 0;
+				read(L, arg0, Index(3));
+
+				Ffi_call_void_d(fn, arg0);
+
+				return 0;
+			}
+		}
+		if (sig.returnType == FfiType::String) {
+			if (sig.paramTypes[0] == FfiType::UnsignedPtr) {
+				unsigned sz = 0;
+				const char* ret = Ffi_call_str_uptr(fn, &sz);
+				if (!ret)
+					return write(L, nullptr);
+
+				std::string s;
+				if (sz > 0)
+					s = std::string(ret, sz);
+				else
+					s = std::string(ret);
+
+				return write(L, s, (long long)s.length());
+			}
+		}
+	} else if (sig.paramTypes.size() == 2) {
+		if (sig.returnType == FfiType::Void) {
+			if (sig.paramTypes[0] == FfiType::String && sig.paramTypes[1] == FfiType::Unsigned) {
+				const char* arg0 = nullptr;
+				unsigned arg1 = 0;
+				read(L, arg0, Index(3));
+				read(L, arg1, Index(4));
+
+				if (!arg0)
+					arg0 = "";
+
+				Ffi_call_void_str_u(fn, arg0, arg1);
+
+				return 0;
+			}
+		}
+	}
+
+	error(L, "Unsupported signature.");
+
+	return 0;
+}
+
+static void open_Ffi(lua_State* L) {
+	req(
+		L,
+		array(
+			luaL_Reg{
+				"Ffi",
+				LUA_LIB(
+					array(
+						luaL_Reg{ "open", Ffi_open },
+						luaL_Reg{ "close", Ffi_close },
+						luaL_Reg{ "call", Ffi_call },
+						luaL_Reg{ nullptr, nullptr }
+					)
+				)
+			},
+			luaL_Reg{ nullptr, nullptr }
+		)
+	);
+}
+
 /**< Stream. */
 
 static void open_Stream(lua_State* L) {
@@ -8397,6 +8672,9 @@ void open(class Executable* exec) {
 	// Encoding.
 	open_Base64(L);
 	open_Lz4(L);
+
+	// Ffi.
+	open_Ffi(L);
 
 	// File.
 	open_File(L);
