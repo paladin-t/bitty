@@ -13,6 +13,7 @@
 #include "../lib/portable_file_dialogs/portable-file-dialogs.h"
 #include <SDL.h>
 #include <dirent.h>
+#include <dlfcn.h>
 #include <experimental/filesystem>
 namespace filesystem = std::experimental::filesystem;
 #include <glib.h>
@@ -485,6 +486,41 @@ void Platform::useDarkMode(class Window* wnd) {
 void Platform::setWindowTransparentColor(class Window* wnd, const struct Color* col) {
 	(void)wnd;
 	(void)col;
+}
+
+}
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
+** Dynamic library
+*/
+
+namespace Bitty {
+
+void* Platform::dynamicOpen(const char* path) {
+	if (!path)
+		return nullptr;
+
+	return ::dlopen(path, RTLD_LAZY);
+}
+
+void* Platform::dynamicSym(void* handle, const char* name) {
+	if (!handle)
+		return nullptr;
+
+	if (!name)
+		return nullptr;
+
+	return ::dlsym(handle, name);
+}
+
+void Platform::dynamicClose(void* handle) {
+	if (!handle)
+		return;
+
+	::dlclose(handle);
 }
 
 }

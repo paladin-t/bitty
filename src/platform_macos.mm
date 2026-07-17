@@ -14,6 +14,7 @@
 #import <AppKit/AppKit.h>
 #import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/Foundation.h>
+#import <dlfcn.h>
 #import <libgen.h>
 #import <mach-o/dyld.h>
 #import <pthread.h>
@@ -373,6 +374,41 @@ void Platform::useDarkMode(class Window* wnd) {
 void Platform::setWindowTransparentColor(class Window* wnd, const struct Color* col) {
 	(void)wnd;
 	(void)col;
+}
+
+}
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
+** Dynamic library
+*/
+
+namespace Bitty {
+
+void* Platform::dynamicOpen(const char* path) {
+	if (!path)
+		return nullptr;
+
+	return ::dlopen(path, RTLD_LAZY);
+}
+
+void* Platform::dynamicSym(void* handle, const char* name) {
+	if (!handle)
+		return nullptr;
+
+	if (!name)
+		return nullptr;
+
+	return ::dlsym(handle, name);
+}
+
+void Platform::dynamicClose(void* handle) {
+	if (!handle)
+		return;
+
+	::dlclose(handle);
 }
 
 }

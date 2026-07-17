@@ -406,23 +406,6 @@ void Platform::redirectIoToConsole(void) {
 
 namespace Bitty {
 
-void Platform::msgbox(const char* text, const char* caption) {
-	::MessageBoxA(nullptr, text, caption, MB_OK);
-}
-
-void Platform::openInput(void) {
-	// Do nothing.
-}
-
-void Platform::closeInput(void) {
-	// Do nothing.
-}
-
-void Platform::inputScreenPosition(int x, int y) {
-	SDL_Rect rect{ x, y, 20, 20 };
-	SDL_SetTextInputRect(&rect);
-}
-
 bool Platform::isSystemInDarkMode(void) {
 	char buf[4];
 	memset(buf, BITTY_COUNTOF(buf) * sizeof(char), 0);
@@ -476,6 +459,61 @@ void Platform::setWindowTransparentColor(class Window* wnd, const struct Color* 
 		style &= ~WS_EX_LAYERED;
 		::SetWindowLong(hWnd, GWL_EXSTYLE, style);
 	}
+}
+
+void Platform::msgbox(const char* text, const char* caption) {
+	::MessageBoxA(nullptr, text, caption, MB_OK);
+}
+
+void Platform::openInput(void) {
+	// Do nothing.
+}
+
+void Platform::closeInput(void) {
+	// Do nothing.
+}
+
+void Platform::inputScreenPosition(int x, int y) {
+	SDL_Rect rect{ x, y, 20, 20 };
+	SDL_SetTextInputRect(&rect);
+}
+
+}
+
+/* ===========================================================================} */
+
+/*
+** {===========================================================================
+** Dynamic library
+*/
+
+namespace Bitty {
+
+void* Platform::dynamicOpen(const char* path) {
+	if (!path)
+		return nullptr;
+
+	const std::string osstr = Unicode::toOs(path);
+	HMODULE h = ::LoadLibraryA(osstr.c_str());
+
+	return (void*)h;
+}
+
+void* Platform::dynamicSym(void* handle, const char* name) {
+	if (!handle)
+		return nullptr;
+
+	if (!name)
+		return nullptr;
+
+	return (void*)::GetProcAddress((HMODULE)handle, name);
+}
+
+void Platform::dynamicClose(void* handle) {
+	if (!handle)
+		return;
+
+	::FreeLibrary((HMODULE)handle);
 }
 
 }

@@ -363,3 +363,25 @@ void Platform::setWindowTransparentColor(class Window* wnd, const struct Color* 
 }
 
 /* ===========================================================================} */
+
+/*
+** {===========================================================================
+** Dynamic library
+*/
+
+namespace Bitty {
+
+void* Platform::dynamicOpen(const char* /* path */) {
+	return nullptr;
+}
+
+void* Platform::dynamicSym(void* /* handle */, const char* /* name */) {
+	return nullptr;
+}
+
+void Platform::dynamicClose(void* /* handle */) {
+}
+
+}
+
+/* ===========================================================================} */

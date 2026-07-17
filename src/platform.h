@@ -102,6 +102,23 @@ public:
 	static void openInput(void);
 	static void closeInput(void);
 	static void inputScreenPosition(int x, int y);
+
+	/**< Dynamic library. */
+
+	/**
+	 * @brief Loads a shared library (`.dll`/`.so`/`.dylib`) by path.
+	 * @return Opaque handle, or `nullptr` on failure.
+	 */
+	static void* dynamicOpen(const char* path);
+	/**
+	 * @brief Resolves a symbol address from a loaded library.
+	 * @return Function / variable pointer, or `nullptr` on failure.
+	 */
+	static void* dynamicSym(void* handle, const char* name);
+	/**
+	 * @brief Closes a previously opened library handle.
+	 */
+	static void dynamicClose(void* handle);
 };
 
 }
