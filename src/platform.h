@@ -121,6 +121,16 @@ public:
 	 * @brief Closes a previously opened library handle.
 	 */
 	static void dynamicClose(void* handle);
+	/**
+	 * @brief Returns a human-readable string describing the last
+	 *   `dynamicOpen`/`dynamicSym` failure, or an empty string if no error
+	 *   information is available.
+	 *
+	 * @note On platforms that use `dlerror()` (Linux/macOS) the act of reading
+	 *   clears the stored error; callers should invoke this exactly once right
+	 *   after a failing call.
+	 */
+	static std::string dynamicError(void);
 };
 
 }

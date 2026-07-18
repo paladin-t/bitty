@@ -358,6 +358,7 @@ int write(lua_State* L, const Function &val);
 int write(lua_State* L, Function &val);
 int write(lua_State* L, void* &val, size_t size);
 int write(lua_State* L, const LightUserdata &val);
+int write(lua_State* L, LightUserdata &val);
 template<typename Class> int write(lua_State* L, const Class* val);
 template<typename Class> int write(lua_State* L, Class* val);
 template<typename Val> int write(lua_State* L, const Val &val);

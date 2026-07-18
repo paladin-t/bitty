@@ -493,7 +493,10 @@ void* Platform::dynamicOpen(const char* path) {
 	if (!path)
 		return nullptr;
 
-	HMODULE h = ::LoadLibraryA(path);
+	::SetLastError(0);
+
+	const std::wstring wpath = Unicode::toWide(path);
+	HMODULE h = ::LoadLibraryW(wpath.c_str());
 
 	return (void*)h;
 }
@@ -505,6 +508,8 @@ void* Platform::dynamicSym(void* handle, const char* name) {
 	if (!name)
 		return nullptr;
 
+	::SetLastError(0);
+
 	return (void*)::GetProcAddress((HMODULE)handle, name);
 }
 
@@ -513,6 +518,21 @@ void Platform::dynamicClose(void* handle) {
 		return;
 
 	::FreeLibrary((HMODULE)handle);
+}
+
+std::string Platform::dynamicError(void) {
+	DWORD err = ::GetLastError();
+	if (err == 0)
+		return "";
+
+	char buf[256] = { 0 };
+	::FormatMessageA(
+		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		nullptr, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		buf, sizeof(buf), nullptr
+	);
+
+	return std::string(buf);
 }
 
 }

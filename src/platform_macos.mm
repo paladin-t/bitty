@@ -391,6 +391,8 @@ void* Platform::dynamicOpen(const char* path) {
 	if (!path)
 		return nullptr;
 
+	::dlerror();
+
 	return ::dlopen(path, RTLD_LAZY);
 }
 
@@ -401,6 +403,8 @@ void* Platform::dynamicSym(void* handle, const char* name) {
 	if (!name)
 		return nullptr;
 
+	::dlerror();
+
 	return ::dlsym(handle, name);
 }
 
@@ -409,6 +413,14 @@ void Platform::dynamicClose(void* handle) {
 		return;
 
 	::dlclose(handle);
+}
+
+std::string Platform::dynamicError(void) {
+	const char* err = ::dlerror();
+	if (!err)
+		return "";
+
+	return std::string(err);
 }
 
 }

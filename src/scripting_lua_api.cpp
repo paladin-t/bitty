@@ -8069,18 +8069,62 @@ static void open_Platform(lua_State* L) {
 
 enum class FfiType {
 	Void,
+	Bool,
+	Int,
+	Unsigned,
 	LongLong,
+	UnsignedLongLong,
+	Float,
 	Double,
 	String,
-	Unsigned,
+	Ptr,
 	UnsignedPtr
 };
 
 struct FfiSignature {
-	FfiType returnType = FfiType::Void;
 	std::string name;
+	FfiType returnType = FfiType::Void;
 	std::vector<FfiType> paramTypes;
 };
+
+union FfiValue {
+	bool b;
+	int i;
+	unsigned u;
+	long long ll;
+	unsigned long long ull;
+	float f;
+	double d;
+	const char* s;
+	void* p;
+};
+
+struct FfiArg {
+	FfiValue value;
+	unsigned unsignedStorage; // Backing storage for `UnsignedPtr`.
+};
+
+// ABI-level category used to collapse the type enum into the four shapes we
+// actually need to dispatch: integers (passed in integer registers as
+// `long long`), single-precision floats, double-precision floats, and pointers
+// (passed as `void*`).  `float` and `double` must stay distinct because their
+// register representations differ.
+enum class FfiCategory { Integer, Float, Double, Pointer };
+
+static FfiCategory Ffi_category(FfiType t) {
+	switch (t) {
+	case FfiType::Float:
+		return FfiCategory::Float;
+	case FfiType::Double:
+		return FfiCategory::Double;
+	case FfiType::String:
+	case FfiType::Ptr:
+	case FfiType::UnsignedPtr:
+		return FfiCategory::Pointer;
+	default:
+		return FfiCategory::Integer;
+	}
+}
 
 static FfiType Ffi_parseType(std::string s) {
 	s = Text::trim(s);
@@ -8092,14 +8136,24 @@ static FfiType Ffi_parseType(std::string s) {
 
 	if (s == "void")
 		return FfiType::Void;
-	if (s == "long long")
+	if (s == "bool")
+		return FfiType::Bool;
+	if (s == "int" || s == "short" || s == "char")
+		return FfiType::Int;
+	if (s == "unsigned" || s == "unsigned int" || s == "unsigned short" || s == "unsigned char")
+		return FfiType::Unsigned;
+	if (s == "long" || s == "long long" || s == "long long int" || s == "intptr_t")
 		return FfiType::LongLong;
+	if (s == "unsigned long" || s == "unsigned long long" || s == "unsigned long long int" || s == "size_t" || s == "uintptr_t")
+		return FfiType::UnsignedLongLong;
+	if (s == "float")
+		return FfiType::Float;
 	if (s == "double")
 		return FfiType::Double;
 	if (s == "char*")
 		return FfiType::String;
-	if (s == "unsigned")
-		return FfiType::Unsigned;
+	if (s == "void*")
+		return FfiType::Ptr;
 	if (s == "unsigned*")
 		return FfiType::UnsignedPtr;
 
@@ -8107,83 +8161,410 @@ static FfiType Ffi_parseType(std::string s) {
 }
 
 static bool Ffi_isTypeKeyword(const std::string &s) {
-	return
-		s == "void" || s == "long" || s == "double" ||
-		s == "char" || s == "unsigned" ||
-		s == "const";
+	static const char* keywords[] = {
+		"void", "bool", "char", "short", "int", "long",
+		"float", "double", "unsigned", "const", "size_t",
+		"intptr_t", "uintptr_t"
+	};
+	for (const char* kw : keywords) {
+		if (s == kw)
+			return true;
+	}
+
+	return false;
 }
 
 static bool Ffi_parseSignature(const std::string &sig, FfiSignature &out) {
-	std::string s = Text::trim(sig);
-	if (!s.empty() && s.back() == ';')
-		s.pop_back();
-	s = Text::trim(s);
-
-	const size_t parenPos = s.find('(');
-	if (parenPos == std::string::npos)
-		return false;
-	const size_t closePos = s.rfind(')');
-	if (closePos == std::string::npos || closePos <= parenPos)
+	const size_t lparen = sig.find('(');
+	if (lparen == std::string::npos)
 		return false;
 
-	const std::string beforeParen = Text::trim(s.substr(0, parenPos));
-	const std::string paramsStr = Text::trim(s.substr(parenPos + 1, closePos - parenPos - 1));
-
-	const size_t nameEnd = beforeParen.size();
-	size_t nameStart = nameEnd;
-	while (nameStart > 0 && (isalnum((unsigned char)beforeParen[nameStart - 1]) || beforeParen[nameStart - 1] == '_'))
-		--nameStart;
-	if (nameStart == nameEnd)
+	const size_t rparen = sig.rfind(')');
+	if (rparen == std::string::npos || rparen <= lparen)
 		return false;
 
-	out.name = beforeParen.substr(nameStart, nameEnd - nameStart);
-	out.returnType = Ffi_parseType(beforeParen.substr(0, nameStart));
+	const std::string head = Text::trim(sig.substr(0, lparen));
+	const size_t space = head.rfind(' ');
+	if (space == std::string::npos)
+		return false;
 
+	out.name = Text::trim(head.substr(space + 1));
+	out.returnType = Ffi_parseType(Text::trim(head.substr(0, space)));
+
+	const std::string paramsStr = Text::trim(sig.substr(lparen + 1, rparen - lparen - 1));
 	out.paramTypes.clear();
-	if (paramsStr.empty() || paramsStr == "void") {
-		// No parameters.
-	} else {
+	if (!paramsStr.empty() && paramsStr != "void") {
 		const Text::Array params = Text::split(paramsStr, ",", 0);
 		for (const std::string &param : params) {
 			const std::string p = Text::trim(param);
-			const size_t pnameEnd = p.size();
-			size_t pnameStart = pnameEnd;
-			while (pnameStart > 0 && (isalnum((unsigned char)p[pnameStart - 1]) || p[pnameStart - 1] == '_'))
-				--pnameStart;
-			std::string ptypeStr;
-			if (pnameStart == pnameEnd) {
-				ptypeStr = p;
-			} else {
-				const std::string possibleName = p.substr(pnameStart, pnameEnd - pnameStart);
-				if (Ffi_isTypeKeyword(possibleName))
-					ptypeStr = p;
+			if (p.empty())
+				continue;
+
+			// Strip parameter name if present.
+			const size_t lastSpace = p.rfind(' ');
+			if (lastSpace != std::string::npos) {
+				const std::string lastWord = Text::trim(p.substr(lastSpace + 1));
+				if (!Ffi_isTypeKeyword(lastWord))
+					out.paramTypes.push_back(Ffi_parseType(Text::trim(p.substr(0, lastSpace))));
 				else
-					ptypeStr = Text::trim(p.substr(0, pnameStart));
+					out.paramTypes.push_back(Ffi_parseType(p));
+			} else {
+				out.paramTypes.push_back(Ffi_parseType(p));
 			}
-			out.paramTypes.push_back(Ffi_parseType(ptypeStr));
 		}
 	}
 
 	return true;
 }
 
-static void Ffi_call_void_ll(void* fn, long long a) {
-	((void(*)(long long))fn)(a);
+static void Ffi_readArg(lua_State* L, int idx, FfiType type, FfiArg &arg) {
+	switch (type) {
+	case FfiType::Bool: {
+			bool v = false;
+			read(L, v, Index(idx));
+			arg.value.b = v;
+		}
+
+		break;
+	case FfiType::Int: {
+			long long v = 0;
+			read(L, v, Index(idx));
+			arg.value.i = (int)v;
+		}
+
+		break;
+	case FfiType::Unsigned: {
+			long long v = 0;
+			read(L, v, Index(idx));
+			arg.value.u = (unsigned)v;
+		}
+
+		break;
+	case FfiType::LongLong: {
+			long long v = 0;
+			read(L, v, Index(idx));
+			arg.value.ll = v;
+		}
+
+		break;
+	case FfiType::UnsignedLongLong: {
+			unsigned long long v = 0;
+			read(L, v, Index(idx));
+			arg.value.ull = v;
+		}
+
+		break;
+	case FfiType::Float: {
+			double v = 0;
+			read(L, v, Index(idx));
+			arg.value.f = (float)v;
+		}
+
+		break;
+	case FfiType::Double: {
+			double v = 0;
+			read(L, v, Index(idx));
+			arg.value.d = v;
+		}
+
+		break;
+	case FfiType::String: {
+			const char* v = nullptr;
+			read(L, v, Index(idx));
+			arg.value.s = v ? v : "";
+		}
+
+		break;
+	case FfiType::Ptr: {
+			void* v = nullptr;
+			read(L, v, Index(idx));
+			arg.value.p = v;
+		}
+
+		break;
+	case FfiType::UnsignedPtr: {
+			arg.unsignedStorage = 0;
+			arg.value.p = &arg.unsignedStorage;
+		}
+
+		break;
+	default: // Do nothing.
+		break;
+	}
 }
-static void Ffi_call_void_d(void* fn, double a) {
-	((void(*)(double))fn)(a);
+
+static int Ffi_writeIntResult(lua_State* L, FfiType type, long long r) {
+	switch (type) {
+	case FfiType::Bool:
+		return write(L, !!r);
+	case FfiType::Int:
+		return write(L, (long long)(int)r);
+	case FfiType::Unsigned:
+		return write(L, (unsigned long long)(unsigned)r);
+	case FfiType::LongLong:
+		return write(L, r);
+	case FfiType::UnsignedLongLong:
+		return write(L, (unsigned long long)r);
+	default:
+		return error(L, "Internal FFI error.");
+	}
 }
-static void Ffi_call_void_str_u(void* fn, const char* a, unsigned b) {
-	((void(*)(const char*, unsigned))fn)(a, b);
+
+static int Ffi_writePtrResult(lua_State* L, FfiType type, void* r) {
+	switch (type) {
+	case FfiType::String: {
+			const char* s = (const char*)r;
+			if (!s)
+				return write(L, nullptr);
+
+			return write(L, s);
+		}
+	case FfiType::Ptr: {
+			LightUserdata ud;
+			ud.data = r;
+
+			return write(L, ud);
+		}
+	default:
+		return error(L, "Internal FFI error.");
+	}
 }
-static long long Ffi_call_ll_void(void* fn) {
-	return ((long long(*)(void))fn)();
+
+// Dispatch helpers for 2-parameter calls. Each macro expands to a complete
+// inner switch on the second parameter category; the trailing `break` exits the
+// outer switch on the first parameter category.
+#define FFI_INNER2(RTYPE, C0CTYPE, V0) \
+	switch (c1) { \
+	case FfiCategory::Integer: r = ((RTYPE(*)(C0CTYPE, long long))fn)(V0, a1.ll); break; \
+	case FfiCategory::Float:   r = ((RTYPE(*)(C0CTYPE, float))    fn)(V0, a1.f ); break; \
+	case FfiCategory::Double:  r = ((RTYPE(*)(C0CTYPE, double))   fn)(V0, a1.d ); break; \
+	case FfiCategory::Pointer: r = ((RTYPE(*)(C0CTYPE, void*))    fn)(V0, a1.p ); break; \
+	} break
+#define FFI_INNER2V(C0CTYPE, V0) \
+	switch (c1) { \
+	case FfiCategory::Integer: ((void(*)(C0CTYPE, long long))fn)(V0, a1.ll); return 0; \
+	case FfiCategory::Float:   ((void(*)(C0CTYPE, float))    fn)(V0, a1.f ); return 0; \
+	case FfiCategory::Double:  ((void(*)(C0CTYPE, double))   fn)(V0, a1.d ); return 0; \
+	case FfiCategory::Pointer: ((void(*)(C0CTYPE, void*))    fn)(V0, a1.p ); return 0; \
+	} break
+
+static int Ffi_doCall(lua_State* L, void* fn, const FfiSignature &sig, const FfiArg* args) {
+	const size_t nparams = sig.paramTypes.size();
+
+	if (nparams == 0) {
+		switch (sig.returnType) {
+		case FfiType::Void: {
+				((void(*)(void))fn)();
+
+				return 0;
+			}
+		case FfiType::Bool:
+		case FfiType::Int:
+		case FfiType::Unsigned:
+		case FfiType::LongLong:
+		case FfiType::UnsignedLongLong: {
+				long long r = ((long long(*)(void))fn)();
+				
+				return Ffi_writeIntResult(L, sig.returnType, r);
+			}
+		case FfiType::Float: {
+				float r = ((float(*)(void))fn)();
+
+				return write(L, (double)r);
+			}
+		case FfiType::Double: {
+				double r = ((double(*)(void))fn)();
+
+				return write(L, r);
+			}
+		case FfiType::String:
+		case FfiType::Ptr: {
+				void* r = ((void*(*)(void))fn)();
+
+				return Ffi_writePtrResult(L, sig.returnType, r);
+			}
+		default: // Do nothing.
+			break;
+		}
+
+		return error(L, "Unsupported return type.");
+	}
+
+	if (nparams == 1) {
+		const FfiCategory c0 = Ffi_category(sig.paramTypes[0]);
+		const FfiValue &a0 = args[0].value;
+
+		if (sig.returnType == FfiType::Void) {
+			switch (c0) {
+			case FfiCategory::Integer: ((void(*)(long long))fn)(a0.ll); return 0;
+			case FfiCategory::Float:   ((void(*)(float))    fn)(a0.f ); return 0;
+			case FfiCategory::Double:  ((void(*)(double))   fn)(a0.d ); return 0;
+			case FfiCategory::Pointer: ((void(*)(void*))    fn)(a0.p ); return 0;
+			}
+
+			return error(L, "Unsupported parameter type.");
+		}
+
+		const FfiCategory rc = Ffi_category(sig.returnType);
+		switch (rc) {
+		case FfiCategory::Integer: {
+				long long r = 0;
+				switch (c0) {
+				case FfiCategory::Integer: r = ((long long(*)(long long))fn)(a0.ll); break;
+				case FfiCategory::Float:   r = ((long long(*)(float))    fn)(a0.f ); break;
+				case FfiCategory::Double:  r = ((long long(*)(double))   fn)(a0.d ); break;
+				case FfiCategory::Pointer: r = ((long long(*)(void*))    fn)(a0.p ); break;
+				}
+
+				return Ffi_writeIntResult(L, sig.returnType, r);
+			}
+		case FfiCategory::Float: {
+				float r = 0;
+				switch (c0) {
+				case FfiCategory::Integer: r = ((float(*)(long long))fn)(a0.ll); break;
+				case FfiCategory::Float:   r = ((float(*)(float))    fn)(a0.f ); break;
+				case FfiCategory::Double:  r = ((float(*)(double))   fn)(a0.d ); break;
+				case FfiCategory::Pointer: r = ((float(*)(void*))    fn)(a0.p ); break;
+				}
+
+				return write(L, (double)r);
+			}
+		case FfiCategory::Double: {
+				double r = 0;
+				switch (c0) {
+				case FfiCategory::Integer: r = ((double(*)(long long))fn)(a0.ll); break;
+				case FfiCategory::Float:   r = ((double(*)(float))    fn)(a0.f ); break;
+				case FfiCategory::Double:  r = ((double(*)(double))   fn)(a0.d ); break;
+				case FfiCategory::Pointer: r = ((double(*)(void*))    fn)(a0.p ); break;
+				}
+
+				return write(L, r);
+			}
+		case FfiCategory::Pointer: {
+				void* r = nullptr;
+				switch (c0) {
+				case FfiCategory::Integer: r = ((void*(*)(long long))fn)(a0.ll); break;
+				case FfiCategory::Float:   r = ((void*(*)(float))    fn)(a0.f ); break;
+				case FfiCategory::Double:  r = ((void*(*)(double))   fn)(a0.d ); break;
+				case FfiCategory::Pointer: r = ((void*(*)(void*))    fn)(a0.p ); break;
+				}
+
+				return Ffi_writePtrResult(L, sig.returnType, r);
+			}
+		}
+
+		return error(L, "Unsupported signature.");
+	}
+
+	if (nparams == 2) {
+		const FfiCategory c0 = Ffi_category(sig.paramTypes[0]);
+		const FfiValue &a0 = args[0].value;
+		const FfiCategory c1 = Ffi_category(sig.paramTypes[1]);
+		const FfiValue &a1 = args[1].value;
+
+		if (sig.returnType == FfiType::Void) {
+			switch (c0) {
+			case FfiCategory::Integer: FFI_INNER2V(long long, a0.ll);
+			case FfiCategory::Float:   FFI_INNER2V(float,     a0.f);
+			case FfiCategory::Double:  FFI_INNER2V(double,    a0.d);
+			case FfiCategory::Pointer: FFI_INNER2V(void*,     a0.p);
+			}
+
+			return error(L, "Unsupported parameter type.");
+		}
+
+		const FfiCategory rc = Ffi_category(sig.returnType);
+		switch (rc) {
+		case FfiCategory::Integer: {
+				long long r = 0;
+				switch (c0) {
+				case FfiCategory::Integer: FFI_INNER2(long long, long long, a0.ll);
+				case FfiCategory::Float:   FFI_INNER2(long long, float,     a0.f);
+				case FfiCategory::Double:  FFI_INNER2(long long, double,    a0.d);
+				case FfiCategory::Pointer: FFI_INNER2(long long, void*,     a0.p);
+				}
+
+				return Ffi_writeIntResult(L, sig.returnType, r);
+			}
+		case FfiCategory::Float: {
+				float r = 0;
+				switch (c0) {
+				case FfiCategory::Integer: FFI_INNER2(float, long long, a0.ll);
+				case FfiCategory::Float:   FFI_INNER2(float, float,     a0.f);
+				case FfiCategory::Double:  FFI_INNER2(float, double,    a0.d);
+				case FfiCategory::Pointer: FFI_INNER2(float, void*,     a0.p);
+				}
+
+				return write(L, (double)r);
+			}
+		case FfiCategory::Double: {
+				double r = 0;
+				switch (c0) {
+				case FfiCategory::Integer: FFI_INNER2(double, long long, a0.ll);
+				case FfiCategory::Float:   FFI_INNER2(double, float,     a0.f);
+				case FfiCategory::Double:  FFI_INNER2(double, double,    a0.d);
+				case FfiCategory::Pointer: FFI_INNER2(double, void*,     a0.p);
+				}
+
+				return write(L, r);
+			}
+		case FfiCategory::Pointer: {
+				void* r = nullptr;
+				switch (c0) {
+				case FfiCategory::Integer: FFI_INNER2(void*, long long, a0.ll);
+				case FfiCategory::Float:   FFI_INNER2(void*, float,     a0.f);
+				case FfiCategory::Double:  FFI_INNER2(void*, double,    a0.d);
+				case FfiCategory::Pointer: FFI_INNER2(void*, void*,     a0.p);
+				}
+
+				return Ffi_writePtrResult(L, sig.returnType, r);
+			}
+		}
+
+		return error(L, "Unsupported signature.");
+	}
+
+	return error(L, "Unsupported parameter count (max 2).");
 }
-static double Ffi_call_d_void(void* fn) {
-	return ((double(*)(void))fn)();
-}
-static const char* Ffi_call_str_uptr(void* fn, unsigned* a) {
-	return ((const char*(*)(unsigned*))fn)(a);
+
+#undef FFI_INNER2
+#undef FFI_INNER2V
+
+static int Ffi_callImpl(lua_State* L, void* fn, const FfiSignature &sig, int firstLuaArg) {
+	// Validate argument count (`UnsignedPtr` params are output-only and do not
+	// consume a Lua argument).
+	int expectedArgs = 0;
+	for (int i = 0; i < (int)sig.paramTypes.size(); ++i) {
+		if (sig.paramTypes[i] != FfiType::UnsignedPtr)
+			++expectedArgs;
+	}
+	const int actualArgs = lua_gettop(L) - firstLuaArg + 1;
+	if (actualArgs < expectedArgs)
+		return error(L, "Too few arguments.");
+
+	// Read arguments.
+	FfiArg args[2];
+	int luaIdx = firstLuaArg;
+	for (int i = 0; i < (int)sig.paramTypes.size() && i < 2; ++i) {
+		if (sig.paramTypes[i] == FfiType::UnsignedPtr) {
+			args[i].unsignedStorage = 0;
+			args[i].value.p = &args[i].unsignedStorage;
+		} else {
+			Ffi_readArg(L, luaIdx, sig.paramTypes[i], args[i]);
+			++luaIdx;
+		}
+	}
+
+	// Call.
+	int nresults = Ffi_doCall(L, fn, sig, args);
+
+	// Push `UnsignedPtr` output values as additional return values.
+	for (int i = 0; i < (int)sig.paramTypes.size() && i < 2; ++i) {
+		if (sig.paramTypes[i] == FfiType::UnsignedPtr)
+			nresults += write(L, (unsigned long long)args[i].unsignedStorage);
+	}
+
+	return nresults;
 }
 
 static int Ffi_open(lua_State* L) {
@@ -8196,10 +8577,14 @@ static int Ffi_open(lua_State* L) {
 		return 0;
 	}
 
-	const std::string osstr = Unicode::toOs(path);
-	void* ptr = Platform::dynamicOpen(osstr.c_str());
-	if (!ptr)
-		return write(L, nullptr);
+	void* ptr = Platform::dynamicOpen(path);
+	if (!ptr) {
+		const std::string err = Platform::dynamicError();
+		if (err.empty())
+			return write(L, nullptr);
+
+		return write(L, nullptr, err);
+	}
 
 	const uintptr_t handle = (uintptr_t)ptr;
 
@@ -8210,10 +8595,37 @@ static int Ffi_close(lua_State* L) {
 	uintptr_t handle = 0;
 	read<>(L, handle);
 
-	if (handle)
-		Platform::dynamicClose((void*)handle);
+	if (handle == 0)
+		return write(L, false);
 
-	return 0;
+	void* ptr = (void*)handle;
+	Platform::dynamicClose(ptr);
+
+	return write(L, true);
+}
+
+static int Ffi_sym(lua_State* L) {
+	uintptr_t handle = 0;
+	const char* name = nullptr;
+	read<>(L, handle, name);
+
+	if (handle == 0)
+		return error(L, "Invalid handle.");
+	if (!name || !*name)
+		return error(L, "String expected.");
+
+	void* fn = Platform::dynamicSym((void*)handle, name);
+	if (!fn) {
+		const std::string err = Platform::dynamicError();
+		if (err.empty())
+			return write(L, nullptr);
+
+		return write(L, nullptr, err);
+	}
+
+	const uintptr_t fptr = (uintptr_t)fn;
+
+	return write(L, fptr);
 }
 
 static int Ffi_call(lua_State* L) {
@@ -8221,103 +8633,42 @@ static int Ffi_call(lua_State* L) {
 	const char* sigStr = nullptr;
 	read<>(L, handle, sigStr);
 
-	if (!handle) {
-		error(L, "Invalid library handle.");
-
-		return 0;
-	}
-	if (!sigStr || !*sigStr) {
-		error(L, "Invalid signature.");
-
-		return 0;
-	}
+	if (handle == 0)
+		return error(L, "Invalid handle.");
+	if (!sigStr || !*sigStr)
+		return error(L, "String expected.");
 
 	FfiSignature sig;
-	if (!Ffi_parseSignature(sigStr, sig)) {
-		error(L, "Failed to parse signature.");
-
-		return 0;
-	}
+	if (!Ffi_parseSignature(sigStr, sig))
+		return error(L, "Failed to parse signature.");
 
 	void* fn = Platform::dynamicSym((void*)handle, sig.name.c_str());
 	if (!fn) {
-		error(L, "Failed to resolve symbol.");
+		const std::string err = Platform::dynamicError();
+		if (err.empty())
+			return error(L, "Failed to resolve symbol.");
 
-		return 0;
+		return error(L, err.c_str());
 	}
 
-	if (sig.paramTypes.empty()) {
-		if (sig.returnType == FfiType::Void) {
-			((void(*)(void))fn)();
+	return Ffi_callImpl(L, fn, sig, 3);
+}
 
-			return 0;
-		}
-		if (sig.returnType == FfiType::LongLong) {
-			const long long ret = Ffi_call_ll_void(fn);
+static int Ffi_callFn(lua_State* L) {
+	uintptr_t fptr = 0;
+	const char* sigStr = nullptr;
+	read<>(L, fptr, sigStr);
 
-			return write(L, ret);
-		}
-		if (sig.returnType == FfiType::Double) {
-			const double ret = Ffi_call_d_void(fn);
+	if (fptr == 0)
+		return error(L, "Invalid function pointer.");
+	if (!sigStr || !*sigStr)
+		return error(L, "String expected.");
 
-			return write(L, ret);
-		}
-	} else if (sig.paramTypes.size() == 1) {
-		if (sig.returnType == FfiType::Void) {
-			if (sig.paramTypes[0] == FfiType::LongLong) {
-				long long arg0 = 0;
-				read(L, arg0, Index(3));
+	FfiSignature sig;
+	if (!Ffi_parseSignature(sigStr, sig))
+		return error(L, "Failed to parse signature.");
 
-				Ffi_call_void_ll(fn, arg0);
-
-				return 0;
-			}
-			if (sig.paramTypes[0] == FfiType::Double) {
-				double arg0 = 0;
-				read(L, arg0, Index(3));
-
-				Ffi_call_void_d(fn, arg0);
-
-				return 0;
-			}
-		}
-		if (sig.returnType == FfiType::String) {
-			if (sig.paramTypes[0] == FfiType::UnsignedPtr) {
-				unsigned sz = 0;
-				const char* ret = Ffi_call_str_uptr(fn, &sz);
-				if (!ret)
-					return write(L, nullptr);
-
-				std::string s;
-				if (sz > 0)
-					s = std::string(ret, sz);
-				else
-					s = std::string(ret);
-
-				return write(L, s, (long long)s.length());
-			}
-		}
-	} else if (sig.paramTypes.size() == 2) {
-		if (sig.returnType == FfiType::Void) {
-			if (sig.paramTypes[0] == FfiType::String && sig.paramTypes[1] == FfiType::Unsigned) {
-				const char* arg0 = nullptr;
-				unsigned arg1 = 0;
-				read(L, arg0, Index(3));
-				read(L, arg1, Index(4));
-
-				if (!arg0)
-					arg0 = "";
-
-				Ffi_call_void_str_u(fn, arg0, arg1);
-
-				return 0;
-			}
-		}
-	}
-
-	error(L, "Unsupported signature.");
-
-	return 0;
+	return Ffi_callImpl(L, (void*)fptr, sig, 3);
 }
 
 static void open_Ffi(lua_State* L) {
@@ -8330,7 +8681,9 @@ static void open_Ffi(lua_State* L) {
 					array(
 						luaL_Reg{ "open", Ffi_open },
 						luaL_Reg{ "close", Ffi_close },
+						luaL_Reg{ "sym", Ffi_sym },
 						luaL_Reg{ "call", Ffi_call },
+						luaL_Reg{ "callFn", Ffi_callFn },
 						luaL_Reg{ nullptr, nullptr }
 					)
 				)
@@ -8339,6 +8692,7 @@ static void open_Ffi(lua_State* L) {
 		)
 	);
 }
+
 
 /**< Stream. */
 

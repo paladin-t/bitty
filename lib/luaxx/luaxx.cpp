@@ -880,6 +880,12 @@ int write(lua_State* L, const LightUserdata &val) {
 	return 1;
 }
 
+int write(lua_State* L, LightUserdata &val) {
+	lua_pushlightuserdata(L, val.data);
+
+	return 1;
+}
+
 int function(lua_State* L, const char* func) {
 	if (!func)
 		return 0;

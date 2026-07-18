@@ -382,6 +382,10 @@ void* Platform::dynamicSym(void* /* handle */, const char* /* name */) {
 void Platform::dynamicClose(void* /* handle */) {
 }
 
+std::string Platform::dynamicError(void) {
+	return "Not implemented.";
+}
+
 }
 
 /* ===========================================================================} */
