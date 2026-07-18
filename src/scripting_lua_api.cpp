@@ -8162,7 +8162,7 @@ static FfiType Ffi_parseType(std::string s) {
 
 static bool Ffi_isTypeKeyword(const std::string &s) {
 	static const char* keywords[] = {
-		"void", "bool", "char", "short", "int", "long",
+		"void", "bool", "char", "char*", "short", "int", "long",
 		"float", "double", "unsigned", "const", "size_t",
 		"intptr_t", "uintptr_t"
 	};
@@ -8331,22 +8331,71 @@ static int Ffi_writePtrResult(lua_State* L, FfiType type, void* r) {
 }
 
 // Dispatch helpers for 2-parameter calls. Each macro expands to a complete
-// inner switch on the second parameter category; the trailing `break` exits the
-// outer switch on the first parameter category.
-#define FFI_INNER2(RTYPE, C0CTYPE, V0) \
-	switch (c1) { \
-	case FfiCategory::Integer: r = ((RTYPE(*)(C0CTYPE, long long))fn)(V0, a1.ll); break; \
-	case FfiCategory::Float:   r = ((RTYPE(*)(C0CTYPE, float))    fn)(V0, a1.f ); break; \
-	case FfiCategory::Double:  r = ((RTYPE(*)(C0CTYPE, double))   fn)(V0, a1.d ); break; \
-	case FfiCategory::Pointer: r = ((RTYPE(*)(C0CTYPE, void*))    fn)(V0, a1.p ); break; \
-	} break
-#define FFI_INNER2V(C0CTYPE, V0) \
-	switch (c1) { \
-	case FfiCategory::Integer: ((void(*)(C0CTYPE, long long))fn)(V0, a1.ll); return 0; \
-	case FfiCategory::Float:   ((void(*)(C0CTYPE, float))    fn)(V0, a1.f ); return 0; \
-	case FfiCategory::Double:  ((void(*)(C0CTYPE, double))   fn)(V0, a1.d ); return 0; \
-	case FfiCategory::Pointer: ((void(*)(C0CTYPE, void*))    fn)(V0, a1.p ); return 0; \
-	} break
+// 2-level switch on both parameter categories, accessing c0, a0, c1, a1, fn,
+// and r from the enclosing scope. FFI_INNER2 assigns the result to r;
+// FFI_INNER2V returns 0 directly after the call.
+#define FFI_INNER2(RTYPE) \
+	switch (c0) { \
+	case FfiCategory::Integer: \
+		switch (c1) { \
+		case FfiCategory::Integer: r = ((RTYPE(*)(long long, long long))fn)(a0.ll, a1.ll); break; \
+		case FfiCategory::Float:   r = ((RTYPE(*)(long long, float))    fn)(a0.ll, a1.f ); break; \
+		case FfiCategory::Double:  r = ((RTYPE(*)(long long, double))   fn)(a0.ll, a1.d ); break; \
+		case FfiCategory::Pointer: r = ((RTYPE(*)(long long, void*))    fn)(a0.ll, a1.p ); break; \
+		} break; \
+	case FfiCategory::Float: \
+		switch (c1) { \
+		case FfiCategory::Integer: r = ((RTYPE(*)(float, long long))fn)(a0.f, a1.ll); break; \
+		case FfiCategory::Float:   r = ((RTYPE(*)(float, float))    fn)(a0.f, a1.f ); break; \
+		case FfiCategory::Double:  r = ((RTYPE(*)(float, double))   fn)(a0.f, a1.d ); break; \
+		case FfiCategory::Pointer: r = ((RTYPE(*)(float, void*))    fn)(a0.f, a1.p ); break; \
+		} break; \
+	case FfiCategory::Double: \
+		switch (c1) { \
+		case FfiCategory::Integer: r = ((RTYPE(*)(double, long long))fn)(a0.d, a1.ll); break; \
+		case FfiCategory::Float:   r = ((RTYPE(*)(double, float))    fn)(a0.d, a1.f ); break; \
+		case FfiCategory::Double:  r = ((RTYPE(*)(double, double))   fn)(a0.d, a1.d ); break; \
+		case FfiCategory::Pointer: r = ((RTYPE(*)(double, void*))    fn)(a0.d, a1.p ); break; \
+		} break; \
+	case FfiCategory::Pointer: \
+		switch (c1) { \
+		case FfiCategory::Integer: r = ((RTYPE(*)(void*, long long))fn)(a0.p, a1.ll); break; \
+		case FfiCategory::Float:   r = ((RTYPE(*)(void*, float))    fn)(a0.p, a1.f ); break; \
+		case FfiCategory::Double:  r = ((RTYPE(*)(void*, double))   fn)(a0.p, a1.d ); break; \
+		case FfiCategory::Pointer: r = ((RTYPE(*)(void*, void*))    fn)(a0.p, a1.p ); break; \
+		} break; \
+	}
+#define FFI_INNER2V() \
+	switch (c0) { \
+	case FfiCategory::Integer: \
+		switch (c1) { \
+		case FfiCategory::Integer: ((void(*)(long long, long long))fn)(a0.ll, a1.ll); return 0; \
+		case FfiCategory::Float:   ((void(*)(long long, float))    fn)(a0.ll, a1.f ); return 0; \
+		case FfiCategory::Double:  ((void(*)(long long, double))   fn)(a0.ll, a1.d ); return 0; \
+		case FfiCategory::Pointer: ((void(*)(long long, void*))    fn)(a0.ll, a1.p ); return 0; \
+		} return 0; \
+	case FfiCategory::Float: \
+		switch (c1) { \
+		case FfiCategory::Integer: ((void(*)(float, long long))fn)(a0.f, a1.ll); return 0; \
+		case FfiCategory::Float:   ((void(*)(float, float))    fn)(a0.f, a1.f ); return 0; \
+		case FfiCategory::Double:  ((void(*)(float, double))   fn)(a0.f, a1.d ); return 0; \
+		case FfiCategory::Pointer: ((void(*)(float, void*))    fn)(a0.f, a1.p ); return 0; \
+		} return 0; \
+	case FfiCategory::Double: \
+		switch (c1) { \
+		case FfiCategory::Integer: ((void(*)(double, long long))fn)(a0.d, a1.ll); return 0; \
+		case FfiCategory::Float:   ((void(*)(double, float))    fn)(a0.d, a1.f ); return 0; \
+		case FfiCategory::Double:  ((void(*)(double, double))   fn)(a0.d, a1.d ); return 0; \
+		case FfiCategory::Pointer: ((void(*)(double, void*))    fn)(a0.d, a1.p ); return 0; \
+		} return 0; \
+	case FfiCategory::Pointer: \
+		switch (c1) { \
+		case FfiCategory::Integer: ((void(*)(void*, long long))fn)(a0.p, a1.ll); return 0; \
+		case FfiCategory::Float:   ((void(*)(void*, float))    fn)(a0.p, a1.f ); return 0; \
+		case FfiCategory::Double:  ((void(*)(void*, double))   fn)(a0.p, a1.d ); return 0; \
+		case FfiCategory::Pointer: ((void(*)(void*, void*))    fn)(a0.p, a1.p ); return 0; \
+		} return 0; \
+	}
 
 static int Ffi_doCall(lua_State* L, void* fn, const FfiSignature &sig, const FfiArg* args) {
 	const size_t nparams = sig.paramTypes.size();
@@ -8463,12 +8512,7 @@ static int Ffi_doCall(lua_State* L, void* fn, const FfiSignature &sig, const Ffi
 		const FfiValue &a1 = args[1].value;
 
 		if (sig.returnType == FfiType::Void) {
-			switch (c0) {
-			case FfiCategory::Integer: FFI_INNER2V(long long, a0.ll);
-			case FfiCategory::Float:   FFI_INNER2V(float,     a0.f);
-			case FfiCategory::Double:  FFI_INNER2V(double,    a0.d);
-			case FfiCategory::Pointer: FFI_INNER2V(void*,     a0.p);
-			}
+			FFI_INNER2V();
 
 			return error(L, "Unsupported parameter type.");
 		}
@@ -8477,45 +8521,25 @@ static int Ffi_doCall(lua_State* L, void* fn, const FfiSignature &sig, const Ffi
 		switch (rc) {
 		case FfiCategory::Integer: {
 				long long r = 0;
-				switch (c0) {
-				case FfiCategory::Integer: FFI_INNER2(long long, long long, a0.ll);
-				case FfiCategory::Float:   FFI_INNER2(long long, float,     a0.f);
-				case FfiCategory::Double:  FFI_INNER2(long long, double,    a0.d);
-				case FfiCategory::Pointer: FFI_INNER2(long long, void*,     a0.p);
-				}
+				FFI_INNER2(long long);
 
 				return Ffi_writeIntResult(L, sig.returnType, r);
 			}
 		case FfiCategory::Float: {
 				float r = 0;
-				switch (c0) {
-				case FfiCategory::Integer: FFI_INNER2(float, long long, a0.ll);
-				case FfiCategory::Float:   FFI_INNER2(float, float,     a0.f);
-				case FfiCategory::Double:  FFI_INNER2(float, double,    a0.d);
-				case FfiCategory::Pointer: FFI_INNER2(float, void*,     a0.p);
-				}
+				FFI_INNER2(float);
 
 				return write(L, (double)r);
 			}
 		case FfiCategory::Double: {
 				double r = 0;
-				switch (c0) {
-				case FfiCategory::Integer: FFI_INNER2(double, long long, a0.ll);
-				case FfiCategory::Float:   FFI_INNER2(double, float,     a0.f);
-				case FfiCategory::Double:  FFI_INNER2(double, double,    a0.d);
-				case FfiCategory::Pointer: FFI_INNER2(double, void*,     a0.p);
-				}
+				FFI_INNER2(double);
 
 				return write(L, r);
 			}
 		case FfiCategory::Pointer: {
 				void* r = nullptr;
-				switch (c0) {
-				case FfiCategory::Integer: FFI_INNER2(void*, long long, a0.ll);
-				case FfiCategory::Float:   FFI_INNER2(void*, float,     a0.f);
-				case FfiCategory::Double:  FFI_INNER2(void*, double,    a0.d);
-				case FfiCategory::Pointer: FFI_INNER2(void*, void*,     a0.p);
-				}
+				FFI_INNER2(void*);
 
 				return Ffi_writePtrResult(L, sig.returnType, r);
 			}
@@ -8579,9 +8603,11 @@ static int Ffi_open(lua_State* L) {
 
 	void* ptr = Platform::dynamicOpen(path);
 	if (!ptr) {
-		const std::string err = Platform::dynamicError();
-		if (err.empty())
+		const std::string osstr = Platform::dynamicError();
+		if (osstr.empty())
 			return write(L, nullptr);
+
+		const std::string err = Unicode::fromOs(osstr);
 
 		return write(L, nullptr, err);
 	}
@@ -8616,9 +8642,11 @@ static int Ffi_sym(lua_State* L) {
 
 	void* fn = Platform::dynamicSym((void*)handle, name);
 	if (!fn) {
-		const std::string err = Platform::dynamicError();
-		if (err.empty())
+		const std::string osstr = Platform::dynamicError();
+		if (osstr.empty())
 			return write(L, nullptr);
+
+		const std::string err = Unicode::fromOs(osstr);
 
 		return write(L, nullptr, err);
 	}
@@ -8644,9 +8672,11 @@ static int Ffi_call(lua_State* L) {
 
 	void* fn = Platform::dynamicSym((void*)handle, sig.name.c_str());
 	if (!fn) {
-		const std::string err = Platform::dynamicError();
-		if (err.empty())
+		const std::string osstr = Platform::dynamicError();
+		if (osstr.empty())
 			return error(L, "Failed to resolve symbol.");
+
+		const std::string err = Unicode::fromOs(osstr);
 
 		return error(L, err.c_str());
 	}
