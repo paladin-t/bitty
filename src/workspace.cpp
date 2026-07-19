@@ -3032,9 +3032,10 @@ void Workspace::console(class Window* /* wnd */, class Renderer* rnd, const clas
 		}
 		consoleY = 0.0f;
 	} else {
-		minHeight = std::min(bodyArea().height() * 0.3f, 256.0f * io.FontGlobalScale);
+		minHeight = ImGui::TitleBarHeight();
 		if (consoleHeight() <= 0.0f) {
-			consoleHeight(minHeight);
+			const float defaultHeight = std::min(bodyArea().height() * 0.3f, 256.0f * io.FontGlobalScale);
+			consoleHeight(defaultHeight);
 		}
 		consoleY = rnd->height() - consoleHeight();
 	}
