@@ -1,3 +1,17 @@
+### v1.10.0 Jul. 19, 2026
+
+Enhanced modules, improved usability, fixed some bugs.
+
+* Added a simple `Ffi` module to call C functions in external shared libraries from Lua directly
+* Improved console panel resizing for bigger edit viewport
+* Fixed a reading bug in `bytes:readLine()` when the last line were not ended with a newline
+* Fixed a reading bug in `file:readLine()` when the last line were not ended with a newline
+* Fixed a calculation bug in `vec2:cross(num)`
+* Fixed a calculation bug in `vec3:cross(...)`
+* Fixed a few potential stability issues of the utilities modules
+* Fixed a scaling bug for map rendering
+* Fixed a text encoding issue in the "read-log" API of the automation server plugin on Windows
+
 ### v1.9.1 Jun. 8, 2026
 
 Improved usability.

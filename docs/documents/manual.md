@@ -37,6 +37,7 @@
 		- [Encoding](#encoding)
 			- [Base64](#base64)
 			- [LZ4](#lz4)
+		- [FFI](#ffi)
 		- [File](#file)
 		- [Filesystem](#filesystem)
 		- [Image](#image)
@@ -773,6 +774,90 @@ Available options:
 * `Lz4.decode(bytes)`: decodes the specific LZ4 `Bytes` to `Bytes`
 	* `bytes`: LZ4 `Bytes` to decode
 	* returns `Bytes`, its cursor will be at the end
+
+### FFI
+
+The `Ffi` library provides a minimal foreign function interface for calling C functions in external shared libraries (".dll" on Windows, ".so" on Linux, ".dylib" on MacOS) from Lua scripts. This is useful for integrating native code, system APIs, or third-party SDKs without modifying the engine itself.
+
+Functions within the dynamic library execute in the same process space as the engine. Improper calls or bugs in the library may cause engine crashes or other abnormal behaviours. Correctness of the dynamic library and calling methods must be ensured.
+
+A function is described by a signature string that resembles a C declaration. The supported types are:
+
+* `void`: no value (return only)
+* `bool`: boolean
+* `int`: 32-bit signed integer
+* `unsigned`: 32-bit unsigned integer
+* `long long`: 64-bit signed integer
+* `unsigned long long`: 64-bit unsigned integer
+* `float`: 32-bit floating point
+* `double`: 64-bit floating point
+* `const char*` / `char*`: UTF-8 string
+* `void*`: opaque pointer (lightuserdata)
+* `unsigned*`: pointer to unsigned integer, used as an output parameter
+
+The supported signatures allow 0 to 2 parameters of any supported type, with any supported return type. For example:
+
+* `void foo();`
+* `bool foo();`
+* `void foo(long long arg);`
+* `void foo(double arg);`
+* `int foo(unsigned a, float b);`
+* `void* foo();`
+* `const char* foo(unsigned* sz);`
+* `void foo(void* ctx, long long data);`
+
+For `unsigned*` parameters, the Lua caller does not pass a value; after the call, the pointed-to value is pushed as an extra return value.
+
+**Static Functions**
+
+* `Ffi.open(path)`: opens a shared library
+	* `path`: the library path (e.g. `mylib.dll`, `libmylib.so`, `libmylib.dylib`); Unicode paths are supported
+	* returns the library handle (lightuserdata) and an error message string on failure, or the handle and `nil` on success
+* `Ffi.close(handle)`: closes a previously opened library handle
+	* `handle`: the library handle returned by `Ffi.open`
+	* returns `true` on success, `false` on failure
+* `Ffi.sym(handle, name)`: resolves a symbol (function or variable address) from the library
+	* `handle`: the library handle returned by `Ffi.open`
+	* `name`: the symbol name (e.g. `"SteamAPI_Init"`)
+	* returns the function pointer (lightuserdata) and an error message string on failure, or the pointer and `nil` on success
+* `Ffi.call(handle, signature, ...)`: resolves and calls a C function in the library
+	* `handle`: the library handle returned by `Ffi.open`
+	* `signature`: a C-like signature string describing the function, e.g. `void foo(long long arg);`
+	* `...`: arguments matching the signature parameters (omit `unsigned*` output parameters)
+	* returns values matching the signature return type; for `unsigned*` parameters, the pointed-to value is appended as an extra return value
+* `Ffi.callFn(fn, signature, ...)`: calls a previously resolved function pointer
+	* `fn`: the function pointer returned by `Ffi.sym` (lightuserdata)
+	* `signature`: a C-like signature string describing the function
+	* `...`: arguments matching the signature parameters (omit `unsigned*` output parameters)
+	* returns values matching the signature return type; for `unsigned*` parameters, the pointed-to value is appended as an extra return value
+
+See the following code for example.
+
+```lua
+-- Open a library and call functions by signature.
+local handle, err = Ffi.open('mylib.dll')
+if not handle then
+	print('Failed to open library: ' .. (err or 'unknown'))
+
+	return
+end
+
+Ffi.call(handle, 'void set_value(long long v);', 42)
+local v = Ffi.call(handle, 'long long get_value(void);')
+local str, sz = Ffi.call(handle, 'const char* get_text(unsigned* sz);')
+
+Ffi.close(handle)
+```
+
+```lua
+-- Resolve a symbol once, call it repeatedly (useful for per-frame callbacks).
+local lib = Ffi.open('mylib.dll')
+local func = Ffi.sym(lib, 'func')
+if func then
+	-- Call the same function repeatedly without re-resolving the symbol.
+	Ffi.callFn(func, 'void func();')
+end
+```
 
 ### File
 
