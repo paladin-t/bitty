@@ -771,7 +771,8 @@ bool Workspace::flushLogFile(void) {
 bool Workspace::readLog(std::string &content) {
 	LockGuard<decltype(logLock())> guard(logLock());
 
-	content = logCache();
+	const std::string osstr = logCache();
+	content = Unicode::fromOs(osstr);
 
 	return true;
 }
