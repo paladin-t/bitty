@@ -8723,7 +8723,6 @@ static void open_Ffi(lua_State* L) {
 	);
 }
 
-
 /**< Stream. */
 
 static void open_Stream(lua_State* L) {

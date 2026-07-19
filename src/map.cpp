@@ -368,7 +368,7 @@ public:
 			Texture::Ptr batch = sub(rnd, 0, 0, _width, _height);
 			if (batch) {
 				if (scale > 1) {
-					const Math::Recti dstRect = Math::Recti::byXYWH(x * scale, y * scale, _width * _tileWidth * scale, _height * _tileHeight * scale);
+					const Math::Recti dstRect = Math::Recti::byXYWH(x, y, _width * _tileWidth * scale, _height * _tileHeight * scale);
 
 					rnd->render(batch.get(), nullptr, &dstRect, nullptr, nullptr, false, false, color, colorChanged, alphaChanged);
 				} else {
@@ -397,12 +397,14 @@ public:
 				const int pixelY = celY * _tileHeight;
 				const Math::Recti srcRect = Math::Recti::byXYWH(pixelX, pixelY, _tileWidth, _tileHeight);
 
-				const int dstX = x + i * _tileWidth;
-				const int dstY = y + j * _tileHeight;
 				Math::Recti dstRect;
 				if (scale > 1) {
-					dstRect = Math::Recti::byXYWH(dstX * scale, dstY * scale, _tileWidth * scale, _tileHeight * scale);
+					const int dstX = x + i * _tileWidth * scale;
+					const int dstY = y + j * _tileHeight * scale;
+					dstRect = Math::Recti::byXYWH(dstX, dstY, _tileWidth * scale, _tileHeight * scale);
 				} else {
+					const int dstX = x + i * _tileWidth;
+					const int dstY = y + j * _tileHeight;
 					dstRect = Math::Recti::byXYWH(dstX, dstY, _tileWidth, _tileHeight);
 				}
 
