@@ -352,7 +352,7 @@ public:
 					}
 				);
 				if (it != first.end())
-					return Index((int)(it - first.begin()), second_);
+					return Index((int)(it - first.begin() - 1), second_);
 			} else {
 				typename FirstCollection::const_iterator it = std::find_if(
 					first.begin(), first.end(),
@@ -375,8 +375,8 @@ public:
 					return _secondComparer(left, right) < 0;
 				}
 			);
-			if (it != first.end())
-				return Index((int)(it - second.begin()), second_);
+			if (it != second.end())
+				return Index((int)(it - second.begin() - 1), second_);
 		} else {
 			typename SecondCollection::const_iterator it = std::find_if(
 				second.begin(), second.end(),
