@@ -344,15 +344,14 @@ public:
 	Index indexOf(const ValueType &val, bool second_) const {
 		if (!second_) {
 			if (_firstComparer) {
-				typename FirstCollection::const_iterator it = std::upper_bound(
+				typename FirstCollection::const_iterator it = std::find_if(
 					first.begin(), first.end(),
-					val,
-					[&] (const ValueType &left, const ValueType &right) -> bool {
-						return _firstComparer(left, right) < 0;
+					[&] (const ValueType &val_) -> bool {
+						return _firstComparer(val, val_) == 0;
 					}
 				);
 				if (it != first.end())
-					return Index((int)(it - first.begin() - 1), second_);
+					return Index((int)(it - first.begin()), second_);
 			} else {
 				typename FirstCollection::const_iterator it = std::find_if(
 					first.begin(), first.end(),
@@ -368,15 +367,14 @@ public:
 		}
 
 		if (_secondComparer) {
-			typename SecondCollection::const_iterator it = std::upper_bound(
+			typename SecondCollection::const_iterator it = std::find_if(
 				second.begin(), second.end(),
-				val,
-				[&] (const ValueType &left, const ValueType &right) -> bool {
-					return _secondComparer(left, right) < 0;
+				[&] (const ValueType &val_) -> bool {
+					return _firstComparer(val, val_) == 0;
 				}
 			);
 			if (it != second.end())
-				return Index((int)(it - second.begin() - 1), second_);
+				return Index((int)(it - second.begin()), second_);
 		} else {
 			typename SecondCollection::const_iterator it = std::find_if(
 				second.begin(), second.end(),
