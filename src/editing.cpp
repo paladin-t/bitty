@@ -1883,7 +1883,6 @@ bool magnifiable(
 	{
 		VariableGuard<decltype(style.FramePadding)> guardFramePadding_(&style.FramePadding, style.FramePadding, guardFramePadding.previous());
 
-		ImGui::Dummy(ImVec2(xOffset, 0));
 		ImGui::SameLine();
 		const float posY = ImGui::GetCursorPosY() + 5;
 		ImGui::SetCursorPosY(posY);
