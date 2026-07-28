@@ -2720,6 +2720,8 @@ void CodeEditor::Delete(void) {
 	u.After = State;
 	AddUndo(u);
 
+	State.SelectionEnd = State.SelectionStart = State.CursorPosition;
+
 	OnModified(false, true);
 }
 
@@ -2768,6 +2770,8 @@ void CodeEditor::DeleteLine(void) {
 
 	u.After = State;
 	AddUndo(u);
+
+	State.SelectionEnd = State.SelectionStart = State.CursorPosition;
 
 	OnModified(false, true);
 }
@@ -4135,6 +4139,8 @@ void CodeEditor::BackSpace(void) {
 	u.After = State;
 	AddUndo(u);
 
+	State.SelectionEnd = State.SelectionStart = State.CursorPosition;
+
 	OnModified(false, true);
 }
 
@@ -4174,6 +4180,8 @@ void CodeEditor::BackSpaceWordwise(void) {
 
 	u.After = State;
 	AddUndo(u);
+
+	State.SelectionEnd = State.SelectionStart = State.CursorPosition;
 
 	OnModified(false, true);
 }
