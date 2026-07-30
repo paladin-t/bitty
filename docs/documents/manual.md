@@ -2550,7 +2550,7 @@ Currently there is only one available strategy, change and try if it's needed:
 | "linear_canvas"      | Hints to set canvas filtering as linear                                       |                          |
 | "anisotropic_canvas" | Hints to set canvas filtering as anisotropic                                  |                          |
 
-In the following description, `Project.foo` (with capital C) indicates that `Project` is a type object and the expression is a constant or static function; `project.foo` or `project:foo()` (with lowercase c) indicates that `project` is an instance object and the expression is a member property or method. In practice, a `project` instance can be obtained from `local project = Project.main`.
+In the following description, `Project.foo` (with capital P) indicates that `Project` is a type object and the expression is a constant or static function; `project.foo` or `project:foo()` (with lowercase p) indicates that `project` is an instance object and the expression is a member property or method. In practice, a `project` instance can be obtained from `local project = Project.main`.
 
 **Constants**
 

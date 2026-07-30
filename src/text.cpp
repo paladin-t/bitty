@@ -420,13 +420,7 @@ std::string Text::sanitizeFilename(const std::string &str, char replacementChar)
 	// Define illegal characters.
 	std::wstring illegalChars = L"/\\?%*:|\"<>";
 
-#if defined BITTY_OS_WIN
-	illegalChars += L"&$!';`";
-#elif defined BITTY_OS_MAC
-	// Do nothing.
-#elif defined BITTY_OS_LINUX
-	// Do nothing.
-#endif /* Platform macro. */
+	illegalChars += L"&$!';`"; // Windows specific, but included for all platforms.
 
 	// Replace illegal characters.
 	for (wchar_t &c : wresult) {
@@ -443,16 +437,13 @@ std::string Text::sanitizeFilename(const std::string &str, char replacementChar)
 	}
 
 	// Replace reserved names.
-#if defined BITTY_OS_WIN
 	constexpr const wchar_t* WINDOWS_RESERVED_NAMES[] = {
 		L"CON", L"PRN", L"AUX", L"NUL",
 		L"COM1", L"COM2", L"COM3", L"COM4", L"COM5", L"COM6", L"COM7", L"COM8", L"COM9",
 		L"LPT1", L"LPT2", L"LPT3", L"LPT4", L"LPT5", L"LPT6", L"LPT7", L"LPT8", L"LPT9"
 	};
-
 	std::wstring upperStr = wresult;
 	std::transform(upperStr.begin(), upperStr.end(), upperStr.begin(), ::toupper);
-
 	for (const wchar_t* reserved : WINDOWS_RESERVED_NAMES) {
 		if (upperStr == reserved) {
 			wresult = L"_" + wresult;
@@ -470,7 +461,6 @@ std::string Text::sanitizeFilename(const std::string &str, char replacementChar)
 			}
 		}
 	}
-#endif /* Platform macro. */
 
 	// Remove if ends with dot.
 	if (!wresult.empty() && (wresult.back() == L'.' || wresult.back() == L' ')) {

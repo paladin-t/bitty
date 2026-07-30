@@ -780,7 +780,7 @@ bool Asset::reload(Usages usage, class Bytes* buf, Object::Ptr ref, bool implici
 			if (object(usage))
 				ptr = Object::as<Map::Ptr>(object(usage));
 			if (!ptr) {
-				const bool batch = (_project->strategy() & Project::BATCH_MAP) != Project::NONE;;
+				const bool batch = (_project->strategy() & Project::BATCH_MAP) != Project::NONE;
 				ptr = Map::Ptr(Map::create(nullptr, batch));
 				object(usage, ptr);
 			}
