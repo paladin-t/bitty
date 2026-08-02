@@ -360,6 +360,8 @@ public:
 		if (!_tiles.texture)
 			return;
 
+		scale = std::max(scale, 1); // Make sure it's not zero.
+
 		const bool batchable = _batch &&
 			(rnd->maxTextureWidth() > 0 && rnd->maxTextureHeight() > 0) &&
 			(_width * _tileWidth <= rnd->maxTextureWidth() && _height * _tileHeight <= rnd->maxTextureHeight()) &&
@@ -381,10 +383,12 @@ public:
 			}
 		}
 
-		const int beginX = Math::clamp((int)(-x / (float)_tileWidth), 0, _width - 1);
-		const int endX = Math::clamp((int)((rnd->width() - x) / (float)_tileWidth), 0, _width - 1);
-		const int beginY = Math::clamp((int)(-y / (float)_tileHeight), 0, _height - 1);
-		const int endY = Math::clamp((int)((rnd->height() - y) / (float)_tileHeight), 0, _height - 1);
+		const int scaledTileWidth = scale > 1 ? _tileWidth * scale : _tileWidth;
+		const int scaledTileHeight = scale > 1 ? _tileHeight * scale : _tileHeight;
+		const int beginX = Math::clamp((int)(-x / (float)scaledTileWidth), 0, _width - 1);
+		const int endX = Math::clamp((int)((rnd->width() - x) / (float)scaledTileWidth), 0, _width - 1);
+		const int beginY = Math::clamp((int)(-y / (float)scaledTileHeight), 0, _height - 1);
+		const int endY = Math::clamp((int)((rnd->height() - y) / (float)scaledTileHeight), 0, _height - 1);
 
 		for (int j = beginY; j <= endY; ++j) {
 			for (int i = beginX; i <= endX; ++i) {
