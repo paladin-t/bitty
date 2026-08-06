@@ -835,7 +835,7 @@ public:
 	virtual bool finished(void) const override {
 #if AUDIO_ADVANCED_MUSIC_OPERATIONS_ENABLED
 		if (!_music)
-			return 0;
+			return false;
 
 		const double pos = Mix_GetMusicPosition(_music);
 
