@@ -92,7 +92,15 @@ public:
 	virtual void weight(int r, int g, int b, int a) = 0;
 	virtual bool quantize(const Color* colors, int colorCount, bool p2p) = 0;
 
+	/**
+	 * @brief Blits a region of this image onto `dst`.
+	 */
 	virtual bool blit(Image* dst, int x, int y, int w, int h, int sx, int sy) const = 0;
+
+	/**
+	 * @brief Alpha-blends a region of this image onto `dst`.
+	 */
+	virtual bool blend(Image* dst, int x, int y, int w, int h, int sx, int sy) = 0;
 
 	virtual bool fromBlank(int width, int height, int paletted) = 0;
 

@@ -358,10 +358,12 @@ public:
 					dst->set(dx, dy, col);
 			}
 		};
+
 		if (w == 0)
 			w = dst->width();
 		if (h == 0)
 			h = dst->height();
+
 		for (int y_ = 0; y_ < h; ++y_) {
 			const int sy_ = sy + y_;
 			const int dy_ = y + y_;
@@ -369,6 +371,113 @@ public:
 				const int sx_ = sx + x_;
 				const int dx_ = x + x_;
 				plot(this, dst, sx_, sy_, dx_, dy_, !!_palettedBits);
+			}
+		}
+
+		return true;
+	}
+
+	virtual bool blend(Image* dst, int x, int y, int w, int h, int sx, int sy) override {
+		if (!dst)
+			return false;
+
+		if (dst == this)
+			return false;
+
+		// Paletted destinations can only store palette indices, not arbitrary blended colors,
+		// so fall back to a plain index copy in that case.
+		if (dst->paletted()) {
+			if(!paletted())
+				return false;
+
+			const Palette::Ptr &srcPlt = _palette;
+			const Palette::Ptr dstPlt = dst->palette();
+			if (!srcPlt || !dstPlt)
+				return false;
+
+			if (w == 0)
+				w = dst->width();
+			if (h == 0)
+				h = dst->height();
+
+			for (int y_ = 0; y_ < h; ++y_) {
+				const int sy_ = sy + y_;
+				const int dy_ = y + y_;
+				for (int x_ = 0; x_ < w; ++x_) {
+					const int sx_ = sx + x_;
+					const int dx_ = x + x_;
+					int srcIdx = 0;
+					if (!get(sx_, sy_, srcIdx))
+						continue;
+					int dstIdx = 0;
+					if (!get(dx_, dy_, dstIdx))
+						continue;
+
+					Color srcCol;
+					if (!srcPlt->get(srcIdx, srcCol))
+						continue;
+					Color dstCol;
+					if (!dstPlt->get(dstIdx, dstCol))
+						continue;
+
+					if (srcCol.a == 0)
+						continue;
+					dst->set(dx_, dy_, srcIdx);
+				}
+			}
+
+			return true;
+		}
+
+		// Perform proper src-over alpha compositing for colored pixels.
+		if (w == 0)
+			w = dst->width();
+		if (h == 0)
+			h = dst->height();
+
+		for (int y_ = 0; y_ < h; ++y_) {
+			const int sy_ = sy + y_;
+			const int dy_ = y + y_;
+			for (int x_ = 0; x_ < w; ++x_) {
+				const int sx_ = sx + x_;
+				const int dx_ = x + x_;
+
+				Color srcCol;
+				if (!get(sx_, sy_, srcCol))
+					continue;
+
+				// Leave destination untouched for fully transparent source pixels.
+				if (srcCol.a == 0)
+					continue;
+
+				// Replace the destination pixel for fully opaque source pixels.
+				if (srcCol.a == 255) {
+					dst->set(dx_, dy_, srcCol);
+
+					continue;
+				}
+
+				// Alpha-composite over the destination's existing color (src-over, straight alpha)
+				// for partially transparent source pixels.
+				Color dstCol;
+				if (!dst->get(dx_, dy_, dstCol))
+					continue;
+
+				const int sa = srcCol.a;
+				const int da = dstCol.a;
+				const int invSa = 255 - sa;
+				const int outA = sa + da * invSa / 255;
+
+				Color out;
+				if (outA == 0) {
+					out = Color(0, 0, 0, 0);
+				} else {
+					out.r = (Byte)Math::clamp((srcCol.r * sa + dstCol.r * da * invSa / 255) / outA, 0, 255);
+					out.g = (Byte)Math::clamp((srcCol.g * sa + dstCol.g * da * invSa / 255) / outA, 0, 255);
+					out.b = (Byte)Math::clamp((srcCol.b * sa + dstCol.b * da * invSa / 255) / outA, 0, 255);
+					out.a = (Byte)outA;
+				}
+				dst->set(dx_, dy_, out);
 			}
 		}
 
