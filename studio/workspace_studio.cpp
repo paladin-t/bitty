@@ -94,6 +94,7 @@ WorkspaceStudio::StudioSettings &WorkspaceStudio::StudioSettings::operator = (co
 	editorGlobalSearch = other.editorGlobalSearch;
 	editorAlwaysShowTransparentBackground = other.editorAlwaysShowTransparentBackground;
 	editorAlwaysShowGrids = other.editorAlwaysShowGrids;
+	editorCorrectYZForShortcuts = other.editorCorrectYZForShortcuts;
 	editorFineZoomingEnabled = other.editorFineZoomingEnabled;
 
 	canvasState = other.canvasState;
@@ -168,6 +169,7 @@ bool WorkspaceStudio::StudioSettings::operator != (const StudioSettings &other) 
 		editorGlobalSearch != other.editorGlobalSearch ||
 		editorAlwaysShowTransparentBackground != other.editorAlwaysShowTransparentBackground ||
 		editorAlwaysShowGrids != other.editorAlwaysShowGrids ||
+		editorCorrectYZForShortcuts != other.editorCorrectYZForShortcuts ||
 		editorFineZoomingEnabled != other.editorFineZoomingEnabled
 	) {
 		return true;
@@ -1239,8 +1241,8 @@ void WorkspaceStudio::shortcuts(class Window* wnd, class Renderer* rnd, const cl
 	const bool v        = ImGui::IsKeyPressed(SDL_SCANCODE_V);
 	const bool w        = ImGui::IsKeyPressed(SDL_SCANCODE_W);
 	const bool x        = ImGui::IsKeyPressed(SDL_SCANCODE_X);
-	const bool y        = ImGui::IsKeyPressed(SDL_SCANCODE_Y);
-	const bool z        = ImGui::IsKeyPressed(SDL_SCANCODE_Z);
+	bool       y        = ImGui::IsKeyPressed(SDL_SCANCODE_Y);
+	bool       z        = ImGui::IsKeyPressed(SDL_SCANCODE_Z);
 	const bool tab      = ImGui::IsKeyPressed(SDL_SCANCODE_TAB);
 	const bool period   = ImGui::IsKeyPressed(SDL_SCANCODE_PERIOD);
 	const bool slash    = ImGui::IsKeyPressed(SDL_SCANCODE_SLASH);
@@ -1254,6 +1256,9 @@ void WorkspaceStudio::shortcuts(class Window* wnd, class Renderer* rnd, const cl
 #elif WORKSPACE_MODIFIER_KEY == WORKSPACE_MODIFIER_KEY_CMD
 	const bool modifier = io.KeySuper;
 #endif /* WORKSPACE_MODIFIER_KEY */
+
+	if (_settings.editorCorrectYZForShortcuts)
+		std::swap(y, z);
 
 	bool toRun = false;
 	bool toStop = false;

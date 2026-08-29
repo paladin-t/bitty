@@ -1400,6 +1400,7 @@ bool Workspace::load(class Window* wnd, class Renderer* rnd, const class Project
 	Jpath::get(doc, settings()->editorGlobalSearch, "editor", "global_search");
 	Jpath::get(doc, settings()->editorAlwaysShowTransparentBackground, "editor", "always_show_transparent_background");
 	Jpath::get(doc, settings()->editorAlwaysShowGrids, "editor", "always_show_grids");
+	Jpath::get(doc, settings()->editorCorrectYZForShortcuts, "editor", "correct_yz_for_shortcuts");
 	Jpath::get(doc, settings()->editorFineZoomingEnabled, "editor", "fine_zooming_enabled");
 
 	Jpath::get(doc, settings()->canvasState, "canvas", "state");
@@ -1521,6 +1522,7 @@ bool Workspace::save(class Window* wnd, class Renderer*, const class Project*, c
 	Jpath::set(doc, doc, settings()->editorGlobalSearch, "editor", "global_search");
 	Jpath::set(doc, doc, settings()->editorAlwaysShowTransparentBackground, "editor", "always_show_transparent_background");
 	Jpath::set(doc, doc, settings()->editorAlwaysShowGrids, "editor", "always_show_grids");
+	Jpath::set(doc, doc, settings()->editorCorrectYZForShortcuts, "editor", "correct_yz_for_shortcuts");
 	Jpath::set(doc, doc, settings()->editorFineZoomingEnabled, "editor", "fine_zooming_enabled");
 
 	Jpath::set(doc, doc, settings()->canvasState, "canvas", "state");

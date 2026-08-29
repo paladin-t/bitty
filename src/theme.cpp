@@ -351,6 +351,7 @@ bool Theme::open(class Renderer* rnd) {
 	windowPreferences_Editor_ClearOnStart("Clear on start");
 	windowPreferences_Editor_ColumnIndicator("Comlmn indicator");
 	windowPreferences_Editor_Console("Console:");
+	windowPreferences_Editor_CorrectYZMapping("Correct Y/Z mapping");
 	windowPreferences_Editor_IgnoreDotFiles("Ignore dot files");
 	windowPreferences_Editor_IndentWith("Indent with     ");
 	windowPreferences_Editor_LoadLastProjectAtStartup("Load last project at startup");
@@ -360,6 +361,7 @@ bool Theme::open(class Renderer* rnd) {
 	windowPreferences_Editor_None("None");
 	windowPreferences_Editor_PackageFormat("Package format  ");
 	windowPreferences_Editor_Project("Project:");
+	windowPreferences_Editor_Shortcuts("Shortcuts:");
 	windowPreferences_Editor_ShowRecentOpenedProjects("Show recent opened projects");
 	windowPreferences_Editor_ShowWhiteSpaces("Show white spaces");
 	windowPreferences_Editor_TextEditor("Text editor:");
