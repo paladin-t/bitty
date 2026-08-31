@@ -176,6 +176,7 @@ private:
 		ImVec2 mousePosition;
 		bool mouseCanUseGlobalState = true;
 
+		bool correctKeyMappings = true;
 		bool imeCompositing = false;
 	};
 
@@ -457,6 +458,14 @@ public:
 #endif /* BITTY_OS_HTML */
 
 		// Initialize the workspace.
+		int correction = 0;
+		Text::Dictionary::const_iterator corOpt = options.find(WORKSPACE_OPTION_APPLICATION_SHORTCUT_CORRECTION_KEY);
+		if (corOpt != options.end()) {
+			const std::string corStr = corOpt->second;
+			Text::fromString(corStr, correction);
+			_context.correctKeyMappings = !!correction;
+		}
+
 		_workspace->load(_window, _renderer, _project, _primitives);
 		_workspace->open(_window, _renderer, _project, _executable, _primitives, fps, options);
 
@@ -875,10 +884,31 @@ private:
 			case SDL_KEYUP: {
 					const SDL_Keymod mod = SDL_GetModState();
 					int key = evt.key.keysym.scancode;
-					if (evt.key.keysym.scancode == SDL_SCANCODE_Y && evt.key.keysym.sym == SDLK_z) {
-						key = SDL_SCANCODE_Z;
-					} else if (evt.key.keysym.scancode == SDL_SCANCODE_Z && evt.key.keysym.sym == SDLK_y) {
-						key = SDL_SCANCODE_Y;
+					if (_context.correctKeyMappings) {
+						// Y <-> Z swap.
+						if (evt.key.keysym.scancode == SDL_SCANCODE_Y && evt.key.keysym.sym == SDLK_z) {
+							key = SDL_SCANCODE_Z;
+						} else if (evt.key.keysym.scancode == SDL_SCANCODE_Z && evt.key.keysym.sym == SDLK_y) {
+							key = SDL_SCANCODE_Y;
+						}
+						// A <-> Q swap.
+						else if (evt.key.keysym.scancode == SDL_SCANCODE_A && evt.key.keysym.sym == SDLK_q) {
+							key = SDL_SCANCODE_Q;
+						} else if (evt.key.keysym.scancode == SDL_SCANCODE_Q && evt.key.keysym.sym == SDLK_a) {
+							key = SDL_SCANCODE_A;
+						}
+						// W <-> Z swap.
+						else if (evt.key.keysym.scancode == SDL_SCANCODE_W && evt.key.keysym.sym == SDLK_z) {
+							key = SDL_SCANCODE_Z;
+						} else if (evt.key.keysym.scancode == SDL_SCANCODE_Z && evt.key.keysym.sym == SDLK_w) {
+							key = SDL_SCANCODE_W;
+						}
+						// M <-> ;(,) swap.
+						else if (evt.key.keysym.scancode == SDL_SCANCODE_M && evt.key.keysym.sym == SDLK_COMMA) {
+							key = SDL_SCANCODE_COMMA;
+						} else if (evt.key.keysym.scancode == SDL_SCANCODE_SEMICOLON && evt.key.keysym.sym == SDLK_m) {
+							key = SDL_SCANCODE_M;
+						}
 					}
 #if defined BITTY_OS_WIN || defined BITTY_OS_LINUX
 					if (key == SDL_SCANCODE_KP_ENTER) {
@@ -1184,6 +1214,7 @@ private:
 			" [-" WORKSPACE_OPTION_APPLICATION_PLATFORM_LINUX_KEY "]"
 			" [-" WORKSPACE_OPTION_APPLICATION_PLATFORM_MACOS_KEY "]"
 			" [-" WORKSPACE_OPTION_APPLICATION_PLATFORM_HTML_KEY "]"
+			" [-" WORKSPACE_OPTION_APPLICATION_SHORTCUT_CORRECTION_KEY " 0]"
 			" [-" WORKSPACE_OPTION_APPLICATION_FPS_KEY "]"
 			" [-" WORKSPACE_OPTION_APPLICATION_BOOT_SOUND_DISABLED_KEY "]"
 			" [-" WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY "]"
@@ -1209,9 +1240,10 @@ private:
 #endif /* BITTY_OS_WIN */
 		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_OUTPUT_KEY                     " \"PATH\" Specify the output path for build-only mode.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_PLATFORM_WIN_KEY               "        Build for Windows.\n");
-		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_PLATFORM_LINUX_KEY             "        Build for Linux.\n");
-		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_PLATFORM_MACOS_KEY             "        Build for MacOS.\n");
-		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_PLATFORM_HTML_KEY              "        Build for HTML.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_PLATFORM_LINUX_KEY               "      Build for Linux.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_PLATFORM_MACOS_KEY               "      Build for MacOS.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_PLATFORM_HTML_KEY               "       Build for HTML.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_SHORTCUT_CORRECTION_KEY        " 0      Disable shortcut correction.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_FPS_KEY                        " FPS    Specify running FPS.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_APPLICATION_BOOT_SOUND_DISABLED_KEY        "        Disable boot sound.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_BORDERLESS_ENABLED_KEY              "        Run with borderless window.\n");
@@ -1219,9 +1251,9 @@ private:
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_HIGH_DPI_DISABLED_KEY               "        Disable high-DPI.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_VSYNC_ENABLED_KEY                   "        Enable vsync.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_WINDOW_ALWAYS_ON_TOP_ENABLED_KEY           "        Keep window top most.\n");
-		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X1_KEY                            "       Set renderer scale to x1.\n");
-		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X2_KEY                            "       Set renderer scale to x2.\n");
-		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X3_KEY                            "       Set renderer scale to x3.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X1_KEY                             "       Set renderer scale to x1.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X2_KEY                             "       Set renderer scale to x2.\n");
+		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_X3_KEY                             "       Set renderer scale to x3.\n");
 		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_DRIVER_KEY                        " 1      Use software renderer.\n");
 #if BITTY_EFFECTS_ENABLED
 		fprintf(stdout, "  -" WORKSPACE_OPTION_RENDERER_EFFECTS_ENABLED_KEY               "        Enable effects.\n");
