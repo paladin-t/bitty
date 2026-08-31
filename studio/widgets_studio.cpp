@@ -198,16 +198,6 @@ void PreferencesPopupBox::update(void) {
 
 				Separator();
 
-				PushID(_theme->windowPreferences_Editor_Shortcuts());
-				{
-					TextUnformatted(_theme->windowPreferences_Editor_Shortcuts());
-
-					Checkbox(_theme->windowPreferences_Editor_CorrectYZMapping(), &_settingsShadow.editorCorrectYZForShortcuts);
-				}
-				PopID();
-
-				Separator();
-
 				PushID(_theme->windowPreferences_Editor_Log());
 				{
 					TextUnformatted(_theme->windowPreferences_Editor_Log());

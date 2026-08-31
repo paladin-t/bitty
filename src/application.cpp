@@ -875,6 +875,11 @@ private:
 			case SDL_KEYUP: {
 					const SDL_Keymod mod = SDL_GetModState();
 					int key = evt.key.keysym.scancode;
+					if (evt.key.keysym.scancode == SDL_SCANCODE_Y && evt.key.keysym.sym == SDLK_z) {
+						key = SDL_SCANCODE_Z;
+					} else if (evt.key.keysym.scancode == SDL_SCANCODE_Z && evt.key.keysym.sym == SDLK_y) {
+						key = SDL_SCANCODE_Y;
+					}
 #if defined BITTY_OS_WIN || defined BITTY_OS_LINUX
 					if (key == SDL_SCANCODE_KP_ENTER) {
 						key = SDL_SCANCODE_RETURN;

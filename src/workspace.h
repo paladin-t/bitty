@@ -233,7 +233,6 @@ public:
 		bool editorGlobalSearch = false;
 		bool editorAlwaysShowTransparentBackground = false;
 		bool editorAlwaysShowGrids = false;
-		bool editorCorrectYZForShortcuts = false;
 		bool editorFineZoomingEnabled = false;
 
 		unsigned canvasState = POPUP;
