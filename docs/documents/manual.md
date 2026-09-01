@@ -1132,6 +1132,15 @@ Directory information:
 	* `sx`: the source x
 	* `sy`: the source y
 	* returns `true` for success, otherwise `false`
+* `image:blend(dst, x, y[, w, h[, sx, sy]])`: alpha-blends the `Image` to another one
+	* `dst`: the specific destination `Image`
+	* `x`: the destination x
+	* `y`: the destination y
+	* `w`: the destination width
+	* `h`: the destination height
+	* `sx`: the source x
+	* `sy`: the source y
+	* returns `true` for success, otherwise `false`
 * `image:fromImage(img)`: loads content from another `Image`
 	* `img`: the specific `Image` to load
 	* returns `true` for success, otherwise `false`
