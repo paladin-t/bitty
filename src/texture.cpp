@@ -494,6 +494,9 @@ public:
 				return false;
 		}
 
+		if (usg == STREAMING && paletted) // Refuse streaming paletted.
+			return false;
+
 		// Create.
 		SDL_Renderer* renderer = (SDL_Renderer*)rnd->pointer();
 
