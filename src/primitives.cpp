@@ -3675,7 +3675,7 @@ public:
 			if (it == _unloads.end())
 				break;
 
-			_unloads.remove(it); // Cancel loading.
+			_unloads.remove(it); // Cancel unloading.
 		} while (false);
 
 		// Schedule for loading.

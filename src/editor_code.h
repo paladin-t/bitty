@@ -34,6 +34,7 @@ static constexpr const char* const EDITOR_CODE_MODULES[] = {
 	"Color",
 	"DateTime",
 	"Base64", "Lz4", // Encoding.
+	"Ffi",
 	"File",
 	"Path", "FileInfo", "DirectoryInfo",
 	"Image",

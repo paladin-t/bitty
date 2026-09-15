@@ -308,6 +308,7 @@ public:
 		return fromCacheOrFile(rnd, path);
 	}
 	virtual ::Bitty::Object::Ptr load(const class Project* project, Asset &req) override {
+		// Extract referencing object.
 		Object::Ptr ref = nullptr;
 		if (req.ref) {
 			switch (req.ref->type()) {
@@ -326,9 +327,11 @@ public:
 			}
 		}
 
+		// Load resource.
 		return fromCacheOrAsset<Object::Ptr, Asset>(
 			project,
 			[] (::Bitty::Asset* asset, Asset &req) -> Object::Ptr {
+				// Handle resources whose target type differs from the load request type.
 				switch (asset->type()) {
 				case ::Bitty::Image::TYPE(): {
 						::Bitty::Texture::Ptr ptr = asset->texture(::Bitty::Asset::RUNNING);
@@ -338,18 +341,22 @@ public:
 				case ::Bitty::Sound::TYPE(): {
 						unsigned target = req.target();
 						if (target != ::Bitty::Sfx::TYPE() && target != ::Bitty::Music::TYPE())
-							target = ::Bitty::Sfx::TYPE();
+							target = ::Bitty::Sfx::TYPE(); // Defaults to SFX if no detail audio type is specified.
 						Object::Ptr ptr = asset->sound(target);
 
 						return ptr;
 					}
 				}
 
-				Object::Ptr ptr = asset->object(::Bitty::Asset::RUNNING);
+				// Get the loaded object.
+				Object::Ptr ptr = asset->object();
+				if (!ptr)
+					return nullptr;
+
+				// Handle resources which need to be cloned.
 				switch (asset->type()) {
 				case ::Bitty::Sprite::TYPE(): // Fall through.
-				case ::Bitty::Map::TYPE():
-					if (ptr) {
+				case ::Bitty::Map::TYPE(): {
 						Object* raw = nullptr;
 						if (ptr->clone(&raw))
 							ptr = Object::Ptr(raw);
@@ -358,6 +365,7 @@ public:
 					break;
 				}
 
+				// Finish.
 				return ptr;
 			},
 			req, ref, req.target()
