@@ -933,11 +933,11 @@ int call(lua_State* L, const Function &func) {
 int setMeta(lua_State* L, const luaL_Reg* meta, const luaL_Reg* methods, lua_CFunction index, lua_CFunction newindex) {
 	newTable(L);
 	if (methods)
-		setFunctions(L, methods, 0);
+		setFunctions(L, methods, false);
 
 	push(L, -2);
 	if (meta)
-		setFunctions(L, meta, 0);
+		setFunctions(L, meta, false);
 
 	write(L, "__index");
 	push(L, -3);
