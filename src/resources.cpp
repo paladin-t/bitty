@@ -349,7 +349,7 @@ public:
 				}
 
 				// Get the loaded object.
-				Object::Ptr ptr = asset->object();
+				Object::Ptr ptr = asset->object(::Bitty::Asset::RUNNING);
 				if (!ptr)
 					return nullptr;
 
