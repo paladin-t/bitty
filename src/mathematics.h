@@ -58,7 +58,7 @@ typedef double Double;
 
 /*
 ** {===========================================================================
-** Simple structures
+** Spacial structures
 */
 
 namespace Bitty {
@@ -670,14 +670,81 @@ typedef Rot<Real> Rotf;
 
 /*
 ** {===========================================================================
-** Complex structures
+** Shape structures
 */
 
 namespace Bitty {
 
 namespace Math {
 
-template<typename T> struct Line {
+template<typename T, typename R = Real> struct Ray {
+	typedef T PointType;
+	typedef T DirectionType;
+
+	T origin;
+	T direction;
+
+	Ray() {
+	}
+	Ray(T pA, T pB) : origin(pA), direction(pB) {
+	}
+	Ray(const Ray &other) {
+		origin = other.origin;
+		direction = other.direction;
+	}
+
+	Ray &operator = (const Ray &other) {
+		origin = other.origin;
+		direction = other.direction;
+
+		return *this;
+	}
+
+	Ray operator - (void) const {
+		return Ray(origin, -direction);
+	}
+
+	bool operator == (const Ray &other) const {
+		return equals(other);
+	}
+
+	bool equals(const Ray &other) const {
+		return origin == other.origin && direction == other.direction;
+	}
+
+	Ray &from(const PointType &p) {
+		origin = p;
+
+		return *this;
+	}
+	Ray &to(const DirectionType &to) {
+		direction = to - origin;
+
+		return *this;
+	}
+	Ray &direct(const PointType &dir) {
+		direction = dir;
+
+		return *this;
+	}
+
+	R normalize(void) {
+		const R length = direction.normalize();
+
+		return length;
+	}
+	Ray normalized(void) const {
+		const DirectionType dir = direction.normalized();
+
+		return Ray(origin, dir);
+	}
+
+	R length(void) const {
+		return direction.length();
+	}
+};
+
+template<typename T, typename R = Real> struct Line {
 	typedef T PointType;
 
 	T pointA;
@@ -697,6 +764,12 @@ template<typename T> struct Line {
 		pointB = other.pointB;
 
 		return *this;
+	}
+
+	R length(void) const {
+		const PointType v = pointB - pointA;
+
+		return v.length();
 	}
 };
 
@@ -723,6 +796,12 @@ template<typename T, typename R = Real> struct Circle {
 		return *this;
 	}
 };
+
+typedef Ray<Vec2f, Real> Ray2f;
+
+typedef Line<Vec2f, Real> Line2f;
+
+typedef Circle<Vec2f, Real> Circlef;
 
 }
 

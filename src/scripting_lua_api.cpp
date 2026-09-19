@@ -185,6 +185,11 @@ LUA_READ_ALIAS(Math::Rotf, Rot)
 LUA_WRITE_ALIAS(Math::Rotf, Rot)
 LUA_WRITE_ALIAS_CONST(Math::Rotf, Rot)
 
+LUA_CHECK_ALIAS(Math::Ray2f, Ray2)
+LUA_READ_ALIAS(Math::Ray2f, Ray2)
+LUA_WRITE_ALIAS(Math::Ray2f, Ray2)
+LUA_WRITE_ALIAS_CONST(Math::Ray2f, Ray2)
+
 LUA_CHECK_CAST(Math::Vec2i, Math::Vec2f, [] (const Math::Vec2f &val) -> Math::Vec2i { return Math::Vec2i((Int)val.x, (Int)val.y); })
 LUA_READ_CAST(Math::Vec2i, Math::Vec2f, [] (const Math::Vec2f &val) -> Math::Vec2i { return Math::Vec2i((Int)val.x, (Int)val.y); })
 LUA_WRITE_CAST(Math::Vec2f, Math::Vec2i, [] (const Math::Vec2i &val) -> Math::Vec2f { return Math::Vec2f(val.x, val.y); })
@@ -1682,33 +1687,55 @@ static int Raycaster_ctor(lua_State* L) {
 static int Raycaster_solve(lua_State* L) {
 	ScriptingLua* impl = ScriptingLua::instanceOf(L);
 
+	const int n = getTop(L);
 	Raycaster::Ptr* obj = nullptr;
+	Math::Ray2f* ray = nullptr;
 	Math::Vec2f* rayPos = nullptr;
 	Math::Vec2f* rayDir = nullptr;
+	Placeholder _3;
 	Placeholder _4;
-	read<>(L, obj, rayPos, rayDir, _4);
-
-	Function::Ptr block = nullptr;
-	Resources::Map::Ptr* map = nullptr;
-	if (isFunction(L, 4))
-		read<4>(L, block);
+	if (n >= 4)
+		read<>(L, obj, rayPos, rayDir, _4);
 	else
-		read<4>(L, map);
+		read<>(L, obj, ray, _3);
 
 	if (!obj) {
-		error(L, "Random expected.");
+		error(L, "Raycaster expected.");
 		warnForMethodCallSymbol(L);
 
 		return 0;
 	}
 
-	if (!rayPos || !rayDir)
-		return 0;
+	Function::Ptr block = nullptr;
+	Resources::Map::Ptr* map = nullptr;
+	if (n >= 4) {
+		if (!rayPos || !rayDir)
+			return 0;
 
-	if (!block && !map) {
-		error(L, "Function or map resource argument(4) expected.");
+		if (isFunction(L, 4))
+			read<4>(L, block);
+		else
+			read<4>(L, map);
 
-		return 0;
+		if (!block && !map) {
+			error(L, "Function or map resource argument(4) expected.");
+
+			return 0;
+		}
+	} else {
+		if (!ray)
+			return 0;
+
+		if (isFunction(L, 3))
+			read<3>(L, block);
+		else
+			read<3>(L, map);
+
+		if (!block && !map) {
+			error(L, "Function or map resource argument(3) expected.");
+
+			return 0;
+		}
 	}
 
 	Raycaster::BlockingHandler block_ = nullptr;
@@ -1738,12 +1765,22 @@ static int Raycaster_solve(lua_State* L) {
 	Math::Vec2i intersectionIndex;
 	Real intersectionDist = 0;
 	Raycaster::Directions intersectionDir = Raycaster::INVALID;
-	const int ret = obj->get()->solve(
-		*rayPos, *rayDir,
-		access,
-		intersectionPos, intersectionIndex,
-		intersectionDist, intersectionDir
-	);
+	int ret = 0;
+	if (ray) {
+		ret = obj->get()->solve(
+			ray->origin, ray->direction,
+			access,
+			intersectionPos, intersectionIndex,
+			intersectionDist, intersectionDir
+		);
+	} else if (rayPos && rayDir) {
+		ret = obj->get()->solve(
+			*rayPos, *rayDir,
+			access,
+			intersectionPos, intersectionIndex,
+			intersectionDist, intersectionDir
+		);
+	}
 
 	if (!ret)
 		return write(L, nullptr, nullptr);
@@ -7288,6 +7325,246 @@ static void open_Rot(lua_State* L) {
 	);
 }
 
+static int Ray2_ctor(lua_State* L) {
+	const int n = getTop(L);
+	Math::Ray2f obj;
+	if (n >= 2) {
+		Math::Ray2f::PointType* origin = nullptr;
+		Math::Ray2f::DirectionType* direct = nullptr;
+		read<>(L, origin, direct);
+
+		obj = Math::Ray2f();
+		if (origin)
+			obj.from(*origin);
+		if (direct)
+			obj.direct(*direct);
+	}
+
+	return write(L, &obj);
+}
+
+static int Ray2___tostring(lua_State* L) {
+	ScriptingLua* impl = ScriptingLua::instanceOf(L);
+	unsigned short precision = impl->debugRealNumberPrecisely() ? 16 : 6;
+
+	Math::Ray2f* obj = nullptr;
+	check<>(L, obj);
+
+	if (obj) {
+		std::string str;
+		str += "Ray2[";
+		str += Text::toString(obj->origin.x, precision);
+		str += ", ";
+		str += Text::toString(obj->origin.y, precision);
+		str += "; ";
+		str += Text::toString(obj->direction.x, precision);
+		str += ", ";
+		str += Text::toString(obj->direction.y, precision);
+		str += "]";
+
+		return write(L, str);
+	} else {
+		error(L, "Ray2 expected.");
+	}
+
+	return 0;
+}
+
+static int Ray2___unm(lua_State* L) {
+	Math::Ray2f* obj = nullptr;
+	check<>(L, obj);
+
+	if (obj) {
+		const Math::Ray2f ret = -*obj;
+
+		return write(L, &ret);
+	} else {
+		error(L, "Ray2 expected.");
+	}
+
+	return 0;
+}
+
+static int Ray2___len(lua_State* L) {
+	Math::Ray2f* obj = nullptr;
+	check<>(L, obj);
+
+	if (obj) {
+		const Real ret = obj->length();
+
+		return write(L, ret);
+	} else {
+		error(L, "Ray2 expected.");
+	}
+
+	return 0;
+}
+
+static int Ray2___eq(lua_State* L) {
+	Math::Ray2f* obj = nullptr;
+	Math::Ray2f* other = nullptr;
+	check<>(L, obj, other);
+
+	if (obj && other) {
+		const bool ret = *obj == *other;
+
+		return write(L, ret);
+	} else {
+		error(L, "Ray2 expected.");
+	}
+
+	return write(L, false);
+}
+
+static int Ray2_normalize(lua_State* L) {
+	Math::Ray2f* obj = nullptr;
+	read<>(L, obj);
+
+	if (obj) {
+		const Real ret = obj->normalize();
+
+		return write(L, ret);
+	} else {
+		error(L, "Ray2 expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int Ray2_from(lua_State* L) {
+	Math::Ray2f* obj = nullptr;
+	Math::Vec2f* point = nullptr;
+	read<>(L, obj, point);
+
+	if (obj && point) {
+		obj->from(*point);
+
+		return 0;
+	} else {
+		error(L, "Ray2 expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int Ray2_to(lua_State* L) {
+	Math::Ray2f* obj = nullptr;
+	Math::Vec2f* point = nullptr;
+	read<>(L, obj, point);
+
+	if (obj && point) {
+		obj->to(*point);
+
+		return 0;
+	} else {
+		error(L, "Ray2 expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int Ray2_direct(lua_State* L) {
+	Math::Ray2f* obj = nullptr;
+	Math::Vec2f* dir = nullptr;
+	read<>(L, obj, dir);
+
+	if (obj && dir) {
+		obj->direct(*dir);
+
+		return 0;
+	} else {
+		error(L, "Ray2 expected.");
+		warnForMethodCallSymbol(L);
+	}
+
+	return 0;
+}
+
+static int Ray2___index(lua_State* L) {
+	Math::Ray2f* obj = nullptr;
+	const char* field = nullptr;
+	read<>(L, obj, field);
+
+	if (!obj || !field)
+		return 0;
+
+	if (strcmp(field, "origin") == 0) {
+		const Math::Vec2f ret = obj->origin;
+
+		return write(L, &ret);
+	} else if (strcmp(field, "direction") == 0) {
+		const Math::Vec2f ret = obj->direction;
+
+		return write(L, &ret);
+	} else if (strcmp(field, "normalized") == 0) {
+		const Math::Ray2f ret = obj->normalized();
+
+		return write(L, &ret);
+	} else if (strcmp(field, "length") == 0) {
+		const Real ret = obj->length();
+
+		return write(L, ret);
+	} else {
+		return __index(L, field);
+	}
+}
+
+static int Ray2___newindex(lua_State* L) {
+	Math::Ray2f* obj = nullptr;
+	const char* field = nullptr;
+	read<>(L, obj, field);
+
+	if (!obj || !field)
+		return 0;
+
+	if (strcmp(field, "origin") == 0) {
+		Math::Ray2f::PointType* val = nullptr;
+		read<3>(L, val);
+
+		if (val)
+			obj->origin = *val;
+	} else if (strcmp(field, "direction") == 0) {
+		Math::Ray2f::DirectionType* val = nullptr;
+		read<3>(L, val);
+
+		if (val)
+			obj->direction = *val;
+	}
+
+	return 0;
+}
+
+static void open_Ray2(lua_State* L) {
+	def(
+		L, "Ray2",
+		LUA_LIB(
+			array(
+				luaL_Reg{ "new", Ray2_ctor },
+				luaL_Reg{ nullptr, nullptr }
+			)
+		),
+		array(
+			luaL_Reg{ "__gc", __gc<Math::Ray2f> },
+			luaL_Reg{ "__tostring", Ray2___tostring },
+			luaL_Reg{ "__unm", Ray2___unm },
+			luaL_Reg{ "__len", Ray2___len },
+			luaL_Reg{ "__eq", Ray2___eq },
+			luaL_Reg{ nullptr, nullptr }
+		),
+		array(
+			luaL_Reg{ "normalize", Ray2_normalize },
+			luaL_Reg{ "from", Ray2_from },
+			luaL_Reg{ "to", Ray2_to },
+			luaL_Reg{ "direct", Ray2_direct },
+			luaL_Reg{ nullptr, nullptr }
+		),
+		Ray2___index, Ray2___newindex
+	);
+}
+
 static int Math_intersects(lua_State* L) {
 	Math::Vec2f* point0 = nullptr;
 	Math::Vec4f* line0 = nullptr;
@@ -7367,38 +7644,38 @@ static int Math_intersects(lua_State* L) {
 	} else if (point0 && line1) {
 		ret = Math::intersects(
 			*point0,
-			Math::Line<Math::Vec2f>(Math::Vec2f(line1->x, line1->y), Math::Vec2f(line1->z, line1->w))
+			Math::Line2f(Math::Vec2f(line1->x, line1->y), Math::Vec2f(line1->z, line1->w))
 		);
 	} else if (point0 && circ1) {
 		ret = Math::intersects(
 			*point0,
-			Math::Circle<Math::Vec2f>(Math::Vec2f(circ1->x, circ1->y), circ1->z)
+			Math::Circlef(Math::Vec2f(circ1->x, circ1->y), circ1->z)
 		);
 	} else if (point0 && rect1) {
 		ret = Math::intersects(*point0, *rect1);
 	} else if (line0 && line1) {
 		ret = Math::intersects(
-			Math::Line<Math::Vec2f>(Math::Vec2f(line0->x, line0->y), Math::Vec2f(line0->z, line0->w)),
-			Math::Line<Math::Vec2f>(Math::Vec2f(line1->x, line1->y), Math::Vec2f(line1->z, line1->w))
+			Math::Line2f(Math::Vec2f(line0->x, line0->y), Math::Vec2f(line0->z, line0->w)),
+			Math::Line2f(Math::Vec2f(line1->x, line1->y), Math::Vec2f(line1->z, line1->w))
 		);
 	} else if (line0 && circ1) {
 		ret = Math::intersects(
-			Math::Line<Math::Vec2f>(Math::Vec2f(line0->x, line0->y), Math::Vec2f(line0->z, line0->w)),
-			Math::Circle<Math::Vec2f>(Math::Vec2f(circ1->x, circ1->y), circ1->z)
+			Math::Line2f(Math::Vec2f(line0->x, line0->y), Math::Vec2f(line0->z, line0->w)),
+			Math::Circlef(Math::Vec2f(circ1->x, circ1->y), circ1->z)
 		);
 	} else if (line0 && rect1) {
 		ret = Math::intersects(
-			Math::Line<Math::Vec2f>(Math::Vec2f(line0->x, line0->y), Math::Vec2f(line0->z, line0->w)),
+			Math::Line2f(Math::Vec2f(line0->x, line0->y), Math::Vec2f(line0->z, line0->w)),
 			*rect1
 		);
 	} else if (circ0 && circ1) {
 		ret = Math::intersects(
-			Math::Circle<Math::Vec2f>(Math::Vec2f(circ0->x, circ0->y), circ0->z),
-			Math::Circle<Math::Vec2f>(Math::Vec2f(circ1->x, circ1->y), circ1->z)
+			Math::Circlef(Math::Vec2f(circ0->x, circ0->y), circ0->z),
+			Math::Circlef(Math::Vec2f(circ1->x, circ1->y), circ1->z)
 		);
 	} else if (circ0 && rect1) {
 		ret = Math::intersects(
-			Math::Circle<Math::Vec2f>(Math::Vec2f(circ0->x, circ0->y), circ0->z),
+			Math::Circlef(Math::Vec2f(circ0->x, circ0->y), circ0->z),
 			*rect1
 		);
 	} else if (rect0 && rect1 && !recti0 && !recti1) {
@@ -7409,28 +7686,28 @@ static int Math_intersects(lua_State* L) {
 		if (line0 && point1) {
 			ret = Math::intersects(
 				*point1,
-				Math::Line<Math::Vec2f>(Math::Vec2f(line0->x, line0->y), Math::Vec2f(line0->z, line0->w))
+				Math::Line2f(Math::Vec2f(line0->x, line0->y), Math::Vec2f(line0->z, line0->w))
 			);
 		} else if (circ0 && point1) {
 			ret = Math::intersects(
 				*point1,
-				Math::Circle<Math::Vec2f>(Math::Vec2f(circ0->x, circ0->y), circ0->z)
+				Math::Circlef(Math::Vec2f(circ0->x, circ0->y), circ0->z)
 			);
 		} else if (rect0 && point1) {
 			ret = Math::intersects(*point1, *rect0);
 		} else if (circ0 && line1) {
 			ret = Math::intersects(
-				Math::Line<Math::Vec2f>(Math::Vec2f(line1->x, line1->y), Math::Vec2f(line1->z, line1->w)),
-				Math::Circle<Math::Vec2f>(Math::Vec2f(circ0->x, circ0->y), circ0->z)
+				Math::Line2f(Math::Vec2f(line1->x, line1->y), Math::Vec2f(line1->z, line1->w)),
+				Math::Circlef(Math::Vec2f(circ0->x, circ0->y), circ0->z)
 			);
 		} else if (rect0 && line1) {
 			ret = Math::intersects(
-				Math::Line<Math::Vec2f>(Math::Vec2f(line1->x, line1->y), Math::Vec2f(line1->z, line1->w)),
+				Math::Line2f(Math::Vec2f(line1->x, line1->y), Math::Vec2f(line1->z, line1->w)),
 				*rect0
 			);
 		} else if (rect0 && circ1) {
 			ret = Math::intersects(
-				Math::Circle<Math::Vec2f>(Math::Vec2f(circ1->x, circ1->y), circ1->z),
+				Math::Circlef(Math::Vec2f(circ1->x, circ1->y), circ1->z),
 				*rect0
 			);
 		}
@@ -9106,6 +9383,7 @@ void open(class Executable* exec) {
 	open_Rect(L);
 	open_Recti(L);
 	open_Rot(L);
+	open_Ray2(L);
 	open_Math(L);
 
 	// Network.

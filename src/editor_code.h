@@ -39,7 +39,7 @@ static constexpr const char* const EDITOR_CODE_MODULES[] = {
 	"Path", "FileInfo", "DirectoryInfo",
 	"Image",
 	"Json",
-	"Vec2", "Vec3", "Vec4", "Rect", "Recti", "Rot",
+	"Vec2", "Vec3", "Vec4", "Rect", "Recti", "Rot", "Ray2",
 	"Math",
 	"Network",
 	"Platform",
