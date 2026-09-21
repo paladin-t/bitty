@@ -250,6 +250,18 @@ void rotate(lua_State* L, int idx, int n) {
 	lua_rotate(L, idx, n);
 }
 
+void insert(lua_State* L, int idx) {
+	lua_insert(L, idx);
+}
+
+void remove(lua_State* L, int idx) {
+	lua_remove(L, idx);
+}
+
+void replace(lua_State* L, int idx) {
+	lua_replace(L, idx);
+}
+
 void copy(lua_State* L, int fromidx, int toidx) {
 	lua_copy(L, fromidx, toidx);
 }
