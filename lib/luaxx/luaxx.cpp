@@ -107,6 +107,7 @@ Ref::Ref() {
 }
 
 Ref::Ref(const Ref &other) {
+	_L = other._L;
 	_handle = other._handle;
 }
 
@@ -120,6 +121,7 @@ Ref::~Ref() {
 }
 
 Ref &Ref::operator = (const Ref &other) {
+	_L = other._L;
 	_handle = other._handle;
 
 	return *this;
@@ -145,6 +147,7 @@ Function::Function() {
 }
 
 Function::Function(const Function &other) {
+	_L = other._L;
 	_handle = other._handle;
 }
 
@@ -158,6 +161,7 @@ Function::~Function() {
 }
 
 Function &Function::operator = (const Function &other) {
+	_L = other._L;
 	_handle = other._handle;
 
 	return *this;
