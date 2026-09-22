@@ -164,7 +164,13 @@ public:
 	virtual void debugRealNumberPrecisely(bool enabled) override;
 
 	virtual Invokable getInvokable(const char* name) const override;
-	virtual Variant invoke(Invokable func, int argc, const Variant* argv) override;
+	virtual Variant invoke(const Invokable &func, int argc, const Variant* argv) override;
+
+	virtual bool createPot(const char* entry, uintptr_t &handle) override;
+	virtual bool destroyPot(uintptr_t handle, int argc, Invokable* argv) override;
+	virtual Invokable getPotInvokable(uintptr_t handle, const char* method) const override;
+	virtual Variant invokePot(uintptr_t handle, const char* method, int argc, const Variant* argv) override;
+	virtual Variant invokePot(uintptr_t handle, const Invokable &method, int argc, const Variant* argv) override;
 
 	double delta(void) const;
 

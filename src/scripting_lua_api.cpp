@@ -795,6 +795,210 @@ int call(int retc, Bitty::Variant* retv, lua_State* L, const Function &func, int
 	return result;
 }
 
+int call(lua_State* L, const Ref &tbl, const char* method, int argc, const Bitty::Variant* argv) {
+	const int n = getTop(L);
+	refed(L, tbl);            // ...table (top).
+	if (!isTable(L, -1)) {
+		pop(L);
+
+		return 0;
+	}
+	readTable(L, -1, method); // ...table, method function (top).
+	insert(L, -2);            // ...method function, table (top).
+	for (int i = 0; i < argc; ++i)
+		write(L, &argv[i]);
+	const int result = invoke(L, 1 /* self */ + argc, 0);
+	if (result == LUA_OK || result == LUA_YIELD) {
+		const int m = getTop(L);
+		const int d = m - n;
+		if (d > 0)
+			pop(L, d);
+	}
+
+	return result;
+}
+
+int call(Bitty::Variant* ret, lua_State* L, const Ref &tbl, const char* method) {
+	const int n = getTop(L);
+	refed(L, tbl);            // ...table (top).
+	if (!isTable(L, -1)) {
+		pop(L);
+
+		return 0;
+	}
+	readTable(L, -1, method); // ...table, method function (top).
+	insert(L, -2);            // ...method function, table (top).
+	const int result = invoke(L, 1 /* self */, 1);
+	if (result == LUA_OK || result == LUA_YIELD) {
+		check(L, ret, Index(-1));
+		const int m = getTop(L);
+		const int d = m - n;
+		if (d > 0)
+			pop(L, d);
+	}
+
+	return result;
+}
+
+int call(Bitty::Variant* ret, lua_State* L, const Ref &tbl, const char* method, int argc, const Bitty::Variant* argv) {
+	const int n = getTop(L);
+	refed(L, tbl);            // ...table (top).
+	if (!isTable(L, -1)) {
+		pop(L);
+
+		return 0;
+	}
+	readTable(L, -1, method); // ...table, method function (top).
+	insert(L, -2);            // ...method function, table (top).
+	for (int i = 0; i < argc; ++i)
+		write(L, &argv[i]);
+	const int result = invoke(L, 1 /* self */ + argc, 1);
+	if (result == LUA_OK || result == LUA_YIELD) {
+		check(L, ret, Index(-1));
+		const int m = getTop(L);
+		const int d = m - n;
+		if (d > 0)
+			pop(L, d);
+	}
+
+	return result;
+}
+
+int call(int retc, Bitty::Variant* retv, lua_State* L, const Ref &tbl, const char* method) {
+	const int n = getTop(L);
+	refed(L, tbl);            // ...table (top).
+	if (!isTable(L, -1)) {
+		pop(L);
+
+		return 0;
+	}
+	readTable(L, -1, method); // ...table, method function (top).
+	insert(L, -2);            // ...method function, table (top).
+	const int result = invoke(L, 1 /* self */, retc);
+	if (result == LUA_OK || result == LUA_YIELD) {
+		for (int i = 0; i < retc; ++i)
+			check(L, &retv[i], Index(-retc + i));
+		const int m = getTop(L);
+		const int d = m - n;
+		if (d > 0)
+			pop(L, d);
+	}
+
+	return result;
+}
+
+int call(int retc, Bitty::Variant* retv, lua_State* L, const Ref &tbl, const char* method, int argc, const Bitty::Variant* argv) {
+	const int n = getTop(L);
+	refed(L, tbl);            // ...table (top).
+	if (!isTable(L, -1)) {
+		pop(L);
+
+		return 0;
+	}
+	readTable(L, -1, method); // ...table, method function (top).
+	insert(L, -2);            // ...method function, table (top).
+	for (int i = 0; i < argc; ++i)
+		write(L, &argv[i]);
+	const int result = invoke(L, 1 /* self */ + argc, retc);
+	if (result == LUA_OK || result == LUA_YIELD) {
+		for (int i = 0; i < retc; ++i)
+			check(L, &retv[i], Index(-retc + i));
+		const int m = getTop(L);
+		const int d = m - n;
+		if (d > 0)
+			pop(L, d);
+	}
+
+	return result;
+}
+
+int call(lua_State* L, const Ref &tbl, const Function &method, int argc, const Bitty::Variant* argv) {
+	const int n = getTop(L);
+	function(L, method); // ...method function (top).
+	refed(L, tbl);       // ...method function, table (top).
+	for (int i = 0; i < argc; ++i)
+		write(L, &argv[i]);
+	const int result = invoke(L, 1 /* self */ + argc, 0);
+	if (result == LUA_OK || result == LUA_YIELD) {
+		const int m = getTop(L);
+		const int d = m - n;
+		if (d > 0)
+			pop(L, d);
+	}
+
+	return result;
+}
+
+int call(Bitty::Variant* ret, lua_State* L, const Ref &tbl, const Function &method) {
+	const int n = getTop(L);
+	function(L, method); // ...method function (top).
+	refed(L, tbl);       // ...method function, table (top).
+	const int result = invoke(L, 1 /* self */, 1);
+	if (result == LUA_OK || result == LUA_YIELD) {
+		check(L, ret, Index(-1));
+		const int m = getTop(L);
+		const int d = m - n;
+		if (d > 0)
+			pop(L, d);
+	}
+
+	return result;
+}
+
+int call(Bitty::Variant* ret, lua_State* L, const Ref &tbl, const Function &method, int argc, const Bitty::Variant* argv) {
+	const int n = getTop(L);
+	function(L, method); // ...method function (top).
+	refed(L, tbl);       // ...method function, table (top).
+	for (int i = 0; i < argc; ++i)
+		write(L, &argv[i]);
+	const int result = invoke(L, 1 /* self */ + argc, 1);
+	if (result == LUA_OK || result == LUA_YIELD) {
+		check(L, ret, Index(-1));
+		const int m = getTop(L);
+		const int d = m - n;
+		if (d > 0)
+			pop(L, d);
+	}
+
+	return result;
+}
+
+int call(int retc, Bitty::Variant* retv, lua_State* L, const Ref &tbl, const Function &method) {
+	const int n = getTop(L);
+	function(L, method); // ...method function (top).
+	refed(L, tbl);       // ...method function, table (top).
+	const int result = invoke(L, 1 /* self */, retc);
+	if (result == LUA_OK || result == LUA_YIELD) {
+		for (int i = 0; i < retc; ++i)
+			check(L, &retv[i], Index(-retc + i));
+		const int m = getTop(L);
+		const int d = m - n;
+		if (d > 0)
+			pop(L, d);
+	}
+
+	return result;
+}
+
+int call(int retc, Bitty::Variant* retv, lua_State* L, const Ref &tbl, const Function &method, int argc, const Bitty::Variant* argv) {
+	const int n = getTop(L);
+	function(L, method); // ...method function (top).
+	refed(L, tbl);       // ...method function, table (top).
+	for (int i = 0; i < argc; ++i)
+		write(L, &argv[i]);
+	const int result = invoke(L, 1 /* self */ + argc, retc);
+	if (result == LUA_OK || result == LUA_YIELD) {
+		for (int i = 0; i < retc; ++i)
+			check(L, &retv[i], Index(-retc + i));
+		const int m = getTop(L);
+		const int d = m - n;
+		if (d > 0)
+			pop(L, d);
+	}
+
+	return result;
+}
+
 /**< JSON. */
 
 static void read_(lua_State* L, rapidjson::Value &val, Index idx, rapidjson::MemoryPoolAllocator<> &allocator, References &refs) {

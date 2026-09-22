@@ -146,6 +146,18 @@ int call(Bitty::Variant* ret, lua_State* L, const Function &func, int argc, cons
 int call(int retc, Bitty::Variant* retv, lua_State* L, const Function &func);
 int call(int retc, Bitty::Variant* retv, lua_State* L, const Function &func, int argc, const Bitty::Variant* argv);
 
+int call(lua_State* L, const Ref &tbl, const char* method, int argc, const Bitty::Variant* argv);
+int call(Bitty::Variant* ret, lua_State* L, const Ref &tbl, const char* method);
+int call(Bitty::Variant* ret, lua_State* L, const Ref &tbl, const char* method, int argc, const Bitty::Variant* argv);
+int call(int retc, Bitty::Variant* retv, lua_State* L, const Ref &tbl, const char* method);
+int call(int retc, Bitty::Variant* retv, lua_State* L, const Ref &tbl, const char* method, int argc, const Bitty::Variant* argv);
+
+int call(lua_State* L, const Ref &tbl, const Function &method, int argc, const Bitty::Variant* argv);
+int call(Bitty::Variant* ret, lua_State* L, const Ref &tbl, const Function &method);
+int call(Bitty::Variant* ret, lua_State* L, const Ref &tbl, const Function &method, int argc, const Bitty::Variant* argv);
+int call(int retc, Bitty::Variant* retv, lua_State* L, const Ref &tbl, const Function &method);
+int call(int retc, Bitty::Variant* retv, lua_State* L, const Ref &tbl, const Function &method, int argc, const Bitty::Variant* argv);
+
 }
 
 /* ===========================================================================} */

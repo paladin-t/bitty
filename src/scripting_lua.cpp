@@ -360,6 +360,7 @@ bool ScriptingLua::setup(void) {
 			Context ctx;
 			ctx.impl = this;
 			ctx.func = setup;
+			setup.detach();
 
 			const int ret = ::Lua::invoke(
 				_L,
@@ -977,10 +978,10 @@ void ScriptingLua::debugRealNumberPrecisely(bool enabled) {
 }
 
 Executable::Invokable ScriptingLua::getInvokable(const char* name) const {
-	LockGuard<decltype(_lock)> guard(_lock);
-
 	if (!name || !*name)
 		return nullptr;
+
+	LockGuard<decltype(_lock)> guard(_lock);
 
 	Invokable invokable(
 		new ::Lua::Function(),
@@ -990,56 +991,352 @@ Executable::Invokable ScriptingLua::getInvokable(const char* name) const {
 		}
 	);
 	::Lua::Function &func = *(::Lua::Function*)invokable.get();
+
 	::Lua::getGlobal(_L, name);
 	::Lua::read(_L, func);
 	::Lua::pop(_L);
+
 	if (!func.valid())
 		return nullptr;
 
 	return invokable;
 }
 
-Variant ScriptingLua::invoke(Invokable func, int argc, const Variant* argv) {
+Variant ScriptingLua::invoke(const Invokable &func, int argc, const Variant* argv) {
+	Variant result(false);
+
+	if (!func)
+		return result;
+
 	LockGuard<decltype(_lock)> guard(_lock);
 
-	Variant result(false);
-	if (func) {
-		struct Context {
-			ScriptingLua* impl = nullptr;
-			Variant* result = nullptr;
-			Invokable func = nullptr;
-			int argc = 0;
-			const Variant* argv = nullptr;
-		};
+	struct Context {
+		ScriptingLua* impl = nullptr;
+		Variant* result = nullptr;
+		const Invokable* func = nullptr;
+		int argc = 0;
+		const Variant* argv = nullptr;
+	};
 
-		Context ctx;
-		ctx.impl = this;
-		ctx.result = &result;
-		ctx.func = func;
-		ctx.argc = argc;
-		ctx.argv = argv;
+	Context ctx;
+	ctx.impl = this;
+	ctx.result = &result;
+	ctx.func = &func;
+	ctx.argc = argc;
+	ctx.argv = argv;
 
-		const int ret = ::Lua::invoke(
-			_L,
-			[] (lua_State* L, void* ud) -> void {
-				Context* ctx = (Context*)ud;
+	const int ret = ::Lua::invoke(
+		_L,
+		[] (lua_State* L, void* ud) -> void {
+			Context* ctx = (Context*)ud;
 
-				check(
+			check(
+				L,
+				::Lua::call(
+					ctx->result,
 					L,
-					::Lua::call(
-						ctx->result,
-						L,
-						*(::Lua::Function*)ctx->func.get(),
-						ctx->argc, ctx->argv
-					)
+					*(const ::Lua::Function*)ctx->func->get(),
+					ctx->argc, ctx->argv
+				)
+			);
+			BITTY_ASSERT(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
+		},
+		&ctx
+	);
+	if (check(_L, ret) != LUA_OK)
+		return Variant(nullptr);
+
+	return result;
+}
+
+bool ScriptingLua::createPot(const char* entry_, uintptr_t &handle) {
+	handle = 0;
+
+	std::string src, ent;
+
+	do {
+		LockGuard<RecursiveMutex>::UniquePtr acquired;
+		Project* prj = _project->acquire(acquired);
+		if (!prj)
+			return false;
+
+		Asset* asset = prj->get(entry_);
+		if (!asset) {
+			observer()->warn("Invalid entry.");
+
+			return false;
+		}
+
+		asset->prepare(Asset::RUNNING, true);
+		Object::Ptr obj = asset->object(Asset::RUNNING);
+		if (!obj) {
+			asset->finish(Asset::RUNNING, true);
+
+			observer()->warn("Cannot find the entry.");
+
+			return false;
+		}
+		Code::Ptr code = Object::as<Code::Ptr>(obj);
+		if (!code) {
+			asset->finish(Asset::RUNNING, true);
+
+			observer()->warn("Invalid the entry.");
+
+			return false;
+		}
+
+		size_t len = 0;
+		const char* txt = code->text(&len);
+		if (!txt || len == 0)
+			return false;
+
+		src.assign(txt, len);
+		ent = entry_;
+
+		len = 0;
+		txt = nullptr;
+		code = nullptr;
+		obj = nullptr;
+		asset->finish(Asset::RUNNING, true);
+		asset = nullptr;
+		prj = nullptr;
+	} while (false);
+
+	bool ok = false;
+	do {
+		LockGuard<decltype(_lock)> guard(_lock);
+
+		const int n = ::Lua::getTop(_L);
+
+		std::string entry = ent;
+		if (Text::endsWith(entry, "." BITTY_LUA_EXT, true))
+			entry = entry.substr(0, entry.length() - strlen("." BITTY_LUA_EXT));
+		_dependency.push_back(entry);
+
+		entry = "=" + ent;
+		if (check(_L, luaL_loadbuffer(_L, src.c_str(), src.size(), entry.c_str())) != LUA_OK) {
+			_dependency.pop_back();
+			BITTY_ASSERT(_dependency.empty());
+
+			return false;
+		}
+		if (check(_L, lua_pcall(_L, 0, LUA_MULTRET, 0)) != LUA_OK) {
+			_dependency.pop_back();
+			BITTY_ASSERT(_dependency.empty());
+
+			return false;
+		}
+
+		const int onStk = ::Lua::getTop(_L) - n;
+		BITTY_ASSERT(onStk >= 0 && "Polluted Lua stack.");
+		if (onStk <= 0) {
+			observer()->warn("Too few return value on stack, expects 1, got 0.");
+		} else {
+			if (onStk > 1) {
+				const std::string msg = Text::cformat(
+					"Too many return values on stack, expects 1, got %d.",
+					onStk
 				);
-				BITTY_ASSERT(::Lua::getTop(L) == 0 && "Polluted Lua stack.");
-			},
-			&ctx
-		);
-		if (check(_L, ret) != LUA_OK)
-			return Variant(nullptr);
+				observer()->warn(msg.c_str());
+			}
+
+			const char* typeName_ = ::Lua::typeNameOf(_L, -1);
+			const std::string typeName = typeName_ ? typeName_ : "Unknown";
+			const bool isTbl = ::Lua::isTable(_L, -1);
+
+			::Lua::Ref ref;
+			::Lua::check(_L, ref, ::Lua::Index(-1));
+
+			if (isTbl && ref != LUA_REFNIL && ref.valid()) {
+				ok = true;
+
+				::Lua::Ref* pot = new ::Lua::Ref(ref);
+				handle = (uintptr_t)(void*)pot;
+				ref.detach();
+			} else {
+				const std::string msg = Text::cformat(
+					"Expects table, got %s.",
+					typeName.c_str()
+				);
+				observer()->warn(msg.c_str());
+			}
+
+			if (onStk > 0)
+				::Lua::pop(_L, onStk);
+		}
+
+		_dependency.pop_back();
+		BITTY_ASSERT(_dependency.empty());
+
+		BITTY_ASSERT(::Lua::getTop(_L) == n && "Polluted Lua stack.");
+	} while (false);
+
+	return ok;
+}
+
+bool ScriptingLua::destroyPot(uintptr_t handle, int argc, Invokable* argv) {
+	if (handle == NULL)
+		return false;
+
+	LockGuard<decltype(_lock)> guard(_lock);
+
+	::Lua::Ref* pot = (::Lua::Ref*)(void*)handle;
+	if (_state == HALTING || _state == READY) {
+		for (int i = 0; i < argc; ++i) {
+			Invokable &invokable = argv[i];
+			if (invokable) {
+				::Lua::Function &func = *(::Lua::Function*)invokable.get();
+				func.detach();
+
+				invokable.reset();
+			}
+		}
+
+		pot->detach(); // Already unref-ed, so only detach then delete `ref` here.
 	}
+
+	delete pot;
+
+	return true;
+}
+
+Executable::Invokable ScriptingLua::getPotInvokable(uintptr_t handle, const char* method) const {
+	if (!handle)
+		return nullptr;
+
+	if (!method || !*method)
+		return nullptr;
+
+	LockGuard<decltype(_lock)> guard(_lock);
+
+	::Lua::Ref* pot = (::Lua::Ref*)(void*)handle;
+
+	Invokable invokable(
+		new ::Lua::Function(),
+		[] (void* ptr) -> void {
+			::Lua::Function* func = (::Lua::Function*)ptr;
+			delete func;
+		}
+	);
+	::Lua::Function &func = *(::Lua::Function*)invokable.get();
+
+	::Lua::refed(_L, *pot); // ...table (top).
+	if (::Lua::isTable(_L, -1)) {
+		::Lua::readTable(_L, -1, method); // ...table, method function (top).
+		::Lua::read(_L, func, ::Lua::Index(-1));
+		::Lua::pop(_L, 2);
+	} else {
+		::Lua::pop(_L);
+	}
+
+	if (!func.valid())
+		return nullptr;
+
+	return invokable;
+}
+
+Variant ScriptingLua::invokePot(uintptr_t handle, const char* method, int argc, const Variant* argv) {
+	Variant result(false);
+
+	if (!handle || !method)
+		return result;
+
+	LockGuard<decltype(_lock)> guard(_lock);
+
+	struct Context {
+		ScriptingLua* impl = nullptr;
+		Variant* result = nullptr;
+		::Lua::Ref* pot = nullptr;
+		const char* method = nullptr;
+		int argc = 0;
+		const Variant* argv = nullptr;
+	};
+
+	::Lua::Ref* pot = (::Lua::Ref*)(void*)handle;
+
+	Context ctx;
+	ctx.impl = this;
+	ctx.result = &result;
+	ctx.pot = pot;
+	ctx.method = method;
+	ctx.argc = argc;
+	ctx.argv = argv;
+
+	const int ret = ::Lua::invoke(
+		_L,
+		[] (lua_State* L, void* ud) -> void {
+			Context* ctx = (Context*)ud;
+
+			const int n = ::Lua::getTop(L);
+			(void)n;
+			check(
+				L,
+				::Lua::call(
+					ctx->result,
+					L,
+					*ctx->pot, ctx->method,
+					ctx->argc, ctx->argv
+				)
+			);
+			BITTY_ASSERT(::Lua::getTop(L) == n && "Polluted Lua stack.");
+		},
+		&ctx
+	);
+	if (check(_L, ret) != LUA_OK)
+		return Variant(nullptr);
+
+	return result;
+}
+
+Variant ScriptingLua::invokePot(uintptr_t handle, const Invokable &method, int argc, const Variant* argv) {
+	Variant result(false);
+
+	if (!handle || !method)
+		return result;
+
+	LockGuard<decltype(_lock)> guard(_lock);
+
+	struct Context {
+		ScriptingLua* impl = nullptr;
+		Variant* result = nullptr;
+		::Lua::Ref* pot = nullptr;
+		const Invokable* method = nullptr;
+		int argc = 0;
+		const Variant* argv = nullptr;
+	};
+
+	::Lua::Ref* pot = (::Lua::Ref*)(void*)handle;
+
+	Context ctx;
+	ctx.impl = this;
+	ctx.result = &result;
+	ctx.pot = pot;
+	ctx.method = &method;
+	ctx.argc = argc;
+	ctx.argv = argv;
+
+	const int ret = ::Lua::invoke(
+		_L,
+		[] (lua_State* L, void* ud) -> void {
+			Context* ctx = (Context*)ud;
+
+			const int n = ::Lua::getTop(L);
+			(void)n;
+			check(
+				L,
+				::Lua::call(
+					ctx->result,
+					L,
+					*ctx->pot, *(const ::Lua::Function*)ctx->method->get(),
+					ctx->argc, ctx->argv
+				)
+			);
+			BITTY_ASSERT(::Lua::getTop(L) == n && "Polluted Lua stack.");
+		},
+		&ctx
+	);
+	if (check(_L, ret) != LUA_OK)
+		return Variant(nullptr);
 
 	return result;
 }
