@@ -241,7 +241,11 @@ public:
 	/**
 	 * @param[out] handle
 	 */
-	virtual bool createPot(const char* entry, uintptr_t &handle) = 0;
+	virtual bool createPot(
+		const char* entry, uintptr_t &handle,
+		bool inSandbox,
+		const char** sandboxBlacklist = nullptr, size_t sandboxBlacklistLength = 0
+	) = 0;
 	virtual bool destroyPot(uintptr_t handle, int argc, Invokable* argv) = 0;
 	bool destroyPot(uintptr_t handle) {
 		return destroyPot(handle, 0, (Invokable*)nullptr);
@@ -253,25 +257,25 @@ public:
 		return destroyPot(handle, (int)n, argv);
 	}
 	virtual Invokable getPotInvokable(uintptr_t handle, const char* method) const = 0;
-	virtual Variant invokePot(uintptr_t handle, const char* method, int argc, const Variant* argv) = 0;
-	Variant invokePot(uintptr_t handle, const char* method) {
-		return invokePot(handle, method, 0, (const Variant*)nullptr);
+	virtual bool invokePot(Variant* ret /* nullable */, uintptr_t handle, const char* method, int argc, const Variant* argv) = 0;
+	bool invokePot(Variant* ret /* nullable */, uintptr_t handle, const char* method) {
+		return invokePot(ret, handle, method, 0, (const Variant*)nullptr);
 	}
-	template<typename ...Args> Variant invokePot(uintptr_t handle, const char* method, const Args &...args) {
+	template<typename ...Args> bool invokePot(Variant* ret /* nullable */, uintptr_t handle, const char* method, const Args &...args) {
 		const size_t n = sizeof...(Args);
 		const Variant argv[n] = { Variant(args)... };
 
-		return invokePot(handle, method, (int)n, argv);
+		return invokePot(ret, handle, method, (int)n, argv);
 	}
-	virtual Variant invokePot(uintptr_t handle, const Invokable &method, int argc, const Variant* argv) = 0;
-	Variant invokePot(uintptr_t handle, const Invokable &method) {
-		return invokePot(handle, method, 0, (const Variant*)nullptr);
+	virtual bool invokePot(Variant* ret /* nullable */, uintptr_t handle, const Invokable &method, int argc, const Variant* argv) = 0;
+	bool invokePot(Variant* ret /* nullable */, uintptr_t handle, const Invokable &method) {
+		return invokePot(ret, handle, method, 0, (const Variant*)nullptr);
 	}
-	template<typename ...Args> Variant invokePot(uintptr_t handle, const Invokable &method, const Args &...args) {
+	template<typename ...Args> bool invokePot(Variant* ret /* nullable */, uintptr_t handle, const Invokable &method, const Args &...args) {
 		const size_t n = sizeof...(Args);
 		const Variant argv[n] = { Variant(args)... };
 
-		return invokePot(handle, method, (int)n, argv);
+		return invokePot(ret, handle, method, (int)n, argv);
 	}
 
 	virtual void gc(void) = 0;

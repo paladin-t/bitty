@@ -127,6 +127,8 @@ struct TableOptions {
 
 bool isPlugin(lua_State* L);
 
+int makeSandbox(lua_State* L, const char** blacklist, size_t blacklistLength);
+
 /**< Variant. */
 
 void check(lua_State* L, Bitty::Variant* ret, Index idx = Index(1), TableOptions options = TableOptions());

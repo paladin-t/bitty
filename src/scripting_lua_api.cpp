@@ -383,6 +383,46 @@ bool isPlugin(lua_State* L) {
 	return !!impl->editing();
 }
 
+int makeSandbox(lua_State* L, const char** blacklist, size_t blacklistLength) {
+	// Create a new table.
+	lua_newtable(L);
+	const int newTblIdx = lua_gettop(L);
+
+	// Iterate global _ENV and copy it into the new table.
+	lua_getglobal(L, "_G"); // Get the global _ENV.
+	const int envTblIdx = lua_gettop(L);
+
+	lua_pushnil(L);
+	while (lua_next(L, envTblIdx) != 0) {
+		// Copy key.
+		lua_pushvalue(L, -2); // ...key, value, key copy (top).
+		lua_insert(L, -2); // ...key, key copy, value (top).
+
+		// Write key copy and value into the new table.
+		lua_rawset(L, newTblIdx); // newTbl[key copy] = value.
+								  // ...key (top).
+	}
+
+	lua_remove(L, envTblIdx); // Pop _ENV.
+
+	// Remove entries from black list.
+	constexpr const char* const BLACK_LIST[] = {
+		LUA_GNAME, LUA_LOADLIBNAME, LUA_DBLIBNAME, LUA_IOLIBNAME, LUA_OSLIBNAME,
+		"loadlib", "searchpath", "preload", "cpath", "path", "searchers", "loaded",
+		"dofile", "loadfile", "load"
+	};
+	for (const char* name : BLACK_LIST) {
+		lua_pushnil(L);
+		lua_setfield(L, -2, name);
+	}
+	for (size_t i = 0; i < blacklistLength; ++i) {
+		lua_pushnil(L);
+		lua_setfield(L, -2, blacklist[i]);
+	}
+
+	return 0;
+}
+
 static int warnForMethodCallSymbol(lua_State* L) {
 	return error(L, "  Warning: Did you mean to call a method using \":\" instead of \".\"?");
 }
