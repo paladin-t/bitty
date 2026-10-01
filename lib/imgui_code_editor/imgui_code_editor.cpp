@@ -1073,6 +1073,8 @@ CodeEditor::CodeEditor() :
 	ShowLineNumbers(true),
 	StickyLineNumbers(false),
 	ShowLineIndicator(true),
+	MouseDownLine(-1),
+	MouseDraggingProgramPointer(false),
 	ShowModificationStatus(true),
 	ShowScrollBars(true),
 	HeadClickEnabled(false),
@@ -1458,9 +1460,22 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 					if (IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
 						dblClkLineNo = lineNo;
 						OnHeadClicked(lineNo, true);
-					} else if (IsMouseClicked(ImGuiMouseButton_Left)) {
-						clkLineNo = lineNo;
-						OnHeadClicked(lineNo, false);
+					} else if (IsMouseDown(ImGuiMouseButton_Left)) {
+						if (MouseDownLine == -1) {
+							MouseDownLine = lineNo;
+							if (ProgramPointer == lineNo)
+								MouseDraggingProgramPointer = true;
+						}
+					} else if (IsMouseReleased(ImGuiMouseButton_Left)) {
+						if (MouseDownLine == lineNo) {
+							clkLineNo = lineNo;
+							OnHeadClicked(lineNo, false);
+						} else {
+							if (MouseDraggingProgramPointer)
+								OnProgramPointerMoved(ProgramPointer, lineNo);
+						}
+						MouseDownLine = -1;
+						MouseDraggingProgramPointer = false;
 					}
 				}
 			}
@@ -1735,7 +1750,7 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 					State.CursorPosition = State.SelectionEnd;
 					OnLineClicked(State.CursorPosition.Line, true);
 				}
-			} else if (IsMouseDragging(ImGuiMouseButton_Left) && IsMouseDown(ImGuiMouseButton_Left)) {
+			} else if (IsMouseDragging(ImGuiMouseButton_Left) && IsMouseDown(ImGuiMouseButton_Left) && !MouseDraggingProgramPointer) {
 				io.WantCaptureMouse = true;
 				State.CursorPosition = InteractiveEnd = SanitizeCoordinates(ScreenPosToCoordinates(GetMousePos()));
 				SetSelection(InteractiveStart, InteractiveEnd, WordSelectionMode);
@@ -1812,6 +1827,10 @@ void CodeEditor::SetHeadClickedHandler(const HeadClicked &aHandler) {
 
 void CodeEditor::SetLineClickedHandler(const LineClicked &aHandler) {
 	LineClickedHandler = aHandler;
+}
+
+void CodeEditor::SetProgramPointerMovedHandler(const ProgramPointerMoved &aHandler) {
+	ProgramPointerMovedHandler = aHandler;
 }
 
 bool CodeEditor::IsChangesSaved(void) const {
@@ -4568,6 +4587,13 @@ void CodeEditor::OnLineClicked(int aLine, bool aDoubleClicked) const {
 		return;
 
 	LineClickedHandler(aLine, aDoubleClicked);
+}
+
+void CodeEditor::OnProgramPointerMoved(int aLine, int aNewLine) const {
+	if (ProgramPointerMovedHandler == nullptr)
+		return;
+
+	ProgramPointerMovedHandler(aLine, aNewLine);
 }
 
 }

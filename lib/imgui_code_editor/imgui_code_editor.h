@@ -230,6 +230,7 @@ public:
 	typedef std::function<void(bool)> Modified;
 	typedef std::function<void(int, bool)> HeadClicked;
 	typedef std::function<void(int, bool)> LineClicked;
+	typedef std::function<void(int, int)> ProgramPointerMoved;
 
 	CodeEditor();
 	virtual ~CodeEditor();
@@ -265,6 +266,7 @@ public:
 	void SetModifiedHandler(const Modified &aHandler);
 	void SetHeadClickedHandler(const HeadClicked &aHandler);
 	void SetLineClickedHandler(const LineClicked &aHandler);
+	void SetProgramPointerMovedHandler(const ProgramPointerMoved &aHandler);
 	bool IsChangesSaved(void) const;
 	void SetChangesCleared(void);
 	void SetChangesSaved(void);
@@ -478,6 +480,7 @@ protected:
 	void OnModified(bool aNewLine, bool aClearAutoIndent) const;
 	void OnHeadClicked(int aLine, bool aDoubleClicked) const;
 	void OnLineClicked(int aLine, bool aDoubleClicked) const;
+	void OnProgramPointerMoved(int aLine, int aNewLine) const;
 
 	Lines CodeLines;
 	std::string TextBuffer;
@@ -510,6 +513,7 @@ protected:
 	Modified ModifiedHandler;
 	HeadClicked HeadClickedHandler;
 	LineClicked LineClickedHandler;
+	ProgramPointerMoved ProgramPointerMovedHandler;
 
 	const ImFont* Font;
 	ImVector<ImWchar> InputBuffer;
@@ -523,6 +527,8 @@ protected:
 	bool ShowLineNumbers;
 	bool StickyLineNumbers;
 	bool ShowLineIndicator;
+	int MouseDownLine;
+	bool MouseDraggingProgramPointer;
 	bool ShowModificationStatus;
 	bool ShowScrollBars;
 	bool HeadClickEnabled;
