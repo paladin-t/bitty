@@ -257,6 +257,18 @@ inline bool read(const rapidjson::Value &obj, const rapidjson::Value* &ret, int 
 
 	return true;
 }
+inline bool read(const rapidjson::Value &obj, const rapidjson::Value* &ret, size_t node) {
+	if (ret)
+		ret = nullptr;
+	if (!obj.IsArray())
+		return false;
+	if ((rapidjson::SizeType)node >= obj.Size())
+		return false;
+
+	ret = &obj[(rapidjson::SizeType)node];
+
+	return true;
+}
 inline bool read(const rapidjson::Value &obj, const rapidjson::Value* &ret, const char* node) {
 	if (ret)
 		ret = nullptr;
@@ -293,6 +305,18 @@ inline bool read(rapidjson::Value &obj, rapidjson::Value* &ret, int node) {
 		return false;
 
 	ret = &obj[node];
+
+	return true;
+}
+inline bool read(rapidjson::Value &obj, rapidjson::Value* &ret, size_t node) {
+	if (ret)
+		ret = nullptr;
+	if (!obj.IsArray())
+		return false;
+	if ((rapidjson::SizeType)node >= obj.Size())
+		return false;
+
+	ret = &obj[(rapidjson::SizeType)node];
 
 	return true;
 }
@@ -335,6 +359,19 @@ inline bool write(rapidjson::Document &doc, rapidjson::Value &obj, rapidjson::Va
 		obj.PushBack(val, doc.GetAllocator());
 	}
 	ret = &obj[node];
+
+	return true;
+}
+inline bool write(rapidjson::Document &doc, rapidjson::Value &obj, rapidjson::Value* &ret, size_t node) {
+	ret = nullptr;
+	if (!obj.IsArray())
+		obj.SetArray();
+	while ((rapidjson::SizeType)node >= obj.Size()) {
+		rapidjson::Value val;
+		val.SetNull();
+		obj.PushBack(val, doc.GetAllocator());
+	}
+	ret = &obj[(rapidjson::SizeType)node];
 
 	return true;
 }
