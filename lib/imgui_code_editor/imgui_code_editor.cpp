@@ -1466,13 +1466,17 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 							if (ProgramPointer == lineNo)
 								MouseDraggingProgramPointer = true;
 						}
+						if (MouseDownLine != lineNo) {
+							if (MouseDraggingProgramPointer)
+								OnProgramPointerMoving(MouseDownLine, lineNo);
+						}
 					} else if (IsMouseReleased(ImGuiMouseButton_Left)) {
 						if (MouseDownLine == lineNo) {
 							clkLineNo = lineNo;
 							OnHeadClicked(lineNo, false);
 						} else {
 							if (MouseDraggingProgramPointer)
-								OnProgramPointerMoved(ProgramPointer, lineNo);
+								OnProgramPointerMoved(MouseDownLine, lineNo);
 						}
 						MouseDownLine = -1;
 						MouseDraggingProgramPointer = false;
@@ -1827,6 +1831,10 @@ void CodeEditor::SetHeadClickedHandler(const HeadClicked &aHandler) {
 
 void CodeEditor::SetLineClickedHandler(const LineClicked &aHandler) {
 	LineClickedHandler = aHandler;
+}
+
+void CodeEditor::SetProgramPointerMovingHandler(const ProgramPointerMoving &aHandler) {
+	ProgramPointerMovingHandler = aHandler;
 }
 
 void CodeEditor::SetProgramPointerMovedHandler(const ProgramPointerMoved &aHandler) {
@@ -4587,6 +4595,13 @@ void CodeEditor::OnLineClicked(int aLine, bool aDoubleClicked) const {
 		return;
 
 	LineClickedHandler(aLine, aDoubleClicked);
+}
+
+void CodeEditor::OnProgramPointerMoving(int aLine, int aNewLine) const {
+	if (ProgramPointerMovingHandler == nullptr)
+		return;
+
+	ProgramPointerMovingHandler(aLine, aNewLine);
 }
 
 void CodeEditor::OnProgramPointerMoved(int aLine, int aNewLine) const {

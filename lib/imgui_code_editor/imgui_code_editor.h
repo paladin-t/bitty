@@ -230,6 +230,7 @@ public:
 	typedef std::function<void(bool)> Modified;
 	typedef std::function<void(int, bool)> HeadClicked;
 	typedef std::function<void(int, bool)> LineClicked;
+	typedef std::function<void(int, int)> ProgramPointerMoving;
 	typedef std::function<void(int, int)> ProgramPointerMoved;
 
 	CodeEditor();
@@ -266,6 +267,7 @@ public:
 	void SetModifiedHandler(const Modified &aHandler);
 	void SetHeadClickedHandler(const HeadClicked &aHandler);
 	void SetLineClickedHandler(const LineClicked &aHandler);
+	void SetProgramPointerMovingHandler(const ProgramPointerMoving &aHandler);
 	void SetProgramPointerMovedHandler(const ProgramPointerMoved &aHandler);
 	bool IsChangesSaved(void) const;
 	void SetChangesCleared(void);
@@ -480,6 +482,7 @@ protected:
 	void OnModified(bool aNewLine, bool aClearAutoIndent) const;
 	void OnHeadClicked(int aLine, bool aDoubleClicked) const;
 	void OnLineClicked(int aLine, bool aDoubleClicked) const;
+	void OnProgramPointerMoving(int aLine, int aNewLine) const;
 	void OnProgramPointerMoved(int aLine, int aNewLine) const;
 
 	Lines CodeLines;
@@ -513,6 +516,7 @@ protected:
 	Modified ModifiedHandler;
 	HeadClicked HeadClickedHandler;
 	LineClicked LineClickedHandler;
+	ProgramPointerMoving ProgramPointerMovingHandler;
 	ProgramPointerMoved ProgramPointerMovedHandler;
 
 	const ImFont* Font;
