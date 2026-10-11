@@ -193,6 +193,11 @@ inline bool getValue(const rapidjson::Value &obj, rapidjson::Value* &ret) {
 
 	return true;
 }
+inline bool getValue(const rapidjson::Value &obj, rapidjson::Document &ret) {
+	ret.CopyFrom(obj, ret.GetAllocator());
+
+	return true;
+}
 inline void setValue(rapidjson::Value &obj, std::nullptr_t, rapidjson::Document &) {
 	obj.SetNull();
 }
@@ -243,6 +248,9 @@ inline void setValue(rapidjson::Value &obj, const std::string &src, rapidjson::D
 }
 inline void setValue(rapidjson::Value &obj, const rapidjson::Value &src, rapidjson::Document &doc) {
 	obj.CopyFrom(src, doc.GetAllocator());
+}
+inline void setValue(rapidjson::Value &obj, const rapidjson::Document &src, rapidjson::Document &doc) {
+	obj.CopyFrom((const rapidjson::Value &)src, doc.GetAllocator());
 }
 
 inline bool read(const rapidjson::Value &obj, const rapidjson::Value* &ret, int node) {
@@ -601,6 +609,17 @@ template<typename Src, typename ...Path> bool set(rapidjson::Document &doc, rapi
 		return false;
 
 	setValue(*tmp, *src, doc);
+
+	return true;
+}
+template<typename ...Path> bool set(rapidjson::Document &doc, rapidjson::Value &obj, const rapidjson::Document &src, Path ...path) {
+	rapidjson::Value* tmp = nullptr;
+	if (!write(doc, obj, tmp, path ...))
+		return false;
+	if (!tmp)
+		return false;
+
+	setValue(*tmp, src, doc);
 
 	return true;
 }
