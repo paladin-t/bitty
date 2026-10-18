@@ -559,7 +559,7 @@ struct Checkpoint {
 };
 
 /**
- * @param[out] bytes
+ * @param[out] checkpoint
  */
 bool toCheckpoint(const Project* project, const char* name, Checkpoint &checkpoint);
 bool fromCheckpoint(const Project* project, const char* name, Checkpoint &checkpoint);

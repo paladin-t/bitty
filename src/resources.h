@@ -99,6 +99,8 @@ public:
 
 		unsigned target(void) const;
 
+		const std::string &asset(void) const;
+
 		template<typename T> void to(T &other) const {
 			decltype(other.pointer) ptr;
 			if (pointer)

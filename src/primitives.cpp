@@ -14,6 +14,7 @@
 #include "project.h"
 #include "renderer.h"
 #include "resource/inline_resource.h"
+#include "workspace.h"
 #include "../lib/sdl_gfx/SDL2_gfxPrimitives.h"
 
 /*
@@ -4087,8 +4088,14 @@ private:
 				break;
 
 			for (Resources::Asset::Ptr ptr : _loads) {
-				if (ptr)
-					_resources->load(_project, *ptr);
+				if (ptr) {
+					const bool loaded = !!_resources->load(_project, *ptr);
+					if (!loaded) {
+						const std::string &asset = ptr->asset();
+						const std::string err = Text::format("Cannot load resource \"{0}\".", { asset });
+						_workspace->warn(err.c_str());
+					}
+				}
 			}
 			_loads.clear();
 		} while (false);

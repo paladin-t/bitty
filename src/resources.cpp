@@ -823,6 +823,10 @@ unsigned Resources::Asset::target(void) const {
 	return _target;
 }
 
+const std::string &Resources::Asset::asset(void) const {
+	return _asset;
+}
+
 Object::Ptr Resources::Asset::unref(void) {
 	Object::Ptr result = nullptr;
 	std::swap(result, ref);
