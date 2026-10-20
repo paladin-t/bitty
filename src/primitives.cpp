@@ -2054,11 +2054,9 @@ public:
 public:
 	CmdVariant() {
 		memset(this, 0, sizeof(CmdVariant));
-		new (&cmd) Cmd();
 	}
 	CmdVariant(const CmdVariant &other) {
 		memset(this, 0, sizeof(CmdVariant));
-		new (&cmd) Cmd();
 
 		switch (other.cmd.type) {
 		case Cmd::TARGET:
@@ -2231,14 +2229,12 @@ public:
 		cmd.dtor(&cmd);
 
 		memset(this, 0, sizeof(CmdVariant));
-		new (&cmd) Cmd();
 	}
 
 	CmdVariant &operator = (const CmdVariant &other) {
 		cmd.dtor(&cmd);
 
 		memset(this, 0, sizeof(CmdVariant));
-		new (&cmd) Cmd();
 
 		switch (other.cmd.type) {
 		case Cmd::TARGET:
