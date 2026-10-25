@@ -278,6 +278,7 @@ public:
 	std::vector<std::string> GetTextLines(bool aIncludeComment, bool aIncludeString) const;
 	std::string GetTextLine(int aLine) const;
 	std::vector<std::pair<std::string, PaletteIndex> > GetWordsAtLine(int aLine, bool aIncludeComment, bool aIncludeString, bool aIncludeSpace) const;
+	std::string GetWordAt(const Coordinates &aCoords, Coordinates* aStart = nullptr, Coordinates* aEnd = nullptr) const;
 
 	void InsertText(const char* aValue);
 	void AppendText(const char* aText, ImU32 aColor = (ImU32)PaletteIndex::Default);
@@ -470,7 +471,6 @@ protected:
 	void EnterCharacter(Char aChar);
 	Coordinates FindWordStart(const Coordinates &aFrom) const;
 	Coordinates FindWordEnd(const Coordinates &aFrom) const;
-	std::string GetWordAt(const Coordinates &aCoords, Coordinates* aStart = nullptr, Coordinates* aEnd = nullptr) const;
 	PaletteIndex GetPaletteIndexAt(const Coordinates &aCoords) const;
 	Char GetCharAt(const Coordinates &aCoords) const;
 	Char GetCharUnderCursor(void) const;

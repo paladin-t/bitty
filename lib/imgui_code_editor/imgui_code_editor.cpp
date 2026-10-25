@@ -1977,6 +1977,25 @@ std::vector<std::pair<std::string, CodeEditor::PaletteIndex> > CodeEditor::GetWo
 	return result;
 }
 
+std::string CodeEditor::GetWordAt(const Coordinates &aCoords, Coordinates* aStart, Coordinates* aEnd) const {
+	Coordinates start = FindWordStart(aCoords);
+	Coordinates end = FindWordEnd(aCoords);
+
+	if (aStart)
+		*aStart = start;
+	if (aEnd)
+		*aEnd = end;
+
+	std::string r;
+
+	for (Coordinates it = start; it < end; Advance(it)) {
+		const Glyph &g = CodeLines[it.Line].Glyphs[it.Column];
+		ImTextAppendUtf8ToStdStr(r, g.Character);
+	}
+
+	return r;
+}
+
 void CodeEditor::InsertText(const char* aValue) {
 	if (aValue == nullptr)
 		return;
@@ -4451,25 +4470,6 @@ CodeEditor::Coordinates CodeEditor::FindWordEnd(const Coordinates &aFrom) const 
 	}
 
 	return at;
-}
-
-std::string CodeEditor::GetWordAt(const Coordinates &aCoords, Coordinates* aStart, Coordinates* aEnd) const {
-	Coordinates start = FindWordStart(aCoords);
-	Coordinates end = FindWordEnd(aCoords);
-
-	if (aStart)
-		*aStart = start;
-	if (aEnd)
-		*aEnd = end;
-
-	std::string r;
-
-	for (Coordinates it = start; it < end; Advance(it)) {
-		const Glyph &g = CodeLines[it.Line].Glyphs[it.Column];
-		ImTextAppendUtf8ToStdStr(r, g.Character);
-	}
-
-	return r;
 }
 
 CodeEditor::PaletteIndex CodeEditor::GetPaletteIndexAt(const Coordinates &aCoords) const {
