@@ -346,6 +346,7 @@ public:
 	bool IsForceMonospaceEnabled(void) const;
 
 	bool IsEditorFocused(void) const;
+	void RequestFocus(void);
 
 	void MoveUp(int aAmount = 1, bool aSelect = false);
 	void MoveDown(int aAmount = 1, bool aSelect = false);
@@ -555,6 +556,7 @@ protected:
 	bool ForceMonospaceEnabled;
 	ImVec2 CursorScreenPos;
 	bool EditorFocused;
+	bool WantFocus;
 
 	Breakpoints Brks;
 	ErrorMarkers Errs;

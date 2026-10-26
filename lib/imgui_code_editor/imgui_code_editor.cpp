@@ -1095,6 +1095,7 @@ CodeEditor::CodeEditor() :
 	SafeColumnIndicatorOffset(0),
 	ForceMonospaceEnabled(false),
 	EditorFocused(false),
+	WantFocus(false),
 	ProgramPointer(-1)
 {
 	SetPalette(GetDarkPalette());
@@ -1222,6 +1223,11 @@ void CodeEditor::Render(const char* aTitle, const ImVec2 &aSize, bool aBorder) {
 	BeginChild(aTitle, aSize, aBorder, flags);
 
 	PushAllowKeyboardFocus(true);
+
+	if (WantFocus) {
+		SetWindowFocus();
+		WantFocus = false;
+	}
 
 	const bool ctrl = io.KeyCtrl;
 	const bool shift = io.KeyShift;
@@ -2277,6 +2283,10 @@ bool CodeEditor::IsForceMonospaceEnabled(void) const {
 
 bool CodeEditor::IsEditorFocused(void) const {
 	return EditorFocused;
+}
+
+void CodeEditor::RequestFocus(void) {
+	WantFocus = true;
 }
 
 void CodeEditor::MoveUp(int aAmount, bool aSelect) {
