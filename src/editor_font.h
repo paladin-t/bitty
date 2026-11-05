@@ -20,7 +20,7 @@
 
 namespace Bitty {
 
-class EditorFont : public Editable, public virtual Object {
+class EditorFont : public Editable, public Object {
 public:
 	BITTY_CLASS_TYPE('F', 'N', 'T', 'E')
 

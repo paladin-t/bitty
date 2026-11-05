@@ -24,7 +24,7 @@ namespace Bitty {
 /**
  * @brief Code resource object.
  */
-class Code : public virtual Object {
+class Code : public Object {
 public:
 	typedef std::shared_ptr<Code> Ptr;
 

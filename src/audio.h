@@ -89,7 +89,7 @@ namespace Bitty {
 /**
  * @brief Sound resource object.
  */
-class Sound : public virtual Object {
+class Sound : public Object {
 public:
 	typedef std::shared_ptr<Sound> Ptr;
 
@@ -156,7 +156,7 @@ namespace Bitty {
 /**
  * @brief SFX resource object.
  */
-class Sfx : public virtual Object {
+class Sfx : public Object {
 public:
 	typedef std::shared_ptr<Sfx> Ptr;
 
@@ -199,7 +199,7 @@ namespace Bitty {
 /**
  * @brief Music resource object.
  */
-class Music : public virtual Object {
+class Music : public Object {
 public:
 	typedef std::shared_ptr<Music> Ptr;
 

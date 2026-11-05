@@ -26,7 +26,7 @@ namespace Bitty {
 /**
  * @brief Raycaster algorithm.
  */
-class Raycaster : public virtual Object {
+class Raycaster : public Object {
 public:
 	typedef std::shared_ptr<Raycaster> Ptr;
 

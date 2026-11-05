@@ -20,7 +20,7 @@
 
 namespace Bitty {
 
-class EditorSound : public Editable, public virtual Object {
+class EditorSound : public Editable, public Object {
 public:
 	BITTY_CLASS_TYPE('S', 'N', 'D', 'E')
 

@@ -25,7 +25,7 @@ namespace Bitty {
 /**
  * @brief Randomizer algorithm.
  */
-class Randomizer : public virtual Object {
+class Randomizer : public Object {
 public:
 	typedef std::shared_ptr<Randomizer> Ptr;
 

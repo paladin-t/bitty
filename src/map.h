@@ -27,7 +27,7 @@ namespace Bitty {
 /**
  * @brief Map resource object.
  */
-class Map : public Collectible, public Cloneable<Map>, public virtual Object {
+class Map : public Collectible, public Cloneable<Map>, public Object {
 public:
 	typedef std::shared_ptr<Map> Ptr;
 

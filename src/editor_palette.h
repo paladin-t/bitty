@@ -20,7 +20,7 @@
 
 namespace Bitty {
 
-class EditorPalette : public Editor, public virtual Object {
+class EditorPalette : public Editor, public Object {
 public:
 	BITTY_CLASS_TYPE('P', 'L', 'T', 'E')
 

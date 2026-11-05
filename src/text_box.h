@@ -27,7 +27,7 @@ namespace Bitty {
 /**
  * @brief Text box object.
  */
-class TextBox : public Editable, public virtual Object {
+class TextBox : public Editable, public Object {
 public:
 	typedef std::shared_ptr<TextBox> Ptr;
 	typedef std::weak_ptr<TextBox> WeakPtr;

@@ -70,7 +70,7 @@ public:
 		bool await(void);
 	};
 
-	struct Asset : public Resource<Object::Ptr>, public Async, public virtual Object {
+	struct Asset : public Resource<Object::Ptr>, public Async, public Object {
 	public:
 		typedef std::shared_ptr<Asset> Ptr;
 
@@ -125,7 +125,7 @@ public:
 		Object::Ptr unref(void);
 	};
 
-	struct Glyph : public Resource<::Bitty::Texture::Ptr>, public Async, public virtual Object {
+	struct Glyph : public Resource<::Bitty::Texture::Ptr>, public Async, public Object {
 		friend class ResourcesImpl;
 
 	private:
@@ -141,7 +141,7 @@ public:
 		virtual unsigned type(void) const override;
 	};
 
-	struct Palette : public Resource<::Bitty::Palette::Ptr>, public Async, public virtual Object {
+	struct Palette : public Resource<::Bitty::Palette::Ptr>, public Async, public Object {
 	public:
 		typedef std::shared_ptr<Palette> Ptr;
 
@@ -168,7 +168,7 @@ public:
 		Object::Ptr unref(void);
 	};
 
-	struct Texture : public Resource<::Bitty::Texture::Ptr>, public Async, public virtual Object {
+	struct Texture : public Resource<::Bitty::Texture::Ptr>, public Async, public Object {
 	public:
 		typedef std::shared_ptr<Texture> Ptr;
 
@@ -196,7 +196,7 @@ public:
 		Palette::Ptr unref(void);
 	};
 
-	struct Sprite : public Resource<::Bitty::Sprite::Ptr>, public Async, public virtual Object {
+	struct Sprite : public Resource<::Bitty::Sprite::Ptr>, public Async, public Object {
 	public:
 		typedef std::shared_ptr<Sprite> Ptr;
 
@@ -224,7 +224,7 @@ public:
 		Texture::Ptr unref(void);
 	};
 
-	struct Map : public Resource<::Bitty::Map::Ptr>, public Async, public virtual Object {
+	struct Map : public Resource<::Bitty::Map::Ptr>, public Async, public Object {
 	public:
 		typedef std::shared_ptr<Map> Ptr;
 
@@ -254,7 +254,7 @@ public:
 		Texture::Ptr unref(void);
 	};
 
-	struct Sfx : public Resource<::Bitty::Sfx::Ptr>, public Async, public virtual Object {
+	struct Sfx : public Resource<::Bitty::Sfx::Ptr>, public Async, public Object {
 	public:
 		typedef std::shared_ptr<Sfx> Ptr;
 
@@ -276,7 +276,7 @@ public:
 		Object::Ptr unref(void);
 	};
 
-	struct Music : public Resource<::Bitty::Music::Ptr>, public Async, public virtual Object {
+	struct Music : public Resource<::Bitty::Music::Ptr>, public Async, public Object {
 	public:
 		typedef std::shared_ptr<Music> Ptr;
 

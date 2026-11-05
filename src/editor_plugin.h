@@ -20,7 +20,7 @@
 
 namespace Bitty {
 
-class EditorPlugin : public Editable, public virtual Object {
+class EditorPlugin : public Editable, public Object {
 public:
 	BITTY_CLASS_TYPE('P', 'L', 'G', 'E')
 

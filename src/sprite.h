@@ -41,7 +41,7 @@ namespace Bitty {
 /**
  * @brief Sprite resource object.
  */
-class Sprite : public Cloneable<Sprite>, public virtual Object {
+class Sprite : public Cloneable<Sprite>, public Object {
 public:
 	typedef std::shared_ptr<Sprite> Ptr;
 

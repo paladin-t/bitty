@@ -47,7 +47,7 @@ namespace Bitty {
 /**
  * @brief Network object.
  */
-class Network : public Updatable, public virtual Object {
+class Network : public Updatable, public Object {
 public:
 	typedef std::shared_ptr<Network> Ptr;
 

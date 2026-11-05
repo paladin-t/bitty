@@ -45,7 +45,7 @@ namespace Bitty {
 /**
  * @brief Image resource object.
  */
-class Image : public Cloneable<Image>, public virtual Object {
+class Image : public Cloneable<Image>, public Object {
 public:
 	typedef std::shared_ptr<Image> Ptr;
 	typedef std::weak_ptr<Image> WeakPtr;

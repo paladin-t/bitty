@@ -25,7 +25,7 @@ namespace Bitty {
 /**
  * @brief Bytes streaming object.
  */
-class Bytes : public Stream, public virtual Object {
+class Bytes : public Stream, public Object {
 public:
 	typedef std::shared_ptr<Bytes> Ptr;
 

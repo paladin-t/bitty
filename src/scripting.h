@@ -53,7 +53,7 @@ namespace Bitty {
 /**
  * @brief Scripting driven executable object.
  */
-class Scripting : public Executable, public NonCopyable, public virtual Object {
+class Scripting : public Executable, public NonCopyable, public Object {
 public:
 	typedef std::shared_ptr<Scripting> Ptr;
 

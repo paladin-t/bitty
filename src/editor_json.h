@@ -20,7 +20,7 @@
 
 namespace Bitty {
 
-class EditorJson : public Editable, public virtual Object {
+class EditorJson : public Editable, public Object {
 public:
 	BITTY_CLASS_TYPE('J', 'S', 'N', 'E')
 

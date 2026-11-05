@@ -29,7 +29,7 @@ namespace Bitty {
 /**
  * @brief Text object and utilities.
  */
-class Text : public virtual Object {
+class Text : public Object {
 public:
 	typedef std::shared_ptr<Text> Ptr;
 

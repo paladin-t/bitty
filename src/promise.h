@@ -28,7 +28,7 @@ namespace Bitty {
 /**
  * @brief Promise object.
  */
-class Promise : public Updatable, public virtual Object {
+class Promise : public Updatable, public Object {
 public:
 	typedef std::shared_ptr<Promise> Ptr;
 	typedef std::weak_ptr<Promise> WeakPtr;

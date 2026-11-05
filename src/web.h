@@ -28,7 +28,7 @@ namespace Bitty {
 /**
  * @brief Fetch object as HTTP client.
  */
-class Fetch : public Updatable, public virtual Object {
+class Fetch : public Updatable, public Object {
 public:
 	typedef std::shared_ptr<Fetch> Ptr;
 
@@ -92,7 +92,7 @@ namespace Bitty {
 /**
  * @brief Web object as HTTP server.
  */
-class Web : public Updatable, public virtual Object {
+class Web : public Updatable, public Object {
 public:
 	typedef std::shared_ptr<Web> Ptr;
 

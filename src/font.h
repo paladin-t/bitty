@@ -25,7 +25,7 @@ namespace Bitty {
 /**
  * @brief Font resource object.
  */
-class Font : public virtual Object {
+class Font : public Object {
 public:
 	typedef unsigned Codepoint;
 

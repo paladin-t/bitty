@@ -28,7 +28,7 @@ namespace Bitty {
 /**
  * @brief JSON object.
  */
-class Json : public virtual Object {
+class Json : public Object {
 public:
 	typedef std::shared_ptr<Json> Ptr;
 

@@ -25,7 +25,7 @@ namespace Bitty {
 /**
  * @brief Database object.
  */
-class Database : public virtual Object {
+class Database : public Object {
 public:
 	typedef std::shared_ptr<Database> Ptr;
 

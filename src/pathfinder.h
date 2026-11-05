@@ -25,7 +25,7 @@ namespace Bitty {
 /**
  * @brief Pathfinder algorithm.
  */
-class Pathfinder : public virtual Object {
+class Pathfinder : public Object {
 public:
 	typedef std::shared_ptr<Pathfinder> Ptr;
 

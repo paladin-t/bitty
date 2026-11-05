@@ -92,7 +92,7 @@ static constexpr const char* const EDITOR_CODE_PRIMITIVES[] = {
 
 namespace Bitty {
 
-class EditorCode : public Editable, public virtual Object {
+class EditorCode : public Editable, public Object {
 private:
 	static int refCount;
 

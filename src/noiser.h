@@ -25,7 +25,7 @@ namespace Bitty {
 /**
  * @brief Noiser algorithm.
  */
-class Noiser : public virtual Object {
+class Noiser : public Object {
 public:
 	typedef std::shared_ptr<Noiser> Ptr;
 

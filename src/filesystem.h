@@ -116,7 +116,7 @@ public:
 /**
  * @brief File info.
  */
-class FileInfo : public virtual Object {
+class FileInfo : public Object {
 public:
 	typedef std::shared_ptr<FileInfo> Ptr;
 
@@ -172,7 +172,7 @@ public:
 /**
  * @brief Directory info.
  */
-class DirectoryInfo : public virtual Object {
+class DirectoryInfo : public Object {
 public:
 	typedef std::shared_ptr<DirectoryInfo> Ptr;
 

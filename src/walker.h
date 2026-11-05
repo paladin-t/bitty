@@ -26,7 +26,7 @@ namespace Bitty {
 /**
  * @brief Walker algorithm.
  */
-class Walker : public virtual Object {
+class Walker : public Object {
 public:
 	typedef std::shared_ptr<Walker> Ptr;
 

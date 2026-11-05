@@ -102,7 +102,7 @@ namespace Bitty {
 /**
  * @brief Palette resource object.
  */
-class Palette : public Cloneable<Palette>, public virtual Object {
+class Palette : public Cloneable<Palette>, public Object {
 public:
 	typedef std::shared_ptr<Palette> Ptr;
 

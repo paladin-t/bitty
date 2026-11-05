@@ -27,7 +27,7 @@ namespace Bitty {
 /**
  * @brief Document viewer object.
  */
-class DocumentViewer : public virtual Object {
+class DocumentViewer : public Object {
 public:
 	typedef std::shared_ptr<DocumentViewer> Ptr;
 	typedef std::weak_ptr<DocumentViewer> WeakPtr;

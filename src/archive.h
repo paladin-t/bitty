@@ -36,7 +36,7 @@ namespace Bitty {
 /**
  * @brief Archive object.
  */
-class Archive : public virtual Object {
+class Archive : public Object {
 public:
 	typedef std::shared_ptr<Archive> Ptr;
 

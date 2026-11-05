@@ -25,7 +25,7 @@ namespace Bitty {
 /**
  * @brief Texture object.
  */
-class Texture : public virtual Object {
+class Texture : public Object {
 public:
 	typedef std::shared_ptr<Texture> Ptr;
 

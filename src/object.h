@@ -169,7 +169,7 @@ namespace Bitty {
 /**
  * @brief Enumerator object interface.
  */
-class IEnumerator : public virtual Object {
+class IEnumerator : public Object {
 public:
 	typedef std::shared_ptr<IEnumerator> Ptr;
 	typedef std::weak_ptr<IEnumerator> WeakPtr;
@@ -185,7 +185,7 @@ public:
 /**
  * @brief Enumerable object interface.
  */
-class IEnumerable : public virtual Object {
+class IEnumerable : public Object {
 public:
 	typedef std::shared_ptr<IEnumerable> Ptr;
 
@@ -210,7 +210,7 @@ namespace Bitty {
 /**
  * @brief List object interface.
  */
-class IList : public virtual Object {
+class IList : public Object {
 public:
 	typedef std::shared_ptr<IList> Ptr;
 
@@ -230,7 +230,7 @@ public:
 /**
  * @brief Dictionary object interface.
  */
-class IDictionary : public virtual Object {
+class IDictionary : public Object {
 public:
 	typedef std::shared_ptr<IDictionary> Ptr;
 
